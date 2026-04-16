@@ -1,0 +1,3 @@
+# Exchange Adapter Design
+
+TBD

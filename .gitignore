@@ -1,0 +1,50 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
+secret/
+credentials/
+config.local.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Build / temp
+tmp/
+temp/
+*.tmp
+
+# Research data artifacts - do not version raw or generated datasets
+research/data/raw/
+research/data/normalized/
+research/data/derived/
+
+# Generated artifacts
+artifacts/
+
+# Local runtime state
+state/
+runtime/
+cache/
