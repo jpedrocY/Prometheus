@@ -36,10 +36,16 @@ tmp/
 temp/
 *.tmp
 
-# Research data artifacts - do not version raw or generated datasets
-research/data/raw/
-research/data/normalized/
-research/data/derived/
+# Research data artifacts - do not version raw or generated datasets.
+# Directory skeleton is kept via .gitkeep files so the Hive partition layout
+# is reproducible without committing any actual data.
+research/data/raw/**
+research/data/normalized/**
+research/data/derived/**
+!research/data/raw/**/
+!research/data/normalized/**/
+!research/data/derived/**/
+!research/data/**/.gitkeep
 
 # Generated artifacts
 artifacts/
