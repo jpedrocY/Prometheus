@@ -2,271 +2,396 @@
 
 ## Purpose
 
-This document is the top-level state snapshot for the Prometheus project.
+This document defines the current state of the Prometheus trading system project.
 
-Its purpose is to make the current project status easy to understand at a glance by recording:
+Its purpose is to:
 
-- the current phase,
-- the major locked decisions,
-- the most important open questions,
-- the current source-of-truth documents,
-- the immediate next implementation-planning steps,
-- and the required working method.
+- provide a clear snapshot of what has already been designed and decided
+- identify what remains before implementation
+- define the boundary between research/design and code generation
+- ensure continuity across chats, sessions, and tools
+- act as the authoritative “project memory checkpoint”
 
-This file is a coordination document, not a replacement for topic-specific specifications.
+This document should be treated as the **single high-level source of truth** for project status.
 
-If this file ever conflicts with a more specific topic document, the topic document is authoritative.
+---
+
+## Project Objective
+
+The goal of the project is to design and build a:
+
+> **production-oriented, safety-first, operator-supervised trading system**
+
+for:
+
+- Binance USDⓈ-M futures  
+- BTCUSDT perpetual (initial scope)
+
+The system is:
+
+- initially **rules-based**
+- designed for **robustness, not hype**
+- built for **safe live deployment**
+- structured to **support future extensions (including AI), but not depend on them**
+
+---
+
+## Strategic Direction (Locked Decisions)
+
+The following decisions are **locked unless explicitly revised**:
+
+### Market & Venue
+- Exchange: Binance USDⓈ-M Futures
+- Primary symbol: BTCUSDT perpetual
+- Secondary (research only): ETHUSDT
+
+### Strategy
+- Strategy type: breakout continuation
+- Signal timeframe: 15m
+- Higher timeframe bias: 1h
+- Entry: bar-close confirmation → market order
+- Stop: structural invalidation + ATR buffer
+- Trade management: staged risk reduction + trailing
+
+### Execution
+- One-way mode
+- Isolated margin
+- One symbol only (v1)
+- One position only (v1)
+- Exchange-side protective stop mandatory
+
+### Risk
+- Initial risk: ~0.25% equity per trade
+- Leverage: tool, not target
+
+### Deployment
+- Supervised (not autonomous)
+- Staged rollout:
+  - research → validation → paper → tiny live → scaled live
+
+---
+
+## Architectural Direction (Locked)
+
+### Core principles
+
+- Modular monolith (v1)
+- Exchange is the **source of truth**
+- User stream = **primary live state source**
+- REST = placement, recovery, reconciliation
+- Restart = safe mode first
+- Strategy and execution are strictly separated
+- Persistence is **restart-critical only**
+- Observability is **state-centric**
+
+---
+
+## What Has Been Fully Designed
+
+The following areas are now **substantially defined and documented**.
+
+---
+
+### 1. Strategy & Validation
+
+- Strategy selection and comparison
+- Breakout strategy specification
+- Backtest plan
+- Validation checklist
+
+---
+
+### 2. Data Layer
+
+- Historical data specification
+- Timestamp policy (UTC ms)
+- Dataset versioning
+
+---
+
+### 3. Execution & Exchange Behavior
+
+- Entry model (market after bar close)
+- Protective stop model (STOP_MARKET, exchange-side)
+- Stop update model (cancel-and-replace)
+- User stream as primary truth
+- Deterministic order IDs
+
+See:  
+:contentReference[oaicite:0]{index=0}
+
+---
+
+### 4. Runtime Architecture
+
+- Modular monolith design
+- Component boundaries
+- Strategy / risk / execution separation
+- Research vs live runtime separation
+- Exchange-authority rules
+
+See:  
+:contentReference[oaicite:1]{index=1}
+
+---
+
+### 5. State Model
+
+- Runtime modes (SAFE_MODE, RUNNING_HEALTHY, etc.)
+- Trade lifecycle states
+- Protection states (critical safety dimension)
+- Reconciliation states
+- Control flags and interaction rules
+
+See:  
+:contentReference[oaicite:2]{index=2}
+
+---
+
+### 6. Internal Communication
+
+- Commands vs events vs queries
+- Message envelope structure
+- Component ownership boundaries
+- Event-driven state transitions
+
+See:  
+:contentReference[oaicite:3]{index=3}
+
+---
+
+### 7. Runtime Persistence
+
+- What must be persisted vs derived
+- Required entities (runtime, trade, protection, reconciliation, incidents)
+- Write timing rules
+- Crash safety principles
+- Restart-read behavior
+
+See:  
+:contentReference[oaicite:4]{index=4}
+
+---
+
+### 8. Observability
+
+- Structured event model
+- Health dimensions (streams, protection, reconciliation, etc.)
+- Alerting philosophy
+- Operator-facing summaries
+- Audit requirements
+
+See:  
+:contentReference[oaicite:5]{index=5}
+
+---
+
+### 9. Restart & Recovery
+
+- Safe-mode-first restart
+- Reconciliation sequence
+- Clean vs recoverable vs unsafe mismatch
+- Emergency branch (unprotected position)
+
+See:  
+:contentReference[oaicite:6]{index=6}
+
+---
+
+### 10. Incident Handling
+
+- Severity classification (1–4)
+- Containment-first principle
+- Safe-mode enforcement
+- Emergency handling rules
+
+See:  
+:contentReference[oaicite:7]{index=7}
+
+---
+
+### 11. Operator Workflow
+
+- Responsibilities and boundaries
+- Allowed manual actions
+- Supervision model
+- Approval rules
+
+See:  
+:contentReference[oaicite:8]{index=8}
+
+---
+
+### 12. Review Process
+
+- Daily operational review
+- Weekly review
+- Escalation thresholds
+- Review artifacts
+
+See:  
+:contentReference[oaicite:9]{index=9}
+
+---
+
+### 13. Release & Deployment
+
+- Staged promotion pipeline
+- Environment model
+- Pre-live checklist
+- Rollback rules
+
+See:  
+:contentReference[oaicite:10]{index=10}
+
+---
+
+### 14. Security
+
+- API key policy (least privilege, no withdrawals)
+- Secrets management rules
+- Permission scoping model
+- Environment separation
+
+See:  
+:contentReference[oaicite:11]{index=11}  
+:contentReference[oaicite:12]{index=12}  
+:contentReference[oaicite:13]{index=13}  
+
+---
+
+### 15. Operator Interface
+
+- Dashboard requirements
+- Required visibility
+- Control actions
+- Safety-first UI philosophy
+
+See:  
+:contentReference[oaicite:14]{index=14}
+
+---
+
+## What Is NOT Yet Defined (Pre-Implementation Gaps)
+
+The following areas are still missing or incomplete and should be finalized **before Claude Code implementation**:
+
+---
+
+### 1. Codebase Structure
+
+- Folder/module layout
+- Naming conventions
+- Dependency boundaries
+- Interface surfaces
+
+---
+
+### 2. AI Coding Handoff Document
+
+- How Claude Code should operate
+- What files it can modify
+- How to respect architecture constraints
+- Testing expectations
+
+---
+
+### 3. First-Run Setup Guide
+
+- Environment setup
+- Secrets loading
+- Initial configuration
+- First startup expectations
+
+---
+
+### 4. Paper / Shadow Runbook
+
+- How to run without real capital
+- Expected behaviors
+- Validation checklist
+
+---
+
+### 5. Tiny Live Runbook
+
+- First live deployment procedure
+- Risk restrictions
+- Monitoring expectations
+- Abort conditions
+
+---
+
+### 6. Templates
+
+- Daily review template
+- Weekly review template
+- Incident report template
+- Release note template
+
+---
 
 ## Current Phase
 
 The project is currently in:
 
-- **implementation architecture and execution-planning**
-
-### Meaning of this phase
+> **Final implementation design phase (pre-code)**
 
 This means:
 
-- the first strategy family has already been selected,
-- the v1 strategy specification has already been written,
-- the historical-data, validation, execution, operations, and security directions are already substantially defined,
-- and the next priority is to build the bridge from research/specification into implementation-ready architecture.
-
-This is **not** the phase for jumping directly into broad coding without structure.
-
-The next priority is to define:
-
-- implementation blueprint,
-- runtime state model,
-- observability design,
-- operator dashboard requirements,
-- and release / deployment process.
-
-## Project Summary
-
-Prometheus is being developed as a production-oriented, AI-assisted but initially rules-based trading system.
-
-The project is intentionally **not** starting as a self-learning autonomous AI trading bot.
-
-The current design direction is:
-
-- narrow scope first,
-- supervised deployment first,
-- one symbol first,
-- one position first,
-- strong operational safety,
-- realistic backtesting,
-- explicit reconciliation and restart behavior,
-- and disciplined documentation before implementation.
-
-## Locked Decisions
-
-The following decisions are already accepted and should not be changed casually.
-
-## Strategy and Market
-
-- venue: **Binance USDⓈ-M futures**
-- primary symbol: **BTCUSDT perpetual**
-- first secondary comparison symbol: **ETHUSDT perpetual**
-- strategy family: **breakout continuation with higher-timeframe trend filter**
-- signal timeframe: **15m**
-- higher-timeframe bias timeframe: **1h**
-- execution style: **bar-close confirmation, then market entry**
-- baseline backtest fill assumption: **next-bar open after confirmed signal close**
-
-## Risk and Trade Management
-
-- stop model: **structural stop + ATR buffer + exchange-side protection**
-- initial live deployment risk: **0.25% equity risk per trade**
-- leverage is treated as a **tool to reach valid position size**, not a target
-- initial live scope remains **one symbol, one position, supervised rollout**
-- preferred live exit philosophy is **staged risk reduction, then trailing**, not a pure fixed take-profit
+- Architecture is largely defined  
+- Execution behavior is defined  
+- Safety systems are defined  
+- Operational model is defined  
 
-## Research and Data
+But:
 
-- official Binance USDⓈ-M endpoints are the canonical historical source
-- historical research storage is **Parquet**
-- the default local research query engine is **DuckDB**
-- canonical timezone is **UTC**
-- canonical timestamp format is **Unix milliseconds**
-- canonical bar identity uses **open_time**
-- strategy logic may use **completed bars only**
-- normalized and derived datasets used for formal research must be versioned explicitly
+- Implementation structure is not yet fully specified  
+- Code generation has not started  
 
-## Execution and Operations
+---
 
-- v1 uses **one-way mode**
-- v1 uses **isolated margin**
-- v1 runs **BTCUSDT only** in the first live-capable form
-- user-stream events are the **primary live source of truth**
-- REST is used for placement, cancellation, reconciliation, and recovery
-- protective stop uses:
-  - `STOP_MARKET`
-  - `closePosition=true`
-  - `MARK_PRICE`
-  - `priceProtect=TRUE`
-- restart always begins in **safe mode**
-- no new entries are allowed until restart reconciliation succeeds
-- incident handling is **severity-based**
-- v1 is **operator-supervised**, not lights-out autonomous
+## Next Step (Critical)
 
-## Security
+The next step is:
 
-- API keys must follow **least privilege**
-- withdrawal permission must remain **disabled**
-- production keys must use **IP restriction**
-- secrets must never live in:
-  - code
-  - git
-  - docs
-  - screenshots
-  - chats
-  - or normal logs
-- startup must fail closed if required secrets or permissions are missing or invalid
+> **Define the codebase structure and AI coding handoff**
 
-## Most Important Open Questions
+This is the bridge between:
 
-The following remain open and should be resolved through research, validation, or architecture work rather than assumption.
+- design  
+and  
+- actual implementation  
 
-## Strategy Validation
+---
 
-- Which exit model is most robust after realistic fees, funding, and slippage?
-- Does BTCUSDT clearly outperform ETHUSDT for this strategy, or are both similarly viable?
-- Is EMA 50 / 200 materially more robust than EMA 20 / 100?
-- Which setup-window length is most robust across folds?
-- Which breakout and stop buffers are robust rather than merely attractive in one period?
-- How sensitive are results to slippage assumptions?
-- Does mark-price-based stop sensitivity materially change conclusions?
+## Handoff Readiness Criteria
 
-## Runtime and Execution Architecture
+The project is ready for Claude Code when:
 
-- What exact runtime state model should be used?
-- What exact client order ID format should be standardized?
-- What exact thresholds should define stale market-data and user-data streams?
-- What exact timeout should define missing entry confirmation?
-- What exact timeout should define missing stop confirmation?
-- Under which failure scenarios should the bot flatten immediately versus preserve protection and wait for review?
+- [ ] Codebase structure is defined  
+- [ ] Runtime modules are mapped to code  
+- [ ] Interfaces are clearly scoped  
+- [ ] Persistence model is implementable  
+- [ ] Event system is implementable  
+- [ ] Runbooks exist for first execution  
+- [ ] Safety constraints are enforceable in code  
 
-## Observability and Operations
+---
 
-- What exact health signals, metrics, and alerts should be mandatory in v1?
-- Which alerts require immediate operator escalation versus passive review?
-- What exact release / promotion path should be used from development to paper / shadow to tiny live?
-- What exact daily and weekly review templates should become standard?
+## Final Notes
 
-## Security and Deployment
+- This system is designed for **robustness, not speed of development**
+- Narrow scope is intentional and should be preserved
+- Safety and state certainty take priority over optimization
+- The goal is not to “get a bot running”  
+  → The goal is to build a system that **can be trusted with capital**
 
-- Should v1 production use one key or split trading and monitoring keys from the start?
-- What exact runtime secret-loading method should be used on the first production host?
-- What exact permission scoping should be defined for each operational role?
-- Where should key and secret inventory metadata live operationally?
+---
 
-## Source-of-Truth Documents
+## Document Status
 
-The following documents are currently authoritative in their areas.
-
-## Strategy Research
-
-- `docs/03-strategy-research/first-strategy-comparison.md`
-- `docs/03-strategy-research/v1-breakout-strategy-spec.md`
-- `docs/03-strategy-research/v1-breakout-backtest-plan.md`
-
-## Data
-
-- `docs/04-data/historical-data-spec.md`
-- `docs/04-data/timestamp-policy.md`
-- `docs/04-data/dataset-versioning.md`
-
-## Validation
-
-- `docs/05-backtesting-validation/v1-breakout-validation-checklist.md`
-
-## Execution / Exchange
-
-- `docs/06-execution-exchange/btcusdt-v1-order-handling-notes.md`
-
-## Operations
-
-- `docs/09-operations/restart-procedure.md`
-- `docs/09-operations/incident-response.md`
-- `docs/09-operations/operator-workflow.md`
-- `docs/09-operations/daily-weekly-review-process.md`
-
-## Security
-
-- `docs/10-security/api-key-policy.md`
-- `docs/10-security/secrets-management.md`
-
-## Authority Rule
-
-If any older summary, earlier chat, or high-level overview conflicts with one of the topic documents above, the topic document wins.
-
-## Known Document Notes
-
-The project should remain alert to documentation drift.
-
-Current notes:
-
-- the historical data specification required cleanup due to formatting / copy-paste corruption and should now be treated as the corrected version
-- high-level project summaries can drift behind the more detailed topic documents
-- this file exists partly to reduce future drift by making the current phase and next steps explicit
-
-## Immediate Next Steps
-
-The next recommended documents / planning steps are:
-
-1. `docs/08-architecture/implementation-blueprint.md`
-2. `docs/08-architecture/state-model.md`
-3. `docs/08-architecture/observability-design.md`
-4. `docs/11-interface/operator-dashboard-requirements.md`
-5. `docs/09-operations/release-process.md`
-
-## Why these are next
-
-These are the highest-value bridge documents between the current specification-heavy phase and the first serious coding phase.
-
-The project already has strong strategy, data, execution, operations, and security policies.
-
-What it still needs most is:
-
-- implementation structure,
-- state ownership and transitions,
-- observability requirements,
-- operator interface requirements,
-- and release discipline.
-
-## Required Working Method
-
-This workflow is mandatory for project work:
-
-1. research, analyze, compare, and think through the decision space carefully
-2. present reasoning, tradeoffs, conclusions, and recommendations clearly
-3. wait for agreement, disagreement, or adjustments
-4. only after approval write or rewrite the Markdown file
-
-Do not skip straight to file generation unless explicitly asked.
-
-## Out of Scope Right Now
-
-The following are intentionally out of scope for the current phase unless explicitly revisited:
-
-- a self-learning live AI bot as the initial production system
-- lights-out autonomous deployment
-- hedge mode
-- multi-symbol portfolio orchestration
-- portfolio-level backtesting as the first implementation target
-- machine-learning overlays in v1
-- alternative data as a default input
-- excessive strategy complexity before baseline validation
-- premature coding without architecture/state-model clarity
-
-## Current Success Condition
-
-The project should consider the current phase successful when:
-
-- the implementation blueprint is clear,
-- the runtime state model is explicit,
-- the observability design is defined,
-- the operator dashboard requirements are documented,
-- the release / promotion process is documented,
-- and the project is ready to begin coding from a stable architecture rather than from scattered assumptions.
+- Status: ACTIVE
+- Last updated: (fill on update)
+- Owner: Project operator
+- Role: Source-of-truth project state checkpoint
