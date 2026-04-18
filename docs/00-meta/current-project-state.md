@@ -6,9 +6,9 @@ This document defines the current high-level state of the Prometheus trading-sys
 
 Its purpose is to:
 
-- provide a clear project checkpoint before the next chat,
+- provide a clear project checkpoint before Claude Code implementation begins,
 - summarize what has already been designed,
-- identify what remains before Claude Code implementation,
+- identify the current implementation-readiness status,
 - define the boundary between documentation/setup/handoff and coding,
 - preserve locked decisions across chats and repository updates,
 - and act as the high-level project memory checkpoint.
@@ -31,9 +31,9 @@ https://github.com/jpedrocY/Prometheus
 
 The repository Markdown files are the primary source of truth.
 
-ChatGPT project-uploaded files are only a limited 25-file continuity cache because of the project-file limit.
+ChatGPT project-uploaded files are only a limited continuity cache because of the project-file limit.
 
-The next chat should inspect the repository directly and use uploaded files as a compact high-priority cache, not as the complete project source.
+Claude Code or any other implementation agent must inspect the repository directly and use uploaded files as a compact high-priority cache, not as the complete project source.
 
 ---
 
@@ -67,25 +67,109 @@ Prometheus v1 is not intended to be a lights-out autonomous AI trading agent.
 
 ## Current Phase
 
-The project is currently at the end of:
+The project has completed the core documentation, architecture, setup, governance, and AI-coding handoff work needed to begin phased implementation planning.
+
+Current phase:
 
 ```text
-implementation architecture and pre-Claude-Code planning
+Claude Code handoff readiness / Phase 0 implementation intake
 ```
 
-The high-value TBD documentation cleanup is almost complete.
+The project is ready to move into Claude Code Phase 0:
 
-The remaining work before actual implementation/setup is:
+```text
+repository audit and implementation-readiness review
+```
 
-1. create `docs/09-operations/first-run-setup-checklist.md`,
-2. create `docs/00-meta/ai-coding-handoff.md`,
-3. update this document one final time if needed,
-4. hand the project to Claude Code through a phased implementation plan,
-5. begin actual setup and implementation in a fresh chat.
+The immediate next step is **not** broad code generation.
 
-The AI coding handoff has **not** been created yet.
+The immediate next step is:
 
-The first-run setup checklist has **not** been created yet.
+1. commit the updated documentation files to the repository,
+2. open the local repository at `C:\Prometheus`,
+3. give Claude Code the initial Phase 0 prompt from `docs/00-meta/ai-coding-handoff.md`,
+4. have Claude Code inspect the repository and produce a repo-audit report,
+5. review that report before approving Phase 1.
+
+---
+
+## Recently Completed Pre-Handoff Documents
+
+The following formerly pending documents have now been created:
+
+```text
+docs/09-operations/first-run-setup-checklist.md
+docs/00-meta/ai-coding-handoff.md
+```
+
+These files complete the practical setup and AI implementation handoff layer.
+
+## First-Run Setup Checklist Status
+
+`docs/09-operations/first-run-setup-checklist.md` now defines the guided setup path for:
+
+- current local environment assumptions,
+- repository setup at `C:\Prometheus`,
+- GitHub Desktop tracking,
+- AntiGravity IDE usage,
+- Claude Code extension usage,
+- ChatGPT-guided setup support,
+- local development setup,
+- Python/tooling setup,
+- configuration skeletons,
+- historical data and research storage,
+- runtime database/log/state preparation,
+- dry-run runtime setup,
+- dashboard and monitor setup,
+- Telegram/n8n alert-route setup,
+- dedicated NUC preparation,
+- host hardening checks,
+- backup/restore verification,
+- paper/shadow readiness,
+- production Binance key timing,
+- tiny-live readiness,
+- emergency access and recovery readiness.
+
+It explicitly preserves the rule:
+
+```text
+Do not create production Binance trade-capable API keys until the correct approved phase gate.
+```
+
+## AI Coding Handoff Status
+
+`docs/00-meta/ai-coding-handoff.md` now defines the implementation contract for Claude Code.
+
+It includes:
+
+- repository reading order,
+- authority hierarchy,
+- locked v1 decisions,
+- non-negotiable safety constraints,
+- forbidden actions,
+- phased implementation plan,
+- runnable checkpoints,
+- acceptance criteria per phase,
+- dual-AI workflow with ChatGPT,
+- Claude Code installation authority,
+- installation escalation protocol,
+- checkpoint reporting protocol,
+- ambiguity/spec-gap protocol,
+- local development first / NUC later plan,
+- migration-to-NUC expectations,
+- and copy-paste prompts for Claude Code.
+
+The handoff explicitly requires:
+
+```text
+phased implementation
+not one-shot generation
+runnable checkpoint after every phase
+no production exchange-write capability before approved gates
+no production Binance keys during early coding
+dry-run and paper/shadow before tiny live
+operator approval before promotion
+```
 
 ---
 
@@ -160,6 +244,7 @@ The first-run setup checklist has **not** been created yet.
 - The NUC has an attached desk monitor showing the operator dashboard during operation.
 - Dashboard should be always available when the monitor is on.
 - Telegram and/or n8n may be used for alert routing, but not as high-risk approval surfaces in v1.
+- Production Binance trade-capable keys must not be created until the correct approved phase gate.
 
 ---
 
@@ -194,7 +279,7 @@ The first-run setup checklist has **not** been created yet.
 
 ## Dashboard / NUC / Alerting Direction
 
-The live operator environment is now explicitly centered on:
+The live operator environment is explicitly centered on:
 
 ```text
 dedicated local NUC / mini PC
@@ -252,7 +337,30 @@ Forbidden in v1:
 
 The following documentation areas are substantially defined.
 
-## 1. Strategy and Research
+## 1. Meta, Setup, and Handoff
+
+```text
+docs/00-meta/current-project-state.md
+docs/00-meta/ai-coding-handoff.md
+docs/09-operations/first-run-setup-checklist.md
+docs/12-roadmap/phase-gates.md
+docs/12-roadmap/technical-debt-register.md
+```
+
+Defined:
+
+- current high-level project memory checkpoint,
+- Claude Code implementation handoff,
+- repository reading order,
+- phased implementation method,
+- dual-AI workflow,
+- installation escalation protocol,
+- first-run setup path,
+- phase gates,
+- technical-debt tracking,
+- implementation ambiguity/spec-gap log requirement.
+
+## 2. Strategy and Research
 
 ```text
 docs/03-strategy-research/first-strategy-comparison.md
@@ -274,7 +382,7 @@ Defined:
 - anti-overfitting principles,
 - validation methodology.
 
-## 2. Data Layer
+## 3. Data Layer
 
 ```text
 docs/04-data/historical-data-spec.md
@@ -297,9 +405,9 @@ Defined:
 - mark-price context,
 - stale market-data gating,
 - research storage vs runtime DB separation,
-- data setup/runbook requirements deferred to first-run checklist.
+- data setup/runbook requirements connected through the first-run setup checklist.
 
-## 3. Backtesting and Validation
+## 4. Backtesting and Validation
 
 ```text
 docs/05-backtesting-validation/v1-breakout-validation-checklist.md
@@ -317,7 +425,7 @@ Defined:
 - execution readiness review,
 - paper/shadow and tiny-live candidate requirements.
 
-## 4. Execution and Exchange
+## 5. Execution and Exchange
 
 ```text
 docs/06-execution-exchange/btcusdt-v1-order-handling-notes.md
@@ -351,7 +459,7 @@ Defined:
 - one-way `BOTH` semantics,
 - `positionAmt` sign interpretation.
 
-## 5. Risk
+## 6. Risk
 
 ```text
 docs/07-risk/position-sizing-framework.md
@@ -384,7 +492,7 @@ Defined:
 - daily loss lockouts,
 - drawdown controls.
 
-## 6. Runtime Architecture
+## 7. Runtime Architecture
 
 ```text
 docs/08-architecture/implementation-blueprint.md
@@ -419,9 +527,10 @@ Defined:
 - alert/dashboard hooks,
 - state-centric observability.
 
-## 7. Operations
+## 8. Operations
 
 ```text
+docs/09-operations/first-run-setup-checklist.md
 docs/09-operations/restart-procedure.md
 docs/09-operations/incident-response.md
 docs/09-operations/operator-workflow.md
@@ -432,6 +541,7 @@ docs/09-operations/rollback-procedure.md
 
 Defined:
 
+- practical first-run setup path,
 - safe-mode-first restart,
 - reconciliation before resumption,
 - clean/recoverable/unsafe mismatch classification,
@@ -444,13 +554,7 @@ Defined:
 - rollback for code/config/risk/database/deployment/docs,
 - rollback does not bypass reconciliation or clear safety flags.
 
-Remaining operations doc to create:
-
-```text
-docs/09-operations/first-run-setup-checklist.md
-```
-
-## 8. Security
+## 9. Security
 
 ```text
 docs/10-security/api-key-policy.md
@@ -479,7 +583,7 @@ Defined:
 - backup/restore,
 - credential compromise handling.
 
-## 9. Operator Interface
+## 10. Operator Interface
 
 ```text
 docs/11-interface/operator-dashboard-requirements.md
@@ -509,7 +613,7 @@ Defined:
 - alert acknowledgement vs resolution,
 - TradingView-like read-only chart/review concept.
 
-## 10. Roadmap / Governance
+## 11. Roadmap / Governance
 
 ```text
 docs/12-roadmap/phase-gates.md
@@ -534,109 +638,51 @@ Defined:
 
 ---
 
-## Remaining Before New Chat / Final Handoff
+## Immediate Next Tasks
 
-The next chat should focus on:
+The next practical tasks are:
+
+1. Save the newly generated files into the repository:
+   - `docs/09-operations/first-run-setup-checklist.md`
+   - `docs/00-meta/ai-coding-handoff.md`
+   - `docs/00-meta/current-project-state.md`
+   - `README.md` or `docs/README.md`, depending on repository placement.
+2. Commit the documentation update.
+3. Start Claude Code with the Phase 0 prompt from the AI coding handoff.
+4. Have Claude Code perform repository audit only.
+5. Review the Phase 0 repo-audit report before approving Phase 1.
+6. Use ChatGPT as setup/debug/review support whenever Claude Code reaches installation issues, unclear system steps, or checkpoint reports requiring review.
+
+---
+
+## Claude Code Start Instruction
+
+Use the initial Claude Code prompt from:
 
 ```text
-docs/09-operations/first-run-setup-checklist.md
 docs/00-meta/ai-coding-handoff.md
-docs/00-meta/current-project-state.md final update
 ```
 
-Optional but recommended:
+The first Claude Code task must be:
 
 ```text
-docs/README.md update if the documentation map is stale
-docs/00-meta/implementation-ambiguity-log.md created or specified by handoff
+Phase 0 — Handoff Intake and Repo Audit
 ```
 
-The new chat should then proceed toward:
-
-- actual setup planning,
-- Claude Code delivery,
-- phase-by-phase implementation,
-- NUC/local environment preparation,
-- dry-run/paper setup,
-- and eventually tiny-live readiness.
+Claude Code must not begin broad implementation until the Phase 0 report is reviewed and Phase 1 is approved.
 
 ---
 
-## First-Run Setup Checklist Requirements
+## Current 25-File Project Upload Recommendation
 
-The first-run setup checklist should provide a practical guided path for:
-
-1. installing what is needed,
-2. configuring local development,
-3. setting Python/dependency tooling,
-4. cloning repository,
-5. running tests/lint/type checks,
-6. initializing runtime database,
-7. preparing historical data folders,
-8. setting up Parquet/DuckDB research storage,
-9. preparing dry-run config,
-10. preparing dashboard on the NUC monitor,
-11. setting up Telegram and/or n8n alert routing,
-12. preparing the dedicated NUC host,
-13. configuring firewall/SSH/time sync/service manager,
-14. configuring logs/backups,
-15. preparing Binance account/testnet/dry-run where appropriate,
-16. creating production keys only at approved phase,
-17. applying API permissions and IP restrictions,
-18. launching paper/shadow,
-19. launching tiny-live,
-20. testing emergency access and recovery.
-
-It must not ask for real production Binance API keys too early.
-
----
-
-## AI Coding Handoff Requirements
-
-The AI coding handoff must tell Claude Code:
-
-- repo Markdown docs are authoritative,
-- inspect repository directly,
-- implementation must be phased,
-- no monolithic one-shot full-system generation,
-- each phase must end with runnable checkpoint,
-- acceptance criteria are required per phase,
-- ambiguity/spec-gap log is mandatory,
-- data layer comes first,
-- execution layer comes late,
-- exchange-write capability disabled until approved gates,
-- no production keys during early coding,
-- dry-run/paper before live,
-- human approval required for paper → tiny-live → scaled-live,
-- live trading cannot be enabled by code alone,
-- safety docs must not be bypassed.
-
-Suggested implementation order:
-
-```text
-1. project scaffold and tooling
-2. data ingestion and validation
-3. backtesting
-4. strategy conformance
-5. risk engine
-6. runtime state and persistence
-7. observability/dashboard read models
-8. fake exchange adapter
-9. dry-run event flows
-10. paper/shadow environment
-11. live exchange integration only after approval
-```
-
----
-
-## Current 25-File Project Upload Recommendation for Next Chat
-
-For the next chat, upload these 25 files as the project-file continuity cache.
+For a future ChatGPT project-file continuity cache, use these 25 files.
 
 The repo remains authoritative and should still be inspected directly.
 
 ```text
 docs/00-meta/current-project-state.md
+docs/00-meta/ai-coding-handoff.md
+docs/09-operations/first-run-setup-checklist.md
 docs/12-roadmap/phase-gates.md
 docs/12-roadmap/technical-debt-register.md
 docs/03-strategy-research/v1-breakout-strategy-spec.md
@@ -659,15 +705,14 @@ docs/08-architecture/internal-event-contracts.md
 docs/08-architecture/runtime-persistence-spec.md
 docs/08-architecture/database-design.md
 docs/08-architecture/deployment-model.md
-docs/08-architecture/event-flows.md
-docs/10-security/host-hardening.md
 ```
 
-If the next chat focuses heavily on setup/dashboard/alerts rather than coding handoff, temporarily swap in:
+If a future chat focuses heavily on setup/dashboard/alerts rather than coding handoff, temporarily swap in:
 
 ```text
+docs/08-architecture/event-flows.md
+docs/10-security/host-hardening.md
 docs/10-security/disaster-recovery.md
-docs/10-security/audit-logging.md
 docs/11-interface/dashboard-metrics.md
 docs/11-interface/alerting-ui.md
 docs/11-interface/manual-control-actions.md
@@ -675,81 +720,6 @@ docs/11-interface/approval-workflows.md
 ```
 
 by removing less immediately needed strategy/data/risk documents, because the repository remains the full source of truth.
-
----
-
-## Recommended Next Chat Prompt
-
-Use the following prompt in the next chat after uploading the 25 selected project files:
-
-```text
-We are continuing the Prometheus trading-bot project in this same project workspace.
-
-The public repository is available here and should be inspected directly:
-https://github.com/jpedrocY/Prometheus
-
-Treat repository Markdown files as the primary source of truth. Project-uploaded files are only a 25-file continuity cache.
-
-Immediate context:
-- We completed the remaining high-value TBD cleanup docs except the first-run setup checklist and the AI coding handoff.
-- The AI coding handoff has NOT been created yet.
-- The first-run setup checklist has NOT been created yet.
-- The next tasks are:
-  1. create docs/09-operations/first-run-setup-checklist.md,
-  2. create docs/00-meta/ai-coding-handoff.md,
-  3. update docs/00-meta/current-project-state.md one final time,
-  4. optionally update docs/README.md if the documentation map is stale,
-  5. then proceed toward actual setup and Claude Code delivery planning.
-
-Important locked context:
-- Prometheus v1 is rules-based, safety-first, operator-supervised, not self-learning live AI.
-- Venue: Binance USDⓈ-M futures.
-- Initial live symbol: BTCUSDT perpetual.
-- ETHUSDT is research/comparison only.
-- V1 live scope: one symbol, one position, one active protective stop.
-- One-way mode, isolated margin.
-- Entry: completed 15m bar confirmation, then market entry.
-- Higher-timeframe bias: completed 1h bar.
-- Protective stop: exchange-side STOP_MARKET with closePosition=true, workingType=MARK_PRICE, priceProtect=TRUE.
-- User stream is primary private-state source.
-- REST is used for placement, cancellation, reconciliation, and recovery.
-- Exchange state is authoritative.
-- Restart always begins in SAFE_MODE.
-- No blind retry for exposure-changing actions.
-- Unknown execution outcomes fail closed.
-- A position without confirmed protective stop is emergency.
-- Initial live risk: 0.25% of sizing equity.
-- Initial effective leverage cap: 2x.
-- Internal notional cap is mandatory before live.
-- V1 is not lights-out autonomous.
-
-Dedicated host/operator setup:
-- Tiny-live default deployment is a dedicated local NUC / mini PC used only for Prometheus.
-- It has an attached desk monitor.
-- The dashboard should be visible whenever the monitor is on during operation.
-- The dashboard should be polished, information-rich, Binance-like where useful, but not a discretionary manual trading terminal.
-- It should show positions, open normal orders, open algo/protective orders, stops, risk, PnL, streams, reconciliation, incidents, alerts, host health, and alert-route status.
-- TradingView-like candle/setup/trade visualization is allowed later as read-only rule verification.
-- Telegram and/or n8n may be used for alert routing.
-- Telegram/n8n should not initially approve high-risk actions.
-- Production Binance keys must not be created until the correct phase gate.
-
-Claude Code implementation philosophy:
-- Use phased implementation, not one-shot generation.
-- Each phase must end with a runnable checkpoint.
-- Acceptance criteria are required per phase.
-- Maintain an ambiguity/spec-gap log.
-- Build data layer first.
-- Build execution layer late.
-- Do not enable real exchange-write capability before dry-run and paper/shadow gates.
-- Human/operator promotion decisions remain required.
-
-Working method:
-- Discuss/reason first where decisions are needed.
-- Recommend.
-- Wait for approval before writing Markdown unless I explicitly ask you to write directly.
-- For setup instructions, be practical and step-by-step, but do not ask me to create real Binance production API keys until the phase gate says it is time.
-```
 
 ---
 
@@ -764,39 +734,19 @@ Validation plan: strong
 Risk model: strong
 Execution model: strong
 Runtime architecture: strong
-Operations: strong, setup checklist pending
+Operations: strong, setup checklist now created
 Security: strong
 Interface/dashboard/alerts: strong
-Roadmap/governance: phase gates and technical debt now defined
-AI coding handoff: pending
-First-run setup checklist: pending
+Roadmap/governance: strong
+AI coding handoff: created
+First-run setup checklist: created
+Claude Code Phase 0 readiness: ready
+Broad implementation readiness: pending Phase 0 repo audit
 ```
 
-The project is very close to Claude Code readiness, but the setup checklist and AI coding handoff should still be created first.
+The project is now ready for Claude Code Phase 0 repository audit and implementation-readiness review.
 
----
-
-## Immediate Next Task
-
-Start the next chat with:
-
-```text
-docs/09-operations/first-run-setup-checklist.md
-```
-
-Then create:
-
-```text
-docs/00-meta/ai-coding-handoff.md
-```
-
-Then update:
-
-```text
-docs/00-meta/current-project-state.md
-```
-
-After that, the project can move into actual setup and phased Claude Code implementation planning.
+It is not ready for unrestricted code generation, exchange-write capability, production Binance keys, or live trading.
 
 ---
 
@@ -805,4 +755,4 @@ After that, the project can move into actual setup and phased Claude Code implem
 - Status: ACTIVE
 - Updated: 2026-04-18
 - Owner: Project operator
-- Role: High-level project memory checkpoint before setup/handoff branch
+- Role: High-level project memory checkpoint before Claude Code Phase 0
