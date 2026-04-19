@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-19
 **Phase:** 2 — Historical Data and Validation Foundation
-**Branch:** `phase-2/historical-data-foundation` (off `main` at `fd64041`, 5 commits ahead, not pushed)
+**Branch:** `phase-2/historical-data-foundation` (off `main` at `fd64041`, 6 commits ahead, not pushed)
 **Status:** COMPLETE. Awaiting operator review before merge; Phase 2b / Phase 3 not started.
 
 ---
@@ -237,7 +237,14 @@ Disabled by absence. `configs/dev.example.yaml` continues to declare `exchange_w
 
 ```
 $ git log --oneline -8
-<to be captured post-commit-6>
+2dee8ba phase-2: checkpoint report
+fae2cab phase-2: synthetic fixtures, end-to-end integration, reports
+f632013 phase-2: research/data normalize, derive, quality, fetch scaffold
+42e6e60 phase-2: research/data manifests, Parquet storage, DuckDB view
+835d07d phase-2: core primitives (time, symbols, intervals, NormalizedKline)
+d79a4b9 phase-2: add pyarrow + duckdb + pydantic; narrow .gitignore rules
+fd64041 Merge pull request #1 from jpedrocY/phase-1/local-dev-foundation
+7b9769e phase-1: commit checkpoint report and resolve TD-005
 
 $ git status
 On branch phase-2/historical-data-foundation
@@ -245,11 +252,11 @@ nothing to commit, working tree clean
 
 $ git branch -vv
   main                              fd64041 [origin/main] Merge pull request #1 from jpedrocY/phase-1/local-dev-foundation
-* phase-2/historical-data-foundation <HEAD> phase-2: checkpoint report
+* phase-2/historical-data-foundation 2dee8ba phase-2: checkpoint report
   phase-1/local-dev-foundation      7b9769e [origin/phase-1/local-dev-foundation] phase-1: commit checkpoint report and resolve TD-005
 ```
 
-Branch is 6 commits ahead of `origin/main` and has not been pushed. `main` unchanged.
+Branch is 6 commits ahead of `origin/main` and has not been pushed. `main` unchanged. (The counts above reflect state immediately after Commit 6. After the metadata fix Commit 7, the branch is 7 commits ahead.)
 
 ## Recommended next step
 
