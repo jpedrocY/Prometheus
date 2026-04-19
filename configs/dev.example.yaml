@@ -22,3 +22,12 @@ research_data:
   derived_root: data/derived
   manifests_root: data/manifests
   fixture_version: v001
+
+  # Phase 2b: Binance public bulk-download client settings.
+  # Public endpoint; no credentials; read-only.
+  binance_bulk:
+    base_url: https://data.binance.vision
+    raw_root: data/raw
+    state_root: data/manifests/_downloads
+    user_agent: "Prometheus-Research/0.0.0 (+https://github.com/jpedrocY/Prometheus)"
+    pace_ms: 100
