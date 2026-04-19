@@ -54,3 +54,24 @@ artifacts/
 state/
 runtime/
 cache/
+
+# Claude Code + local secrets (pack additions)
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/agent-memory/
+.mcp.json
+
+# Allow .env.example despite .env.* deny above
+!.env.example
+
+# Private / local data zones not covered by runtime/
+private/
+data/secrets/
+data/runtime/
+
+# SSH / keypairs
+id_rsa*
+
+# SQLite sidecar files
+*.sqlite-shm
+*.sqlite-wal

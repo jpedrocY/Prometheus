@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "graphify": {
+      "command": "GRAPHIFY_COMMAND_HERE",
+      "args": [
+        "GRAPHIFY_MCP_ARGS_HERE"
+      ],
+      "env": {
+        "GRAPHIFY_PROJECT_ROOT": "C:/Prometheus"
+      }
+    }
+  }
+}
