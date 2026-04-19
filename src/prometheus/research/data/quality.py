@@ -16,6 +16,7 @@ from collections.abc import Sequence
 
 from pydantic import BaseModel, ConfigDict
 
+from prometheus.core.events import FundingRateEvent
 from prometheus.core.intervals import Interval, interval_duration_ms
 from prometheus.core.klines import NormalizedKline
 
@@ -139,3 +140,72 @@ def check_no_future_bars(
 ) -> list[NormalizedKline]:
     """Return bars whose open_time is in the future relative to ``now_ms``."""
     return [k for k in klines if k.open_time > now_ms]
+
+
+# ---------------------------------------------------------------------------
+# Funding-rate checks (Phase 2c)
+# ---------------------------------------------------------------------------
+
+
+class DuplicateFundingReport(BaseModel):
+    model_config = ConfigDict(frozen=True, strict=True, extra="forbid")
+
+    symbol: str
+    funding_time: int
+    count: int
+
+
+class ExtremeFundingReport(BaseModel):
+    model_config = ConfigDict(frozen=True, strict=True, extra="forbid")
+
+    symbol: str
+    funding_time: int
+    funding_rate: float
+
+
+def check_no_duplicate_funding_events(
+    events: Sequence[FundingRateEvent],
+) -> list[DuplicateFundingReport]:
+    """Return funding-event identities seen more than once."""
+    counts: dict[tuple[str, int], int] = defaultdict(int)
+    for event in events:
+        counts[(event.symbol.value, event.funding_time)] += 1
+    return [
+        DuplicateFundingReport(symbol=sym, funding_time=ft, count=n)
+        for (sym, ft), n in sorted(counts.items())
+        if n > 1
+    ]
+
+
+def check_funding_events_within_window(
+    events: Sequence[FundingRateEvent],
+    *,
+    start_ms: int,
+    end_ms: int,
+) -> list[FundingRateEvent]:
+    """Return funding events whose funding_time falls outside the window."""
+    if end_ms < start_ms:
+        raise ValueError("end_ms must be >= start_ms")
+    return [e for e in events if e.funding_time < start_ms or e.funding_time > end_ms]
+
+
+def check_funding_rate_magnitude(
+    events: Sequence[FundingRateEvent],
+    *,
+    threshold: float = 0.01,
+) -> list[ExtremeFundingReport]:
+    """Soft-flag funding events whose rate magnitude exceeds ``threshold``.
+
+    Not a hard fail; rates > 1% (the default threshold) are rare for USD-M
+    perpetuals and worth an operator eye. The model-level bound at
+    ``abs(rate) >= 1.0`` still rejects clearly-malformed inputs.
+    """
+    return [
+        ExtremeFundingReport(
+            symbol=e.symbol.value,
+            funding_time=e.funding_time,
+            funding_rate=e.funding_rate,
+        )
+        for e in events
+        if abs(e.funding_rate) > threshold
+    ]

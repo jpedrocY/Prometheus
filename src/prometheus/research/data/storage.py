@@ -18,8 +18,10 @@ import duckdb
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from prometheus.core.events import FundingRateEvent
 from prometheus.core.intervals import Interval
 from prometheus.core.klines import NormalizedKline
+from prometheus.core.mark_price_klines import MarkPriceKline
 from prometheus.core.symbols import Symbol
 
 NORMALIZED_KLINE_COLUMNS: tuple[str, ...] = (
@@ -61,6 +63,62 @@ NORMALIZED_KLINE_ARROW_SCHEMA: pa.Schema = pa.schema(
 _ROW_GROUP_SIZE = 65_536
 _COMPRESSION = "zstd"
 _COMPRESSION_LEVEL = 3
+
+
+# ---------------------------------------------------------------------------
+# Mark-price klines (Phase 2c) — 9-field schema, no volume
+# ---------------------------------------------------------------------------
+
+
+MARK_PRICE_KLINE_COLUMNS: tuple[str, ...] = (
+    "symbol",
+    "interval",
+    "open_time",
+    "close_time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "source",
+)
+
+MARK_PRICE_KLINE_ARROW_SCHEMA: pa.Schema = pa.schema(
+    [
+        pa.field("symbol", pa.string(), nullable=False),
+        pa.field("interval", pa.string(), nullable=False),
+        pa.field("open_time", pa.int64(), nullable=False),
+        pa.field("close_time", pa.int64(), nullable=False),
+        pa.field("open", pa.float64(), nullable=False),
+        pa.field("high", pa.float64(), nullable=False),
+        pa.field("low", pa.float64(), nullable=False),
+        pa.field("close", pa.float64(), nullable=False),
+        pa.field("source", pa.string(), nullable=False),
+    ]
+)
+
+
+# ---------------------------------------------------------------------------
+# Funding-rate events (Phase 2c) — no interval dimension
+# ---------------------------------------------------------------------------
+
+
+FUNDING_RATE_EVENT_COLUMNS: tuple[str, ...] = (
+    "symbol",
+    "funding_time",
+    "funding_rate",
+    "mark_price",
+    "source",
+)
+
+FUNDING_RATE_EVENT_ARROW_SCHEMA: pa.Schema = pa.schema(
+    [
+        pa.field("symbol", pa.string(), nullable=False),
+        pa.field("funding_time", pa.int64(), nullable=False),
+        pa.field("funding_rate", pa.float64(), nullable=False),
+        pa.field("mark_price", pa.float64(), nullable=False),
+        pa.field("source", pa.string(), nullable=False),
+    ]
+)
 
 
 def partition_path(
@@ -259,3 +317,207 @@ def query_completed_bars(
     column_names = [d[0] for d in cursor.description]
     fetched: Iterable[tuple[Any, ...]] = cursor.fetchall()
     return [dict(zip(column_names, row, strict=True)) for row in fetched]
+
+
+# ---------------------------------------------------------------------------
+# Mark-price Parquet I/O (Phase 2c)
+# ---------------------------------------------------------------------------
+
+
+def _table_from_mark_price_klines(klines: Sequence[MarkPriceKline]) -> pa.Table:
+    columns: dict[str, list[Any]] = {col: [] for col in MARK_PRICE_KLINE_COLUMNS}
+    for kline in klines:
+        columns["symbol"].append(kline.symbol.value)
+        columns["interval"].append(kline.interval.value)
+        columns["open_time"].append(kline.open_time)
+        columns["close_time"].append(kline.close_time)
+        columns["open"].append(kline.open)
+        columns["high"].append(kline.high)
+        columns["low"].append(kline.low)
+        columns["close"].append(kline.close)
+        columns["source"].append(kline.source)
+    return pa.table(columns, schema=MARK_PRICE_KLINE_ARROW_SCHEMA)
+
+
+def write_mark_price_klines(
+    root: Path,
+    klines: Sequence[MarkPriceKline],
+    *,
+    dataset_version: str,
+    schema_version: str,
+    pipeline_version: str,
+) -> list[Path]:
+    """Write mark-price klines to a Hive-partitioned Parquet tree."""
+    if not klines:
+        return []
+
+    partitions: dict[tuple[Symbol, Interval, int, int], list[MarkPriceKline]] = defaultdict(list)
+    for kline in klines:
+        year, month = _year_month_for_open_time(kline.open_time)
+        partitions[(kline.symbol, kline.interval, year, month)].append(kline)
+
+    custom_metadata = {
+        b"dataset_version": dataset_version.encode("utf-8"),
+        b"schema_version": schema_version.encode("utf-8"),
+        b"pipeline_version": pipeline_version.encode("utf-8"),
+    }
+
+    written_paths: list[Path] = []
+    for (symbol, interval, year, month), group in partitions.items():
+        group.sort(key=lambda k: k.open_time)
+        directory = partition_path(root, symbol, interval, year, month)
+        directory.mkdir(parents=True, exist_ok=True)
+        file_path = directory / "part-0000.parquet"
+        table = _table_from_mark_price_klines(group)
+        table_with_meta = table.replace_schema_metadata(custom_metadata)
+        pq.write_table(
+            table_with_meta,
+            file_path,
+            compression=_COMPRESSION,
+            compression_level=_COMPRESSION_LEVEL,
+            row_group_size=_ROW_GROUP_SIZE,
+        )
+        written_paths.append(file_path)
+    return written_paths
+
+
+def _row_to_mark_price_kline(row: dict[str, Any]) -> MarkPriceKline:
+    return MarkPriceKline.model_validate(
+        {
+            "symbol": Symbol(row["symbol"]),
+            "interval": Interval(row["interval"]),
+            "open_time": row["open_time"],
+            "close_time": row["close_time"],
+            "open": row["open"],
+            "high": row["high"],
+            "low": row["low"],
+            "close": row["close"],
+            "source": row["source"],
+        }
+    )
+
+
+def read_mark_price_klines(
+    root: Path,
+    *,
+    symbol: Symbol | None = None,
+    interval: Interval | None = None,
+) -> list[MarkPriceKline]:
+    import pyarrow.dataset as pads
+
+    if not root.exists():
+        return []
+    dataset = pads.dataset(str(root), format="parquet", partitioning="hive")
+    filter_expr: Any = None
+    if symbol is not None:
+        filter_expr = pads.field("symbol") == symbol.value
+    if interval is not None:
+        interval_expr = pads.field("interval") == interval.value
+        filter_expr = interval_expr if filter_expr is None else filter_expr & interval_expr
+    table = dataset.to_table(filter=filter_expr) if filter_expr is not None else dataset.to_table()
+    rows = cast(list[dict[str, Any]], table.to_pylist())
+    klines = [_row_to_mark_price_kline(r) for r in rows]
+    klines.sort(key=lambda k: (k.symbol.value, k.interval.value, k.open_time))
+    return klines
+
+
+# ---------------------------------------------------------------------------
+# Funding-rate Parquet I/O (Phase 2c) — partitioned by (symbol, year, month)
+# ---------------------------------------------------------------------------
+
+
+def funding_partition_path(root: Path, symbol: Symbol, year: int, month: int) -> Path:
+    """Funding-rate Hive partition: no interval dimension."""
+    if not 1 <= month <= 12:
+        raise ValueError(f"month must be in [1, 12], got {month}")
+    return root / f"symbol={symbol.value}" / f"year={year:04d}" / f"month={month:02d}"
+
+
+def _year_month_for_funding_time(funding_time_ms: int) -> tuple[int, int]:
+    stamp = dt.datetime.fromtimestamp(funding_time_ms / 1000, tz=dt.UTC)
+    return stamp.year, stamp.month
+
+
+def _table_from_funding_events(events: Sequence[FundingRateEvent]) -> pa.Table:
+    columns: dict[str, list[Any]] = {col: [] for col in FUNDING_RATE_EVENT_COLUMNS}
+    for event in events:
+        columns["symbol"].append(event.symbol.value)
+        columns["funding_time"].append(event.funding_time)
+        columns["funding_rate"].append(event.funding_rate)
+        columns["mark_price"].append(event.mark_price)
+        columns["source"].append(event.source)
+    return pa.table(columns, schema=FUNDING_RATE_EVENT_ARROW_SCHEMA)
+
+
+def write_funding_rate_events(
+    root: Path,
+    events: Sequence[FundingRateEvent],
+    *,
+    dataset_version: str,
+    schema_version: str,
+    pipeline_version: str,
+) -> list[Path]:
+    """Write funding-rate events partitioned by (symbol, year, month)."""
+    if not events:
+        return []
+
+    partitions: dict[tuple[Symbol, int, int], list[FundingRateEvent]] = defaultdict(list)
+    for event in events:
+        year, month = _year_month_for_funding_time(event.funding_time)
+        partitions[(event.symbol, year, month)].append(event)
+
+    custom_metadata = {
+        b"dataset_version": dataset_version.encode("utf-8"),
+        b"schema_version": schema_version.encode("utf-8"),
+        b"pipeline_version": pipeline_version.encode("utf-8"),
+    }
+
+    written_paths: list[Path] = []
+    for (symbol, year, month), group in partitions.items():
+        group.sort(key=lambda e: e.funding_time)
+        directory = funding_partition_path(root, symbol, year, month)
+        directory.mkdir(parents=True, exist_ok=True)
+        file_path = directory / "part-0000.parquet"
+        table = _table_from_funding_events(group)
+        table_with_meta = table.replace_schema_metadata(custom_metadata)
+        pq.write_table(
+            table_with_meta,
+            file_path,
+            compression=_COMPRESSION,
+            compression_level=_COMPRESSION_LEVEL,
+            row_group_size=_ROW_GROUP_SIZE,
+        )
+        written_paths.append(file_path)
+    return written_paths
+
+
+def _row_to_funding_event(row: dict[str, Any]) -> FundingRateEvent:
+    return FundingRateEvent.model_validate(
+        {
+            "symbol": Symbol(row["symbol"]),
+            "funding_time": row["funding_time"],
+            "funding_rate": row["funding_rate"],
+            "mark_price": row["mark_price"],
+            "source": row["source"],
+        }
+    )
+
+
+def read_funding_rate_events(
+    root: Path,
+    *,
+    symbol: Symbol | None = None,
+) -> list[FundingRateEvent]:
+    import pyarrow.dataset as pads
+
+    if not root.exists():
+        return []
+    dataset = pads.dataset(str(root), format="parquet", partitioning="hive")
+    filter_expr: Any = None
+    if symbol is not None:
+        filter_expr = pads.field("symbol") == symbol.value
+    table = dataset.to_table(filter=filter_expr) if filter_expr is not None else dataset.to_table()
+    rows = cast(list[dict[str, Any]], table.to_pylist())
+    events = [_row_to_funding_event(r) for r in rows]
+    events.sort(key=lambda e: (e.symbol.value, e.funding_time))
+    return events

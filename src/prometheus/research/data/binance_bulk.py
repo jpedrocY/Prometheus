@@ -64,6 +64,7 @@ import random
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 
 import httpx
@@ -77,7 +78,29 @@ from prometheus.core.symbols import Symbol
 # ---------------------------------------------------------------------------
 
 DEFAULT_BASE_URL = "https://data.binance.vision"
-_MONTHLY_KLINES_PATH = "data/futures/um/monthly/klines"
+
+
+class BulkFamily(StrEnum):
+    """Bulk-data family directory on ``data.binance.vision``.
+
+    Used to parameterize the URL builders and partition layout so the
+    Phase 2b :class:`BulkDownloader` can serve both Phase 2b standard
+    klines and Phase 2c mark-price klines without code duplication.
+
+    Values match the Binance bulk-path directory name exactly.
+    """
+
+    KLINES = "klines"
+    MARK_PRICE_KLINES = "markPriceKlines"
+
+
+_FAMILY_MONTHLY_PATH = {
+    BulkFamily.KLINES: "data/futures/um/monthly/klines",
+    BulkFamily.MARK_PRICE_KLINES: "data/futures/um/monthly/markPriceKlines",
+}
+
+# Kept for backward compatibility (Phase 2b) — resolves to the klines family.
+_MONTHLY_KLINES_PATH = _FAMILY_MONTHLY_PATH[BulkFamily.KLINES]
 _DEFAULT_USER_AGENT = "Prometheus-Research/0.0.0 (+https://github.com/jpedrocY/Prometheus)"
 _SHA256_HEX_LENGTH = 64
 _CHECKSUM_SEPARATOR = "  "  # exactly two spaces per observed format
@@ -101,11 +124,11 @@ def monthly_zip_url(
     month: int,
     *,
     base_url: str = DEFAULT_BASE_URL,
+    family: BulkFamily = BulkFamily.KLINES,
 ) -> str:
     filename = monthly_zip_filename(symbol, interval, year, month)
-    return (
-        f"{base_url.rstrip('/')}/{_MONTHLY_KLINES_PATH}/{symbol.value}/{interval.value}/{filename}"
-    )
+    path_prefix = _FAMILY_MONTHLY_PATH[family]
+    return f"{base_url.rstrip('/')}/{path_prefix}/{symbol.value}/{interval.value}/{filename}"
 
 
 def monthly_checksum_url(
@@ -115,8 +138,12 @@ def monthly_checksum_url(
     month: int,
     *,
     base_url: str = DEFAULT_BASE_URL,
+    family: BulkFamily = BulkFamily.KLINES,
 ) -> str:
-    return monthly_zip_url(symbol, interval, year, month, base_url=base_url) + ".CHECKSUM"
+    return (
+        monthly_zip_url(symbol, interval, year, month, base_url=base_url, family=family)
+        + ".CHECKSUM"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -181,6 +208,7 @@ class BulkDownloader:
         base_url: str = DEFAULT_BASE_URL,
         user_agent: str = _DEFAULT_USER_AGENT,
         pace_ms: int = _DEFAULT_PACE_MS,
+        family: BulkFamily = BulkFamily.KLINES,
         clock: Callable[[], float] | None = None,
         sleep: Callable[[float], None] | None = None,
         rng: random.Random | None = None,
@@ -190,10 +218,15 @@ class BulkDownloader:
         self._base_url = base_url.rstrip("/")
         self._user_agent = user_agent
         self._pace_ms = pace_ms
+        self._family = family
         self._monotonic = clock or time.monotonic
         self._sleep = sleep or time.sleep
         self._rng = rng or random.Random()
         self._last_request_at: float | None = None
+
+    @property
+    def family(self) -> BulkFamily:
+        return self._family
 
     # -- local path layout -----------------------------------------------
 
@@ -201,7 +234,7 @@ class BulkDownloader:
         return (
             self._raw_root
             / "binance_usdm"
-            / "klines"
+            / self._family.value
             / f"symbol={symbol.value}"
             / f"interval={interval.value}"
             / f"year={year:04d}"
@@ -275,7 +308,9 @@ class BulkDownloader:
 
     def fetch_checksum(self, symbol: Symbol, interval: Interval, year: int, month: int) -> str:
         """Return the expected SHA256 hex for the monthly ZIP."""
-        url = monthly_checksum_url(symbol, interval, year, month, base_url=self._base_url)
+        url = monthly_checksum_url(
+            symbol, interval, year, month, base_url=self._base_url, family=self._family
+        )
         response = self._get_with_retry(url, stream=False)
         return parse_checksum_line(
             response.text,
@@ -295,7 +330,9 @@ class BulkDownloader:
         matches the published ``.CHECKSUM``, the file is reused and
         ``was_cached=True`` in the outcome.
         """
-        url = monthly_zip_url(symbol, interval, year, month, base_url=self._base_url)
+        url = monthly_zip_url(
+            symbol, interval, year, month, base_url=self._base_url, family=self._family
+        )
         dest = self.local_zip_path(symbol, interval, year, month)
         expected_sha256 = self.fetch_checksum(symbol, interval, year, month)
 

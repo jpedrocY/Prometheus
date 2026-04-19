@@ -539,10 +539,218 @@ def _build_manifest(
     )
 
 
+# ---------------------------------------------------------------------------
+# Phase 2c: mark-price ingest
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class MarkPriceIngestResult:
+    symbol: Symbol
+    interval: Interval
+    months_processed: list[tuple[int, int]]
+    total_row_count: int
+    normalized_paths: list[Path]
+    manifest_path: Path
+
+
+def ingest_mark_price_monthly_range(
+    downloader: BulkDownloader,
+    *,
+    symbol: Symbol,
+    interval: Interval,
+    start_year: int,
+    start_month: int,
+    end_year: int,
+    end_month: int,
+    normalized_root: Path,
+    manifests_root: Path,
+    dataset_version: str,
+    schema_version: str = "mark_price_kline_v1",
+    pipeline_version: str = "prometheus@0.0.0",
+) -> MarkPriceIngestResult:
+    """Download + normalize + persist mark-price klines for a month range.
+
+    Caller MUST provide a :class:`BulkDownloader` constructed with
+    ``family=BulkFamily.MARK_PRICE_KLINES``. The function asserts this
+    to prevent accidentally routing mark-price downloads through the
+    standard-klines path.
+    """
+    from .binance_bulk import BulkFamily
+    from .mark_price import extract_mark_price_rows_from_zip, normalize_mark_price_rows
+    from .storage import read_mark_price_klines, write_mark_price_klines
+
+    if downloader.family is not BulkFamily.MARK_PRICE_KLINES:
+        raise ValueError(
+            "ingest_mark_price_monthly_range requires a BulkDownloader "
+            "with family=BulkFamily.MARK_PRICE_KLINES"
+        )
+    if interval is not Interval.I_15M:
+        raise ValueError("Phase 2c mark-price ingest supports only Interval.I_15M")
+
+    month_pairs = _iter_months(start_year, start_month, end_year, end_month)
+    source_urls: list[str] = []
+    normalized_paths: list[Path] = []
+    total_rows = 0
+
+    for year, month in month_pairs:
+        outcome = downloader.download_month(symbol, interval, year, month)
+        source_urls.append(outcome.url)
+        raw_rows = extract_mark_price_rows_from_zip(outcome.local_path)
+        klines = normalize_mark_price_rows(
+            raw_rows, symbol=symbol, interval=interval, source=outcome.url
+        )
+        if not klines:
+            raise DataIntegrityError(f"no mark-price rows extracted from {outcome.local_path}")
+        written = write_mark_price_klines(
+            normalized_root,
+            klines,
+            dataset_version=dataset_version,
+            schema_version=schema_version,
+            pipeline_version=pipeline_version,
+        )
+        total_rows += len(klines)
+        normalized_paths.extend(written)
+
+    # Read back (sanity) and build manifest.
+    _ = read_mark_price_klines(normalized_root, symbol=symbol, interval=interval)
+
+    dataset_name = dataset_version.rsplit("__v", 1)[0]
+    manifest_path = manifests_root / f"{dataset_version}.manifest.json"
+    if not manifest_path.exists():
+        write_manifest(
+            manifest_path,
+            DatasetManifest(
+                dataset_name=dataset_name,
+                dataset_version=dataset_version,
+                dataset_category="mark_price_kline",
+                created_at_utc_ms=utc_now_ms(),
+                canonical_timezone="UTC",
+                canonical_timestamp_format="unix_milliseconds",
+                symbols=(symbol,),
+                intervals=(interval,),
+                sources=tuple(source_urls),
+                schema_version=schema_version,
+                pipeline_version=pipeline_version,
+                partitioning=("symbol", "interval", "year", "month"),
+                primary_key=("symbol", "interval", "open_time"),
+                generator="prometheus.research.data.ingest.ingest_mark_price_monthly_range",
+                predecessor_version=None,
+                invalid_windows=(),
+                notes=(
+                    f"Phase 2c mark-price bulk ingest from data.binance.vision. "
+                    f"Months: {start_year:04d}-{start_month:02d} to "
+                    f"{end_year:04d}-{end_month:02d}."
+                ),
+            ),
+        )
+
+    return MarkPriceIngestResult(
+        symbol=symbol,
+        interval=interval,
+        months_processed=month_pairs,
+        total_row_count=total_rows,
+        normalized_paths=normalized_paths,
+        manifest_path=manifest_path,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Phase 2c: funding-rate ingest
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class FundingIngestResult:
+    symbol: Symbol
+    event_count: int
+    first_funding_time_ms: int | None
+    last_funding_time_ms: int | None
+    normalized_paths: list[Path]
+    manifest_path: Path
+
+
+def ingest_funding_range(
+    rest_client: Any,  # BinanceRestClient — typed via module import to avoid cycle
+    *,
+    symbol: Symbol,
+    start_time_ms: int,
+    end_time_ms: int,
+    normalized_root: Path,
+    manifests_root: Path,
+    dataset_version: str,
+    schema_version: str = "funding_rate_event_v1",
+    pipeline_version: str = "prometheus@0.0.0",
+) -> FundingIngestResult:
+    """Paginate funding-rate events, normalize, write Parquet + manifest."""
+    from .funding_rate import fetch_funding_events_raw, normalize_funding_events
+    from .storage import write_funding_rate_events
+
+    raw_events = fetch_funding_events_raw(
+        rest_client,
+        symbol=symbol,
+        start_time_ms=start_time_ms,
+        end_time_ms=end_time_ms,
+    )
+    source_url = f"{rest_client.base_url}/fapi/v1/fundingRate?symbol={symbol.value}"
+    events = normalize_funding_events(raw_events, expected_symbol=symbol, source=source_url)
+
+    normalized_paths = write_funding_rate_events(
+        normalized_root,
+        events,
+        dataset_version=dataset_version,
+        schema_version=schema_version,
+        pipeline_version=pipeline_version,
+    )
+
+    dataset_name = dataset_version.rsplit("__v", 1)[0]
+    manifest_path = manifests_root / f"{dataset_version}.manifest.json"
+    if not manifest_path.exists():
+        write_manifest(
+            manifest_path,
+            DatasetManifest(
+                dataset_name=dataset_name,
+                dataset_version=dataset_version,
+                dataset_category="funding_rate_event",
+                created_at_utc_ms=utc_now_ms(),
+                canonical_timezone="UTC",
+                canonical_timestamp_format="unix_milliseconds",
+                symbols=(symbol,),
+                intervals=(),
+                sources=(source_url,),
+                schema_version=schema_version,
+                pipeline_version=pipeline_version,
+                partitioning=("symbol", "year", "month"),
+                primary_key=("symbol", "funding_time"),
+                generator="prometheus.research.data.ingest.ingest_funding_range",
+                predecessor_version=None,
+                invalid_windows=(),
+                notes=(
+                    f"Phase 2c funding-rate REST ingest from "
+                    f"{rest_client.base_url}/fapi/v1/fundingRate. "
+                    f"Window: {start_time_ms} to {end_time_ms} UTC ms."
+                ),
+            ),
+        )
+
+    return FundingIngestResult(
+        symbol=symbol,
+        event_count=len(events),
+        first_funding_time_ms=events[0].funding_time if events else None,
+        last_funding_time_ms=events[-1].funding_time if events else None,
+        normalized_paths=normalized_paths,
+        manifest_path=manifest_path,
+    )
+
+
 __all__ = [
+    "FundingIngestResult",
     "IngestMonthResult",
     "IngestRangeResult",
+    "MarkPriceIngestResult",
     "extract_rows_from_zip",
+    "ingest_funding_range",
+    "ingest_mark_price_monthly_range",
     "ingest_monthly_range",
     "parse_binance_csv_row",
 ]

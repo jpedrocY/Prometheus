@@ -378,6 +378,70 @@ Resolution evidence:
 
 ---
 
+## GAP-20260419-011 — DatasetManifest accepts empty intervals tuple (event-type datasets)
+
+Status:              RESOLVED
+Phase discovered:    2c (public market data completion, funding-rate ingest)
+Area:                DATA / ARCHITECTURE
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/data/manifests.py`, `src/prometheus/research/data/ingest.py::ingest_funding_range`
+
+Description:
+Phase 2c funding-rate events are not bar-indexed and have no interval dimension. The Phase 2 :class:`DatasetManifest` model has a `symbols` non-empty validator but does not require `intervals` to be non-empty. Phase 2c confirmed that `intervals=()` is accepted by the model and round-trips through JSON write/read correctly.
+
+Why it matters:
+Future event-type datasets (open-interest, liquidation streams, etc.) can reuse the existing `DatasetManifest` without model changes.
+
+Resolution evidence:
+- Funding manifests `binance_usdm_btcusdt_funding__v001.manifest.json` and `binance_usdm_ethusdt_funding__v001.manifest.json` written successfully during the Phase 2c bounded run with `intervals=()` in each.
+
+---
+
+## GAP-20260419-012 — Binance fundingRate shares 500/5min/IP limit with fundingInfo
+
+Status:              RESOLVED
+Phase discovered:    2c (public market data completion, Step 3 TD-006 verification)
+Area:                EXCHANGE_API / DATA
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/data/binance_rest.py`, `src/prometheus/research/data/funding_rate.py`
+
+Description:
+Operator flagged at Phase 2c Gate 1 condition 4 that `/fapi/v1/fundingRate` uses an IP-based request-count rate limit shared with `/fapi/v1/fundingInfo`, not a per-request weight. WebFetch of the official Get-Funding-Rate-History page on 2026-04-19 confirmed the verbatim wording: `"share 500/5min/IP rate limit with GET /fapi/v1/fundingInfo"`. 500 requests / 300 seconds / IP ~= 1.67 requests per second peak.
+
+Resolution evidence:
+- `binance_rest.py`: default `pace_ms=1000` (1 req/sec) chosen for ~40% margin below the documented peak.
+- `funding_rate.py` module docstring cites the verbatim rate-limit wording.
+- `configs/dev.example.yaml` `research_data.funding.pace_ms: 1000` with a comment referencing the verified limit.
+- Bounded real run of BTC + ETH funding-rate for 2026-03 completed without 429 responses at the 1s pacing.
+
+---
+
+## GAP-20260419-013 — Mark-price bulk CSV column layout undocumented; parsed positionally
+
+Status:              RESOLVED (by runtime observation)
+Phase discovered:    2c (public market data completion, Step 3 source verification)
+Area:                EXCHANGE_API / DATA
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/data/mark_price.py`
+
+Description:
+The github.com/binance/binance-public-data README does NOT document the CSV column layout for mark-price kline bulk files (confirmed via WebFetch 2026-04-19). The REST `/fapi/v1/markPriceKlines` endpoint returns 12-element arrays where volume-related fields are placeholder zeros; the bulk CSV was assumed to mirror that layout. `mark_price.py::parse_mark_price_csv_row` enforces 12 columns and extracts only the 6 meaningful positional fields (open_time, open, high, low, close, close_time).
+
+Runtime verification during Phase 2c bounded run:
+- BTCUSDT-15m-2026-03 mark-price ZIP parsed cleanly, 2976 rows extracted, all `MarkPriceKline` invariants passed.
+- ETHUSDT-15m-2026-03 identical.
+- SHA256s byte-for-byte match the WebFetch-captured values.
+
+Resolution evidence:
+- BTC mark-price SHA256 `79edfb409a35630cfb8894b883c2bcc4d5a3d6f78bf4d449585cc9e6e8f475e3` — captured via pre-run WebFetch and verified against the downloaded ZIP on 2026-04-19.
+- ETH mark-price SHA256 `d30d71f35e0935783bedadcbc905537153c1e8980c1336a7c0403be12ba73762` — same.
+- If Binance ever changes the column layout, `parse_mark_price_csv_row`'s column-count check raises `DataIntegrityError` loudly.
+
+---
+
 ## GAP-20260419-009 — pytest `pythonpath` extended to include the repo root
 
 Status:              RESOLVED

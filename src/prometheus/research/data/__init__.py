@@ -2,17 +2,21 @@
 
 Phase 2 scope: synthetic fixtures.
 Phase 2b scope: Binance public bulk historical klines (no credentials).
+Phase 2c scope: Binance public mark-price klines, funding-rate history,
+exchangeInfo snapshots (all public, no credentials).
 """
 
 from .binance_bulk import (
     BulkDownloader,
     BulkDownloadError,
+    BulkFamily,
     DownloadOutcome,
     monthly_checksum_url,
     monthly_zip_filename,
     monthly_zip_url,
     parse_checksum_line,
 )
+from .binance_rest import BinanceRestClient, RestRequestError
 from .derive import derive_1h_from_15m
 from .download_state import (
     DownloadState,
@@ -23,72 +27,125 @@ from .download_state import (
     read_state,
     write_state,
 )
+from .exchange_info import fetch_exchange_info_snapshot, parse_exchange_info
 from .fetch import FixtureKlineSource, HistoricalKlineSource, RawKlineRow
+from .funding_rate import fetch_funding_events_raw, normalize_funding_events
 from .ingest import (
+    FundingIngestResult,
     IngestMonthResult,
     IngestRangeResult,
+    MarkPriceIngestResult,
     extract_rows_from_zip,
+    ingest_funding_range,
+    ingest_mark_price_monthly_range,
     ingest_monthly_range,
     parse_binance_csv_row,
 )
 from .manifests import DatasetManifest, InvalidWindow, read_manifest, write_manifest
+from .mark_price import (
+    extract_mark_price_rows_from_zip,
+    normalize_mark_price_rows,
+    parse_mark_price_csv_row,
+)
 from .normalize import normalize_rows
 from .quality import (
+    DuplicateFundingReport,
     DuplicateReport,
+    ExtremeFundingReport,
     MissingWindow,
+    check_funding_events_within_window,
+    check_funding_rate_magnitude,
+    check_no_duplicate_funding_events,
     check_no_duplicates,
     check_no_future_bars,
     check_no_missing_bars,
     check_timestamp_monotonic,
 )
 from .storage import (
+    FUNDING_RATE_EVENT_ARROW_SCHEMA,
+    FUNDING_RATE_EVENT_COLUMNS,
+    MARK_PRICE_KLINE_ARROW_SCHEMA,
+    MARK_PRICE_KLINE_COLUMNS,
     NORMALIZED_KLINE_ARROW_SCHEMA,
     NORMALIZED_KLINE_COLUMNS,
     attach_dataset_view,
+    funding_partition_path,
     partition_path,
+    read_funding_rate_events,
     read_klines,
+    read_mark_price_klines,
+    write_funding_rate_events,
     write_klines,
+    write_mark_price_klines,
 )
 
 __all__ = [
+    "BinanceRestClient",
     "BulkDownloadError",
     "BulkDownloader",
+    "BulkFamily",
     "DatasetManifest",
     "DownloadOutcome",
     "DownloadState",
     "DownloadStateError",
     "DownloadStatus",
+    "DuplicateFundingReport",
     "DuplicateReport",
+    "ExtremeFundingReport",
+    "FUNDING_RATE_EVENT_ARROW_SCHEMA",
+    "FUNDING_RATE_EVENT_COLUMNS",
     "FixtureKlineSource",
+    "FundingIngestResult",
     "HistoricalKlineSource",
     "IngestMonthResult",
     "IngestRangeResult",
     "InvalidWindow",
+    "MARK_PRICE_KLINE_ARROW_SCHEMA",
+    "MARK_PRICE_KLINE_COLUMNS",
+    "MarkPriceIngestResult",
     "MissingWindow",
     "MonthDownloadState",
     "NORMALIZED_KLINE_ARROW_SCHEMA",
     "NORMALIZED_KLINE_COLUMNS",
     "RawKlineRow",
+    "RestRequestError",
     "attach_dataset_view",
+    "check_funding_events_within_window",
+    "check_funding_rate_magnitude",
+    "check_no_duplicate_funding_events",
     "check_no_duplicates",
     "check_no_future_bars",
     "check_no_missing_bars",
     "check_timestamp_monotonic",
     "derive_1h_from_15m",
+    "extract_mark_price_rows_from_zip",
     "extract_rows_from_zip",
+    "fetch_exchange_info_snapshot",
+    "fetch_funding_events_raw",
+    "funding_partition_path",
+    "ingest_funding_range",
+    "ingest_mark_price_monthly_range",
     "ingest_monthly_range",
     "monthly_checksum_url",
     "monthly_zip_filename",
     "monthly_zip_url",
+    "normalize_funding_events",
+    "normalize_mark_price_rows",
     "normalize_rows",
     "parse_binance_csv_row",
     "parse_checksum_line",
+    "parse_exchange_info",
+    "parse_mark_price_csv_row",
     "partition_path",
+    "read_funding_rate_events",
     "read_klines",
     "read_manifest",
+    "read_mark_price_klines",
     "read_or_init_state",
     "read_state",
+    "write_funding_rate_events",
     "write_klines",
     "write_manifest",
+    "write_mark_price_klines",
     "write_state",
 ]
