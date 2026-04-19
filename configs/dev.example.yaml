@@ -13,3 +13,12 @@ symbol: BTCUSDT
 risk_fraction: 0.0025
 max_effective_leverage: 2.0
 internal_notional_cap_usdt: null   # must be set explicitly before any live stage
+
+# Phase 2 research-data output paths (local, git-ignored).
+# Example values only; there is no config loader yet, so these keys are
+# documentation for operators running the pipeline manually.
+research_data:
+  data_root: data/normalized/klines
+  derived_root: data/derived
+  manifests_root: data/manifests
+  fixture_version: v001

@@ -46,6 +46,20 @@ research/data/derived/**
 !research/data/derived/**/
 !research/data/**/.gitkeep
 
+# Phase 2: repo-root data/ output root (same pattern as research/data/).
+# Parquet datasets, derived artifacts, and generated dataset manifests
+# created locally must not be committed.
+# Track any .gitkeep placeholders if operators choose to materialize the skeleton.
+data/raw/**
+data/normalized/**
+data/derived/**
+data/manifests/**
+!data/raw/**/
+!data/normalized/**/
+!data/derived/**/
+!data/manifests/**/
+!data/**/.gitkeep
+
 # Generated artifacts
 artifacts/
 

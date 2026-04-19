@@ -1,0 +1,19 @@
+{
+  "canonical_timestamp_format": "unix_milliseconds",
+  "canonical_timezone": "UTC",
+  "created_at_utc_ms": 1774224000000,
+  "dataset_category": "normalized_kline",
+  "dataset_name": "synthetic_btcusdt_15m",
+  "dataset_version": "synthetic_btcusdt_15m__v001",
+  "generator": "tests.fixtures.market_data.synthetic.synthetic_15m_rows",
+  "intervals": ["15m"],
+  "invalid_windows": [],
+  "notes": "Deterministic synthetic BTCUSDT 15m fixture used by Phase 2 tests. Seeded RNG walk starting at 65000.0. No real market data, no network source.",
+  "partitioning": ["symbol", "interval", "year", "month"],
+  "pipeline_version": "prometheus@0.0.0",
+  "predecessor_version": null,
+  "primary_key": ["symbol", "interval", "open_time"],
+  "schema_version": "kline_v1",
+  "sources": ["synthetic:tests/fixtures/market_data/synthetic.py"],
+  "symbols": ["BTCUSDT"]
+}

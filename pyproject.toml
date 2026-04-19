@@ -6,7 +6,11 @@ readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = { text = "Proprietary" }
 authors = [{ name = "Prometheus operator" }]
-dependencies = []
+dependencies = [
+    "pyarrow>=17",
+    "duckdb>=1.1",
+    "pydantic>=2.8",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -48,7 +52,11 @@ strict = true
 files = ["src/prometheus"]
 warn_unused_configs = true
 
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*", "duckdb", "duckdb.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q --strict-markers"
-pythonpath = ["src"]
+pythonpath = ["src", "."]
