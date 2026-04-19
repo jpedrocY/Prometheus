@@ -31,3 +31,26 @@ research_data:
     state_root: data/manifests/_downloads
     user_agent: "Prometheus-Research/0.0.0 (+https://github.com/jpedrocY/Prometheus)"
     pace_ms: 100
+
+  # Phase 2c: mark-price + funding + exchangeInfo settings.
+  # All public endpoints; no credentials; no signed requests.
+  mark_price:
+    # Uses the same bulk downloader as standard klines with family=markPriceKlines.
+    raw_root: data/raw
+    normalized_root: data/normalized/mark_price_klines
+    manifests_root: data/manifests
+
+  funding:
+    # REST endpoint /fapi/v1/fundingRate on fapi.binance.com.
+    # Rate limit (verified 2026-04-19): shares 500/5min/IP with /fapi/v1/fundingInfo.
+    base_url: https://fapi.binance.com
+    normalized_root: data/normalized/funding_rate
+    manifests_root: data/manifests
+    pace_ms: 1000  # conservative vs documented 500/5min/IP limit
+
+  exchange_info:
+    # REST endpoint /fapi/v1/exchangeInfo on fapi.binance.com. Weight 1.
+    base_url: https://fapi.binance.com
+    raw_root: data/raw
+    derived_root: data/derived
+    manifests_root: data/manifests
