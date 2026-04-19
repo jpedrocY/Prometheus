@@ -475,4 +475,272 @@ Resolution evidence:
 
 ---
 
+## GAP-20260419-014 — 1h normalized ATR filter uses 1h ATR(20) and latest 1h close
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A1)
+Area:                STRATEGY
+Blocking phase:      NON_BLOCKING
+Risk level:          MEDIUM
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md`, `src/prometheus/strategy/v1_breakout/trigger.py`
+
+Description:
+The v1 breakout spec entry trigger condition 6 requires `0.20% <= ATR(20) / close <= 2.00%`, labeled "1h normalized ATR filter." The spec is ambiguous about which ATR (15m or 1h) and which close (15m signal bar's close or latest 1h close) to use.
+
+Options considered:
+- Option A: use 15m ATR(20) and 15m breakout-bar close (literal reading of the trigger context).
+- Option B: use 1h ATR(20) and latest completed 1h close (literal reading of the "1h" label).
+
+Operator decision:
+Option B — use 1h ATR(20) and latest completed 1h close.
+
+Resolution evidence:
+- `src/prometheus/strategy/v1_breakout/trigger.py::_passes_atr_regime` accepts `atr_20_1h` and `latest_1h_close` parameters.
+- `src/prometheus/strategy/v1_breakout/strategy.py::V1BreakoutStrategy.maybe_entry` sources `atr_20_1h` from `session.current_1h_atr_20()` and `latest_1h_close` from `session.latest_1h_close()`.
+- `tests/unit/strategy/v1_breakout/test_trigger.py::test_normalized_atr_out_of_range_rejects` asserts rejection when `atr_20_1h / latest_1h_close < 0.20%`.
+
+---
+
+## GAP-20260419-015 — Stop-distance filter uses signal-bar close as reference
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A2)
+Area:                STRATEGY
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/strategy/types.py`, `src/prometheus/strategy/v1_breakout/stop.py`, `src/prometheus/strategy/v1_breakout/strategy.py`
+
+Description:
+The stop-distance filter rejects trades with `stop_distance < 0.60 * ATR(20)` or `> 1.80 * ATR(20)`, where `stop_distance = abs(entry_price - initial_stop)`. In backtest, `entry_price` (next-bar open) is not known at signal-bar close time. A reference price must be chosen for the pre-fill filter evaluation.
+
+Operator decision:
+Option A — use the 15m signal bar's CLOSE as the reference price. All information available at signal time; avoids making trade approval depend on an as-yet-unobserved fill price.
+
+Resolution evidence:
+- `src/prometheus/strategy/v1_breakout/strategy.py::V1BreakoutStrategy.maybe_entry` sets `reference_price = breakout_bar.close`.
+- `EntryIntent.reference_price` is documented as the signal-bar close proxy.
+
+---
+
+## GAP-20260419-016 — Managed-exit fills at next bar's open (same as entry)
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A3)
+Area:                STRATEGY / BACKTEST
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/backtest/fills.py`, `src/prometheus/research/backtest/engine.py`
+
+Description:
+The backtest plan says managed exits (stagnation, trailing breach) fill at "the next available executable price." The phrase is ambiguous: either next-bar open or the close of the triggering bar.
+
+Operator decision:
+Option A — next-bar open, consistent with the entry fill baseline and the backtest plan's conservative philosophy.
+
+Resolution evidence:
+- `src/prometheus/research/backtest/fills.py::exit_fill_price` applies slippage to `next_bar.open`.
+- `engine.py::_close_trade_managed` sources the exit price from `exit_fill_price(next_bar=...)`.
+
+---
+
+## GAP-20260419-017 — Gap-through stop rule: fill at bar open if gap, else stop level
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A4)
+Area:                BACKTEST / EXECUTION
+Blocking phase:      NON_BLOCKING
+Risk level:          MEDIUM (materially affects tail losses)
+Related docs:        `src/prometheus/research/backtest/stops.py`
+
+Description:
+When a mark-price bar crosses the stop level, two fill conventions are possible: (A) always fill at the stop level; (B) fill at the bar open if the bar opens BEYOND the stop (adverse gap), else at the stop level.
+
+Operator decision:
+Option B — realistic for STOP_MARKET behavior, which fills at market on trigger and will realize the adverse open price if the market has already gapped.
+
+Resolution evidence:
+- `src/prometheus/research/backtest/stops.py::evaluate_stop_hit` returns `StopHit.was_gap_through` flag and fills at `mark_bar.open` when the bar opens beyond the stop.
+- `tests/unit/research/backtest/test_stops.py::TestLongStopHit::test_gap_through_fills_at_bar_open` and the short mirror assert the behavior.
+
+---
+
+## GAP-20260419-018 — Taker commission rate parameterized {0.05%, 0.04%, 0.02%}; primary 0.05%
+
+Status:              ACCEPTED_LIMITATION
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A5, §11.C.D2)
+Area:                BACKTEST / EXCHANGE_API
+Blocking phase:      PRE_TINY_LIVE (resolution requires Phase 2d authenticated endpoints)
+Risk level:          MEDIUM
+Related docs:        `src/prometheus/research/backtest/config.py`, `docs/03-strategy-research/v1-breakout-backtest-plan.md`
+
+Description:
+The authenticated `GET /fapi/v2/commissionRate` endpoint is deferred to Phase 2d. Phase 3 cannot query the live account's actual taker rate. The backtester parameterizes `taker_fee_rate` across {0.05%, 0.04%, 0.02%} (standard, small-discount, BNB-discount), with 0.05% as the primary conservative baseline. Sensitivity is reported via separate runs (different `run_id`).
+
+Operator decision:
+Accept as Phase 3 limitation. Documented as an accepted limitation in every `BacktestReportManifest.accepted_limitations` produced. Resolves fully when Phase 2d lands authenticated commissionRate fetch.
+
+Resolution evidence:
+- `BacktestConfig.taker_fee_rate` is a required configurable field; default 0.0005 in CLI.
+- `DatasetCitation` and `accepted_limitations` fields on `BacktestReportManifest` allow per-run documentation of the placeholder.
+
+---
+
+## GAP-20260419-019 — Funding event join window inclusive both ends
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A6)
+Area:                BACKTEST / DATA
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/backtest/funding_join.py`
+
+Description:
+The join predicate for applying a `FundingRateEvent` to an open position is `funding_time ∈ [entry_fill_time, exit_fill_time]`. The boundary convention (inclusive both ends vs. exclusive either side) is not specified in the data or backtest docs.
+
+Operator decision:
+Inclusive both ends: `T_entry <= funding_time <= T_exit`.
+
+Resolution evidence:
+- `src/prometheus/research/backtest/funding_join.py::apply_funding_accrual` uses the predicate `if entry_fill_time_ms <= event.funding_time <= exit_fill_time_ms`.
+- `tests/unit/research/backtest/test_funding_join.py::test_inclusive_both_ends` asserts events exactly at entry time and exactly at exit time are included.
+
+---
+
+## GAP-20260419-020 — ExchangeInfo 2026-04-19 snapshot used as proxy for 2026-03 backtest window
+
+Status:              ACCEPTED_LIMITATION
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.A.A7, §11.C.D1)
+Area:                DATA / EXCHANGE_API
+Blocking phase:      NON_BLOCKING for Phase 3 conformance; PRE_TINY_LIVE for live
+Risk level:          LOW
+Related docs:        `data/derived/exchange_info/2026-04-19T21-22-59Z.json`, `src/prometheus/research/backtest/report.py::DatasetCitation`
+
+Description:
+Phase 2c captured a single exchangeInfo snapshot on 2026-04-19. The backtester uses this for per-symbol filters (tickSize, stepSize, minNotional, precisions) when running on the 2026-03 window. If Binance changed any filter between 2026-03 and 2026-04-19, rounding assumptions could be marginally off. BTCUSDT filters change rarely; the proxy is acceptable for Phase 3 conformance but not for long-horizon promotion evidence.
+
+Additionally, the snapshot does not currently have a `DatasetManifest` — it lives as a timestamp-named JSON under `data/derived/exchange_info/`. The validation-checklist Gate-1 "exchange metadata snapshots are available" criterion reads the snapshot via path + sha256 rather than a manifest version.
+
+Operator decision:
+Accept both (a) the snapshot-date proxy and (b) the absent-manifest handling as Phase 3 limitations, documented in every backtest report manifest.
+
+Resolution evidence:
+- `BacktestReportManifest.dataset_citations` accepts a `raw_file_path + raw_file_sha256` variant for the exchangeInfo snapshot.
+- `accepted_limitations` field on the manifest records both limitations on every run.
+- `tests/simulation/test_backtest_real_2026_03.py` loads `ExchangeInfoSnapshot` from the on-disk JSON and filters per symbol.
+
+---
+
+## GAP-20260419-021 — Phase 3 starting sizing_equity_usdt = 10,000 USDT (flat/non-compounding)
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.B.R1)
+Area:                RISK / BACKTEST
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/backtest/config.py`, `src/prometheus/research/backtest/accounting.py`
+
+Description:
+The risk docs define sizing_equity as `min(account_equity, strategy_allocated_equity)` but do not fix a numeric starting value. For Phase 3 research, a specific starting number is needed. The operator also specified the primary variant is FLAT (sizing_equity unchanged across trades; compounding variant may be reported as sensitivity only).
+
+Operator decision:
+`sizing_equity_usdt = 10_000.0` as the Phase 3 research default, with flat (non-compounding) sizing as the primary variant.
+
+Resolution evidence:
+- `BacktestConfig.sizing_equity_usdt` required positive float; CLI default 10_000.0.
+- `Accounting.start(starting_equity=...)` holds the flat base; `equity` updates per trade but sizing math reads `sizing_equity_usdt` from config (not from `Accounting.equity`), preserving the flat variant.
+- `docs/00-meta/implementation-reports/2026-04-19_phase-3_gate-1-plan.md` §11.B.R1 records the decision.
+
+---
+
+## GAP-20260419-022 — Risk-usage fraction in backtest: 0.90 primary, 1.00 sensitivity
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.B.R2)
+Area:                RISK / BACKTEST
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/backtest/sizing.py`, `docs/07-risk/position-sizing-framework.md`
+
+Description:
+The sizing framework's `risk_usage_fraction` default for initial live is 0.90 (a 10% buffer for friction). For backtest research the doc allows 1.00 as a "pure risk" sweep variant but does not mandate a choice.
+
+Operator decision:
+Primary = 0.90 (matches live sizing). Sensitivity runs may use 1.00 with different `run_id`.
+
+Resolution evidence:
+- `BacktestConfig.risk_usage_fraction` required in (0, 1]; CLI default 0.90.
+- `sizing.py::compute_size` applies `risk_budget = risk_amount * risk_usage_fraction`.
+
+---
+
+## GAP-20260419-023 — Research internal notional cap = 100,000 USDT (not the live cap)
+
+Status:              RESOLVED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.B.R3)
+Area:                RISK / BACKTEST
+Blocking phase:      NON_BLOCKING for Phase 3; live notional cap remains TD-018
+Risk level:          LOW
+Related docs:        `src/prometheus/research/backtest/config.py`, `docs/12-roadmap/technical-debt-register.md#TD-018`
+
+Description:
+TD-018 defers the tiny-live notional cap value to pre-tiny-live. For Phase 3 research, a cap value must still be configured so the cap-binding behavior in `sizing.py` is exercised. A research cap of 100_000 USDT is high enough to not bind for typical BTC/ETH sizes at 0.25% risk with 10k equity, low enough to catch configuration typos.
+
+Operator decision:
+`max_notional_internal_usdt = 100_000.0` as the Phase 3 research default. Distinct from the live tiny-live cap (TD-018 remains OPEN).
+
+Resolution evidence:
+- `BacktestConfig.max_notional_internal_usdt` required positive; CLI default 100_000.0.
+- Summary metrics report `sizing_limited_by` so it is observable when the cap binds.
+- TD-018 is NOT resolved or edited by this entry.
+
+---
+
+## GAP-20260419-024 — Validation Gate 1 "leverageBracket + commissionRate snapshots" accepted as placeholder limitation
+
+Status:              ACCEPTED_LIMITATION
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.C.D2)
+Area:                DATA / EXCHANGE_API / BACKTEST
+Blocking phase:      PRE_TINY_LIVE (resolution requires Phase 2d authenticated endpoints)
+Risk level:          MEDIUM
+Related docs:        `docs/05-backtesting-validation/v1-breakout-validation-checklist.md`, `docs/03-strategy-research/v1-breakout-backtest-plan.md`
+
+Description:
+Validation checklist Gate 1 requires "leverage bracket snapshots are available" and "commission-rate assumptions are explicit and documented." Both endpoints are authenticated (`/fapi/v1/leverageBracket`, `/fapi/v2/commissionRate`) and were deferred to Phase 2d. Phase 3 proceeds with:
+- no leverage-bracket check (v1 cap of 2x effective leverage is far below any published bracket threshold for BTCUSDT/ETHUSDT, so not exercising the check does not create unsafe assumptions)
+- parameterized commissionRate sensitivity per GAP-20260419-018
+
+This is a strict reading of Gate 1 noncompliance, accepted explicitly by operator at Phase 3 Gate 1 approval.
+
+Operator decision:
+Accept as Phase 3 limitation. Documented on every `BacktestReportManifest.accepted_limitations`. NOT silently resolved. Phase 2d remains OPEN as a separate operator-approved task.
+
+Resolution evidence:
+- `BacktestReportManifest.accepted_limitations` field records the limitation text per run.
+- `docs/00-meta/implementation-reports/2026-04-19_phase-3_gate-1-plan.md` §11.C.D2 records the operator approval.
+- `docs/00-meta/implementation-reports/2026-04-19_phase-3_gate-1-plan.md` §0 Executive Summary flags this explicitly.
+
+---
+
+## GAP-20260419-025 — Phase 2e wider historical backfill proposed; Phase 3 completes on 2026-03 only
+
+Status:              DEFERRED
+Phase discovered:    3 (Phase 3 Gate 1 plan §11.D.DS1)
+Area:                DATA / ROADMAP
+Blocking phase:      PRE_VALIDATION_GATES_4_6 (walk-forward, robustness, ETH comparison at scale)
+Risk level:          HIGH if conflated with Phase 3 scope; NON_BLOCKING for Phase 3 conformance scope
+Related docs:        `docs/05-backtesting-validation/v1-breakout-validation-checklist.md`, `docs/05-backtesting-validation/walk-forward-validation.md`, Phase 3 Gate 1 plan §11.D
+
+Description:
+2026-03 real data (31 days) is sufficient to demonstrate Phase 3 strategy conformance and backtester mechanics. It is insufficient for Validation Gates 4 (walk-forward), 5 (BTC/ETH robustness comparison), and 6 (exit-model comparison). Those gates require multi-year history.
+
+Operator decision:
+Defer. Phase 3 makes NO profitability, robustness, or walk-forward promotion claims from the 2026-03 sample. A separate operator-approved "Phase 2e — wider historical backfill" task will propose BTC + ETH 15m bulk for a wider range (e.g., 2022-01 through 2026-03) using the existing `BulkDownloader` before walk-forward validation begins.
+
+Resolution evidence:
+- `docs/00-meta/implementation-reports/2026-04-19_phase-3_gate-1-plan.md` §11.D.DS1 records the operator-approved deferral and the Phase 2e proposal.
+- `BacktestReportManifest.accepted_limitations` records the 31-day-only scope per run.
+- No Phase 3 tests attempt Gate 4/5/6 validation.
+
+---
+
 
