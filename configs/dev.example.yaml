@@ -1,0 +1,15 @@
+# Prometheus local development config example.
+# Copy to dev.local.yaml for personal local overrides; do not commit real values.
+# See configs/README.md for policy.
+
+runtime_mode_on_start: SAFE_MODE
+entries_blocked_default: true
+exchange_write_enabled: false
+real_capital_enabled: false
+
+adapter: fake
+
+symbol: BTCUSDT
+risk_fraction: 0.0025
+max_effective_leverage: 2.0
+internal_notional_cap_usdt: null   # must be set explicitly before any live stage
