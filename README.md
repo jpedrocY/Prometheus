@@ -1,27 +1,31 @@
 # Prometheus
 
-Prometheus is a long-term research, systems-design, and implementation-planning project for a production-oriented trading system.
+Prometheus is a long-term research, systems-design, and implementation project for a production-oriented trading system.
 
-The project is focused on designing and implementing a robust, testable, operator-supervised trading bot for **Binance USDⓈ-M futures**, starting with a narrow rules-based v1 before any future AI-assisted or adaptive extensions are considered.
+The project is focused on building a robust, testable, operator-supervised trading bot for **Binance USDⓈ-M futures**, starting with a narrow rules-based v1 before any future AI-assisted or adaptive extensions are considered.
 
-> Prometheus is not intended to start as a self-learning live AI trader. The first implementation is deliberately rules-based, tightly scoped, heavily documented, and safety-first.
+> Prometheus is not intended to start as a self-learning live AI trader. The first implementation is deliberately rules-based, tightly scoped, heavily documented, safety-first, and operator-supervised.
 
 ---
 
 ## Current Project Status
 
-**Phase:** Claude Code handoff readiness / Phase 0 implementation intake.
+**Phase:** Claude Code Phase 0 readiness — repository audit and implementation-readiness review.
 
-The repository is still primarily a documentation and architecture repository, but the core pre-implementation handoff layer is now in place.
+The repository has completed the main pre-implementation documentation and handoff layer.
 
-The current focus is on:
+Completed readiness items:
 
-- preserving the locked v1 trading scope,
-- using the repository Markdown files as the source of truth,
-- handing Claude Code a strict phased implementation contract,
-- starting with a repo audit before broad code generation,
-- guiding installations and setup through Claude Code + ChatGPT + operator review,
-- and keeping live-capital safety constraints explicit before implementation.
+- core strategy, data, validation, execution, risk, architecture, operations, security, interface, and governance documentation,
+- `docs/09-operations/first-run-setup-checklist.md`,
+- `docs/00-meta/ai-coding-handoff.md`,
+- `docs/00-meta/current-project-state.md`,
+- Prometheus-specific Claude Code agent pack,
+- root `CLAUDE.md`,
+- `.claude/agents/` with the nine Prometheus project agents,
+- `.claude/rules/` with Prometheus project rules,
+- `.mcp.example.json` as an inert MCP template,
+- `.mcp.graphify.template.json` as an inert Graphify placeholder.
 
 The next implementation step is:
 
@@ -29,21 +33,23 @@ The next implementation step is:
 Claude Code Phase 0 — Handoff Intake and Repo Audit
 ```
 
-Broad code generation should not begin until Phase 0 is completed and reviewed.
+Phase 0 is an audit and readiness step. It is **not** broad implementation.
+
+Claude Code must inspect the repository, read the required handoff documents, verify the current source/tooling/test/doc state, and produce a Phase 0 repository-audit report before Phase 1 is approved.
 
 ---
 
 ## Project Objective
 
-Design and eventually build a:
+Design and build a:
 
 > **production-oriented, safety-first, operator-supervised trading system**
 
 for:
 
 - **Venue:** Binance USDⓈ-M futures
-- **Initial symbol:** BTCUSDT perpetual
-- **Secondary research comparison:** ETHUSDT perpetual
+- **Initial live symbol:** BTCUSDT perpetual
+- **Secondary research/comparison symbol:** ETHUSDT perpetual
 
 The system is designed to be:
 
@@ -51,19 +57,20 @@ The system is designed to be:
 - narrow before broad,
 - robust before clever,
 - supervised before autonomous,
+- staged before live,
 - and extensible only after the baseline system proves trustworthy.
 
 ---
 
 ## Locked V1 Direction
 
-The following decisions are currently locked unless a later document explicitly revises them.
+The following decisions are currently locked unless a later repository document explicitly revises them.
 
 ### Market and venue
 
 - Binance USDⓈ-M futures
 - BTCUSDT perpetual as the first live-capable symbol
-- ETHUSDT perpetual as the first secondary research comparison
+- ETHUSDT perpetual as the first secondary research/comparison symbol
 - BTCUSDT-only live scope for v1
 
 ### Strategy
@@ -86,11 +93,18 @@ The following decisions are currently locked unless a later document explicitly 
 - One active protective stop maximum in v1
 - No pyramiding
 - No reversal entry while positioned
+- No hedge-mode behavior
 - Exchange-side protective stop mandatory
-- Protective stop uses `STOP_MARKET`, `closePosition=true`, `workingType=MARK_PRICE`, `priceProtect=TRUE`
+- Protective stop uses:
+  - `STOP_MARKET`
+  - `closePosition=true`
+  - `workingType=MARK_PRICE`
+  - `priceProtect=TRUE`
 - User stream is the primary live private-state source
 - REST is used for placement, cancellation, reconciliation, and recovery
 - Exchange state is authoritative
+- Unknown execution outcomes fail closed
+- No blind retry for exposure-changing actions
 
 ### Risk
 
@@ -110,6 +124,8 @@ research -> validation -> dry-run -> paper/shadow -> tiny live -> scaled live
 ```
 
 No stage should be skipped.
+
+Tiny live is intended to run on a dedicated local NUC / mini PC with an attached monitor showing the operator dashboard during operation.
 
 Production Binance trade-capable keys must not be created until the correct approved phase gate.
 
@@ -140,27 +156,37 @@ Core principles:
 
 ## Repository Structure
 
-Current documentation structure:
+Current documentation and support structure:
 
 ```text
 docs/
-  00-meta/                   project objective, scope, current state, AI handoff
-  01-foundations/            foundational concepts and project framing
-  02-market-structure/       futures mechanics, fees, funding, leverage, liquidation
-  03-strategy-research/      strategy selection and v1 breakout strategy design
-  04-data/                   historical data, live data, timestamps, dataset versioning
-  05-backtesting-validation/ backtesting principles and validation gates
-  06-execution-exchange/     exchange/order handling and reconciliation concepts
-  07-risk/                   risk philosophy and risk controls
-  08-architecture/           implementation architecture and runtime design
-  09-operations/             setup, restart, incident, operator, review, release processes
-  10-security/               API keys, secrets, permission scoping, security policies
-  11-interface/              dashboard and operator-control requirements
-  12-roadmap/                phase gates, technical debt, sequencing
-  adr/                       architecture decision records
-  glossary/                  shared definitions
-  runbooks/                  operational procedures
-  templates/                 reusable documentation templates
+  00-meta/                    current state, AI coding handoff, Claude agent pack
+  01-foundations/             foundational concepts and project framing
+  02-market-structure/        futures mechanics, fees, funding, leverage, liquidation
+  03-strategy-research/       strategy selection and v1 breakout strategy design
+  04-data/                    historical data, live data, timestamps, dataset versioning
+  05-backtesting-validation/  backtesting principles and validation gates
+  06-execution-exchange/      exchange/order handling and reconciliation concepts
+  07-risk/                    risk philosophy and risk controls
+  08-architecture/            implementation architecture and runtime design
+  09-operations/              setup, restart, incident, operator, review, release processes
+  10-security/                API keys, secrets, permission scoping, security policies
+  11-interface/               dashboard and operator-control requirements
+  12-roadmap/                 phase gates, technical debt, sequencing
+  adr/                        architecture decision records
+  glossary/                   shared definitions
+  runbooks/                   operational procedures
+  templates/                  reusable documentation templates
+
+.claude/
+  agents/                     Prometheus-specific Claude Code project agents
+  rules/                      Prometheus-specific Claude Code rule imports
+  settings.json               shared safe Claude Code settings
+  settings.local.example.json local-only settings template
+
+CLAUDE.md                     root Claude Code project memory/instructions
+.mcp.example.json             inert MCP example template
+.mcp.graphify.template.json   inert Graphify MCP placeholder
 ```
 
 The planned implementation source tree is defined separately in:
@@ -185,10 +211,11 @@ Markdown documents in this repository are the project’s primary source of trut
 
 If there is a conflict between older chat context and repository documentation:
 
-1. detailed current Markdown docs win,
-2. then `docs/00-meta/current-project-state.md`,
-3. then older project chat memory,
-4. then informal summaries.
+1. detailed current Markdown docs win for their specialist domain,
+2. `docs/00-meta/current-project-state.md` wins for high-level project status,
+3. `docs/00-meta/ai-coding-handoff.md` wins for implementation method and Claude Code workflow,
+4. `docs/12-roadmap/phase-gates.md` wins for promotion gates,
+5. older chat memory and informal summaries are secondary.
 
 Do not silently change locked decisions.
 
@@ -201,9 +228,11 @@ Surface conflicts first.
 For a human reviewer or AI implementation agent, start here:
 
 ```text
+CLAUDE.md
 docs/00-meta/current-project-state.md
 docs/00-meta/ai-coding-handoff.md
 docs/09-operations/first-run-setup-checklist.md
+docs/00-meta/claude-agent-pack.md
 docs/12-roadmap/phase-gates.md
 docs/12-roadmap/technical-debt-register.md
 ```
@@ -270,7 +299,7 @@ docs/11-interface/alerting-ui.md
 
 ---
 
-## AI Coding Handoff
+## Claude Code Handoff
 
 Claude Code implementation must begin with:
 
@@ -306,6 +335,84 @@ Phase 0 is an audit/review step, not broad implementation.
 
 ---
 
+## Claude Agent Pack
+
+Prometheus includes a project-specific Claude Code agent pack.
+
+The pack is documented in:
+
+```text
+docs/00-meta/claude-agent-pack.md
+```
+
+Project agents live in:
+
+```text
+.claude/agents/
+```
+
+Current Prometheus agents:
+
+```text
+prometheus-orchestrator
+prometheus-safety-guardian
+prometheus-spec-architect
+prometheus-data-validation-engineer
+prometheus-strategy-backtest-engineer
+prometheus-risk-state-engineer
+prometheus-execution-simulation-engineer
+prometheus-dashboard-alerts-engineer
+prometheus-test-verification-engineer
+```
+
+Recommended first agents:
+
+```text
+prometheus-orchestrator
+prometheus-safety-guardian
+prometheus-spec-architect
+prometheus-test-verification-engineer
+```
+
+The agent pack strengthens Claude Code during phased implementation. It does not replace the AI coding handoff, phase gates, specialist docs, or operator approval.
+
+---
+
+## MCP and Graphify Status
+
+Prometheus includes MCP templates only:
+
+```text
+.mcp.example.json
+.mcp.graphify.template.json
+```
+
+Current intended status:
+
+- `.mcp.example.json` is a tracked inert template.
+- `.mcp.graphify.template.json` is a tracked inert placeholder.
+- `.mcp.json` should remain local-only and gitignored if created later.
+- MCP servers are not required before Phase 0.
+- Graphify is optional and should not be enabled until installation and secret-exclusion rules are verified.
+
+Recommended early MCP candidates, when approved:
+
+- `filesystem-prometheus`, scoped only to `C:/Prometheus`,
+- `context7`, for library documentation,
+- `playwright`, later for dashboard testing.
+
+Do not configure:
+
+- ERP/JAF MCP servers,
+- company MySQL/MariaDB MCP servers,
+- Laravel MCP servers,
+- Phoenix theme MCP servers,
+- Figma tokens,
+- plaintext credentials,
+- Binance production write tools.
+
+---
+
 ## Setup and Operator Workflow
 
 The practical setup path is defined in:
@@ -322,18 +429,15 @@ ChatGPT = setup/review/debugging/documentation guide
 Operator = approval authority and physical/system operator
 ```
 
-The operator already has the repo cloned locally at:
+Current operator environment:
 
 ```text
-C:\Prometheus
+Local repo path: C:\Prometheus
+GitHub Desktop: repository tracking
+AntiGravity IDE: repository open
+Claude Code extension: installed and logged in
+ChatGPT: setup/debug/checkpoint review partner
 ```
-
-and is using:
-
-- GitHub Desktop for repository tracking,
-- AntiGravity IDE,
-- Claude Code extension logged into a Max plan account,
-- ChatGPT for guided setup review, screenshots, logs, errors, and checkpoint interpretation.
 
 Claude Code may install project/phase-required dependencies when safe.
 
@@ -341,32 +445,23 @@ If installation or setup requires unclear system-level action, admin privileges,
 
 ---
 
-## Implementation Handoff Status
-
-The project is ready for Claude Code Phase 0 repository audit.
-
-Created handoff/setup documents:
-
-```text
-docs/00-meta/ai-coding-handoff.md
-docs/09-operations/first-run-setup-checklist.md
-```
+## Implementation Order
 
 Implementation must be phased.
 
-The expected high-level implementation order is:
+Expected high-level order:
 
 ```text
-1. repo audit and Phase 1 plan
-2. local development foundation
-3. historical data and validation foundation
-4. backtesting and strategy conformance
-5. risk, state, and persistence runtime
-6. dashboard, observability, and alerts
-7. dry-run exchange simulation
-8. paper/shadow operation
-9. tiny-live preparation
-10. scaled-live preparation
+0. repo audit and Phase 1 plan
+1. local development foundation
+2. historical data and validation foundation
+3. backtesting and strategy conformance
+4. risk, state, and persistence runtime
+5. dashboard, observability, and alerts
+6. dry-run exchange simulation
+7. paper/shadow operation
+8. tiny-live preparation
+9. scaled-live preparation
 ```
 
 Execution-layer and real exchange-write capability come late.
@@ -406,7 +501,7 @@ The goal is to build a system that can eventually be trusted with real capital u
 Hard project rules:
 
 - Never commit secrets.
-- Never place API keys or secrets in docs, code, logs, screenshots, or chats.
+- Never place API keys or secrets in docs, code, logs, screenshots, prompts, chats, database rows, or test snapshots.
 - Production API keys must have no withdrawal permission.
 - Production API keys must use IP restriction where practical.
 - Development, paper/shadow, and production credentials must remain separate.
@@ -447,6 +542,37 @@ Tiny live should run on the dedicated local NUC / mini PC after host hardening, 
 
 ---
 
+## Current Next Step
+
+Run Claude Code Phase 0 only:
+
+```text
+Phase 0 — Handoff Intake and Repo Audit
+```
+
+Claude Code should produce a report covering:
+
+- current branch,
+- working tree status,
+- repository layout,
+- documentation status,
+- source-code status,
+- package/tooling status,
+- test status,
+- existing configuration status,
+- agent-pack status,
+- MCP status,
+- missing or stale files,
+- immediate blockers,
+- safety concerns,
+- proposed Phase 1 plan,
+- recommended commands for Phase 1,
+- questions for operator/ChatGPT.
+
+Claude Code must stop after the Phase 0 report and wait for operator approval.
+
+---
+
 ## Disclaimer
 
 This repository is for research, architecture, and software-system design.
@@ -458,6 +584,6 @@ Nothing in this repository is financial advice. Trading leveraged crypto futures
 ## Document Status
 
 - Status: active
-- Project phase: Claude Code handoff readiness / Phase 0 implementation intake
+- Project phase: Claude Code Phase 0 readiness
 - Initial live scope: BTCUSDT perpetual on Binance USDⓈ-M futures
-- Last updated: 2026-04-18
+- Last updated: 2026-04-19
