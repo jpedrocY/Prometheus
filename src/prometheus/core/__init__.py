@@ -7,8 +7,18 @@ execution, persistence, secrets, or operator modules.
 """
 
 from .errors import DataIntegrityError, ManifestError, PrometheusError
+from .events import FundingRateEvent
+from .exchange_info import (
+    ExchangeInfoSnapshot,
+    LotSizeFilter,
+    MarketLotSizeFilter,
+    MinNotionalFilter,
+    PriceFilter,
+    SymbolInfo,
+)
 from .intervals import Interval, interval_duration_ms
 from .klines import NormalizedKline
+from .mark_price_klines import MarkPriceKline
 from .symbols import Symbol
 from .time import (
     ClockFn,
@@ -21,11 +31,19 @@ from .time import (
 __all__ = [
     "ClockFn",
     "DataIntegrityError",
+    "ExchangeInfoSnapshot",
+    "FundingRateEvent",
     "Interval",
+    "LotSizeFilter",
     "ManifestError",
+    "MarkPriceKline",
+    "MarketLotSizeFilter",
+    "MinNotionalFilter",
     "NormalizedKline",
+    "PriceFilter",
     "PrometheusError",
     "Symbol",
+    "SymbolInfo",
     "close_time_for",
     "floor_to_interval",
     "interval_duration_ms",
