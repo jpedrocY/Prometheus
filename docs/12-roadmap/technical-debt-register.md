@@ -389,7 +389,7 @@ Review and update `docs/README.md` if needed.
 
 **Category:** IMPLEMENTATION / DOCUMENTATION  
 **Owner area:** Claude Code handoff / implementation process  
-**Status:** OPEN  
+**Status:** RESOLVED  
 **Blocking phase:** PRE_CODING_START  
 **Risk level:** HIGH
 
@@ -426,6 +426,15 @@ AI coding handoff should instruct Claude Code to create/update this log whenever
 ### Blocking status
 
 Not a blocker to writing handoff, but the handoff must require it before implementation proceeds deeply.
+
+### Resolution evidence
+
+- `docs/00-meta/implementation-ambiguity-log.md` now exists and contains the required entry-format header plus the initial Phase 1 ambiguity/spec-gap entries:
+  - `GAP-20260419-001` — filename mismatch `first_strategy-comparison.md` vs `first-strategy-comparison.md` (RESOLVED by `git mv`).
+  - `GAP-20260419-002` — Phase 1 tooling decisions (uv, Python `>=3.11,<3.13`, `[dependency-groups]`, deferred pre-commit/CI, feature-branch workflow) (RESOLVED).
+  - `GAP-20260419-003` — `.python-version` git-ignore conflict; narrow `.gitignore` edit authorized (RESOLVED).
+- Ambiguity log committed in Phase 1 Commit 3 on branch `phase-1/local-dev-foundation`.
+- Phase 1 checkpoint report at `docs/00-meta/implementation-reports/2026-04-19_phase-1-checkpoint-report.md` records the ambiguity-log discipline as the process to carry into Phase 2 and onward.
 
 ---
 
