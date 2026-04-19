@@ -311,6 +311,73 @@ Resolution evidence:
 
 ---
 
+## GAP-20260419-010 — Binance USD-M bulk CSVs DO have a header row (contrary to Phase 2b TD-006 assumption)
+
+Status:              RESOLVED
+Phase discovered:    2b (historical download, Step 11 real bounded run)
+Area:                DATA / EXCHANGE_API
+Blocking phase:      PRE_PHASE_2B_COMPLETION (blocks the bounded real run)
+Risk level:          HIGH (per Phase 2b Gate 1 condition 3: any divergence from verified source assumptions is logged at HIGH risk and escalated)
+Related docs:        `src/prometheus/research/data/ingest.py`, `src/prometheus/research/data/binance_bulk.py` (TD-006 evidence block), `docs/00-meta/implementation-reports/2026-04-19_phase-2b_gate-1-plan.md`
+
+Description:
+During Phase 2b Step 11 (bounded real download of BTCUSDT 15m 2026-03 from `data.binance.vision`), the first real pipeline run failed at CSV parsing with:
+
+```
+DataIntegrityError: CSV line 1: failed to cast numeric field
+  (invalid literal for int() with base 10: 'open_time')
+```
+
+Inspection of the downloaded ZIP confirmed it was checksum-verified correctly and contains a single member `BTCUSDT-15m-2026-03.csv`. The first line of that CSV is a column-name header:
+
+```
+open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore
+```
+
+Data rows follow from line 2 onward with valid UTC-ms timestamps, the expected 12 columns, and data starting at `2026-03-01T00:00:00Z` as expected.
+
+The TD-006 verification evidence block in `binance_bulk.py` currently asserts **"No header row"** — this was an inference from the github.com/binance/binance-public-data README example (which shows column names in a table but does not explicitly state whether the CSV is row-1 header or row-1 data). The real on-disk file has a header, so the inference was wrong.
+
+Secondary observations (not currently blocking):
+- The header row's column names are slightly different from the README table labels (e.g., `quote_volume` in the file vs `Quote asset volume` in the README; `count` vs `Number of trades`; `taker_buy_volume` vs `Taker buy base asset volume`). Because `parse_binance_csv_row` parses by POSITION, not name, this does not affect correctness once the header is skipped.
+- The ZIP's internal member name is `BTCUSDT-15m-2026-03.csv` (the ZIP filename with `.zip` replaced by `.csv`), matching the convention I tested for in `extract_rows_from_zip` by opening the single member regardless of name.
+
+Why it matters:
+The parser currently fails closed (correctly) but prevents the bounded real run from completing. All subsequent months and symbols would fail identically until the parser handles a header row.
+
+Downloaded artifact that IS on disk (safe, checksum-verified, git-ignored):
+- `data/raw/binance_usdm/klines/symbol=BTCUSDT/interval=15m/year=2026/month=03/BTCUSDT-15m-2026-03.zip`
+- Size: 145,250 bytes
+- SHA256 matches the published `.CHECKSUM`.
+
+No normalized Parquet, no derived 1h, no manifest, no state file was written (parser failed before state update).
+
+Options considered:
+- **Option A:** skip the first CSV line if its first field is not a valid integer (minimal, defensive — works whether a header is present or not). Single-line change in `extract_rows_from_zip`.
+- **Option B:** unconditionally skip the first line (assumes header always present, simpler, but brittle if Binance ever removes the header).
+- **Option C:** validate the header against an expected set of column names before skipping (strictest — fails closed if column order changes).
+- **Option D:** revert the 2b scope, abandon the real run, leave the downloader as mock-only.
+
+Recommended resolution:
+**Option A** — defensive first-line detection. Conditional on whether the first field parses as an int. Works on files with or without a header. Keeps `parse_binance_csv_row` unchanged and contained; the fix lives in `extract_rows_from_zip`.
+
+Secondary fix: update the `## TD-006 verification evidence` docstring in `binance_bulk.py` to correct the "No header row" assertion and to cite this GAP entry.
+
+Operator decision:
+Approved 2026-04-19 — Option A with stricter header detection. Recognized header requires 12 comma-separated columns AND first field normalized/lowercased equals `open_time`. Non-numeric non-header first rows must fail loudly (no silent skipping of arbitrary malformed content).
+
+Resolution evidence:
+- `src/prometheus/research/data/ingest.py`: added `_is_kline_csv_header` helper and modified `extract_rows_from_zip` to skip the first row only if it is a recognized header; other non-numeric first rows raise `DataIntegrityError` as before.
+- `src/prometheus/research/data/binance_bulk.py`: TD-006 evidence block updated. The "No header row" assertion is removed and replaced with a documented correction citing this GAP. Runtime detection and behavior described inline.
+- `tests/unit/research/data/test_ingest.py`: added 9 new tests covering header detection and extraction paths — `test_is_header_recognizes_open_time`, `test_is_header_case_insensitive`, `test_is_header_rejects_numeric_first_field`, `test_is_header_rejects_wrong_column_count`, `test_is_header_rejects_similar_but_wrong_name`, `test_extract_skips_header_row`, `test_extract_works_without_header`, `test_extract_header_skip_preserves_data_rows`, `test_extract_rejects_non_numeric_non_header_first_row`, `test_extract_rejects_wrong_column_count_first_row`.
+- Full test suite: **136 passed** in 0.85s (was 126 before the fix).
+- Real bounded ingest completed successfully for both BTCUSDT and ETHUSDT 15m 2026-03:
+  * BTCUSDT ZIP SHA256 `ea25e84ddffdcc8b7ba68fb47363daee6a9ef53941f152c9ebf6d4e165d32bf8` (matched pre-verified WebFetch checksum); 2976 × 15m bars, 744 × 1h derived bars, 0 invalid windows.
+  * ETHUSDT ZIP SHA256 `8070870b512ab7c312329a7fc1a45217fc7aff5ed7bbb4f805d96caf7c99fd5d` (matched pre-verified WebFetch checksum); 2976 × 15m bars, 744 × 1h derived bars, 0 invalid windows.
+- Manifests written: 4 × ~0.9 KB under `data/manifests/`. Download state files: 2 × 0.775 KB under `data/manifests/_downloads/`. All git-ignored.
+
+---
+
 ## GAP-20260419-009 — pytest `pythonpath` extended to include the repo root
 
 Status:              RESOLVED
