@@ -54,3 +54,33 @@ research_data:
     raw_root: data/raw
     derived_root: data/derived
     manifests_root: data/manifests
+
+# Phase 3 research-only backtester settings.
+# No config loader yet — documentation for operators running the
+# engine via `uv run python -m prometheus.research.backtest.cli`.
+# All values reflect operator decisions recorded in
+# docs/00-meta/implementation-ambiguity-log.md GAP-014 through GAP-025.
+backtest:
+  # Fixed starting equity for flat (non-compounding) sizing (GAP-021).
+  sizing_equity_usdt: 10000.0
+  # Primary risk per trade. 0.005 and 0.01 are allowed research sweeps.
+  risk_fraction: 0.0025
+  # Initial live default per position-sizing-framework. 1.00 may be a
+  # sensitivity run (GAP-022).
+  risk_usage_fraction: 0.90
+  # Locked v1 live cap. Raising this requires a separate risk-gate.
+  max_effective_leverage: 2.0
+  # Phase 3 research cap; distinct from the live tiny-live cap (TD-018).
+  max_notional_internal_usdt: 100000.0
+  # Taker fee sensitivity primary value (GAP-018). 0.0004 and 0.0002
+  # should be run as sensitivity variants with different run_id.
+  taker_fee_rate: 0.0005
+  # Slippage bucket {LOW, MEDIUM, HIGH}; MEDIUM is the primary.
+  slippage_bucket: MEDIUM
+  # Backtest reports go under this root; git-ignored by the existing
+  # data/derived/** pattern.
+  reports_root: data/derived/backtests
+  # FAKE is the ONLY supported adapter in Phase 3. Any later live
+  # adapter requires a phase-gate-approved phase that adds a new
+  # BacktestAdapter value.
+  adapter: FAKE

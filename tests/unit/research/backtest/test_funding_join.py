@@ -1,0 +1,112 @@
+from __future__ import annotations
+
+import pytest
+
+from prometheus.core.symbols import Symbol
+from prometheus.research.backtest.funding_join import apply_funding_accrual
+from tests.unit.strategy.conftest import funding
+
+ANCHOR = 1_772_582_400_000
+EIGHT_HOURS_MS = 8 * 60 * 60 * 1000
+
+
+def _events(rates: list[float], symbol: Symbol = Symbol.BTCUSDT) -> list:
+    return [
+        funding(symbol=symbol, funding_time=ANCHOR + i * EIGHT_HOURS_MS, funding_rate=r)
+        for i, r in enumerate(rates)
+    ]
+
+
+def test_no_events_in_window() -> None:
+    events = _events([0.0001, 0.0002, -0.0001])
+    total, matched = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR + 100 * EIGHT_HOURS_MS,
+        exit_fill_time_ms=ANCHOR + 101 * EIGHT_HOURS_MS,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    assert total == 0.0
+    assert matched == []
+
+
+def test_long_pays_positive_rate() -> None:
+    events = _events([0.0001])  # rate > 0, long pays
+    total, matched = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR - 1,
+        exit_fill_time_ms=ANCHOR + 1,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    assert len(matched) == 1
+    # Long's funding_pnl = notional * rate * (-direction_sign) = 1000 * 0.0001 * -1 = -0.1
+    assert total == pytest.approx(-0.1)
+
+
+def test_short_receives_positive_rate() -> None:
+    events = _events([0.0001])
+    total, _ = apply_funding_accrual(
+        direction_long=False,
+        entry_fill_time_ms=ANCHOR - 1,
+        exit_fill_time_ms=ANCHOR + 1,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    # Short's funding_pnl = 1000 * 0.0001 * +1 = +0.1
+    assert total == pytest.approx(0.1)
+
+
+def test_inclusive_both_ends() -> None:
+    """Per GAP-20260419-019 operator decision: window is inclusive both ends."""
+    events = _events([0.0001])
+    # Event exactly AT entry time -> included.
+    total_at_entry, matched_entry = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR,
+        exit_fill_time_ms=ANCHOR + 1_000,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    assert len(matched_entry) == 1
+    # Event exactly AT exit time -> included.
+    total_at_exit, matched_exit = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR - 1_000,
+        exit_fill_time_ms=ANCHOR,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    assert len(matched_exit) == 1
+
+
+def test_multiple_events_summed() -> None:
+    events = _events([0.0001, 0.0002, 0.0003])
+    total, matched = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR - 1,
+        exit_fill_time_ms=ANCHOR + 3 * EIGHT_HOURS_MS,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    assert len(matched) == 3
+    assert total == pytest.approx(-(0.0001 + 0.0002 + 0.0003) * 1_000.0)
+
+
+def test_invalid_inputs() -> None:
+    with pytest.raises(ValueError):
+        apply_funding_accrual(
+            direction_long=True,
+            entry_fill_time_ms=100,
+            exit_fill_time_ms=50,
+            position_notional_usdt=1_000.0,
+            funding_events=[],
+        )
+    with pytest.raises(ValueError):
+        apply_funding_accrual(
+            direction_long=True,
+            entry_fill_time_ms=100,
+            exit_fill_time_ms=200,
+            position_notional_usdt=0.0,
+            funding_events=[],
+        )
