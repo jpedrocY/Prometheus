@@ -824,4 +824,183 @@ Resolution evidence:
 
 ---
 
+## GAP-20260424-030 — Break-even rule text conflicts with spec Open Question #8
+
+Status:              OPEN
+Phase discovered:    2f (strategy review)
+Area:                STRATEGY
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 380, 564), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+
+Description:
+The strategy spec asserts the Stage-4 break-even rule as "when the trade reaches +1.5 R MFE, move the stop to break-even" (line 380). The same spec's Open Questions section (line 564) lists "Should the break-even transition happen at +1.5 R or +2.0 R?" as an unresolved research question. Treating the same value as both a locked rule and an open question is internally inconsistent.
+
+Why it matters:
+Variant-design discipline requires a clear structural / parametric boundary. If +1.5 R is "locked," no variant may touch it. If it is an open question, Phase 2f's hypothesis list may propose a test. The Phase 2f memo treats the value as parametric (consistent with Open Q #8) and proposes H-D3 (+2.0 R) as the wave-1 resolution test. No spec edit is proposed in 2f.
+
+Options considered:
+- Option A: Update the spec to remove the "research default, revisable" status — declare +1.5 R locked. Would forbid H-D3.
+- Option B: Update the spec to explicitly mark +1.5 R as a research default, aligning with Open Q #8. Would preserve H-D3.
+- Option C: Leave the spec alone and let H-D3 (and the memo entry for this GAP) constitute the de-facto resolution record.
+
+Recommended resolution:
+Option C for 2f (docs-only). The H-D3 result (from a future execution phase) produces the empirical basis for a later Option B spec edit if the alternative threshold is accepted, or a formal Option A declaration if +1.5 R is retained.
+
+Operator decision:
+pending
+
+Resolution evidence:
+pending H-D3 execution-phase results and subsequent spec update.
+
+---
+
+## GAP-20260424-031 — EMA slope wording ambiguous: discrete comparison vs. fitted slope
+
+Status:              OPEN
+Phase discovered:    2f (strategy review)
+Area:                STRATEGY
+Blocking phase:      NON_BLOCKING for 2f; PRE_DRY_RUN for HTF-bias variant implementation
+Risk level:          MEDIUM
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 156–172), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+
+Description:
+The spec defines long bias as "1h EMA(50) is rising versus 3 completed 1h candles earlier" (line 160) and short bias as "1h EMA(50) is falling versus 3 completed 1h candles earlier" (line 168). The phrase is ambiguous: "rising versus N candles earlier" could mean (a) a discrete comparison `EMA[now] > EMA[now − 3h]`, or (b) a fitted slope over the last 3 (or 4) completed 1h bars. These are materially different definitions and can yield different bias outputs at regime turning points.
+
+Why it matters:
+Variant H-C1 in the Phase 2f memo tests a different EMA pair (20/100) but preserves the existing slope rule literally. If the slope rule itself is ambiguous, variant results are only interpretable after the operational definition is pinned. For 2f (docs-only) the memo adopts the discrete-comparison interpretation as the implementation convention; a future variant-execution phase must (a) confirm or override that convention in its Gate 1 plan, and (b) if a fitted-slope interpretation is later selected, run it as a separate hypothesis H-C2, not as a silent change.
+
+Options considered:
+- Option A: Pin "discrete comparison" as the official v1 definition (edit spec lines 160 and 168). Simplest; matches the implementation convention. Out of scope for 2f.
+- Option B: Pin "fitted slope" with a specified fit (e.g., linear regression over last 4 completed 1h bars). More complex; would require code changes.
+- Option C: Defer pinning; require any HTF-bias variant to explicitly specify the definition in its Gate 1 plan.
+
+Recommended resolution:
+Option C for 2f. The memo records the discrete-comparison interpretation as the working default. An execution-phase Gate 1 plan explicitly re-declares the interpretation. A separate wave-1 / wave-2 hypothesis H-C2 may later compare discrete vs. fitted as a standalone test.
+
+Operator decision:
+pending
+
+Resolution evidence:
+pending execution-phase Gate 1 plan that pins the definition.
+
+---
+
+## GAP-20260424-032 — Backtest uses trade-price stops; live uses MARK_PRICE stops
+
+Status:              OPEN
+Phase discovered:    2f (strategy review)
+Area:                STRATEGY
+Blocking phase:      NON_BLOCKING for 2f; PRE_PAPER_SHADOW for live-readiness claims
+Risk level:          MEDIUM
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 332), `docs/03-strategy-research/v1-breakout-backtest-plan.md` (§"Stop trigger reference", lines 180–181), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+
+Description:
+The live protective stop uses `workingType=MARK_PRICE` (spec line 332, per the Binance USDⓈ-M order model). The backtest plan specifies that the primary backtest simulation uses trade-price bars, with mark-price sensitivity as a separate, explicitly scoped sensitivity test (backtest-plan §Stop trigger reference, lines 180–181). The Phase 2e baseline reports zero stop gap-through events under the trade-price model; whether the same is true under a mark-price stop-trigger model is not yet measured.
+
+Why it matters:
+Any promotion claim that depends on stop behavior is fragile if only trade-price stop simulation has been done. For Phase 2f (docs-only, no runs), the GAP is non-blocking. For any future variant wave that intends to promote a candidate toward paper/shadow, a mark-price stop-trigger sensitivity must be part of the required report cuts, not an optional extra.
+
+Options considered:
+- Option A: Require mark-price stop-trigger sensitivity as a mandatory report cut in every variant wave from 2g onward.
+- Option B: Defer mark-price sensitivity until the first paper/shadow readiness review.
+- Option C: Run mark-price sensitivity once on the H0 baseline in a small out-of-wave audit, then re-evaluate.
+
+Recommended resolution:
+Option A. Mark-price sensitivity is a pre-declared required report cut in the Phase 2f Gate 1 plan's comparison framework for any future execution phase. Cost for Phase 2f itself: zero (docs only).
+
+Operator decision:
+pending (for execution-phase commitment)
+
+Resolution evidence:
+pending — to be cited from the execution-phase Gate 1 plan.
+
+---
+
+## GAP-20260424-033 — Stagnation window not in Open Questions but discussed as metric
+
+Status:              OPEN
+Phase discovered:    2f (strategy review)
+Area:                STRATEGY
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 415), `docs/03-strategy-research/v1-breakout-backtest-plan.md` (§Metrics — stagnation-exit frequency), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+
+Description:
+The spec fixes the stagnation exit as "if, after 8 completed 15m bars from entry, the trade has not reached at least +1.0 R MFE, exit at market" (line 415). This rule is not listed in the spec's Open Questions section. The backtest plan, however, treats "stagnation-exit frequency" as a trade-quality metric to review (implying the value may be revisable based on evidence). The Phase 2e baseline shows stagnation is the second most common exit reason (BTC 19/41, ETH 11/47) — non-trivial share.
+
+Why it matters:
+Variant-design discipline needs to know whether H-D5 (stagnation window variant, 6/10/12 bars) is a legitimate parametric variant or a structural change. For 2f the memo classifies it as parametric (since the backtest plan discusses the value as something whose frequency informs future decisions), but flags it for operator confirmation before any wave-1 / wave-2 run that includes H-D5.
+
+Options considered:
+- Option A: Treat stagnation window as parametric; add an explicit Open Question to the spec (line ~567).
+- Option B: Keep stagnation window locked; H-D5 is out of scope.
+- Option C: Defer classification; no wave includes H-D5 until a spec update.
+
+Recommended resolution:
+Option C for 2f (defer). Wave 1 does not include H-D5 (gate 1 condition 3 caps exit/management variants at one — H-D3 takes that slot). If a later wave wants H-D5, its Gate 1 plan resolves this GAP first.
+
+Operator decision:
+pending (for execution-phase decision if H-D5 is ever proposed)
+
+Resolution evidence:
+pending — see future execution-phase Gate 1 plan if H-D5 is proposed.
+
+---
+
+## GAP-20260424-034 — "Previous 8 completed 15m candles" convention verified in implementation
+
+Status:              RESOLVED (verification-only)
+Phase discovered:    2f (strategy review)
+Area:                STRATEGY / DOCS
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/strategy/v1_breakout/setup.py`, `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 123), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+
+Description:
+The spec says "the previous 8 completed 15m candles" (line 123). In principle this could be interpreted as either `[N−8 .. N−1]` or `[N−9 .. N−2]` where `N` is the breakout bar. `src/prometheus/strategy/v1_breakout/setup.py` (lines 3–12, 31–35) explicitly documents the convention:
+
+> "The 'current' bar (breakout candidate) is NOT part of the window." — and — "These are the 8 bars STRICTLY BEFORE the breakout candidate bar. `atr_20_15m` is evaluated at the close of the LAST bar in the window (position [-1]; NOT the breakout bar)."
+
+Why it matters:
+Future variant hypotheses that vary window length (H-A1) must preserve the strictly-before semantics. The Phase 2f memo records the convention so hypothesis code does not accidentally redefine it.
+
+Options considered:
+- Option A: Accept the implementation convention and document it in the memo. No code change.
+- Option B: Redefine the convention. Would require a code change and re-running the Phase 2e baseline — rejected for 2f.
+
+Recommended resolution:
+Option A.
+
+Operator decision:
+accepted (convention already consistent across spec + implementation + Phase 2e run)
+
+Resolution evidence:
+`src/prometheus/strategy/v1_breakout/setup.py` lines 3–12 and 31–35 document the convention. The Phase 2f memo §1.5 quotes those lines and commits the convention for wave-1 hypothesis H-A1.
+
+---
+
+## GAP-20260424-035 — Sizing formula fully specified in implementation, not in spec
+
+Status:              RESOLVED (documentation-only)
+Phase discovered:    2f (strategy review)
+Area:                STRATEGY / DOCS
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `src/prometheus/research/backtest/sizing.py`, `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 317–323), `docs/07-risk/position-sizing-framework.md`, `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+
+Description:
+The strategy spec (§Sizing lines 317–323) states that position size is the min of stop-based risk size, max-leverage-based size, leverage-bracket-compliant size, and internal hard notional cap — but does not write out the per-factor formula. The full pipeline is defined in `src/prometheus/research/backtest/sizing.py` lines 1–19 and `docs/07-risk/position-sizing-framework.md`.
+
+Why it matters:
+Any variant that changes sizing inputs (risk_fraction, risk_usage_fraction, max_effective_leverage, max_notional_internal, stop_distance via stop-rule changes) needs a single canonical formula reference. The Phase 2f memo §1.5 records the full pipeline verbatim from the implementation. No code change is proposed in 2f.
+
+Operator decision:
+accepted (documentation already complete across risk-doc + implementation; memo quotes the pipeline explicitly)
+
+Resolution evidence:
+Phase 2f memo §1.5 cites `src/prometheus/research/backtest/sizing.py:1–19` and quotes the 10-step pipeline plus the `SizingLimitedBy` labels. Phase 2e baseline funnel confirms zero sizing rejections at Phase 3 defaults, consistent with the pipeline.
+
+---
+
 
