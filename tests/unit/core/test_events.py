@@ -72,3 +72,28 @@ def test_negative_funding_rate_accepted_under_bound() -> None:
     # Negative funding rates are legitimate (shorts pay longs).
     event = FundingRateEvent(**_kwargs(funding_rate=-0.0005))
     assert event.funding_rate == -0.0005
+
+
+# Per GAP-20260420-029: Binance fundingRate returns markPrice="" for
+# pre-2024 funding events. The model represents this as mark_price=None.
+
+
+def test_none_mark_price_accepted() -> None:
+    """Missing markPrice from pre-2024 Binance funding events -> mark_price=None."""
+    event = FundingRateEvent(**_kwargs(mark_price=None))
+    assert event.mark_price is None
+    # All other fields remain validated.
+    assert event.symbol is Symbol.BTCUSDT
+    assert event.funding_rate == 0.0001
+
+
+def test_none_mark_price_still_rejects_invalid_funding_rate() -> None:
+    """Optional mark_price does not relax the funding_rate magnitude check."""
+    with pytest.raises(ValidationError):
+        FundingRateEvent(**_kwargs(mark_price=None, funding_rate=1.5))
+
+
+def test_none_mark_price_still_rejects_bad_funding_time() -> None:
+    """Optional mark_price does not relax the funding_time check."""
+    with pytest.raises(ValidationError):
+        FundingRateEvent(**_kwargs(mark_price=None, funding_time=-1))
