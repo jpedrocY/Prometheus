@@ -721,6 +721,87 @@ Resolution evidence:
 
 ---
 
+## GAP-20260420-029 — Binance `/fapi/v1/fundingRate` returns EMPTY `markPrice` for pre-2024 events (HIGH risk; resolved via Option C)
+
+Status:              RESOLVED — Option C implemented (`FundingRateEvent.mark_price: float | None`); full-range backfill unblocked
+Phase discovered:    2e (Gate-2 TD-006 verification, 2026-04-20)
+Area:                EXCHANGE_API / DATA
+Blocking phase:      PRE_PHASE_2E_FUNDING_BACKFILL (blocks the funding slice of the widened 2022-01 through 2026-03 range)
+Risk level:          HIGH (per Phase 2e Gate 1 condition 11: any divergence from verified source assumptions is logged at HIGH risk and escalated)
+Related docs:        `src/prometheus/core/events.py`, `src/prometheus/research/data/funding_rate.py`, `docs/00-meta/implementation-reports/2026-04-20_phase-2e_gate-1-plan.md`
+
+Description:
+Gate-1 condition 11 required a TD-006-style pre-backfill verification of the fundingRate endpoint behavior for the extended 2022-01 through 2026-03 range. Sampling live today (2026-04-20):
+
+```
+# 2022-01-01 BTCUSDT (startTime=1640995200000, first funding window of 2022):
+{"symbol":"BTCUSDT","fundingTime":1640995200006,"fundingRate":"0.00010000","markPrice":""}
+# All 5 events in that sample: markPrice = ""
+
+# 2023-01-01 BTCUSDT (startTime=1672531200000):
+{"symbol":"BTCUSDT","fundingTime":1672531200000,"fundingRate":"0.00010000","markPrice":""}
+# All 4 events: markPrice = ""
+
+# 2024-01-01 BTCUSDT (startTime=1704067200000):
+{"symbol":"BTCUSDT","fundingTime":1704067200000,"fundingRate":"0.00037409","markPrice":"42313.90000000"}
+# All events: markPrice populated as numeric-looking string
+
+# 2025-07 BTCUSDT (startTime=1751328000000): markPrice populated (e.g. "107096.82611594")
+# 2026-03 BTCUSDT: markPrice populated (Phase 2c verified)
+```
+
+**Binance's public fundingRate endpoint returns `markPrice` as an empty string `""` for funding events in 2022 and 2023.** The exact cutoff date where Binance started populating `markPrice` retroactively or from that day forward is not documented; we've confirmed populated values from 2024-01-01 onward and empty values for 2022-01-01 and 2023-01-01.
+
+This conflicts with repo assumptions in TWO places:
+
+1. `src/prometheus/research/data/funding_rate.py::normalize_funding_events` line 136 executes `float(raw["markPrice"])`. On empty string this raises `ValueError` and is wrapped in `DataIntegrityError: funding event {index} numeric cast failed: could not convert string to float: ''`.
+
+2. `src/prometheus/core/events.py::FundingRateEvent._validate` enforces `if self.mark_price <= 0: raise ValueError("mark_price must be strictly positive")`. Even if empty strings were coerced to `0.0`, the model would reject them at construction.
+
+**Consequence for Phase 2e:**
+- The `ingest_funding_range` call for any symbol for a date range covering 2022 or 2023 will fail at the first empty-markPrice event.
+- The widened 2022-01 through 2026-03 default range cannot be backfilled for funding data without a resolution decision.
+- Kline and mark-price backfill are unaffected (those datasets don't depend on fundingRate's markPrice).
+
+**Why Phase 2c missed this:** Phase 2c's TD-006 WebFetch sampled only 2026-03 data, where `markPrice` is populated. No test covered the empty-string case; the Phase 2c unit tests in `tests/unit/research/data/test_funding_rate.py` construct raw events with valid numeric strings (e.g. `"65000.0"`) or explicitly rejected `"0"`, never `""`.
+
+**Why it matters:**
+- Funding is a material cost component in the v1 backtester's net-PnL accounting (inclusive-both-ends join per GAP-20260419-019).
+- If Phase 2e proceeds without funding data for 2022–2023, any baseline trade held in that window will have `funding_pnl = 0` in its trade record, which understates cost (but does not fabricate revenue — `funding_pnl = 0` matches "no data joined" correctly, just with degraded accuracy).
+- The decision is: do we narrow the funding range, change the model to accept missing markPrice, or narrow the whole Phase 2e range?
+
+Options considered:
+
+- **Option A — Narrow funding range; keep kline/mark-price at 2022-01 through 2026-03.** Run `ingest_funding_range` only for 2024-01 through 2026-03. Kline and mark-price cover the full 2022-01 through 2026-03. Clearly document the coverage mismatch in the baseline summary. No code changes. Lowest risk; matches actual upstream data availability. Backtester's funding join is time-based; trades in 2022-2023 silently receive `funding_pnl = 0`.
+- **Option B — Narrow entire Phase 2e range to 2024-01 through 2026-03 (27 months).** This matches Gate 1 plan §7.2 Option B. All datasets consistent. Smaller sample but avoids the spec-gap entirely. No code changes.
+- **Option C — Update `FundingRateEvent.mark_price` to `Optional[float]` and skip empty in `normalize_funding_events`.** Code change to a core domain model. Requires tests for None handling, storage/read-path handling of nullable fields, backtester's funding-join handling of None markPrice. Moderately invasive; breaks existing Phase 2c invariants that mark_price is strictly positive.
+- **Option D — Skip empty-markPrice events in `normalize_funding_events` with an accumulating `InvalidWindow`-style record and no model change.** Drops the event entirely for 2022-2023; the backtester's funding join for those years returns zero events. Smaller code change than C. Still a core-code change; still loses information (Binance's `fundingRate` and `fundingTime` are populated, just markPrice isn't).
+
+Recommended resolution:
+**Option A** for Phase 2e. Keeps Phase 2e a zero-core-code phase. Matches actual upstream data availability. Clearly documents the coverage boundary in both baseline summary and Gate 2 report. No model changes deferred to a later phase if retroactive-markPrice-backfill becomes available or if strict-positivity of markPrice is later relaxed.
+
+Operator decision:
+Approved 2026-04-20 — **Option C with narrow scope**:
+- core `FundingRateEvent.mark_price` becomes `float | None`;
+- empty markPrice from Binance normalizes to `None`;
+- non-empty numeric markPrice still parses as positive float; malformed non-empty raises loudly;
+- funding-rate Parquet schema made nullable on `mark_price`;
+- backtester's funding accrual uses `funding_rate` + position notional only (no mark_price dependency, verified);
+- focused tests added covering empty-string → None, populated → float, malformed → raise, model-level optional handling, Parquet None round-trip, and funding-join math with None.
+
+Phase 2e proceeds at the full approved range (2022-01 through 2026-03) for all four datasets. Funding-event coverage across the full range includes events with None markPrice (pre-2024) and populated markPrice (2024+).
+
+Resolution evidence:
+- `src/prometheus/core/events.py`: `FundingRateEvent.mark_price: float | None`; validator only checks `> 0` when not None.
+- `src/prometheus/research/data/funding_rate.py::normalize_funding_events`: empty string (`""`) and Python `None` upstream → `mark_price=None`; malformed non-empty → `DataIntegrityError`.
+- `src/prometheus/research/data/storage.py`: `FUNDING_RATE_EVENT_ARROW_SCHEMA` field `mark_price` is `nullable=True`. Existing `_table_from_funding_events` and `_row_to_funding_event` are shape-compatible with `None` via pyarrow's null handling.
+- `src/prometheus/research/backtest/funding_join.py`: `apply_funding_accrual` reads only `event.funding_rate`; no `mark_price` access — confirmed by `grep mark_price src/prometheus/research/backtest/` (zero hits).
+- Tests: added 3 model tests (`test_events.py`), 6 normalization tests (`test_funding_rate.py`), 2 storage round-trip tests (`test_storage.py`), 2 funding-join compatibility tests (`test_funding_join.py`).
+- Quality gates after the update: `ruff check .` passed, `ruff format --check` clean on 112 files, `mypy` green on 48 source files, `pytest` 387 passed (was 374 pre-Option-C; +13 new tests).
+- Branch: `phase-2e/wider-historical-backfill` @ working tree (not yet committed per Phase 2e Gate-2-stop rule).
+
+---
+
 ## GAP-20260419-025 — Phase 2e wider historical backfill proposed; Phase 3 completes on 2026-03 only
 
 Status:              DEFERRED

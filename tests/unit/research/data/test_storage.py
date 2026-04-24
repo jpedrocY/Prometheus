@@ -182,3 +182,80 @@ def test_attach_dataset_view_rejects_bad_view_name(tmp_path: Path) -> None:
     con = duckdb.connect()
     with pytest.raises(ValueError):
         attach_dataset_view(con, "bad;view", tmp_path)
+
+
+# ---------------------------------------------------------------------------
+# Funding-rate nullable mark_price round-trip (GAP-20260420-029)
+# ---------------------------------------------------------------------------
+
+
+def test_funding_rate_round_trip_with_none_mark_price(tmp_path: Path) -> None:
+    """A FundingRateEvent with mark_price=None must survive Parquet round-trip."""
+    from prometheus.core.events import FundingRateEvent
+    from prometheus.research.data.storage import (
+        read_funding_rate_events,
+        write_funding_rate_events,
+    )
+
+    events = [
+        FundingRateEvent(
+            symbol=Symbol.BTCUSDT,
+            funding_time=1_640_995_200_006,  # 2022-01-01
+            funding_rate=0.00010000,
+            mark_price=None,  # pre-2024 Binance behavior
+            source="test",
+        ),
+        FundingRateEvent(
+            symbol=Symbol.BTCUSDT,
+            funding_time=1_704_067_200_000,  # 2024-01-01
+            funding_rate=0.00037409,
+            mark_price=42313.90,  # populated
+            source="test",
+        ),
+    ]
+    write_funding_rate_events(
+        tmp_path,
+        events,
+        dataset_version="binance_usdm_btcusdt_funding__v002",
+        schema_version="funding_rate_event_v1",
+        pipeline_version="test",
+    )
+    read_back = read_funding_rate_events(tmp_path, symbol=Symbol.BTCUSDT)
+    assert len(read_back) == 2
+    # Sort by funding_time for deterministic comparison (storage sorts by
+    # symbol then funding_time already, but be explicit in assertions).
+    read_back_sorted = sorted(read_back, key=lambda e: e.funding_time)
+    assert read_back_sorted[0].mark_price is None
+    assert read_back_sorted[0].funding_rate == 0.00010000
+    assert read_back_sorted[1].mark_price == 42313.90
+    assert read_back_sorted[1].funding_rate == 0.00037409
+
+
+def test_funding_rate_round_trip_only_none_mark_prices(tmp_path: Path) -> None:
+    """A window containing only pre-2024 events (all None) must round-trip."""
+    from prometheus.core.events import FundingRateEvent
+    from prometheus.research.data.storage import (
+        read_funding_rate_events,
+        write_funding_rate_events,
+    )
+
+    events = [
+        FundingRateEvent(
+            symbol=Symbol.ETHUSDT,
+            funding_time=1_640_995_200_000 + i * 8 * 60 * 60 * 1000,
+            funding_rate=0.00005 * (i + 1),
+            mark_price=None,
+            source="test",
+        )
+        for i in range(3)
+    ]
+    write_funding_rate_events(
+        tmp_path,
+        events,
+        dataset_version="binance_usdm_ethusdt_funding__v002",
+        schema_version="funding_rate_event_v1",
+        pipeline_version="test",
+    )
+    read_back = read_funding_rate_events(tmp_path, symbol=Symbol.ETHUSDT)
+    assert len(read_back) == 3
+    assert all(e.mark_price is None for e in read_back)

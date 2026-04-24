@@ -110,3 +110,66 @@ def test_invalid_inputs() -> None:
             position_notional_usdt=0.0,
             funding_events=[],
         )
+
+
+# Per GAP-20260420-029: Binance fundingRate returns markPrice="" for
+# pre-2024 funding events. FundingRateEvent.mark_price is Optional.
+# apply_funding_accrual uses only funding_rate and the position
+# notional; None mark_price must NOT affect funding math.
+
+
+def test_funding_accrual_works_with_none_mark_price() -> None:
+    """An event with mark_price=None still accrues via funding_rate."""
+    from prometheus.core.events import FundingRateEvent
+
+    events = [
+        FundingRateEvent(
+            symbol=Symbol.BTCUSDT,
+            funding_time=ANCHOR,
+            funding_rate=0.0001,
+            mark_price=None,  # pre-2024 upstream behavior
+            source="test",
+        )
+    ]
+    total, matched = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR - 1,
+        exit_fill_time_ms=ANCHOR + 1,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    # Expected: 1000 * 0.0001 * -1 = -0.1 (long pays positive-rate funding).
+    assert len(matched) == 1
+    assert total == pytest.approx(-0.1)
+
+
+def test_funding_accrual_mixes_none_and_populated_mark_prices() -> None:
+    """Pre-2024 (None) and 2024+ (populated) events coexist without special-casing."""
+    from prometheus.core.events import FundingRateEvent
+
+    events = [
+        FundingRateEvent(
+            symbol=Symbol.BTCUSDT,
+            funding_time=ANCHOR,
+            funding_rate=0.0001,
+            mark_price=None,
+            source="test",
+        ),
+        FundingRateEvent(
+            symbol=Symbol.BTCUSDT,
+            funding_time=ANCHOR + EIGHT_HOURS_MS,
+            funding_rate=0.0002,
+            mark_price=50_000.0,
+            source="test",
+        ),
+    ]
+    total, matched = apply_funding_accrual(
+        direction_long=True,
+        entry_fill_time_ms=ANCHOR - 1,
+        exit_fill_time_ms=ANCHOR + EIGHT_HOURS_MS + 1,
+        position_notional_usdt=1_000.0,
+        funding_events=events,
+    )
+    assert len(matched) == 2
+    # Sum: 1000 * (0.0001 + 0.0002) * -1 = -0.3
+    assert total == pytest.approx(-0.3)

@@ -202,3 +202,95 @@ def test_normalize_rejects_non_numeric_rate() -> None:
     ]
     with pytest.raises(DataIntegrityError):
         normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
+
+
+# Per GAP-20260420-029: Binance fundingRate returns markPrice="" for
+# pre-2024 funding events. normalize_funding_events must treat
+# empty string as None, not as a parse failure.
+
+
+def test_normalize_empty_mark_price_becomes_none() -> None:
+    """Pre-2024 Binance funding events have markPrice='' -> mark_price=None."""
+    raw = [
+        {
+            "symbol": "BTCUSDT",
+            "fundingTime": 1_640_995_200_006,  # 2022-01-01
+            "fundingRate": "0.00010000",
+            "markPrice": "",
+        }
+    ]
+    events = normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
+    assert len(events) == 1
+    assert events[0].mark_price is None
+    assert events[0].funding_rate == 0.00010000
+    assert events[0].funding_time == 1_640_995_200_006
+
+
+def test_normalize_null_mark_price_becomes_none() -> None:
+    """JSON null for markPrice is also treated as None (defensive)."""
+    raw: list[dict[str, Any]] = [
+        {
+            "symbol": "BTCUSDT",
+            "fundingTime": 1_640_995_200_006,
+            "fundingRate": "0.00010000",
+            "markPrice": None,
+        }
+    ]
+    events = normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
+    assert events[0].mark_price is None
+
+
+def test_normalize_numeric_mark_price_still_parses_as_positive_float() -> None:
+    """2024+ events with numeric markPrice still land as positive floats."""
+    raw = [
+        {
+            "symbol": "BTCUSDT",
+            "fundingTime": 1_704_067_200_000,  # 2024-01-01
+            "fundingRate": "0.00037409",
+            "markPrice": "42313.90000000",
+        }
+    ]
+    events = normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
+    assert events[0].mark_price == 42313.90
+    assert events[0].mark_price > 0
+
+
+def test_normalize_rejects_malformed_non_empty_mark_price() -> None:
+    """Non-empty, non-numeric markPrice must still fail loudly (no silent drop)."""
+    raw = [
+        {
+            "symbol": "BTCUSDT",
+            "fundingTime": 1,
+            "fundingRate": "0.0001",
+            "markPrice": "not-a-price",
+        }
+    ]
+    with pytest.raises(DataIntegrityError):
+        normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
+
+
+def test_normalize_rejects_negative_mark_price() -> None:
+    """A negative numeric markPrice must still be rejected by the model."""
+    raw = [
+        {
+            "symbol": "BTCUSDT",
+            "fundingTime": 1,
+            "fundingRate": "0.0001",
+            "markPrice": "-1.0",
+        }
+    ]
+    with pytest.raises(DataIntegrityError):
+        normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
+
+
+def test_normalize_rejects_missing_mark_price_key() -> None:
+    """A missing markPrice KEY (rather than empty string value) still raises."""
+    raw: list[dict[str, Any]] = [
+        {
+            "symbol": "BTCUSDT",
+            "fundingTime": 1,
+            "fundingRate": "0.0001",
+        }
+    ]
+    with pytest.raises(DataIntegrityError):
+        normalize_funding_events(raw, expected_symbol=Symbol.BTCUSDT, source="test")
