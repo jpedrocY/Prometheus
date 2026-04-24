@@ -117,12 +117,23 @@ def normalize_funding_events(
 ) -> list[FundingRateEvent]:
     """Convert raw Binance funding-rate JSON objects into typed events.
 
-    Binance returns ``fundingRate`` and ``markPrice`` as string-decimals;
-    this function parses them as ``float``. A mismatched ``symbol`` field
-    raises :class:`DataIntegrityError`.
+    Binance returns ``fundingRate`` as a string-decimal; this function
+    parses it as ``float``. A mismatched ``symbol`` raises
+    :class:`DataIntegrityError`.
+
+    ``markPrice`` handling per GAP-20260420-029:
+      - Empty string ``""`` -> ``mark_price = None`` (Binance does not
+        populate markPrice for pre-2024 funding events).
+      - Missing key (``None``) -> ``mark_price = None``.
+      - Numeric-looking string -> parsed as float; must be strictly
+        positive (the model enforces this on construction).
+      - Malformed non-empty markPrice -> ``DataIntegrityError``.
     """
     result: list[FundingRateEvent] = []
     for index, raw in enumerate(raw_events):
+        # Per GAP-20260420-029: markPrice may be present but empty.
+        # It is still a required KEY in the upstream schema, so a
+        # missing key is treated as malformed. Empty string is valid.
         missing = {"symbol", "fundingTime", "fundingRate", "markPrice"} - raw.keys()
         if missing:
             raise DataIntegrityError(f"funding event {index} missing fields {sorted(missing)}")
@@ -133,10 +144,22 @@ def normalize_funding_events(
             )
         try:
             funding_rate = float(raw["fundingRate"])
-            mark_price = float(raw["markPrice"])
             funding_time = int(raw["fundingTime"])
         except (TypeError, ValueError) as exc:
             raise DataIntegrityError(f"funding event {index} numeric cast failed: {exc}") from exc
+
+        raw_mark_price = raw["markPrice"]
+        mark_price: float | None
+        if raw_mark_price is None or raw_mark_price == "":
+            # Upstream absence. Do not coerce to 0.0; do not derive.
+            mark_price = None
+        else:
+            try:
+                mark_price = float(raw_mark_price)
+            except (TypeError, ValueError) as exc:
+                raise DataIntegrityError(
+                    f"funding event {index} markPrice cast failed: {exc}"
+                ) from exc
 
         try:
             event = FundingRateEvent(

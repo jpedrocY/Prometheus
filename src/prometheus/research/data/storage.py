@@ -115,7 +115,9 @@ FUNDING_RATE_EVENT_ARROW_SCHEMA: pa.Schema = pa.schema(
         pa.field("symbol", pa.string(), nullable=False),
         pa.field("funding_time", pa.int64(), nullable=False),
         pa.field("funding_rate", pa.float64(), nullable=False),
-        pa.field("mark_price", pa.float64(), nullable=False),
+        # mark_price is nullable per GAP-20260420-029: Binance does not
+        # populate markPrice for funding events before ~2024-01-01.
+        pa.field("mark_price", pa.float64(), nullable=True),
         pa.field("source", pa.string(), nullable=False),
     ]
 )
