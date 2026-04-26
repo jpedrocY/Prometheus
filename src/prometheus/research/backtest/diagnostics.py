@@ -66,7 +66,11 @@ from prometheus.strategy.v1_breakout.bias import (
     EMA_SLOW,  # noqa: F401 — re-exported for backwards-compatible imports
     SLOPE_LOOKBACK,
 )
-from prometheus.strategy.v1_breakout.setup import SETUP_SIZE, detect_setup  # noqa: F401
+from prometheus.strategy.v1_breakout.setup import (
+    SETUP_SIZE,
+    detect_setup,  # noqa: F401
+    detect_setup_volatility_percentile,
+)
 from prometheus.strategy.v1_breakout.stop import (
     compute_initial_stop,
     passes_stop_distance_filter,
@@ -78,7 +82,10 @@ from prometheus.strategy.v1_breakout.trigger import (
     CLOSE_LOCATION_RATIO,
     TRUE_RANGE_ATR_MULT,  # noqa: F401 — re-exported for backwards-compatible imports
 )
-from prometheus.strategy.v1_breakout.variant_config import V1BreakoutConfig
+from prometheus.strategy.v1_breakout.variant_config import (
+    SetupPredicateKind,
+    V1BreakoutConfig,
+)
 
 from .config import BacktestConfig
 from .sizing import RejectionReason, compute_size
@@ -122,6 +129,10 @@ class _IncrementalIndicators:
         self.ema_fast_latest: float = float("nan")
         self.ema_slow_latest: float = float("nan")
         self.ema_fast_history: deque[float] = deque(maxlen=SLOPE_LOOKBACK + 1)
+        # 15m prior-bar ATR(20) history for the R1a percentile predicate
+        # (mirrors StrategySession._15m_prior_atr_history; populated only with
+        # non-NaN trailing values).
+        self.prior15_atr_history: deque[float] = deque()
 
     def ingest_15m(self, bar: NormalizedKline) -> None:
         tr = true_range(bar.high, bar.low, self.prev15_close)
@@ -135,6 +146,9 @@ class _IncrementalIndicators:
             self.tr15_warmup = []
         else:
             self.atr15_latest = ((ATR_PERIOD - 1) * self.atr15_latest + tr) / ATR_PERIOD
+        # Maintain prior-bar ATR history (matches StrategySession behavior).
+        if self.atr15_before == self.atr15_before:  # not NaN
+            self.prior15_atr_history.append(self.atr15_before)
 
     def ingest_1h(self, bar: NormalizedKline) -> None:
         tr = true_range(bar.high, bar.low, self.prev1h_close)
@@ -313,7 +327,12 @@ def run_signal_funnel(
     setup_size = sc.setup_size
     expansion_atr_mult = sc.expansion_atr_mult
     min_1h_bars_for_bias = sc.ema_slow + SLOPE_LOOKBACK
-    min_15m_bars_for_signal = ATR_PERIOD + 1 + setup_size + 1
+    base_min_15m = ATR_PERIOD + 1 + setup_size + 1
+    if sc.setup_predicate_kind == SetupPredicateKind.VOLATILITY_PERCENTILE:
+        percentile_floor = sc.setup_percentile_lookback + ATR_PERIOD + 1
+        min_15m_bars_for_signal = max(base_min_15m, percentile_floor)
+    else:
+        min_15m_bars_for_signal = base_min_15m
 
     counts = SignalFunnelCounts(symbol=symbol)
     counts.total_15m_bars_loaded = len(klines_15m)
@@ -390,7 +409,17 @@ def run_signal_funnel(
             counts.rejected_no_valid_setup += 1
             continue
         prior_bars = list(recent15)[-(setup_size + 1) : -1]
-        setup = detect_setup(prior_bars, atr_prior_15m, setup_size=setup_size)
+        if sc.setup_predicate_kind == SetupPredicateKind.VOLATILITY_PERCENTILE:
+            setup = detect_setup_volatility_percentile(
+                prior_bars,
+                atr_prior_15m,
+                tuple(ind.prior15_atr_history),
+                percentile_threshold=sc.setup_percentile_threshold,
+                lookback=sc.setup_percentile_lookback,
+                setup_size=setup_size,
+            )
+        else:
+            setup = detect_setup(prior_bars, atr_prior_15m, setup_size=setup_size)
         if setup is None:
             counts.rejected_no_valid_setup += 1
             continue

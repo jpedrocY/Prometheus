@@ -18,6 +18,15 @@ per Phase 2j memo §D.6:
     exit_r_target = 2.0  R-target multiple for take-profit
     exit_time_stop_bars = 8  unconditional time-stop horizon (15m bars)
 
+Phase 2m (R1a — Volatility-percentile setup) adds three setup-validity
+fields. ``setup_predicate_kind`` selects between H0's range-based
+predicate (default; RANGE_BASED) and R1a's percentile-based predicate
+(VOLATILITY_PERCENTILE). The two R1a sub-parameters are committed
+singularly per Phase 2j memo §C.6:
+
+    setup_percentile_threshold = 25  bottom-quartile cutoff
+    setup_percentile_lookback  = 200 trailing-bars distribution length
+
 Any instance constructed with all defaults produces the baseline H0
 behavior exactly; see ``tests/unit/strategy/v1_breakout/test_variant_config.py``.
 """
@@ -41,6 +50,20 @@ class ExitKind(StrEnum):
 
     STAGED_TRAILING = "STAGED_TRAILING"
     FIXED_R_TIME_STOP = "FIXED_R_TIME_STOP"
+
+
+class SetupPredicateKind(StrEnum):
+    """Selects the setup-validity predicate.
+
+    RANGE_BASED is H0's locked Phase 2e baseline (range_width <= 1.75 *
+    ATR(20) on 15m AND |close[-1] - open[-8]| <= 0.35 * range_width).
+    VOLATILITY_PERCENTILE is R1a per Phase 2j memo §C: setup is valid
+    iff the 15m ATR(20) at close of bar B-1 is in the bottom X-th
+    percentile of the trailing N-bar ATR distribution.
+    """
+
+    RANGE_BASED = "RANGE_BASED"
+    VOLATILITY_PERCENTILE = "VOLATILITY_PERCENTILE"
 
 
 class V1BreakoutConfig(BaseModel):
@@ -75,6 +98,14 @@ class V1BreakoutConfig(BaseModel):
     exit_kind: ExitKind = ExitKind.STAGED_TRAILING
     exit_r_target: float = Field(default=2.0, gt=0.0, le=10.0)
     exit_time_stop_bars: int = Field(default=8, gt=0, le=200)
+
+    # R1a setup-predicate axis. Default = RANGE_BASED preserves H0 bit-for-bit.
+    # The two sub-parameters apply only when setup_predicate_kind ==
+    # VOLATILITY_PERCENTILE and are ignored under RANGE_BASED (which uses the
+    # setup-module constants MAX_RANGE_ATR_MULT and MAX_DRIFT_RATIO).
+    setup_predicate_kind: SetupPredicateKind = SetupPredicateKind.RANGE_BASED
+    setup_percentile_threshold: int = Field(default=25, gt=0, lt=100)
+    setup_percentile_lookback: int = Field(default=200, gt=0, le=2000)
 
     def model_post_init(self, __context: object) -> None:
         if self.ema_fast >= self.ema_slow:

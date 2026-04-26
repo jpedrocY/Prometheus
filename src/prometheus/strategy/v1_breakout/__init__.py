@@ -20,20 +20,22 @@ from __future__ import annotations
 
 from .bias import evaluate_1h_bias
 from .management import TradeManagement
-from .setup import detect_setup
+from .setup import detect_setup, detect_setup_volatility_percentile
 from .stop import compute_initial_stop, passes_stop_distance_filter
 from .strategy import StrategySession, V1BreakoutStrategy
 from .trigger import evaluate_long_trigger, evaluate_short_trigger
-from .variant_config import ExitKind, V1BreakoutConfig
+from .variant_config import ExitKind, SetupPredicateKind, V1BreakoutConfig
 
 __all__ = [
     "ExitKind",
+    "SetupPredicateKind",
     "StrategySession",
     "TradeManagement",
     "V1BreakoutConfig",
     "V1BreakoutStrategy",
     "compute_initial_stop",
     "detect_setup",
+    "detect_setup_volatility_percentile",
     "evaluate_1h_bias",
     "evaluate_long_trigger",
     "evaluate_short_trigger",
