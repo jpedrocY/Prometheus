@@ -66,15 +66,19 @@ from ..types import (
     StopUpdateIntent,
     TrendBias,
 )
-from .bias import EMA_FAST, EMA_SLOW, SLOPE_LOOKBACK
+from .bias import EMA_SLOW, SLOPE_LOOKBACK
 from .management import ManagementBarDiagnostic, TradeManagement
 from .setup import SETUP_SIZE, detect_setup
 from .stop import compute_initial_stop, passes_stop_distance_filter
 from .trigger import evaluate_long_trigger, evaluate_short_trigger
+from .variant_config import V1BreakoutConfig
 
 ATR_PERIOD = 20
 
-# Minimum bar counts required before any signal can be evaluated.
+# Minimum bar counts required before any signal can be evaluated, at
+# BASELINE defaults. Kept as module constants for backwards-compatible
+# imports; the session computes its per-variant values from its config
+# via ``session.min_1h_bars_for_bias`` / ``session.min_15m_bars_for_signal``.
 MIN_1H_BARS_FOR_BIAS = EMA_SLOW + SLOPE_LOOKBACK  # 203
 MIN_15M_BARS_FOR_SIGNAL = (
     ATR_PERIOD + 1 + SETUP_SIZE + 1  # 20 ATR warmup + 8 setup + 1 breakout
@@ -107,11 +111,18 @@ class StrategySession:
     """Rolling state for one symbol's v1 strategy evaluation.
 
     The session maintains bounded-size bar deques plus incremental
-    indicator caches (Wilder ATR(20) for 15m and 1h; EMA(50) and
-    EMA(200) for 1h, plus a short slope-lookback history).
+    indicator caches (Wilder ATR(20) for 15m and 1h; EMA(fast) and
+    EMA(slow) for 1h, plus a short slope-lookback history).
+
+    ``config`` holds the variant overrides (setup_size, EMA pair, etc.).
+    Default construction uses the locked Phase 2e baseline; any variant
+    that changes ``ema_fast`` / ``ema_slow`` / ``setup_size`` recomputes
+    the warmup-bar minimums via ``min_1h_bars_for_bias`` /
+    ``min_15m_bars_for_signal``.
     """
 
     symbol: Symbol
+    config: V1BreakoutConfig = field(default_factory=V1BreakoutConfig)
     _1h_window: deque[NormalizedKline] = field(default_factory=lambda: deque(maxlen=400))
     _15m_window: deque[NormalizedKline] = field(default_factory=lambda: deque(maxlen=400))
     _active_trade: _ActiveTrade | None = None
@@ -213,11 +224,12 @@ class StrategySession:
     # ----- Private EMA + bias helpers (1h only) -----
 
     def _update_ema_fast(self, close: float) -> None:
-        alpha = 2.0 / (EMA_FAST + 1.0)
+        ema_fast = self.config.ema_fast
+        alpha = 2.0 / (ema_fast + 1.0)
         if _is_nan(self._1h_ema_fast_latest):
             self._1h_ema_fast_warmup.append(close)
-            if len(self._1h_ema_fast_warmup) == EMA_FAST:
-                seed = sum(self._1h_ema_fast_warmup) / EMA_FAST
+            if len(self._1h_ema_fast_warmup) == ema_fast:
+                seed = sum(self._1h_ema_fast_warmup) / ema_fast
                 self._1h_ema_fast_latest = seed
                 self._1h_ema_fast_warmup = []
         else:
@@ -227,11 +239,12 @@ class StrategySession:
             self._1h_ema_fast_history.append(self._1h_ema_fast_latest)
 
     def _update_ema_slow(self, close: float) -> None:
-        alpha = 2.0 / (EMA_SLOW + 1.0)
+        ema_slow = self.config.ema_slow
+        alpha = 2.0 / (ema_slow + 1.0)
         if _is_nan(self._1h_ema_slow_latest):
             self._1h_ema_slow_warmup.append(close)
-            if len(self._1h_ema_slow_warmup) == EMA_SLOW:
-                seed = sum(self._1h_ema_slow_warmup) / EMA_SLOW
+            if len(self._1h_ema_slow_warmup) == ema_slow:
+                seed = sum(self._1h_ema_slow_warmup) / ema_slow
                 self._1h_ema_slow_latest = seed
                 self._1h_ema_slow_warmup = []
         else:
@@ -274,11 +287,21 @@ class StrategySession:
         return self._active_trade is not None
 
     @property
+    def min_1h_bars_for_bias(self) -> int:
+        """Warmup floor for 1h bias, sized from the active EMA-slow period."""
+        return self.config.ema_slow + SLOPE_LOOKBACK
+
+    @property
+    def min_15m_bars_for_signal(self) -> int:
+        """Warmup floor for 15m signal, sized from the active setup window."""
+        return ATR_PERIOD + 1 + self.config.setup_size + 1
+
+    @property
     def ready_to_signal(self) -> bool:
         """Enough bars to evaluate bias + setup + trigger."""
         return (
-            len(self._1h_window) >= MIN_1H_BARS_FOR_BIAS
-            and len(self._15m_window) >= MIN_15M_BARS_FOR_SIGNAL
+            len(self._1h_window) >= self.min_1h_bars_for_bias
+            and len(self._15m_window) >= self.min_15m_bars_for_signal
         )
 
     @property
@@ -286,7 +309,7 @@ class StrategySession:
         """Re-entry requires a new complete setup window AFTER the last exit."""
         if self._last_exit_close_time_ms is None:
             return True
-        return self._bars_since_last_exit >= SETUP_SIZE
+        return self._bars_since_last_exit >= self.config.setup_size
 
     def current_1h_atr_20(self) -> float:
         return self._1h_atr_latest
@@ -348,7 +371,20 @@ class StrategySession:
 
 
 class V1BreakoutStrategy:
-    """Stateless orchestrator. Decisions depend only on session state."""
+    """Stateless orchestrator. Decisions depend only on session state.
+
+    ``config`` holds variant overrides (setup_size, expansion_atr_mult,
+    ema_fast, ema_slow, break_even_r). Default = locked baseline.
+    The passed config must equal the session's config; construct the
+    strategy and the session from the same config instance.
+    """
+
+    def __init__(self, config: V1BreakoutConfig | None = None) -> None:
+        self._config = config if config is not None else V1BreakoutConfig()
+
+    @property
+    def config(self) -> V1BreakoutConfig:
+        return self._config
 
     def maybe_entry(self, session: StrategySession) -> EntryIntent | None:
         """Evaluate all six long + short trigger conditions."""
@@ -359,11 +395,12 @@ class V1BreakoutStrategy:
         if not session.ready_to_signal:
             return None
 
+        setup_size = self._config.setup_size
         bars_15m = list(session._15m_window)
         breakout_bar = bars_15m[-1]
         prev_bar = bars_15m[-2]
-        prior_8 = bars_15m[-(SETUP_SIZE + 1) : -1]
-        assert len(prior_8) == SETUP_SIZE
+        prior_bars = bars_15m[-(setup_size + 1) : -1]
+        assert len(prior_bars) == setup_size
 
         bias = session.current_1h_bias()
         if bias == TrendBias.NEUTRAL:
@@ -372,7 +409,7 @@ class V1BreakoutStrategy:
         atr_15m_at_prior = session.prior_15m_atr_20()
         if _is_nan(atr_15m_at_prior):
             return None
-        setup = detect_setup(prior_8, atr_15m_at_prior)
+        setup = detect_setup(prior_bars, atr_15m_at_prior, setup_size=setup_size)
         if setup is None:
             return None
 
@@ -382,6 +419,7 @@ class V1BreakoutStrategy:
         if _is_nan(atr_15m_now) or _is_nan(atr_1h):
             return None
 
+        expansion_mult = self._config.expansion_atr_mult
         signal = evaluate_long_trigger(
             bias=bias,
             setup=setup,
@@ -390,6 +428,7 @@ class V1BreakoutStrategy:
             atr_20_15m=atr_15m_now,
             atr_20_1h=atr_1h,
             latest_1h_close=latest_1h_close,
+            expansion_atr_mult=expansion_mult,
         ) or evaluate_short_trigger(
             bias=bias,
             setup=setup,
@@ -398,6 +437,7 @@ class V1BreakoutStrategy:
             atr_20_15m=atr_15m_now,
             atr_20_1h=atr_1h,
             latest_1h_close=latest_1h_close,
+            expansion_atr_mult=expansion_mult,
         )
         if signal is None:
             return None
@@ -428,7 +468,9 @@ class V1BreakoutStrategy:
         atr_15m = session.current_15m_atr_20()
         if _is_nan(atr_15m):
             return None, None
-        intent, diag = active.management.on_completed_bar(latest_bar, atr_15m)
+        intent, diag = active.management.on_completed_bar(
+            latest_bar, atr_15m, break_even_r=self._config.break_even_r
+        )
         return intent, diag
 
 

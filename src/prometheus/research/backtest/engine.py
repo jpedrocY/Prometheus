@@ -29,7 +29,7 @@ from prometheus.strategy.types import EntryIntent, ExitIntent, ExitReason, StopU
 from prometheus.strategy.v1_breakout import StrategySession, V1BreakoutStrategy
 
 from .accounting import Accounting, TradePnL, compute_trade_pnl
-from .config import BacktestConfig
+from .config import BacktestConfig, StopTriggerSource
 from .fills import entry_fill_price, exit_fill_price
 from .funding_join import apply_funding_accrual
 from .simulation_clock import next_15m_open_time
@@ -105,7 +105,7 @@ class BacktestEngine:
 
     def __init__(self, config: BacktestConfig) -> None:
         self._config = config
-        self._strategy = V1BreakoutStrategy()
+        self._strategy = V1BreakoutStrategy(config.strategy_variant)
 
     def run(
         self,
@@ -136,7 +136,10 @@ class BacktestEngine:
             if symbol not in symbol_info_per_symbol:
                 warnings.append(f"symbol {symbol} has no exchangeInfo; skipping")
                 continue
-            run = _SymbolRun(symbol=symbol, session=StrategySession(symbol=symbol))
+            run = _SymbolRun(
+                symbol=symbol,
+                session=StrategySession(symbol=symbol, config=self._config.strategy_variant),
+            )
             accounting = Accounting.start(self._config.sizing_equity_usdt)
             self._run_symbol(
                 run,
@@ -197,17 +200,25 @@ class BacktestEngine:
             # Observe the just-completed 15m bar.
             run.session.observe_15m_bar(bar_15m)
 
-            # If we have an open trade, check stop-hit against this
-            # bar's mark-price bar BEFORE running management for the
-            # next bar. Rationale: a stop-out fires intrabar based
-            # on mark-price; management moves happen at bar close.
+            # If we have an open trade, check stop-hit BEFORE running
+            # management for the next bar. Source of the stop-evaluation
+            # bar is controlled by config.stop_trigger_source:
+            #   - MARK_PRICE (default): live-aligned; uses the mark-price
+            #     bar keyed by the current 15m open_time.
+            #   - TRADE_PRICE: Phase 2g sensitivity switch; uses the
+            #     trade-price 15m bar directly.
             if run.open_trade is not None:
-                mark_bar = mark_by_open.get(bar_15m.open_time)
-                if mark_bar is not None:
+                if config.stop_trigger_source == StopTriggerSource.MARK_PRICE:
+                    stop_eval_bar: MarkPriceKline | NormalizedKline | None = mark_by_open.get(
+                        bar_15m.open_time
+                    )
+                else:  # TRADE_PRICE
+                    stop_eval_bar = bar_15m
+                if stop_eval_bar is not None:
                     hit = evaluate_stop_hit(
                         direction_long=run.open_trade.direction_long,
                         current_stop=run.open_trade.current_stop,
-                        mark_bar=mark_bar,
+                        mark_bar=stop_eval_bar,
                         slippage_bps=config.slippage_bps,
                     )
                     if hit is not None:

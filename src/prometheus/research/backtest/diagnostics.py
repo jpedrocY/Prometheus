@@ -62,11 +62,11 @@ from prometheus.core.symbols import Symbol
 from prometheus.strategy.indicators import true_range
 from prometheus.strategy.types import Direction, TrendBias
 from prometheus.strategy.v1_breakout.bias import (
-    EMA_FAST,
-    EMA_SLOW,
+    EMA_FAST,  # noqa: F401 — re-exported for backwards-compatible imports
+    EMA_SLOW,  # noqa: F401 — re-exported for backwards-compatible imports
     SLOPE_LOOKBACK,
 )
-from prometheus.strategy.v1_breakout.setup import SETUP_SIZE, detect_setup
+from prometheus.strategy.v1_breakout.setup import SETUP_SIZE, detect_setup  # noqa: F401
 from prometheus.strategy.v1_breakout.stop import (
     compute_initial_stop,
     passes_stop_distance_filter,
@@ -76,14 +76,17 @@ from prometheus.strategy.v1_breakout.trigger import (
     ATR_REGIME_MIN,
     BREAKOUT_BUFFER_ATR_MULT,
     CLOSE_LOCATION_RATIO,
-    TRUE_RANGE_ATR_MULT,
+    TRUE_RANGE_ATR_MULT,  # noqa: F401 — re-exported for backwards-compatible imports
 )
+from prometheus.strategy.v1_breakout.variant_config import V1BreakoutConfig
 
 from .config import BacktestConfig
 from .sizing import RejectionReason, compute_size
 
 ATR_PERIOD = 20
 
+# Baseline warmup constants retained for backwards-compatible imports.
+# Per-variant runs compute warmup thresholds from the active config.
 MIN_1H_BARS_FOR_BIAS = EMA_SLOW + SLOPE_LOOKBACK
 MIN_15M_BARS_FOR_SIGNAL = ATR_PERIOD + 1 + SETUP_SIZE + 1
 
@@ -94,9 +97,14 @@ class _IncrementalIndicators:
     Maintained inline in ``run_signal_funnel`` so the diagnostic runs
     in O(bars) rather than O(bars * window). Seeding conventions
     match the standalone ``wilder_atr`` / ``ema`` functions exactly.
+
+    ``ema_fast_period`` / ``ema_slow_period`` default to the locked
+    baseline (50/200) and are overridden per-variant.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *, ema_fast_period: int = EMA_FAST, ema_slow_period: int = EMA_SLOW) -> None:
+        self.ema_fast_period = ema_fast_period
+        self.ema_slow_period = ema_slow_period
         # 15m ATR
         self.tr15_warmup: list[float] = []
         self.atr15_latest: float = float("nan")
@@ -141,24 +149,26 @@ class _IncrementalIndicators:
             self.atr1h_latest = ((ATR_PERIOD - 1) * self.atr1h_latest + tr) / ATR_PERIOD
         # EMA fast
         close = bar.close
+        ema_fast = self.ema_fast_period
+        ema_slow = self.ema_slow_period
         if self.ema_fast_latest != self.ema_fast_latest:  # NaN
             self.ema_fast_warmup.append(close)
-            if len(self.ema_fast_warmup) == EMA_FAST:
-                self.ema_fast_latest = sum(self.ema_fast_warmup) / EMA_FAST
+            if len(self.ema_fast_warmup) == ema_fast:
+                self.ema_fast_latest = sum(self.ema_fast_warmup) / ema_fast
                 self.ema_fast_warmup = []
         else:
-            a = 2.0 / (EMA_FAST + 1.0)
+            a = 2.0 / (ema_fast + 1.0)
             self.ema_fast_latest = a * close + (1.0 - a) * self.ema_fast_latest
         if self.ema_fast_latest == self.ema_fast_latest:  # not NaN
             self.ema_fast_history.append(self.ema_fast_latest)
         # EMA slow
         if self.ema_slow_latest != self.ema_slow_latest:
             self.ema_slow_warmup.append(close)
-            if len(self.ema_slow_warmup) == EMA_SLOW:
-                self.ema_slow_latest = sum(self.ema_slow_warmup) / EMA_SLOW
+            if len(self.ema_slow_warmup) == ema_slow:
+                self.ema_slow_latest = sum(self.ema_slow_warmup) / ema_slow
                 self.ema_slow_warmup = []
         else:
-            a = 2.0 / (EMA_SLOW + 1.0)
+            a = 2.0 / (ema_slow + 1.0)
             self.ema_slow_latest = a * close + (1.0 - a) * self.ema_slow_latest
 
     def current_bias(self, latest_1h_close: float) -> TrendBias:
@@ -285,15 +295,26 @@ def run_signal_funnel(
     klines_1h: Sequence[NormalizedKline],
     symbol_info: SymbolInfo,
     config: BacktestConfig,
+    strategy_config: V1BreakoutConfig | None = None,
 ) -> SignalFunnelCounts:
     """Walk the 15m series and attribute each decision bar to a funnel bucket.
 
     ``symbol_info`` is needed to exercise the sizing pipeline. ``config``
     supplies sizing parameters (equity, risk_fraction, etc.).
 
+    ``strategy_config`` supplies the variant overrides (setup_size,
+    expansion_atr_mult, ema_fast, ema_slow, break_even_r). Defaults to
+    the locked baseline, which reproduces the Phase 2e funnel shape.
+
     This function does NOT alter any strategy or engine state. It is
     purely observational.
     """
+    sc = strategy_config if strategy_config is not None else V1BreakoutConfig()
+    setup_size = sc.setup_size
+    expansion_atr_mult = sc.expansion_atr_mult
+    min_1h_bars_for_bias = sc.ema_slow + SLOPE_LOOKBACK
+    min_15m_bars_for_signal = ATR_PERIOD + 1 + setup_size + 1
+
     counts = SignalFunnelCounts(symbol=symbol)
     counts.total_15m_bars_loaded = len(klines_15m)
     counts.total_1h_bars_loaded = len(klines_1h)
@@ -306,7 +327,7 @@ def run_signal_funnel(
         return counts
 
     # Incremental indicator state (O(1) per-bar updates).
-    ind = _IncrementalIndicators()
+    ind = _IncrementalIndicators(ema_fast_period=sc.ema_fast, ema_slow_period=sc.ema_slow)
 
     # 1h window is fed as bars complete; we track a counter (not a
     # growing list) for warmup gating. Latest 1h close is needed for
@@ -316,9 +337,9 @@ def run_signal_funnel(
     fed_1h_count = 0
     latest_1h_close_cache: float = float("nan")
 
-    # 15m bookkeeping — no growing list; we maintain a small ring for
-    # the 8-bar setup + 2-bar TR lookup. maxlen = SETUP_SIZE + 2 = 10.
-    recent15: deque[NormalizedKline] = deque(maxlen=SETUP_SIZE + 2)
+    # 15m bookkeeping — small ring for setup + TR lookup:
+    # setup_size bars (prior) + 1 breakout + 1 slot for TR prev_close = setup_size + 2.
+    recent15: deque[NormalizedKline] = deque(maxlen=setup_size + 2)
     fed_15m_count = 0
     total_15m = len(klines_15m)
 
@@ -338,10 +359,10 @@ def run_signal_funnel(
         fed_15m_count += 1
 
         # Warmup check.
-        if fed_1h_count < MIN_1H_BARS_FOR_BIAS or fed_15m_count < MIN_15M_BARS_FOR_SIGNAL:
-            if fed_1h_count < MIN_1H_BARS_FOR_BIAS:
+        if fed_1h_count < min_1h_bars_for_bias or fed_15m_count < min_15m_bars_for_signal:
+            if fed_1h_count < min_1h_bars_for_bias:
                 counts.warmup_1h_bars_excluded += 1
-            if fed_15m_count < MIN_15M_BARS_FOR_SIGNAL:
+            if fed_15m_count < min_15m_bars_for_signal:
                 counts.warmup_15m_bars_excluded += 1
             continue
 
@@ -363,16 +384,13 @@ def run_signal_funnel(
         if atr_prior_15m != atr_prior_15m:  # NaN
             counts.rejected_no_valid_setup += 1
             continue
-        # prior_8 = the 8 bars immediately before the current bar. Since
-        # recent15 has maxlen=10 (8 setup + 1 breakout + 1 slop for TR
-        # prev_close access), and the current bar is recent15[-1], the
-        # 8 prior bars are recent15[-9:-1]. If recent15 has fewer than
-        # 9 items, we're still inside setup warmup.
-        if len(recent15) < SETUP_SIZE + 1:
+        # prior = the setup_size bars immediately before the current bar.
+        # recent15 has maxlen = setup_size + 2.
+        if len(recent15) < setup_size + 1:
             counts.rejected_no_valid_setup += 1
             continue
-        prior_8 = list(recent15)[-(SETUP_SIZE + 1) : -1]
-        setup = detect_setup(prior_8, atr_prior_15m)
+        prior_bars = list(recent15)[-(setup_size + 1) : -1]
+        setup = detect_setup(prior_bars, atr_prior_15m, setup_size=setup_size)
         if setup is None:
             counts.rejected_no_valid_setup += 1
             continue
@@ -404,7 +422,7 @@ def run_signal_funnel(
         # ---- True range (uses prior 15m close from the ring) ----
         prev_close = recent15[-2].close
         tr = true_range(bar_15m.high, bar_15m.low, prev_close)
-        if tr < TRUE_RANGE_ATR_MULT * atr_15m_now:
+        if tr < expansion_atr_mult * atr_15m_now:
             counts.rejected_true_range_too_small += 1
             continue
 

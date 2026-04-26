@@ -181,16 +181,21 @@ class TradeManagement:
         self,
         bar: NormalizedKline,
         atr_20_15m: float,
+        *,
+        break_even_r: float = STAGE_4_MFE_R,
     ) -> tuple[StopUpdateIntent | ExitIntent | None, ManagementBarDiagnostic]:
         """Process one completed 15m bar after the entry fill.
 
-        Returns a tuple of (intent, diagnostic). The intent is at
-        most one of:
+        ``break_even_r`` is the Stage-3 → Stage-4 MFE-R threshold that
+        moves the stop to break-even. Defaults to the locked baseline
+        (+1.5 R). Phase 2g H-D3 sets this to 2.0. Note that Stage 5
+        (trailing activation at +2.0 R) is unchanged; setting
+        ``break_even_r == STAGE_5_MFE_R`` collapses Stage 4 and Stage 5
+        onto the same bar — a clean cascade, not a collision, because
+        the risk-reducing-only guard in ``_update_stop_if_better``
+        always picks the tighter candidate.
 
-            - StopUpdateIntent (stage transition moved the stop)
-            - ExitIntent (stagnation or trailing breach)
-
-        The diagnostic captures per-bar state useful for reports.
+        Returns a tuple of (intent, diagnostic).
         """
         self.bars_in_trade += 1
         self._update_excursions(bar.high, bar.low)
@@ -212,7 +217,7 @@ class TradeManagement:
                 )
             self.stage = TradeStage.STAGE_3_RISK_REDUCED
 
-        if self.stage == TradeStage.STAGE_3_RISK_REDUCED and self.mfe_r >= STAGE_4_MFE_R:
+        if self.stage == TradeStage.STAGE_3_RISK_REDUCED and self.mfe_r >= break_even_r:
             candidate = self.entry_price
             update = self._update_stop_if_better(candidate, StopMoveStage.STAGE_4_BREAK_EVEN)
             if update is not None:

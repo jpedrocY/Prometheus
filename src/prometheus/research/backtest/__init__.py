@@ -20,7 +20,7 @@ asserts this package does not import from
 from __future__ import annotations
 
 from .accounting import Accounting
-from .config import BacktestAdapter, BacktestConfig, SlippageBucket
+from .config import BacktestAdapter, BacktestConfig, SlippageBucket, StopTriggerSource
 from .diagnostics import SignalFunnelCounts, run_signal_funnel
 from .engine import BacktestEngine, BacktestRunResult
 from .fills import compute_fill_price, entry_fill_price
@@ -54,6 +54,7 @@ __all__ = [
     "SizingLimitedBy",
     "SlippageBucket",
     "StopHit",
+    "StopTriggerSource",
     "TradeRecord",
     "apply_funding_accrual",
     "bar_visible_at",
