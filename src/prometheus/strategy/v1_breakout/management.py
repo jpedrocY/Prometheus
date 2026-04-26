@@ -177,29 +177,91 @@ class TradeManagement:
             triggered_at_close_time=0,  # filled by caller to the bar's close_time
         )
 
+    def _fixed_r_time_stop_decision(
+        self, bar: NormalizedKline, r_target: float, time_stop_bars: int
+    ) -> ExitIntent | None:
+        """R3 (Phase 2j memo §D) terminal-exit decision for one bar.
+
+        Take-profit wins over time-stop on the same bar (per memo §D.7
+        same-bar priority spec: STOP > TAKE_PROFIT > TIME_STOP; the
+        STOP > TAKE_PROFIT half is enforced by the engine pre-check).
+        The protective stop is never moved during the trade — the
+        initial structural stop set at entry stays put.
+        """
+        target_offset = r_target * self.r_magnitude
+        if self.direction == Direction.LONG:
+            target_price = self.entry_price + target_offset
+            tp_hit = bar.high >= target_price
+        else:
+            target_price = self.entry_price - target_offset
+            tp_hit = bar.low <= target_price
+        if tp_hit:
+            return ExitIntent(
+                symbol=self.symbol,
+                direction=self.direction,
+                reason=ExitReason.TAKE_PROFIT,
+                triggering_bar_close_time=bar.close_time,
+            )
+        if self.bars_in_trade >= time_stop_bars:
+            return ExitIntent(
+                symbol=self.symbol,
+                direction=self.direction,
+                reason=ExitReason.TIME_STOP,
+                triggering_bar_close_time=bar.close_time,
+            )
+        return None
+
     def on_completed_bar(
         self,
         bar: NormalizedKline,
         atr_20_15m: float,
         *,
         break_even_r: float = STAGE_4_MFE_R,
+        exit_kind: str = "STAGED_TRAILING",
+        r_target: float = 2.0,
+        time_stop_bars: int = 8,
     ) -> tuple[StopUpdateIntent | ExitIntent | None, ManagementBarDiagnostic]:
         """Process one completed 15m bar after the entry fill.
 
-        ``break_even_r`` is the Stage-3 → Stage-4 MFE-R threshold that
-        moves the stop to break-even. Defaults to the locked baseline
-        (+1.5 R). Phase 2g H-D3 sets this to 2.0. Note that Stage 5
-        (trailing activation at +2.0 R) is unchanged; setting
-        ``break_even_r == STAGE_5_MFE_R`` collapses Stage 4 and Stage 5
-        onto the same bar — a clean cascade, not a collision, because
-        the risk-reducing-only guard in ``_update_stop_if_better``
-        always picks the tighter candidate.
+        Dispatches on ``exit_kind`` per Phase 2j memo §D:
+
+            "STAGED_TRAILING" (default) — H0 locked Phase 2e baseline.
+                Stages 2 → 3 → 4 → 5 by MFE thresholds, with stop
+                moves and trailing. Stage 7 stagnation gate at 8 bars
+                with MFE < +1.0 R. ``break_even_r`` overrides the
+                Stage-3 → Stage-4 trigger (Phase 2g H-D3 = 2.0).
+                ``r_target`` and ``time_stop_bars`` are ignored.
+
+            "FIXED_R_TIME_STOP" (R3) — two-rule terminal exit. The
+                stop never moves. Take-profit fires when bar.high
+                (long) or bar.low (short) reaches the +``r_target``
+                R level. Time-stop fires unconditionally when
+                ``bars_in_trade >= time_stop_bars``. Take-profit
+                wins over time-stop on the same management bar.
+                ``break_even_r`` is ignored.
+
+        Same-bar STOP > TAKE_PROFIT priority is enforced by the
+        backtest engine: the stop-hit check runs before the management
+        call and short-circuits the bar via ``continue`` if a stop
+        is hit, so this method never observes a take-profit on a bar
+        that already stopped out.
 
         Returns a tuple of (intent, diagnostic).
         """
         self.bars_in_trade += 1
         self._update_excursions(bar.high, bar.low)
         intent: StopUpdateIntent | ExitIntent | None = None
+
+        if exit_kind == "FIXED_R_TIME_STOP":
+            intent = self._fixed_r_time_stop_decision(bar, r_target, time_stop_bars)
+            diag = ManagementBarDiagnostic(
+                bars_in_trade=self.bars_in_trade,
+                stage=self.stage,
+                current_stop=self.current_stop,
+                mfe_r=self.mfe_r,
+                mae_r=self.mae_r,
+            )
+            return intent, diag
 
         # Stage transitions by MFE thresholds. Check them in order
         # so a single bar can cascade (e.g., a big bar that pushes

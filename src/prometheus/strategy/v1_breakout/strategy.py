@@ -469,7 +469,12 @@ class V1BreakoutStrategy:
         if _is_nan(atr_15m):
             return None, None
         intent, diag = active.management.on_completed_bar(
-            latest_bar, atr_15m, break_even_r=self._config.break_even_r
+            latest_bar,
+            atr_15m,
+            break_even_r=self._config.break_even_r,
+            exit_kind=self._config.exit_kind.value,
+            r_target=self._config.exit_r_target,
+            time_stop_bars=self._config.exit_time_stop_bars,
         )
         return intent, diag
 

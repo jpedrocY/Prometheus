@@ -24,9 +24,10 @@ from .setup import detect_setup
 from .stop import compute_initial_stop, passes_stop_distance_filter
 from .strategy import StrategySession, V1BreakoutStrategy
 from .trigger import evaluate_long_trigger, evaluate_short_trigger
-from .variant_config import V1BreakoutConfig
+from .variant_config import ExitKind, V1BreakoutConfig
 
 __all__ = [
+    "ExitKind",
     "StrategySession",
     "TradeManagement",
     "V1BreakoutConfig",
