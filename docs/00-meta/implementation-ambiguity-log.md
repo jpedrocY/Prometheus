@@ -1003,4 +1003,42 @@ Phase 2f memo §1.5 cites `src/prometheus/research/backtest/sizing.py:1–19` an
 
 ---
 
+## GAP-20260424-036 — Phase 2f §11.2 fold-scheme interpretation pinned for future waves
+
+Status:              RESOLVED (documentation-only; standing convention recorded for future fold-based analyses on R)
+Phase discovered:    2g (Gate 2 review caught a fold-methodology mismatch in the first draft of the comparison report)
+Area:                METHODOLOGY
+Blocking phase:      NON_BLOCKING
+Risk level:          LOW
+Related docs:        `docs/00-meta/implementation-reports/2026-04-24_phase-2f_gate-1-plan.md` §11.2; `docs/00-meta/implementation-reports/2026-04-24_phase-2g_wave1_variant-comparison.md` §3 + §3.A; `docs/00-meta/implementation-reports/2026-04-24_phase-2g_gate-2-review.md` §7; `docs/00-meta/implementation-reports/2026-04-24_phase-2h_decision-memo.md` §2.10.4
+
+Description:
+The Phase 2f Gate 1 plan §11.2 specified "five rolling folds of 12-month train / 6-month test, stepping 6 months on R". On the 36-month research window R = 2022-01-01 → 2025-01-01 this is mathematically ambiguous:
+
+- The strict reading "each fold has a full 12-month train preceding its 6-month test, with tests stepping 6 months and all tests inside R" yields exactly 4 folds (tests at 2023-01..2023-06, 2023-07..2023-12, 2024-01..2024-06, 2024-07..2024-12). It does not yield 5 folds.
+- The "5 stepping-6m tests inside R" reading requires fold 1's test to start at month 6 of R (2022-07..2022-12) with a 6-month partial-train front edge (2022-01..2022-06) — the only arrangement that places exactly 5 stepping-6m tests fully within R.
+- The "5 folds with full 12m train each, step 6m" reading bleeds the 5th test into V (2025-01..2025-06), which is forbidden by Phase 2f §11.3 V-isolation discipline.
+
+Why it matters:
+Future fold-based consistency analyses on R need a single, unambiguous convention so per-fold counts and per-fold expectancy values are reproducible across waves and reviewers.
+
+Options considered:
+- Option A: 4 folds with full 12m train each (strict reading; loses the "5 folds" count).
+- Option B: 5 folds with fold 1's train as a 6m partial front edge; folds 2–5 with full 12m train; all tests inside R.
+- Option C: 6 non-overlapping 6m folds covering all 36 R months (full coverage; abandons "rolling" + "12m train" framing).
+
+Recommended resolution:
+Option B is the standing convention for any future fold-based analysis on R that cites Phase 2f §11.2. Phase 2g Gate 2 also retained Option C as a clearly-labeled supplemental appendix (`docs/00-meta/implementation-reports/2026-04-24_phase-2g_wave1_variant-comparison.md` §3.A) because Option B leaves 2022-01..2022-06 inside fold 1's notional train front edge and uncovered by any test fold; Option C provides descriptive coverage of those months without ranking authority.
+
+Operator decision:
+accepted (recorded inline in the Phase 2g comparison report §3, the Phase 2g Gate 2 review §7, and this Phase 2h decision memo §2.10.4; standing convention for future waves)
+
+Resolution evidence:
+- Phase 2g comparison report §3 implements Option B (the approved 5 rolling folds, fold 1 partial-train) and §3.A retains Option C as a clearly-labeled supplemental appendix.
+- Phase 2g Gate 2 review §7 records the methodology correction explicitly.
+- Phase 2h decision memo §2.10.4 cites Option B as the standing convention for any future Phase 2i wave.
+- No spec edit to Phase 2f §11.2 is proposed; this ambiguity-log entry is the canonical convention reference for future waves.
+
+---
+
 
