@@ -25,33 +25,38 @@ MAX_DRIFT_RATIO = 0.35
 
 
 def detect_setup(
-    prior_8_15m_bars: Sequence[NormalizedKline],
+    prior_bars: Sequence[NormalizedKline],
     atr_20_15m: float,
+    *,
+    setup_size: int = SETUP_SIZE,
 ) -> SetupWindow | None:
-    """Detect a valid 8-bar setup from ``prior_8_15m_bars``.
+    """Detect a valid setup from ``prior_bars``.
 
-    ``prior_8_15m_bars`` must be exactly 8 bars in ascending
-    open_time order. These are the 8 bars STRICTLY BEFORE the
-    breakout candidate bar.
+    ``prior_bars`` must be exactly ``setup_size`` bars in ascending
+    open_time order, strictly BEFORE the breakout candidate bar
+    (see variant_config.py — the window excludes the current bar).
 
     ``atr_20_15m`` is the 15m ATR(20) value evaluated at the close of
     the LAST bar in the window (i.e., at position [-1]; NOT the
     breakout bar).
 
+    ``setup_size`` defaults to the locked baseline (8). Phase 2g H-A1
+    sets this to 10. Range-width and drift ratios are unchanged.
+
     Returns a ``SetupWindow`` if both conditions pass, else ``None``.
     """
-    if len(prior_8_15m_bars) != SETUP_SIZE:
+    if len(prior_bars) != setup_size:
         return None
     if atr_20_15m <= 0:
         return None
-    highs = [b.high for b in prior_8_15m_bars]
-    lows = [b.low for b in prior_8_15m_bars]
+    highs = [b.high for b in prior_bars]
+    lows = [b.low for b in prior_bars]
     setup_high = max(highs)
     setup_low = min(lows)
     range_width = setup_high - setup_low
     if range_width > MAX_RANGE_ATR_MULT * atr_20_15m:
         return None
-    drift_abs = abs(prior_8_15m_bars[-1].close - prior_8_15m_bars[0].open)
+    drift_abs = abs(prior_bars[-1].close - prior_bars[0].open)
     if range_width > 0 and drift_abs > MAX_DRIFT_RATIO * range_width:
         return None
     # When range_width == 0 the bars are degenerate (flat). Reject
@@ -60,9 +65,9 @@ def detect_setup(
     if range_width == 0:
         return None
     return SetupWindow(
-        symbol=prior_8_15m_bars[0].symbol,
-        first_bar_open_time=prior_8_15m_bars[0].open_time,
-        last_bar_open_time=prior_8_15m_bars[-1].open_time,
+        symbol=prior_bars[0].symbol,
+        first_bar_open_time=prior_bars[0].open_time,
+        last_bar_open_time=prior_bars[-1].open_time,
         setup_high=setup_high,
         setup_low=setup_low,
         setup_range_width=range_width,

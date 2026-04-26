@@ -18,6 +18,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from prometheus.core.symbols import Symbol
+from prometheus.strategy.v1_breakout.variant_config import V1BreakoutConfig
 
 
 class BacktestAdapter(StrEnum):
@@ -32,6 +33,20 @@ class SlippageBucket(StrEnum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
+
+
+class StopTriggerSource(StrEnum):
+    """Which price stream evaluates protective-stop hits.
+
+    MARK_PRICE matches the live protective-stop configuration
+    (workingType=MARK_PRICE) and is the default. TRADE_PRICE is a
+    research-only sensitivity switch introduced in Phase 2g to
+    quantify how stop-trigger choice affects reported performance
+    (GAP-20260424-032).
+    """
+
+    MARK_PRICE = "MARK_PRICE"
+    TRADE_PRICE = "TRADE_PRICE"
 
 
 # Default slippage bps per bucket (one side of the trade).
@@ -88,6 +103,15 @@ class BacktestConfig(BaseModel):
 
     # Adapter is FAKE-only in Phase 3.
     adapter: BacktestAdapter = BacktestAdapter.FAKE
+
+    # Strategy variant overrides. Default = locked Phase 2e baseline (H0).
+    # Phase 2g wave-1 sets exactly one field per variant.
+    strategy_variant: V1BreakoutConfig = Field(default_factory=V1BreakoutConfig)
+
+    # Which price stream evaluates stops. MARK_PRICE (default) mirrors
+    # the live protective-stop workingType; TRADE_PRICE is a Phase 2g
+    # sensitivity switch (GAP-20260424-032).
+    stop_trigger_source: StopTriggerSource = StopTriggerSource.MARK_PRICE
 
     @model_validator(mode="after")
     def _check(self) -> BacktestConfig:

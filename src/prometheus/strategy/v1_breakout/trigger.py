@@ -40,9 +40,15 @@ def _passes_atr_regime(atr_20_1h: float, latest_1h_close: float) -> bool:
     return ATR_REGIME_MIN <= normalized <= ATR_REGIME_MAX
 
 
-def _true_range_passes(breakout_bar: NormalizedKline, prev_close: float, atr_20_15m: float) -> bool:
+def _true_range_passes(
+    breakout_bar: NormalizedKline,
+    prev_close: float,
+    atr_20_15m: float,
+    *,
+    expansion_atr_mult: float = TRUE_RANGE_ATR_MULT,
+) -> bool:
     tr = true_range(breakout_bar.high, breakout_bar.low, prev_close)
-    return tr >= TRUE_RANGE_ATR_MULT * atr_20_15m
+    return tr >= expansion_atr_mult * atr_20_15m
 
 
 def _close_in_top_quarter(bar: NormalizedKline) -> bool:
@@ -97,11 +103,14 @@ def evaluate_long_trigger(
     atr_20_15m: float,
     atr_20_1h: float,
     latest_1h_close: float,
+    expansion_atr_mult: float = TRUE_RANGE_ATR_MULT,
 ) -> BreakoutSignal | None:
     """Long-direction six-condition trigger.
 
     Returns a ``BreakoutSignal`` if all six conditions pass, else
-    ``None``.
+    ``None``. ``expansion_atr_mult`` controls the breakout-bar TR
+    gate and defaults to the locked baseline (1.0 × ATR20). Phase 2g
+    H-B2 sets this to 0.75.
     """
     if bias != TrendBias.LONG:
         return None
@@ -112,7 +121,9 @@ def evaluate_long_trigger(
     trigger_level = setup.setup_high + BREAKOUT_BUFFER_ATR_MULT * atr_20_15m
     if breakout_bar.close <= trigger_level:
         return None
-    if not _true_range_passes(breakout_bar, prev_15m_close, atr_20_15m):
+    if not _true_range_passes(
+        breakout_bar, prev_15m_close, atr_20_15m, expansion_atr_mult=expansion_atr_mult
+    ):
         return None
     if not _close_in_top_quarter(breakout_bar):
         return None
@@ -138,8 +149,13 @@ def evaluate_short_trigger(
     atr_20_15m: float,
     atr_20_1h: float,
     latest_1h_close: float,
+    expansion_atr_mult: float = TRUE_RANGE_ATR_MULT,
 ) -> BreakoutSignal | None:
-    """Short-direction six-condition trigger."""
+    """Short-direction six-condition trigger.
+
+    ``expansion_atr_mult`` defaults to the locked baseline (1.0 × ATR20);
+    Phase 2g H-B2 sets this to 0.75.
+    """
     if bias != TrendBias.SHORT:
         return None
     if setup is None:
@@ -149,7 +165,9 @@ def evaluate_short_trigger(
     trigger_level = setup.setup_low - BREAKOUT_BUFFER_ATR_MULT * atr_20_15m
     if breakout_bar.close >= trigger_level:
         return None
-    if not _true_range_passes(breakout_bar, prev_15m_close, atr_20_15m):
+    if not _true_range_passes(
+        breakout_bar, prev_15m_close, atr_20_15m, expansion_atr_mult=expansion_atr_mult
+    ):
         return None
     if not _close_in_bottom_quarter(breakout_bar):
         return None
