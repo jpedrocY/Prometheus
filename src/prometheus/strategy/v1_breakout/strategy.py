@@ -68,10 +68,10 @@ from ..types import (
 )
 from .bias import EMA_SLOW, SLOPE_LOOKBACK
 from .management import ManagementBarDiagnostic, TradeManagement
-from .setup import SETUP_SIZE, detect_setup
+from .setup import SETUP_SIZE, detect_setup, detect_setup_volatility_percentile
 from .stop import compute_initial_stop, passes_stop_distance_filter
 from .trigger import evaluate_long_trigger, evaluate_short_trigger
-from .variant_config import V1BreakoutConfig
+from .variant_config import SetupPredicateKind, V1BreakoutConfig
 
 ATR_PERIOD = 20
 
@@ -156,6 +156,14 @@ class StrategySession:
     # Cached bias updated on each 1h observation once warmed up.
     _current_1h_bias: TrendBias = TrendBias.NEUTRAL
 
+    # --- 15m prior-bar ATR(20) history for R1a percentile predicate ---
+    # Appended after every observe_15m_bar with the ATR value at close of
+    # the preceding bar (i.e., what becomes ``A_prior`` for the next
+    # decision). NaN warmup entries are skipped so the deque length is
+    # the count of non-NaN trailing values; the percentile predicate
+    # rejects until len() >= setup_percentile_lookback.
+    _15m_prior_atr_history: deque[float] = field(default_factory=deque)
+
     # ----- Public observation API -----
 
     def observe_1h_bar(self, bar: NormalizedKline) -> None:
@@ -220,6 +228,12 @@ class StrategySession:
             self._15m_tr_warmup = []
         else:
             self._15m_atr_latest = ((ATR_PERIOD - 1) * self._15m_atr_latest + tr) / ATR_PERIOD
+
+        # Maintain the trailing prior-bar ATR history for the R1a
+        # percentile predicate. Skip NaN warmup values so the deque
+        # length equals the count of non-NaN trailing values.
+        if not _is_nan(self._15m_atr_before_latest):
+            self._15m_prior_atr_history.append(self._15m_atr_before_latest)
 
     # ----- Private EMA + bias helpers (1h only) -----
 
@@ -293,8 +307,28 @@ class StrategySession:
 
     @property
     def min_15m_bars_for_signal(self) -> int:
-        """Warmup floor for 15m signal, sized from the active setup window."""
-        return ATR_PERIOD + 1 + self.config.setup_size + 1
+        """Warmup floor for 15m signal.
+
+        For RANGE_BASED predicate (H0 default), the floor sizes from
+        the setup window: ATR seed (21) + setup_size + 1. For
+        VOLATILITY_PERCENTILE predicate (R1a), the floor must also
+        cover the percentile-lookback warmup: lookback + ATR_PERIOD + 1
+        (per Phase 2j memo §C.5 boundary case ``B >= N + 21``).
+        """
+        base = ATR_PERIOD + 1 + self.config.setup_size + 1
+        if self.config.setup_predicate_kind == SetupPredicateKind.VOLATILITY_PERCENTILE:
+            percentile_floor = self.config.setup_percentile_lookback + ATR_PERIOD + 1
+            return max(base, percentile_floor)
+        return base
+
+    def prior_15m_atr_history(self) -> tuple[float, ...]:
+        """Trailing prior-bar 15m ATR(20) values for the R1a predicate.
+
+        Returns the values at close of bars B-K..B-1 inclusive, where K
+        is the number of non-NaN ATR observations recorded so far. Used
+        only by R1a; the H0 path never reads this.
+        """
+        return tuple(self._15m_prior_atr_history)
 
     @property
     def ready_to_signal(self) -> bool:
@@ -409,7 +443,18 @@ class V1BreakoutStrategy:
         atr_15m_at_prior = session.prior_15m_atr_20()
         if _is_nan(atr_15m_at_prior):
             return None
-        setup = detect_setup(prior_bars, atr_15m_at_prior, setup_size=setup_size)
+        if self._config.setup_predicate_kind == SetupPredicateKind.VOLATILITY_PERCENTILE:
+            history = session.prior_15m_atr_history()
+            setup = detect_setup_volatility_percentile(
+                prior_bars,
+                atr_15m_at_prior,
+                history,
+                percentile_threshold=self._config.setup_percentile_threshold,
+                lookback=self._config.setup_percentile_lookback,
+                setup_size=setup_size,
+            )
+        else:
+            setup = detect_setup(prior_bars, atr_15m_at_prior, setup_size=setup_size)
         if setup is None:
             return None
 
