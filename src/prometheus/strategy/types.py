@@ -48,8 +48,10 @@ class StopMoveStage(StrEnum):
 class ExitReason(StrEnum):
     """Why a strategy-managed exit fires.
 
-    STOP, TRAILING_BREACH, STAGNATION are per
-    v1-breakout-strategy-spec.md §"Stage 5" and §"Stage 7".
+    STOP, TRAILING_BREACH, STAGNATION are per the H0 staged-trailing
+    exit philosophy (v1-breakout-strategy-spec.md §"Stage 5" and
+    §"Stage 7"). TAKE_PROFIT and TIME_STOP are per the R3 fixed-R
+    exit philosophy (Phase 2j memo §D, exit_kind=FIXED_R_TIME_STOP).
     END_OF_DATA is a backtest-only terminator for trades still open
     at the end of the simulation window.
     """
@@ -57,6 +59,8 @@ class ExitReason(StrEnum):
     STOP = "STOP"
     TRAILING_BREACH = "TRAILING_BREACH"
     STAGNATION = "STAGNATION"
+    TAKE_PROFIT = "TAKE_PROFIT"
+    TIME_STOP = "TIME_STOP"
     END_OF_DATA = "END_OF_DATA"
 
 

@@ -235,6 +235,8 @@ def compute_summary_metrics(
             "stop_exits": 0,
             "trailing_exits": 0,
             "stagnation_exits": 0,
+            "take_profit_exits": 0,
+            "time_stop_exits": 0,
             "end_of_data_exits": 0,
             "total_fees_usdt": 0.0,
             "total_funding_usdt": 0.0,
@@ -257,6 +259,8 @@ def compute_summary_metrics(
     stop_exits = sum(1 for t in trades if t.exit_reason == "STOP")
     trailing_exits = sum(1 for t in trades if t.exit_reason == "TRAILING_BREACH")
     stagnation_exits = sum(1 for t in trades if t.exit_reason == "STAGNATION")
+    take_profit_exits = sum(1 for t in trades if t.exit_reason == "TAKE_PROFIT")
+    time_stop_exits = sum(1 for t in trades if t.exit_reason == "TIME_STOP")
     end_exits = sum(1 for t in trades if t.exit_reason == "END_OF_DATA")
     gap_through = sum(1 for t in trades if t.stop_was_gap_through)
 
@@ -286,6 +290,8 @@ def compute_summary_metrics(
         "stop_exits": stop_exits,
         "trailing_exits": trailing_exits,
         "stagnation_exits": stagnation_exits,
+        "take_profit_exits": take_profit_exits,
+        "time_stop_exits": time_stop_exits,
         "end_of_data_exits": end_exits,
         "total_fees_usdt": total_fees,
         "total_funding_usdt": total_funding,
