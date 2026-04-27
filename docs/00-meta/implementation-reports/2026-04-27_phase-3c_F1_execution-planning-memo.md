@@ -406,15 +406,17 @@ PF(F1, ETHUSDT, R, MED, MARK)   >  0.30
 
 (I.e., ETH satisfies §10.4-style absolute floor even though ETH is not the primary symbol per §1.7.3.)
 
-**Condition (iv) — §11.6 HIGH-slippage cost-sensitivity gate.** F1 must not §10.4-fail at HIGH slippage on either symbol:
+**Condition (iv) — §11.6 HIGH-slippage cost-sensitivity gate.** F1 must preserve **positive absolute BTC edge at HIGH slippage** AND ETH must remain non-catastrophic at HIGH slippage:
 
 ```
-expR(F1, BTCUSDT, R, HIGH, MARK)  >  −0.50  AND  PF(F1, BTCUSDT, R, HIGH, MARK)  >  0.30
+expR(F1, BTCUSDT, R, HIGH, MARK)  >  0
 AND
 expR(F1, ETHUSDT, R, HIGH, MARK)  >  −0.50  AND  PF(F1, ETHUSDT, R, HIGH, MARK)  >  0.30
 ```
 
-This is a **softer §11.6 gate than the V1-internal gate Phase 2v applied to R2.** R2's §11.6 evaluated whether HIGH-slip Δexp_H0 stayed positive (i.e., HIGH-slip improvement vs H0 anchor preserved). For F1, the appropriate §11.6 evaluator is **absolute floor preservation at HIGH** — F1 should not collapse below §10.4 hard-reject thresholds at HIGH, regardless of how F1's HIGH-slip absolute results compare to V1's MED-slip results (which would be a cross-family comparison the §11.6 gate is not calibrated for).
+This is a **stricter §11.6 gate** than soft absolute-floor preservation. The reasoning: F1's central claim under §7.2 condition (i) is positive absolute BTC edge at MED slippage; if HIGH-slippage cost variation erodes that BTC edge to zero or below, the cost-resilience of F1's BTC absolute claim has failed. Classifying such an outcome as PROMOTE would be incoherent with F1's self-anchored governance — the BTC edge that condition (i) certifies at MED would not survive realistic cost variation. The R2 precedent (Phase 2w §7) supports this strengthening: R2 failed §11.6 because HIGH-slip Δexp_H0 went negative; for F1's absolute-edge frame, the analog is "BTC HIGH-slip expR ≤ 0", and the same cost-resilience failure mode applies.
+
+ETH remains at the comparison-only absolute floor (`expR > −0.50` AND `PF > 0.30`) because ETH is never F1's primary symbol per §1.7.3. ETH HIGH-slip catastrophic failure (expR ≤ −0.50 or PF ≤ 0.30) is classified as a §7.3 HARD REJECT outcome, not as §11.6 cost-sensitivity blocking.
 
 **Condition (v) — §10.4-style hard-reject absolute thresholds.** F1 must not violate the §10.4 absolute floors at MED slippage:
 
@@ -424,7 +426,7 @@ AND
 expR(F1, ETHUSDT, R, MED, MARK)  >  −0.50  AND  PF(F1, ETHUSDT, R, MED, MARK)  >  0.30
 ```
 
-(Note condition (i) already implies positive BTC expR; (v) is the parallel ETH check at MED. Together (iii) and (v) cover ETH MED + HIGH absolute-floor preservation.)
+(Note condition (i) already implies positive BTC MED expR. Condition (v) is a parallel BTC + ETH §10.4 absolute-floor check at MED. Together, (iii) covers ETH non-catastrophic at MED, (iv) covers BTC positive-edge preservation at HIGH plus ETH non-catastrophic at HIGH, and (v) covers BTC and ETH §10.4 absolute floors at MED. The conditions are intentionally redundant on overlapping cells to make the gate evaluator unambiguous.)
 
 ### 7.3 Verdict outcomes
 
@@ -433,10 +435,11 @@ Combining conditions (i)–(v):
 | Outcome | Conditions met | Interpretation |
 |---------|----------------|----------------|
 | **PROMOTE — F1 first-execution PASS** | All five (i, ii, iii, iv, v) | F1 has a clean first-execution result. V-window run 5 is executed for §11.3 direction-of-improvement confirmation. F1 becomes a candidate-of-record for any future F1-internal variant work or paper/shadow consideration (the latter remains operator-policy-deferred). |
-| **PROMOTE-with-caveats** | (i, ii, v) AND (iii or iv passed but at-margin) | F1 has positive BTC absolute edge and BTC mechanism support but cost-sensitivity or ETH preservation is borderline. V-window run 5 executed. F1 retained as research evidence with mechanism-level findings. |
-| **MECHANISM PASS / FRAMEWORK FAIL** | (ii) PASS, (i) or (iii)/(iv)/(v) FAIL | M1 mechanism-supported but framework gate fails. F1 retained as research evidence per Phase 2x / Phase 2y precedent (mechanism informative even when framework fails). |
+| **PROMOTE-with-caveats** | (i, ii, v) AND (iii or iv passed but at-margin) | F1 has positive BTC absolute edge and BTC mechanism support but cost-sensitivity or ETH preservation is borderline (e.g., BTC HIGH expR positive but small; ETH HIGH ratios near floor). V-window run 5 executed. F1 retained as research evidence with mechanism-level findings. |
+| **MECHANISM PASS / FRAMEWORK FAIL — §11.6 cost-sensitivity blocks** | (i) MED PASS + (ii) M1 PASS + (iv) BTC HIGH expR ≤ 0, with no §10.4 catastrophic-floor violation anywhere | F1 has positive BTC absolute edge at MED slippage and M1 BTC mechanism support, but BTC HIGH-slip expR collapses to zero or below (without crossing the §10.4 catastrophic floor). **§11.6 cost-sensitivity gate fails: F1's BTC absolute edge does not survive realistic cost variation. NOT PROMOTE.** F1 retained as research evidence; mechanism evidence preserved as descriptive (mirroring R2's Phase 2w outcome shape). V-window run 5 not executed (§11.3 direction-of-improvement is moot when §11.6 blocks). |
+| **MECHANISM PASS / FRAMEWORK FAIL — other** | (ii) M1 PASS + (i) FAIL (BTC MED expR not strictly positive but no catastrophic floor violation anywhere) | M1 mechanism-supported but BTC MED absolute-edge condition (i) fails without catastrophic violation. F1 retained as research evidence per Phase 2x / Phase 2y precedent. V-window run 5 not executed. |
 | **MECHANISM FAIL** | (ii) FAIL, regardless of (i, iii, iv, v) | M1 mechanism-falsified — F1's central claim refuted. F1 disqualified regardless of other conditions. **Family-research closeout.** |
-| **HARD REJECT** | Any §10.4-style absolute-floor violation in (iii), (iv), or (v) | F1 is hard-rejected. V-window run 5 not executed. F1 family research is concluded as failed. |
+| **HARD REJECT** | Any catastrophic absolute-floor violation: expR ≤ −0.50 OR PF ≤ 0.30 on either symbol at either MED or HIGH slippage (per conditions iii, iv ETH-side, iv BTC-side if catastrophic, or v) | F1 is hard-rejected. V-window run 5 not executed. F1 family research is concluded as failed. |
 
 ### 7.4 Cross-family references are descriptive only
 
@@ -558,7 +561,7 @@ Per F1 R-window per symbol per slippage tier (runs 1, 2, 3):
 
 - `expR`, `PF`, `WR`, `netPct`, `|maxDD|` per tier.
 - Δ vs H0 same tier (descriptive cross-family reference); Δ vs R3 same tier (descriptive cross-family reference).
-- §7.2 condition (iv) HIGH-slippage absolute-floor preservation evaluation per cell.
+- §7.2 condition (iv) HIGH-slippage **positive BTC absolute edge preservation (BTC expR > 0) + ETH non-catastrophic floor preservation (ETH expR > −0.50 AND ETH PF > 0.30)** evaluation per cell.
 
 ### 8.12 Mark-price vs trade-price sensitivity
 
@@ -724,9 +727,10 @@ Phase 3b §9.4 cross-tabulation applied to F1 with §7.2 governance:
 | PROMOTE | PASS | FAIL | PASS | Mechanism partially supported (M2 fails); framework PROMOTE. |
 | PROMOTE | PASS | FAIL | FAIL | Mechanism partially supported (only M1); framework PROMOTE; cost / regime caveats prominent. |
 | PROMOTE-with-caveats | PASS | * | * | At-margin §7.2 conditions; mechanism informative for any future F1-prime. |
-| MECHANISM PASS / FRAMEWORK FAIL | PASS | * | * | M1 mechanism-supported but framework fails. F1 retained as research evidence. |
+| MECHANISM PASS / FRAMEWORK FAIL — §11.6 cost-sensitivity blocks | PASS | * | * | M1 mechanism-supported and BTC MED edge positive, but BTC HIGH-slip expR ≤ 0 (with no catastrophic floor violation). **F1's BTC absolute edge does not survive cost realism. NOT PROMOTE.** F1 retained as research evidence; mechanism preserved as descriptive (mirrors R2's Phase 2w outcome shape). |
+| MECHANISM PASS / FRAMEWORK FAIL — other | PASS | * | * | M1 mechanism-supported but BTC MED absolute-edge condition (i) fails (without catastrophic violation). F1 retained as research evidence. |
 | MECHANISM FAIL | FAIL | * | * | M1 falsifies F1's central claim. Family research closes. |
-| HARD REJECT | * | * | * | §7.2 condition (iii)/(iv)/(v) absolute-floor violation. Family research closes. |
+| HARD REJECT | * | * | * | Catastrophic absolute-floor violation (expR ≤ −0.50 OR PF ≤ 0.30) on either symbol at either MED or HIGH slippage. Family research closes. |
 
 Phase 3d execution **must report all five §7.2 conditions and all three M1/M2/M3 outcomes** independently; the combined verdict follows mechanically from the table.
 
@@ -783,6 +787,19 @@ Phase 3d implementation should also include in-test regressions for:
 - Same-bar priority in F1: STOP > TARGET > TIME_STOP (analogous to V1 R3's STOP > TAKE_PROFIT > TIME_STOP).
 
 Estimated F1 unit-test count: 30–50 covering all axes (parallel to Phase 2w R2's 43 R2-specific tests).
+
+### 10.4 Phase 3d-A sequencing requirement
+
+Phase 3d-A (the implementation phase preceding Phase 3d-B execution) **must enforce the following sequence before any F1 result is interpreted**:
+
+1. **Implement F1 strategy module + dispatch + tests** per §4.
+2. **Run code-quality gates** per §10.1 — `pytest`, `ruff check`, `ruff format --check`, `mypy src` must all pass green.
+3. **Run H0 / R3 control re-runs** per §6.3 / §6.4 (runs 6, 7, 8, 9) and verify bit-for-bit reproduction of locked baselines per §10.2.
+4. **Only after** steps 2 AND 3 pass green, F1 governing run (run 1) and sensitivity runs (runs 2, 3, 4) may be executed and interpreted.
+
+If step 2 OR step 3 fails, **F1 evaluation must halt**. Engine bug must be diagnosed and fixed; H0 / R3 controls must reproduce bit-for-bit before F1 runs are executed. **F1 results from a Phase 3d-A run where H0 / R3 controls did not reproduce bit-for-bit are not valid evidence and must not be reported as F1's first-execution result.**
+
+This sequencing protects against engine-correctness bugs (e.g., a feature-dataset construction bug that affects both V1 and F1 paths; a per-bar evaluation regression that affects all strategies; a dispatch-pattern misroute that breaks V1 silently while F1 appears to work). The Phase 2w-A precedent (H0 / R3 controls re-run on the engine version with R2 dispatch added; bit-for-bit reproduction was the implementation-correctness validator) is the direct convention; Phase 3d-A applies the same discipline with F1 dispatch added to both `StrategyFamily` enum and the engine's per-bar evaluator.
 
 ---
 
@@ -860,7 +877,7 @@ Phase 3d execution must explicitly verify each risk below before reporting any F
 
 **Mitigation:** §7 framework distinction; §7.4 explicit forbidden patterns; cross-family deltas labeled "descriptive cross-family reference; not §10.3-equivalent governing metric" in all reports.
 
-**Test surface:** Phase 3d analysis script must compute §7.2 conditions (i)–(v) as **F1-self-anchored absolute** values; cross-family deltas computed separately and clearly labeled. Phase 3c review should confirm analysis-script logic before Phase 3d execution begins.
+**Test surface:** Phase 3d analysis script must compute §7.2 conditions (i)–(v) as **F1-self-anchored absolute** values; cross-family deltas computed separately and clearly labeled. Note specifically that condition (iv)'s BTC HIGH-slip pass criterion (`expR > 0`) is also F1-self-anchored absolute — parallel in form to condition (i)'s BTC MED-slip pass criterion. Neither condition (i) nor condition (iv) BTC-side is a delta-vs-H0 or delta-vs-R3 metric. Phase 3c review should confirm analysis-script logic before Phase 3d execution begins.
 
 ---
 
@@ -874,7 +891,7 @@ The operator brief specifies four GO/NO-GO conditions:
 
 1. **GO only if the plan is internally consistent and implementable without spec changes.** ✓ MET — §2 restates Phase 3b spec verbatim; §3 forbids spec change in Phase 3c; §4 implementation surface is implementable using the engine's existing per-bar evaluation discipline + dispatch pattern from Phase 2w-A.
 2. **NO-GO if the Phase 3b spec needs changes.** ✓ MET — no spec changes proposed. F1 axes §2.1–§2.9 stand verbatim.
-3. **NO-GO if F1 first-execution gate is ambiguous.** ✓ MET — §7.2 defines five precise conditions (i, ii, iii, iv, v); §7.3 maps outcomes to verdicts; §9.1 defines exact M1 computation.
+3. **NO-GO if F1 first-execution gate is ambiguous.** ✓ MET — §7.2 defines five precise conditions (i, ii, iii, iv, v); §7.3 maps outcomes to verdicts including the §11.6 cost-sensitivity-block specific row; §9.1 defines exact M1 computation. The post-amendment §7.2(iv) BTC HIGH expR > 0 criterion is unambiguous: F1 must preserve positive absolute BTC edge under cost variation, and a BTC HIGH ≤ 0 outcome (with no catastrophic floor violation) is classified as MECHANISM PASS / FRAMEWORK FAIL — §11.6 cost-sensitivity blocks (NOT PROMOTE).
 4. **NO-GO if H0/R3 are accidentally treated as governing anchors.** ✓ MET — §7.4 explicitly forbids treating H0/R3 deltas as governing; cross-family references are labeled descriptive throughout (§6.3, §6.4, §8.14, §11.9).
 5. **NO-GO if execution would require threshold or project-lock changes.** ✓ MET — §7 uses Phase 2f §10.4-style absolute floors and §11.6 HIGH-slip absolute-floor preservation; no threshold change. §13 preserves all §1.7.3 locks verbatim.
 
@@ -896,7 +913,7 @@ Estimated Phase 3d implementation surface: 1500–2500 lines of source + tests +
 - **No paper/shadow planning.** Phase 2p §F.2 / post-Phase-2w / Phase 2x §6 / Phase 2y §8.4 / Phase 3a §7 / Phase 3b §15 deferrals stand.
 - **No Phase 4 (runtime / state / persistence).** Same authorities.
 - **No live-readiness, deployment, exchange-write, production keys.**
-- **No threshold change.** §10.3 / §10.4 / §11.3 / §11.4 / §11.6 thresholds preserved verbatim per Phase 2f §11.3.5 / Phase 2y closeout.
+- **No threshold change.** §10.3 / §10.4 / §11.3 / §11.4 / §11.6 numerical thresholds preserved verbatim per Phase 2f §11.3.5 / Phase 2y closeout. The §11.6 = 8 bps HIGH slippage threshold is unchanged. Phase 3c §7.2(iv) defines **how F1 evaluates §11.6** (BTC HIGH expR > 0 AND ETH HIGH non-catastrophic) — this is a cross-family-fairness adjustment to the gate **definition**, not a numerical threshold change.
 - **No project-level lock change.** §1.7.3 verbatim.
 - **No spec change.** Phase 3b §4 axes locked.
 - **No run-set expansion.** §6 inventory pre-committed; mid-execution additions forbidden.
