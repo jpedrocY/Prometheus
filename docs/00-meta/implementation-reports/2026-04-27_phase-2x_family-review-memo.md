@@ -148,9 +148,9 @@ The **ceiling on entry-axis improvement** under unchanged Phase 2f §11.6 is: R2
 
 The slippage-sensitivity profile is informative about the **nature** of each candidate's edge:
 
-| Candidate | LOW (0 bps) | MEDIUM (5 bps, committed) | HIGH (8 bps) | Cost-sensitivity profile |
-|-----------|-------------|---------------------------|--------------|--------------------------|
-| **R3** | BTC −0.139 / PF 0.719; ETH −0.271 / 0.561 | BTC −0.240 / 0.560; ETH −0.351 / 0.474 | BTC −0.445 / 0.359; ETH −0.549 / 0.316 | Cost-robust. Even at HIGH (3× MED), R3 is still better than H0 at MED. |
+| Candidate | LOW (1 bps per side) | MEDIUM (3 bps per side, committed) | HIGH (8 bps per side) | Cost-sensitivity profile |
+|-----------|----------------------|------------------------------------|-----------------------|--------------------------|
+| **R3** | BTC −0.139 / PF 0.719; ETH −0.271 / 0.561 | BTC −0.240 / 0.560; ETH −0.351 / 0.474 | BTC −0.445 / 0.359; ETH −0.549 / 0.316 | Cost-robust. Even at HIGH (~2.67× MED), R3 is still better than H0 at MED. |
 | **R1a + R3** | BTC −0.319 / 0.449; ETH −0.022 / 0.965 | BTC −0.420 / 0.355; ETH −0.114 / 0.833 | BTC −0.544 / 0.358; ETH −0.354 / 0.583 | Cost-monotone. ETH essentially break-even at LOW; BTC monotone-degraded. |
 | **R1b-narrow** | BTC −0.196 / 0.654; ETH −0.174 / 0.690 | BTC −0.263 / 0.561; ETH −0.224 / 0.622 | BTC −0.389 / 0.445; ETH −0.371 / 0.452 | Cost-monotone. PROMOTES at HIGH on both symbols; framework-clearing across the band. |
 | **R2 + R3** | BTC −0.180 / 0.973 (PROMOTE); ETH −0.481 / 0.366 (DISQ at LOW) | BTC −0.275 / 0.529 (PROMOTE); ETH −0.432 / 0.454 (PROMOTE) | BTC −0.473 / 0.315 (DISQ); ETH −0.705 / 0.256 (DISQ) | **Cost-fragile.** §11.6 gate FAILS. ETH disqualifies even at LOW (Δexp_H0 −0.006). |

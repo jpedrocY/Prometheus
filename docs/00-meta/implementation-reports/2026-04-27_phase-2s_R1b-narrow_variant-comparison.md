@@ -383,7 +383,7 @@ GAP-20260424-032 + Phase 2f §11.6 cost-sensitivity gate.
 | HIGH     | BTCUSDT |     10 |  −0.389 | 0.445 |  −0.87% |  −1.28% |
 | HIGH     | ETHUSDT |     12 |  −0.371 | 0.452 |  −1.00% |  −1.52% |
 
-Cost sensitivity is monotone and proportional. At HIGH (3× baseline): BTC expR −0.389, ETH expR −0.371 — both still better than H0 at MEDIUM (BTC −0.459, ETH −0.475). The candidate remains framework-clearing across the slippage band (no §10.3 disqualification floor triggered at HIGH).
+Cost sensitivity is monotone and proportional. At HIGH (8 bps per side; ~2.67× the committed MEDIUM): BTC expR −0.389, ETH expR −0.371 — both still better than H0 at MEDIUM (BTC −0.459, ETH −0.475). The candidate remains framework-clearing across the slippage band (no §10.3 disqualification floor triggered at HIGH).
 
 ## 11. Stop-trigger sensitivity (GAP-20260424-032)
 
