@@ -328,7 +328,7 @@ V does NOT promote R3 again (Phase 2f §11.3.5 binds: V is sanity-check / no-fit
 
 ## 8. Slippage sensitivity (R3 on R window)
 
-GAP-20260424-032 carry-forward + Phase 2f §11.6 cost-sensitivity gate. LOW = 0 bps; MEDIUM = 5 bps (baseline); HIGH = 15 bps (3x baseline).
+GAP-20260424-032 carry-forward + Phase 2f §11.6 cost-sensitivity gate. Per the canonical project config (`src/prometheus/research/backtest/config.py` `DEFAULT_SLIPPAGE_BPS`): LOW = 1.0 bps per side; MEDIUM = 3.0 bps per side (committed default); HIGH = 8.0 bps per side. The numerical run results in this section were computed using these canonical values. (The Phase 2l text originally described LOW = 0 / MEDIUM = 5 / HIGH = 15 bps; that was inline-description drift. Cleaned per the 2026-04-27 docs-only slippage-wording consistency cleanup; numerical results unchanged.)
 
 | Slippage | Symbol  | Trades | expR    | PF    | netPct  | maxDD   |
 |----------|---------|-------:|--------:|------:|--------:|--------:|
@@ -339,7 +339,7 @@ GAP-20260424-032 carry-forward + Phase 2f §11.6 cost-sensitivity gate. LOW = 0 
 | HIGH     | BTCUSDT |     33 |  −0.445 | 0.359 |  −3.29% |  −3.69% |
 | HIGH     | ETHUSDT |     33 |  −0.549 | 0.316 |  −4.07% |  −4.79% |
 
-Cost sensitivity is monotone and proportional. Even at HIGH (3x baseline) R3 does not cross the §10.4 hard-reject thresholds (BTC expR −0.445 is above −0.50; BTC PF 0.359 is above 0.30; ETH expR −0.549 is below −0.50 BUT ETH §11.4 is not the disqualifier — see §11.4 cross-symbol rule). Compare H0 on the same window at MEDIUM: expR −0.459, PF 0.255 — R3 at HIGH (−0.445, 0.359) is still better than H0 at MEDIUM. This confirms R3's improvement isn't an artifact of any specific slippage assumption; it persists across the cost sensitivity range.
+Cost sensitivity is monotone and proportional. Even at HIGH (8 bps per side; ~2.67× the committed MEDIUM) R3 does not cross the §10.4 hard-reject thresholds (BTC expR −0.445 is above −0.50; BTC PF 0.359 is above 0.30; ETH expR −0.549 is below −0.50 BUT ETH §11.4 is not the disqualifier — see §11.4 cross-symbol rule). Compare H0 on the same window at MEDIUM: expR −0.459, PF 0.255 — R3 at HIGH (−0.445, 0.359) is still better than H0 at MEDIUM. This confirms R3's improvement isn't an artifact of any specific slippage assumption; it persists across the cost sensitivity range.
 
 ## 9. Stop-trigger-source sensitivity (GAP-20260424-032)
 

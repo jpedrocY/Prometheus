@@ -347,7 +347,7 @@ V-window observations:
 
 ## 10. Slippage sensitivity
 
-GAP-20260424-032 carry-forward + Phase 2f §11.6 cost-sensitivity gate. LOW = 0 bps; MEDIUM = 5 bps (baseline); HIGH = 15 bps (3× baseline). R1a+R3 on R-window:
+GAP-20260424-032 carry-forward + Phase 2f §11.6 cost-sensitivity gate. Per the canonical project config (`src/prometheus/research/backtest/config.py` `DEFAULT_SLIPPAGE_BPS`): LOW = 1.0 bps per side; MEDIUM = 3.0 bps per side (committed default); HIGH = 8.0 bps per side. The numerical run results in this section were computed using these canonical values. (The Phase 2m text originally described LOW = 0 / MEDIUM = 5 / HIGH = 15 bps; that was inline-description drift carried forward from Phase 2l. Cleaned per the 2026-04-27 docs-only slippage-wording consistency cleanup; numerical results unchanged.) R1a+R3 on R-window:
 
 | Slippage | Symbol  | Trades | expR    | PF    | netPct  | maxDD   |
 |----------|---------|-------:|--------:|------:|--------:|--------:|
@@ -358,7 +358,7 @@ GAP-20260424-032 carry-forward + Phase 2f §11.6 cost-sensitivity gate. LOW = 0 
 | HIGH     | BTCUSDT |     22 |  −0.544 | 0.358 |  −2.68% |  −3.31% |
 | HIGH     | ETHUSDT |     23 |  −0.354 | 0.583 |  −1.83% |  −4.00% |
 
-Cost sensitivity is monotone and proportional. At HIGH (3× baseline) BTC expR drops to −0.544 (just below the §10.4 −0.50 hard-reject boundary if §10.4 applied — but Δn < 0 so §10.4 does not apply). ETH at LOW slippage is essentially break-even (expR −0.022, PF 0.965, netPct −0.11%) — confirming that the ETH improvement is robust to cost assumptions.
+Cost sensitivity is monotone and proportional. At HIGH (8 bps per side; ~2.67× the committed MEDIUM) BTC expR drops to −0.544 (just below the §10.4 −0.50 hard-reject boundary if §10.4 applied — but Δn < 0 so §10.4 does not apply). ETH at LOW slippage is essentially break-even (expR −0.022, PF 0.965, netPct −0.11%) — confirming that the ETH improvement is robust to cost assumptions.
 
 ## 11. Stop-trigger-source sensitivity (GAP-20260424-032)
 
