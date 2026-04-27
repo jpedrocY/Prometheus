@@ -60,7 +60,7 @@ R-window is run for all three variants (H0, R3, R2+R3). V-window is run only if 
 
 Per Phase 2f §11.6 cost-sensitivity gate. The cost model has two dimensions:
 
-- **Slippage tier**: `LOW` (1 bps), `MEDIUM` (3 bps; default), `HIGH` (9 bps; ≈ 3× MED). Applied symmetrically as taker-side slippage on entry and exit fills.
+- **Slippage tier**: `LOW` (1 bps), `MEDIUM` (3 bps; default), `HIGH` (8 bps). Authoritative values per `src/prometheus/research/backtest/config.py` `DEFAULT_SLIPPAGE_BPS[SlippageBucket.HIGH] = 8.0`. All Phase 2w runs used the canonical code value (8.0 bps for HIGH). Applied symmetrically as taker-side slippage on entry and exit fills. *(Note: a prior draft of this plan stated HIGH ≈ 3× MED ≈ 9 bps; the canonical code value is 8 bps. The plan wording is corrected here for consistency with the code; no metrics, verdicts, thresholds, or interpretations change — every Phase 2 run since the canonical value was committed has used 8 bps.)*
 - **Stop trigger**: `MARK_PRICE` (default per §1.7.3 mark-price-stops lock), `TRADE_PRICE` (sensitivity diagnostic per GAP-20260424-032).
 
 Default cost model for the governing R-window run: **MEDIUM slippage + MARK_PRICE stop trigger**.
