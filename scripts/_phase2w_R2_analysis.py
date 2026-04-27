@@ -38,6 +38,10 @@ from statistics import mean
 
 import pyarrow.parquet as pq
 
+from prometheus.core.intervals import Interval
+from prometheus.core.symbols import Symbol
+from prometheus.research.data.storage import read_klines
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 # §10.3 thresholds preserved per Phase 2f §11.3.5 (no post-hoc loosening).
@@ -664,27 +668,126 @@ def _diagnostic_p8_per_fold_consistency(
 # --------------------------------------------------------------------------
 
 
-def _diagnostic_p9_per_regime_placeholder() -> dict:
-    """§P.9 per-regime expR.
+def _diagnostic_p9_per_regime(
+    trades_per_variant_per_symbol: dict,
+    klines_1h_per_symbol: dict,
+) -> dict:
+    """§P.9 per-regime expR (Phase 2l/2m/2s convention).
 
-    The full per-regime decomposition requires re-running the trades
-    through a 1h-volatility tercile classifier (per Phase 2l/2m/2s
-    convention: trailing 1000 1h-bar Wilder ATR(20), 33/67 splits).
-    For 2w-B, we record this as a deferred sub-computation: the
-    regime classification machinery exists in prior Phase 2 analysis
-    scripts but is not duplicated here. The 2w-B checkpoint report
-    documents this as a noted deferral (computed at report-writing
-    time if needed) rather than forced into the analysis JSON.
+    Classifies each trade into a 1h-volatility tercile based on the
+    trailing 1000 1h-bar Wilder ATR(20) distribution at the time of
+    the trade's signal bar. Tercile boundaries are 33rd / 67th
+    percentile within the trailing window (recomputed per-trade for
+    the most accurate live-equivalent classification). Aggregates
+    expR / WR / PF / count per regime per variant per symbol.
+
+    Per Phase 2l / 2m / 2s precedent. The convention treats sample-
+    size-fragile cells (n < 3) as informative-but-uninterpretable.
     """
-    return {
-        "computed": False,
-        "reason": (
-            "Per-regime expR requires 1h-volatility tercile classifier "
-            "(Phase 2l/2m/2s convention). Not duplicated in 2w-B "
-            "analysis script; 2w-C may compute at report-writing time "
-            "from the run trade-logs if operator authorizes."
-        ),
-    }
+    # Pre-compute per-symbol 1h ATR series (Wilder ATR(20)).
+    atr_per_symbol: dict[str, list[tuple[int, float]]] = {}
+    for sym, klines in klines_1h_per_symbol.items():
+        highs = [k["high"] for k in klines]
+        lows = [k["low"] for k in klines]
+        closes = [k["close"] for k in klines]
+        # Inline Wilder ATR(20) (mirrors src/.../indicators.py).
+        period = 20
+        n = len(highs)
+        atr_vals: list[float] = [float("nan")] * n
+        if n > period:
+            tr = [float("nan")] * n
+            tr[0] = highs[0] - lows[0]
+            for i in range(1, n):
+                tr[i] = max(
+                    highs[i] - lows[i],
+                    abs(highs[i] - closes[i - 1]),
+                    abs(lows[i] - closes[i - 1]),
+                )
+            seed = sum(tr[:period]) / period
+            atr_vals[period] = seed
+            prev = seed
+            for i in range(period + 1, n):
+                prev = ((period - 1) * prev + tr[i]) / period
+                atr_vals[i] = prev
+        # Store as (close_time_ms, atr) pairs for binary-search-friendly lookup.
+        atr_per_symbol[sym] = [(klines[i]["close_time"], atr_vals[i]) for i in range(n)]
+
+    def _classify_trade(symbol: str, signal_bar_open_time_ms: int) -> str | None:
+        """Classify a trade's regime based on the 1h ATR's trailing
+        1000-bar tercile at the most recent completed 1h bar before
+        the signal bar's open_time.
+        """
+        atr_series = atr_per_symbol.get(symbol)
+        if not atr_series:
+            return None
+        # Find the most recent completed 1h bar (close_time < signal_bar_open_time).
+        idx_at_signal = -1
+        for i in range(len(atr_series) - 1, -1, -1):
+            if atr_series[i][0] < signal_bar_open_time_ms:
+                idx_at_signal = i
+                break
+        if idx_at_signal < 0:
+            return None
+        # Trailing 1000-bar window (or as much as available).
+        window_start = max(0, idx_at_signal - 999)
+        window = [
+            atr_series[i][1]
+            for i in range(window_start, idx_at_signal + 1)
+            if not math.isnan(atr_series[i][1])
+        ]
+        if len(window) < 50:  # need a minimum to compute meaningful terciles
+            return None
+        atr_now = atr_series[idx_at_signal][1]
+        if math.isnan(atr_now):
+            return None
+        sorted_w = sorted(window)
+        nth_33 = sorted_w[len(sorted_w) // 3]
+        nth_67 = sorted_w[(2 * len(sorted_w)) // 3]
+        if atr_now <= nth_33:
+            return "low_vol"
+        if atr_now <= nth_67:
+            return "med_vol"
+        return "high_vol"
+
+    def _aggregate(trades: list[dict], symbol: str) -> dict:
+        cells: dict[str, dict[str, float | int]] = {
+            "low_vol": {"count": 0, "rs_sum": 0.0, "wins": 0, "gains": 0.0, "losses": 0.0},
+            "med_vol": {"count": 0, "rs_sum": 0.0, "wins": 0, "gains": 0.0, "losses": 0.0},
+            "high_vol": {"count": 0, "rs_sum": 0.0, "wins": 0, "gains": 0.0, "losses": 0.0},
+            "uncategorized": {"count": 0, "rs_sum": 0.0, "wins": 0, "gains": 0.0, "losses": 0.0},
+        }
+        for t in trades:
+            regime = _classify_trade(symbol, t["signal_bar_open_time_ms"])
+            key = regime if regime else "uncategorized"
+            cell = cells[key]
+            r = t["net_r_multiple"]
+            cell["count"] = int(cell["count"]) + 1
+            cell["rs_sum"] = float(cell["rs_sum"]) + float(r)
+            if r > 0:
+                cell["wins"] = int(cell["wins"]) + 1
+                cell["gains"] = float(cell["gains"]) + float(r)
+            else:
+                cell["losses"] = float(cell["losses"]) + float(-r)
+        out: dict[str, dict] = {}
+        for regime, cell in cells.items():
+            n = int(cell["count"])
+            if n == 0:
+                out[regime] = {"count": 0}
+                continue
+            expR = float(cell["rs_sum"]) / n
+            wr = float(cell["wins"]) / n
+            pf = (
+                float(cell["gains"]) / float(cell["losses"]) if cell["losses"] > 0 else float("inf")
+            )
+            out[regime] = {"count": n, "expR": expR, "WR": wr, "PF": pf}
+        return out
+
+    result: dict[str, dict] = {}
+    for variant, sym_trades in trades_per_variant_per_symbol.items():
+        result[variant] = {}
+        for symbol, trades in sym_trades.items():
+            result[variant][symbol] = _aggregate(trades, symbol)
+    return result
 
 
 # --------------------------------------------------------------------------
@@ -749,9 +852,26 @@ def main() -> int:
     r3_r_eth_trades = _load_trades(args.r3_r_dir, "ETHUSDT")
     r2_r_btc_trades = _load_trades(args.r2_r_dir, "BTCUSDT")
     r2_r_eth_trades = _load_trades(args.r2_r_dir, "ETHUSDT")
-    # V-window trades are not consumed in 2w-B diagnostics (V-window
-    # confirmation uses summary-level metrics only); reserved for 2w-C
-    # comparison-report writing if needed.
+    # V-window trades are not consumed in 2w-B/C diagnostics (V-window
+    # confirmation uses summary-level metrics only).
+
+    # Load 1h klines for the §P.9 per-regime expR diagnostic. Use the
+    # locked v002 dataset path; per-symbol bar list is consumed by the
+    # P.9 classifier's trailing-1000-bar tercile computation.
+    bars_1h_root = Path("data/derived/bars_1h/standard")
+    klines_1h_per_symbol_dict: dict[str, list[dict]] = {}
+    for sym_enum in (Symbol.BTCUSDT, Symbol.ETHUSDT):
+        klines = read_klines(bars_1h_root, symbol=sym_enum, interval=Interval.I_1H)
+        klines_1h_per_symbol_dict[sym_enum.value] = [
+            {
+                "open_time": k.open_time,
+                "close_time": k.close_time,
+                "high": k.high,
+                "low": k.low,
+                "close": k.close,
+            }
+            for k in klines
+        ]
 
     r2_r_btc_lifecycle = _load_r2_lifecycle(args.r2_r_dir, "BTCUSDT")
     r2_r_eth_lifecycle = _load_r2_lifecycle(args.r2_r_dir, "ETHUSDT")
@@ -858,7 +978,14 @@ def main() -> int:
             r3_r_eth_trades,
             h0_r_eth_trades,
         ),
-        "P9_per_regime_expR": _diagnostic_p9_per_regime_placeholder(),
+        "P9_per_regime_expR": _diagnostic_p9_per_regime(
+            trades_per_variant_per_symbol={
+                "h0": {"BTCUSDT": h0_r_btc_trades, "ETHUSDT": h0_r_eth_trades},
+                "r3": {"BTCUSDT": r3_r_btc_trades, "ETHUSDT": r3_r_eth_trades},
+                "r2_r3": {"BTCUSDT": r2_r_btc_trades, "ETHUSDT": r2_r_eth_trades},
+            },
+            klines_1h_per_symbol=klines_1h_per_symbol_dict,
+        ),
         "P10_r_distance_distribution_btc": _diagnostic_p10_r_distance_distribution(
             r2_r_btc_trades, r3_r_btc_trades
         ),
