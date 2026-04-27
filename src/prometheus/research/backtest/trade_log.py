@@ -57,6 +57,30 @@ class TradeRecord(BaseModel):
     fee_rate_assumption: float
     stop_was_gap_through: bool
 
+    # ----- R2 pullback-retest entry metadata (Phase 2u, Gate 2 amended) -----
+    # All fields default to H0-equivalent values so MARKET_NEXT_BAR_OPEN
+    # (H0/R3/R1a/R1b-narrow) trade records are unchanged in their
+    # economically-meaningful columns. Under H0 default, the registration
+    # bar IS the signal bar, time_to_fill_bars is 0, the pullback level is
+    # not applicable (NaN), the structural stop level equals initial_stop,
+    # the ATR at signal is the same value the existing strategy uses
+    # for the sizing pipeline, the fill price equals entry_fill_price, and
+    # the R-distance is stop_distance / atr_at_signal. The R2 path
+    # populates these with the actual frozen-at-registration values.
+    #
+    # ``cancellation_reason`` is always None for filled trades (R2 or H0);
+    # it is reserved for sidecar cancellation/expiry records that 2w-B will
+    # add to the per-symbol funnel/diagnostic reports (not to the trade log).
+    registration_bar_index: int = -1
+    fill_bar_index: int = -1
+    time_to_fill_bars: int = 0
+    pullback_level_at_registration: float = float("nan")
+    structural_stop_level_at_registration: float = float("nan")
+    atr_at_signal: float = float("nan")
+    fill_price: float = float("nan")
+    r_distance: float = float("nan")
+    cancellation_reason: str | None = None
+
 
 def trade_record_to_dict(rec: TradeRecord) -> dict[str, object]:
     data = rec.model_dump()
@@ -99,6 +123,19 @@ def trade_record_to_parquet_table(records: list[TradeRecord]) -> pa.Table:
             ("slippage_bucket", pa.string()),
             ("fee_rate_assumption", pa.float64()),
             ("stop_was_gap_through", pa.bool_()),
+            # R2 pullback-retest entry metadata (Phase 2u, Gate 2 amended).
+            # All fields default to H0-equivalent values for non-R2 paths;
+            # the parquet schema carries them so a future R2 run shares
+            # the same trade-log shape as H0/R3/R1a/R1b-narrow.
+            ("registration_bar_index", pa.int64()),
+            ("fill_bar_index", pa.int64()),
+            ("time_to_fill_bars", pa.int64()),
+            ("pullback_level_at_registration", pa.float64()),
+            ("structural_stop_level_at_registration", pa.float64()),
+            ("atr_at_signal", pa.float64()),
+            ("fill_price", pa.float64()),
+            ("r_distance", pa.float64()),
+            ("cancellation_reason", pa.string()),
         ]
     )
     columns: dict[str, list[object]] = {name: [] for name in schema.names}

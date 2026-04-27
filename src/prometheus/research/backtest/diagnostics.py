@@ -284,8 +284,50 @@ class SignalFunnelCounts:
     trades_filled: int = 0
     trades_closed: int = 0
 
+    # R2 pullback-retest entry-lifecycle buckets (Phase 2u, Gate 2 amended).
+    # Populated only when ``entry_kind=PULLBACK_RETEST`` (R2 path); they
+    # remain 0 under MARKET_NEXT_BAR_OPEN (H0/R3/R1a/R1b-narrow defaults).
+    # The accounting identity per Phase 2u §J.4 amendment:
+    #
+    #     registered_candidates = expired_candidates_no_pullback
+    #                           + expired_candidates_bias_flip
+    #                           + expired_candidates_opposite_signal
+    #                           + expired_candidates_structural_invalidation
+    #                           + expired_candidates_stop_distance_at_fill
+    #                           + trades_filled_R2
+    #
+    # is enforced by ``r2_accounting_identity_holds`` below. For control
+    # paths (entry_kind=MARKET_NEXT_BAR_OPEN) the identity is trivially
+    # 0 = 0 + 0 + 0 + 0 + 0 + 0; for R2 runs it is populated by the engine.
+    registered_candidates: int = 0
+    expired_candidates_no_pullback: int = 0
+    expired_candidates_bias_flip: int = 0
+    expired_candidates_opposite_signal: int = 0
+    expired_candidates_structural_invalidation: int = 0
+    expired_candidates_stop_distance_at_fill: int = 0
+    trades_filled_R2: int = 0
+
     # Warnings / context
     warnings: list[str] = field(default_factory=list)
+
+    @property
+    def r2_accounting_identity_holds(self) -> bool:
+        """Return True iff the R2 funnel-bucket accounting identity holds.
+
+        The identity per Phase 2u §J.4 (Gate 2 amended): every
+        registered PendingCandidate has exactly one terminal outcome
+        (one of five cancellation reasons or fill). For the
+        MARKET_NEXT_BAR_OPEN control path all R2 buckets are 0 and
+        the identity holds trivially.
+        """
+        return self.registered_candidates == (
+            self.expired_candidates_no_pullback
+            + self.expired_candidates_bias_flip
+            + self.expired_candidates_opposite_signal
+            + self.expired_candidates_structural_invalidation
+            + self.expired_candidates_stop_distance_at_fill
+            + self.trades_filled_R2
+        )
 
     def summary(self) -> str:
         """Human-readable one-symbol summary block."""
