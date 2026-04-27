@@ -67,29 +67,40 @@ Prometheus v1 is not intended to be a lights-out autonomous AI trading agent.
 
 ## Current Phase
 
-The project has completed the core documentation, architecture, setup, governance, and AI-coding handoff work needed to begin phased implementation planning.
+Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 historical-data foundation, and the Phase 2 strategy/backtesting research arc are all complete. Phase 2w (R2 pullback-retest entry redesign) is the most recent phase and has been merged into `main`.
 
 Current phase:
 
 ```text
-Claude Code handoff readiness / Phase 0 implementation intake
+Phase 2w merged. No next phase authorized.
 ```
 
-The project is ready to move into Claude Code Phase 0:
+Most recent merge:
 
 ```text
-repository audit and implementation-readiness review
+main HEAD: 955b2cd88aae9cdb890743dd5ac995290f89fc4b
+Merge title:  Merge Phase 2w (R2 pullback-retest entry) into main
 ```
 
-The immediate next step is **not** broad code generation.
+## Strategy Research Arc Outcomes
 
-The immediate next step is:
+The Phase 2 strategy/backtesting research arc (Phase 2e through Phase 2w) has produced these outcomes:
 
-1. commit the updated documentation files to the repository,
-2. open the local repository at `C:\Prometheus`,
-3. give Claude Code the initial Phase 0 prompt from `docs/00-meta/ai-coding-handoff.md`,
-4. have Claude Code inspect the repository and produce a repo-audit report,
-5. review that report before approving Phase 1.
+- **H0** — locked Phase 2e baseline; remains the **framework anchor**.
+- **R3** (Fixed-R take-profit + unconditional time-stop, Phase 2p §C.1) — **baseline-of-record**.
+- **R1a** (volatility-percentile setup predicate) — retained as **research evidence**; **non-leading**.
+- **R1b-narrow** (bias-strength magnitude threshold) — retained as **research evidence**; **non-leading**.
+- **R2** (pullback-retest entry) — final verdict **FAILED — §11.6 cost-sensitivity gate blocks**. M1 ✓, M3 ✓, M2 ✗ (mechanism partially supported); slippage-fragile. Retained as **research evidence** per Phase 2p §D framing.
+
+No next strategy phase is authorized.
+
+No paper/shadow planning is authorized.
+
+No Phase 4 (risk/state/persistence runtime) work is authorized.
+
+No live-readiness, deployment, exchange-write, or production-key work is authorized.
+
+The next step is operator-driven only: the operator decides whether and when any subsequent phase is authorized. Until then, the project remains at the post-Phase-2w research-arc closeout boundary.
 
 ---
 
@@ -640,36 +651,28 @@ Defined:
 
 ## Immediate Next Tasks
 
-The next practical tasks are:
+No new strategy phase, paper/shadow planning, Phase 4 runtime implementation, live-readiness, or deployment work is currently authorized.
 
-1. Save the newly generated files into the repository:
-   - `docs/09-operations/first-run-setup-checklist.md`
-   - `docs/00-meta/ai-coding-handoff.md`
-   - `docs/00-meta/current-project-state.md`
-   - `README.md` or `docs/README.md`, depending on repository placement.
-2. Commit the documentation update.
-3. Start Claude Code with the Phase 0 prompt from the AI coding handoff.
-4. Have Claude Code perform repository audit only.
-5. Review the Phase 0 repo-audit report before approving Phase 1.
-6. Use ChatGPT as setup/debug/review support whenever Claude Code reaches installation issues, unclear system steps, or checkpoint reports requiring review.
+The next step is operator-driven:
+
+1. Operator reviews Phase 2w final outputs:
+   - `docs/00-meta/implementation-reports/2026-04-27_phase-2w_R2_variant-comparison.md`
+   - `docs/00-meta/implementation-reports/2026-04-27_phase-2w-A_checkpoint-report.md`
+   - `docs/00-meta/implementation-reports/2026-04-27_phase-2w-B_R2_execution-diagnostics.md`
+2. Operator decides whether and when to authorize any subsequent phase.
+3. Until that authorization, the project remains at the post-Phase-2w research-arc closeout boundary.
+
+Implementation/code work that proceeds without explicit operator authorization for a specific phase is forbidden.
 
 ---
 
 ## Claude Code Start Instruction
 
-Use the initial Claude Code prompt from:
+Phase 0 (repo audit), Phase 1 (local development foundation), and the Phase 2 strategy/backtesting research arc (through Phase 2w) are complete and merged to `main`.
 
-```text
-docs/00-meta/ai-coding-handoff.md
-```
+Claude Code must not begin any subsequent strategy phase, paper/shadow planning, Phase 4 runtime implementation, live-readiness, or deployment work without explicit operator authorization for that specific phase.
 
-The first Claude Code task must be:
-
-```text
-Phase 0 — Handoff Intake and Repo Audit
-```
-
-Claude Code must not begin broad implementation until the Phase 0 report is reviewed and Phase 1 is approved.
+The AI coding handoff at `docs/00-meta/ai-coding-handoff.md` remains the authoritative reference for phased implementation method, safety constraints, and reporting protocol. Phase-gate governance at `docs/12-roadmap/phase-gates.md` and the technical-debt register at `docs/12-roadmap/technical-debt-register.md` continue to bound any future phase.
 
 ---
 
@@ -728,31 +731,40 @@ by removing less immediately needed strategy/data/risk documents, because the re
 Current readiness:
 
 ```text
-Strategy/research: strong
-Historical/live data design: strong
-Validation plan: strong
-Risk model: strong
-Execution model: strong
-Runtime architecture: strong
-Operations: strong, setup checklist now created
-Security: strong
-Interface/dashboard/alerts: strong
-Roadmap/governance: strong
-AI coding handoff: created
-First-run setup checklist: created
-Claude Code Phase 0 readiness: ready
-Broad implementation readiness: pending Phase 0 repo audit
+Strategy/research:                Phase 2 research arc complete
+                                  H0 anchor; R3 baseline-of-record;
+                                  R1a, R1b-narrow, R2 retained as research evidence
+Historical/live data design:      docs strong; Phase 2e v002 datasets locked
+Validation plan:                  implemented through Phase 2w
+Risk model:                       docs strong; runtime not yet implemented
+Execution model:                  docs strong; runtime not yet implemented
+Runtime architecture:             docs strong; runtime not yet implemented
+Operations:                       docs strong; runtime not yet implemented
+Security:                         docs strong; runtime not yet implemented
+Interface/dashboard/alerts:       docs strong; not yet implemented
+Roadmap/governance:               strong
+AI coding handoff:                created
+First-run setup checklist:        created
+Claude Code Phase 0 readiness:    completed
+Phase 1 local-dev foundation:     completed
+Phase 2 data foundation:          completed
+Phase 2 strategy research arc:    completed (Phase 2w merged at 955b2cd)
+Phase 4 runtime implementation:   NOT authorized
+Paper/shadow planning:            NOT authorized
+Live-readiness / deployment:      NOT authorized
+Production-key work:              NOT authorized
+Exchange-write capability:        NOT authorized
 ```
 
-The project is now ready for Claude Code Phase 0 repository audit and implementation-readiness review.
+The project has completed the Phase 2 strategy/backtesting research arc.
 
-It is not ready for unrestricted code generation, exchange-write capability, production Binance keys, or live trading.
+It is not ready for Phase 4 runtime implementation, paper/shadow operation, exchange-write capability, production Binance keys, or live trading. No subsequent phase has been authorized; the next step requires explicit operator authorization for that specific phase.
 
 ---
 
 ## Document Status
 
 - Status: ACTIVE
-- Updated: 2026-04-18
+- Updated: 2026-04-27
 - Owner: Project operator
-- Role: High-level project memory checkpoint before Claude Code Phase 0
+- Role: High-level project memory checkpoint after Phase 2w research-arc closeout
