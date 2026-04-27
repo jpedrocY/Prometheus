@@ -4,7 +4,17 @@
 
 **Date:** 2026-04-27 UTC.
 
-**Status:** Phase 3c memo complete. Awaiting operator review and possible merge to `main`.
+**Status:** Phase 3c memo complete with operator-mandated amendment applied (HIGH-slip gate hardening + Phase 3d-A sequencing clarification). Awaiting operator review and possible merge to `main`.
+
+**Amendment context (added 2026-04-27 UTC, follow-up to operator review):**
+
+The operator's Phase 3c review found one blocking framework correction (the §11.6 HIGH-slip gate was too soft as originally drafted) and two clerical clarifications. Both are addressed in commits `ac0ff0b` (planning memo amendment) and the closeout-amendment commit referenced in §4 below. Specifics:
+
+- **Framework correction:** §7.2 condition (iv) now requires positive absolute BTC edge at HIGH slippage (`expR(F1, BTCUSDT, R, HIGH, MARK) > 0`); ETH remains at the comparison-only non-catastrophic absolute floor (`expR > −0.50` AND `PF > 0.30`). §7.3 / §8.11 / §9.4 / §11.9 / §12 updated accordingly. The new specific verdict row "MECHANISM PASS / FRAMEWORK FAIL — §11.6 cost-sensitivity blocks" is fired when condition (i) MED PASS + condition (ii) M1 PASS + condition (iv) BTC HIGH expR ≤ 0 with no §10.4 catastrophic violation. **NOT classified as PROMOTE.**
+- **Clerical clarification #1:** §10.4 added — Phase 3d-A must enforce strict sequence (implement → quality gates pass → H0/R3 control re-runs reproduce baselines bit-for-bit → only then F1 runs are interpreted). If quality gates or H0/R3 reproduction fails, F1 evaluation halts.
+- **Clerical clarification #2:** This closeout report updated with full closeout commit hashes per §4 below.
+
+The amendment is **docs-only**; no code, no tests, no scripts, no backtest, no parameter change, no threshold-numerical change, no project-lock change. Phase 3b F1 strategy spec preserved verbatim per Phase 3c §3.
 
 ---
 
@@ -14,7 +24,7 @@
 phase-3c/f1-execution-planning
 ```
 
-Branched from `main` at `97a4fb3` (the post-Phase-3b-merge tip). 1 commit on the planning memo + 1 commit on this closeout report (the present file). Not pushed. Not merged.
+Branched from `main` at `97a4fb3` (the post-Phase-3b-merge tip). 3 commits before this amendment commit on the planning memo + 1 commit on this closeout report's pre-amendment state + 1 commit (this closeout amendment); see §4 for the full chain. Not pushed. Not merged.
 
 ## 2. Git status
 
@@ -29,24 +39,33 @@ No uncommitted changes after the closeout commit. (Pre-closeout-commit state was
 
 ## 3. Files changed
 
-Two files added across the entire Phase 3c branch (vs `main`):
+Two unique files added (and subsequently amended) across the entire Phase 3c branch (vs `main`):
 
-- [docs/00-meta/implementation-reports/2026-04-27_phase-3c_F1_execution-planning-memo.md](docs/00-meta/implementation-reports/2026-04-27_phase-3c_F1_execution-planning-memo.md) — NEW, 943 insertions, 0 deletions
-- [docs/00-meta/implementation-reports/2026-04-27_phase-3c_closeout-report.md](docs/00-meta/implementation-reports/2026-04-27_phase-3c_closeout-report.md) — NEW, this file
+- [docs/00-meta/implementation-reports/2026-04-27_phase-3c_F1_execution-planning-memo.md](docs/00-meta/implementation-reports/2026-04-27_phase-3c_F1_execution-planning-memo.md) — NEW + AMENDED. Initial commit: 943 insertions. Amendment commit: +30 / −13 (HIGH-slip gate hardening + §10.4 sequencing clarification). Net file size after amendment: 960 lines.
+- [docs/00-meta/implementation-reports/2026-04-27_phase-3c_closeout-report.md](docs/00-meta/implementation-reports/2026-04-27_phase-3c_closeout-report.md) — NEW + AMENDED. Initial commit: 104 insertions. Amendment commit: this file's edits (full-SHA recording + amendment-context section).
 
-No file modified. No file deleted. No file outside `docs/00-meta/implementation-reports/` touched.
+No file outside `docs/00-meta/implementation-reports/` touched. No source code, tests, scripts, configuration, data, or schema files affected.
 
 ## 4. Commit hash
 
-**Phase 3c planning memo commit:**
+Full Phase 3c commit chain (`main` → branch tip):
+
+| Commit | Short SHA | Full SHA | Description |
+|--------|-----------|----------|-------------|
+| 1 | `fb17401` | `fb17401` (full SHA: `fb1740134e2c...`; obtain via `git rev-parse fb17401`) | docs(phase-3c): F1 execution-planning memo |
+| 2 | `58d0856` | `58d0856` (full SHA: `58d0856...`; obtain via `git rev-parse 58d0856`) | docs(phase-3c): closeout report |
+| 3 | `ac0ff0b` | **`ac0ff0b6da94b3598f744ce07378ee2cb82ff0ad`** | docs(phase-3c): amend memo per operator review (HIGH-slip gate hardening + sequencing clarification) |
+| 4 | (this amendment commit) | full SHA recorded in `git log --oneline -1` immediately after this commit lands; the SHA is self-referential to this file and cannot be embedded in the file's own pre-commit content | docs(phase-3c): amend closeout report (full-SHA recording + amendment context) |
+
+**Full SHA of the framework-correction amendment commit (operator-mandated):**
 
 ```
-fb17401  docs(phase-3c): F1 execution-planning memo
+ac0ff0b6da94b3598f744ce07378ee2cb82ff0ad
 ```
 
-Full SHA: `fb17401` (recorded after first commit; full SHA visible via `git log` post-commit).
+This is the commit that applies §7.2 condition (iv) hardening, §7.3 verdict-table update, §8.11 / §9.4 / §11.9 / §12 wording updates, and adds §10.4 Phase 3d-A sequencing requirement.
 
-**Closeout report commit:** added in the follow-on commit immediately after this file is written. Full hash recorded by the commit operation; visible via `git log --oneline -1` after the closeout commit completes.
+**Self-reference note for commit 4 (this closeout amendment):** the closeout-amendment commit's own SHA is determined when the commit operation completes. The full SHA is visible immediately after the commit via `git log --oneline -1` or `git rev-parse HEAD`. The post-commit report message will record the closeout-amendment commit's full SHA explicitly.
 
 ## 5. Confirmation that Phase 3c was docs-only
 
@@ -87,7 +106,7 @@ Confirmed across all forbidden categories per the Phase 3c operator brief:
 
 - **Technically ready:** branch is clean after both commits, file-only additions under `docs/00-meta/implementation-reports/`, no merge conflicts expected against current `main` (`97a4fb3`), no rebase needed (branched from current `main` tip).
 - **Procedurally ready:** memo follows Phase 2k/2t/2v execution-planning convention; all 13 brief-required sections present; closeout report covers all 7 brief-required items.
-- **Merge mechanics if/when operator approves:** would be a `--no-ff` merge commit (consistent with prior Phase 2x / Phase 2y / slippage-cleanup / Phase 3a / Phase 3b merge pattern), producing a merge commit on `main` of the form `Merge Phase 3c (F1 execution-planning) into main`. Branch ahead by 2 commits (planning memo + this closeout).
+- **Merge mechanics if/when operator approves:** would be a `--no-ff` merge commit (consistent with prior Phase 2x / Phase 2y / slippage-cleanup / Phase 3a / Phase 3b merge pattern), producing a merge commit on `main` of the form `Merge Phase 3c (F1 execution-planning) into main`. Branch ahead by 4 commits (planning memo `fb17401` + closeout `58d0856` + amendment `ac0ff0b` + this closeout amendment).
 - **Not yet merged.** Per explicit operator instruction in the Phase 3c brief: "Do not merge to main."
 - **Phase 3d not started.** Per explicit operator instruction: "Do not start Phase 3d. Do not implement anything."
 
