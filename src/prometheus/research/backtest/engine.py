@@ -193,9 +193,42 @@ class BacktestEngine:
     pre-window warmup bars needed for indicator seeding.
     """
 
-    def __init__(self, config: BacktestConfig) -> None:
+    def __init__(
+        self,
+        config: BacktestConfig,
+        *,
+        r2_fill_model: str = "next-bar-open-after-confirmation",
+    ) -> None:
+        """Construct the engine.
+
+        ``r2_fill_model`` is a **runner-script-only** R2 fill-model
+        switch per Phase 2v Gate 2 clarification. The committed fill
+        model is ``next-bar-open-after-confirmation`` (Phase 2u §F.4)
+        and is the only path eligible for §10.3 governing evaluation.
+        The diagnostic alternative ``limit-at-pullback-intrabar`` is
+        permitted exclusively for the §P.6 fill-model sensitivity
+        diagnostic (Phase 2v run #10) and is intentionally NOT a
+        ``V1BreakoutConfig`` field — exposing it as a config field
+        would invite drift toward sweeps. Outside the runner-script
+        invocation that explicitly opts in, the default committed
+        path is the only option.
+
+        Allowed values:
+          - "next-bar-open-after-confirmation" (committed; default)
+          - "limit-at-pullback-intrabar" (diagnostic-only; runner #10)
+        """
+        if r2_fill_model not in (
+            "next-bar-open-after-confirmation",
+            "limit-at-pullback-intrabar",
+        ):
+            raise ValueError(
+                f"unsupported r2_fill_model: {r2_fill_model!r}. "
+                "Allowed: next-bar-open-after-confirmation (committed; default) "
+                "or limit-at-pullback-intrabar (diagnostic-only)."
+            )
         self._config = config
         self._strategy = V1BreakoutStrategy(config.strategy_variant)
+        self._r2_fill_model = r2_fill_model
 
     def run(
         self,
@@ -620,18 +653,43 @@ class BacktestEngine:
         """
         config = self._config
         session = run.session
-        next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
-        if next_bar is None:
-            # End of data on the touch+confirmation bar: cannot fill.
-            # Treat as no-pullback expiry (the touch+confirmation
-            # event happened but the fill cannot be recorded).
-            run.r2_counters.expired_no_pullback += 1
-            session.clear_pending_candidate()
-            return
+        is_long = pending.direction == Direction.LONG
 
+        # Dispatch on the runner-script-only R2 fill model. The
+        # committed model (Phase 2u §F.4) is next-bar-open after
+        # confirmation; the diagnostic-only alternative (Phase 2v
+        # §P.6 / run #10) is limit-at-pullback intrabar. Both paths
+        # share the fill-time stop-distance band re-check and the
+        # frozen-structural-stop invariant.
+        if self._r2_fill_model == "limit-at-pullback-intrabar":
+            # Diagnostic-only: fill at the touch bar at pullback_level
+            # with zero slippage (limit-fill maker assumption per
+            # Phase 2u §P.6). Same taker fee as committed path
+            # (no maker-fee path implemented; Phase 2v Gate 2
+            # clarification: this is sensitivity-only).
+            fill_bar = bar_15m
+            fill_bar_idx = idx_15m
+            raw_fill_price = pending.pullback_level
+        else:
+            # Committed (default): fill at NEXT bar's open, with
+            # H0's existing slippage/fee path.
+            next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+            if next_bar is None:
+                # End of data on the touch+confirmation bar: cannot fill.
+                # Treat as no-pullback expiry (the touch+confirmation
+                # event happened but the fill cannot be recorded).
+                run.r2_counters.expired_no_pullback += 1
+                session.clear_pending_candidate()
+                return
+            fill_bar = next_bar
+            fill_bar_idx = idx_15m + 1
+            raw_fill_price = next_bar.open
+
+        # Fill-time stop-distance re-check (same band as H0; uses
+        # frozen ATR snapshot per Phase 2u §E.3).
         fill_eval = evaluate_fill_at_next_bar_open(
             pending,
-            next_bar.open,
+            raw_fill_price,
             filter_min_atr_mult=FILTER_MIN_ATR_MULT,
             filter_max_atr_mult=FILTER_MAX_ATR_MULT,
         )
@@ -640,11 +698,14 @@ class BacktestEngine:
             session.clear_pending_candidate()
             return
 
-        # Sizing pipeline using the actual fill price + frozen stop.
-        is_long = pending.direction == Direction.LONG
-        assert fill_eval.fill_price is not None
-        assert fill_eval.fill_stop_distance is not None
-        fill_price = entry_fill_price(next_bar=next_bar, direction_long=is_long, config=config)
+        # Compute the actual recorded fill price. Committed path uses
+        # entry_fill_price() (applies slippage); diagnostic limit path
+        # records the pullback level exactly (zero slippage; Phase 2u
+        # §P.6 / Phase 2v §4.6).
+        if self._r2_fill_model == "limit-at-pullback-intrabar":
+            fill_price = pending.pullback_level
+        else:
+            fill_price = entry_fill_price(next_bar=fill_bar, direction_long=is_long, config=config)
         fill_stop_distance = abs(fill_price - pending.structural_stop_level)
         sizing = compute_size(
             sizing_equity_usdt=config.sizing_equity_usdt,
@@ -664,12 +725,11 @@ class BacktestEngine:
             return
         assert sizing.limited_by is not None
 
-        fill_bar_idx = idx_15m + 1  # the bar whose open is the fill price
         run.open_trade = _OpenTrade(
-            symbol=next_bar.symbol,
+            symbol=fill_bar.symbol,
             direction_long=is_long,
             signal_bar_open_time_ms=pending.signal_bar_open_time_ms,
-            entry_fill_time_ms=next_bar.open_time,
+            entry_fill_time_ms=fill_bar.open_time,
             entry_fill_price=fill_price,
             initial_stop=pending.structural_stop_level,
             stop_distance=fill_stop_distance,
@@ -698,8 +758,8 @@ class BacktestEngine:
         session.on_entry_filled(
             signal=pending.signal,
             fill_price=fill_price,
-            fill_time_ms=next_bar.open_time,
-            fill_bar=next_bar,
+            fill_time_ms=fill_bar.open_time,
+            fill_bar=fill_bar,
             initial_stop=pending.structural_stop_level,
         )
         session.clear_pending_candidate()
