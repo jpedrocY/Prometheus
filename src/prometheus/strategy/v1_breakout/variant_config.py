@@ -27,6 +27,14 @@ singularly per Phase 2j memo §C.6:
     setup_percentile_threshold = 25  bottom-quartile cutoff
     setup_percentile_lookback  = 200 trailing-bars distribution length
 
+Phase 2s (R1b-narrow — Bias-strength redesign) adds one bias-validity
+field. ``bias_slope_strength_threshold`` extends H0's binary slope-3
+direction-sign check with a magnitude threshold per Phase 2r spec
+memo §F. Default 0.0 dispatches to H0's bit-for-bit binary predicate;
+non-zero opts in to R1b-narrow's magnitude check. The committed
+R1b-narrow value is 0.0020 (= 0.20%), anchored to the project's
+existing ``ATR_REGIME_MIN`` constant.
+
 Any instance constructed with all defaults produces the baseline H0
 behavior exactly; see ``tests/unit/strategy/v1_breakout/test_variant_config.py``.
 """
@@ -106,6 +114,17 @@ class V1BreakoutConfig(BaseModel):
     setup_predicate_kind: SetupPredicateKind = SetupPredicateKind.RANGE_BASED
     setup_percentile_threshold: int = Field(default=25, gt=0, lt=100)
     setup_percentile_lookback: int = Field(default=200, gt=0, le=2000)
+
+    # R1b-narrow bias-strength axis. Default 0.0 dispatches to H0's strict
+    # binary direction-sign slope-3 check (bit-for-bit preservation per
+    # Phase 2r spec memo §J sentinel pattern). Non-zero opts in to the
+    # magnitude check: LONG iff slope_strength_3 >= +threshold; SHORT iff
+    # slope_strength_3 <= -threshold; where slope_strength_3 = (EMA(50)[now]
+    # - EMA(50)[now-3]) / EMA(50)[now]. The committed R1b-narrow value is
+    # 0.0020 (= 0.20%), anchored to the project's existing ATR_REGIME_MIN
+    # constant in trigger.py per Phase 2r spec memo §F. Field constraint
+    # le=0.10 is conservative; the spec only commits a single value.
+    bias_slope_strength_threshold: float = Field(default=0.0, ge=0.0, le=0.10)
 
     def model_post_init(self, __context: object) -> None:
         if self.ema_fast >= self.ema_slow:

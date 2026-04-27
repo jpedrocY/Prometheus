@@ -270,6 +270,12 @@ class StrategySession:
         Mirrors the logic of ``bias.evaluate_1h_bias`` but on cached
         scalars. Requires both EMAs seeded AND the slope-lookback
         ring full (SLOPE_LOOKBACK + 1 values).
+
+        Dispatches per Phase 2r spec memo §J sentinel pattern:
+        when ``config.bias_slope_strength_threshold == 0.0`` (default)
+        the predicate uses H0's strict binary direction-sign check
+        (bit-for-bit H0 preservation); when the threshold is positive
+        the predicate uses R1b-narrow's magnitude check.
         """
         if _is_nan(self._1h_ema_fast_latest) or _is_nan(self._1h_ema_slow_latest):
             self._current_1h_bias = TrendBias.NEUTRAL
@@ -281,8 +287,25 @@ class StrategySession:
         slow_now = self._1h_ema_slow_latest
         fast_then = self._1h_ema_fast_history[0]  # SLOPE_LOOKBACK bars earlier
         close_now = self._1h_window[-1].close
-        long_ok = (fast_now > slow_now) and (close_now > fast_now) and (fast_now > fast_then)
-        short_ok = (fast_now < slow_now) and (close_now < fast_now) and (fast_now < fast_then)
+        threshold = self.config.bias_slope_strength_threshold
+        if threshold == 0.0:
+            # H0 binary direction-sign check (bit-for-bit preserved).
+            long_ok = (fast_now > slow_now) and (close_now > fast_now) and (fast_now > fast_then)
+            short_ok = (fast_now < slow_now) and (close_now < fast_now) and (fast_now < fast_then)
+        else:
+            # R1b-narrow magnitude check.
+            if fast_now <= 0.0:
+                self._current_1h_bias = TrendBias.NEUTRAL
+                return
+            slope_strength_3 = (fast_now - fast_then) / fast_now
+            long_ok = (
+                (fast_now > slow_now) and (close_now > fast_now) and (slope_strength_3 >= threshold)
+            )
+            short_ok = (
+                (fast_now < slow_now)
+                and (close_now < fast_now)
+                and (slope_strength_3 <= -threshold)
+            )
         if long_ok and not short_ok:
             self._current_1h_bias = TrendBias.LONG
         elif short_ok and not long_ok:

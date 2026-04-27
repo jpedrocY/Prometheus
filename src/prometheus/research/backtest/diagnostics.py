@@ -185,7 +185,16 @@ class _IncrementalIndicators:
             a = 2.0 / (ema_slow + 1.0)
             self.ema_slow_latest = a * close + (1.0 - a) * self.ema_slow_latest
 
-    def current_bias(self, latest_1h_close: float) -> TrendBias:
+    def current_bias(
+        self,
+        latest_1h_close: float,
+        slope_strength_threshold: float = 0.0,
+    ) -> TrendBias:
+        """Cached bias evaluation. Dispatches per Phase 2r spec memo §J:
+        ``slope_strength_threshold == 0.0`` (default) uses H0's strict
+        binary direction-sign check (bit-for-bit preserved); positive
+        threshold uses R1b-narrow's magnitude check.
+        """
         if self.ema_fast_latest != self.ema_fast_latest:
             return TrendBias.NEUTRAL
         if self.ema_slow_latest != self.ema_slow_latest:
@@ -195,8 +204,27 @@ class _IncrementalIndicators:
         fast_now = self.ema_fast_latest
         slow_now = self.ema_slow_latest
         fast_then = self.ema_fast_history[0]
-        long_ok = (fast_now > slow_now) and (latest_1h_close > fast_now) and (fast_now > fast_then)
-        short_ok = (fast_now < slow_now) and (latest_1h_close < fast_now) and (fast_now < fast_then)
+        if slope_strength_threshold == 0.0:
+            long_ok = (
+                (fast_now > slow_now) and (latest_1h_close > fast_now) and (fast_now > fast_then)
+            )
+            short_ok = (
+                (fast_now < slow_now) and (latest_1h_close < fast_now) and (fast_now < fast_then)
+            )
+        else:
+            if fast_now <= 0.0:
+                return TrendBias.NEUTRAL
+            slope_strength_3 = (fast_now - fast_then) / fast_now
+            long_ok = (
+                (fast_now > slow_now)
+                and (latest_1h_close > fast_now)
+                and (slope_strength_3 >= slope_strength_threshold)
+            )
+            short_ok = (
+                (fast_now < slow_now)
+                and (latest_1h_close < fast_now)
+                and (slope_strength_3 <= -slope_strength_threshold)
+            )
         if long_ok and not short_ok:
             return TrendBias.LONG
         if short_ok and not long_ok:
@@ -388,7 +416,7 @@ def run_signal_funnel(
         counts.decision_bars_evaluated += 1
 
         # ---- Bias (cached) ----
-        bias = ind.current_bias(latest_1h_close_cache)
+        bias = ind.current_bias(latest_1h_close_cache, sc.bias_slope_strength_threshold)
         if bias == TrendBias.LONG:
             counts.bias_long_count += 1
         elif bias == TrendBias.SHORT:

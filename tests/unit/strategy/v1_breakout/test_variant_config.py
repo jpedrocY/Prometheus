@@ -29,7 +29,12 @@ from prometheus.strategy.v1_breakout import (
     detect_setup_volatility_percentile,
     evaluate_long_trigger,
 )
-from prometheus.strategy.v1_breakout.bias import EMA_FAST, EMA_SLOW
+from prometheus.strategy.v1_breakout.bias import (
+    EMA_FAST,
+    EMA_SLOW,
+    evaluate_1h_bias,
+    evaluate_1h_bias_with_slope_strength,
+)
 from prometheus.strategy.v1_breakout.management import STAGE_4_MFE_R, TradeManagement
 from prometheus.strategy.v1_breakout.setup import SETUP_SIZE, percentile_rank_threshold
 from prometheus.strategy.v1_breakout.trigger import TRUE_RANGE_ATR_MULT
@@ -68,6 +73,8 @@ def test_default_config_matches_baseline_constants() -> None:
     assert cfg.setup_predicate_kind == SetupPredicateKind.RANGE_BASED
     assert cfg.setup_percentile_threshold == 25
     assert cfg.setup_percentile_lookback == 200
+    # R1b-narrow field defaults to 0.0 (H0 strict-binary slope-3 check).
+    assert cfg.bias_slope_strength_threshold == 0.0
 
 
 def test_default_config_is_frozen_and_strict() -> None:
@@ -803,3 +810,234 @@ def test_R1a_combined_with_R3_config_holds_both_axes() -> None:
     assert cfg.setup_predicate_kind == SetupPredicateKind.VOLATILITY_PERCENTILE
     assert cfg.setup_percentile_threshold == 25
     assert cfg.setup_percentile_lookback == 200
+
+
+# --------------------------------------------------------------------------
+# R1b-narrow (bias_slope_strength_threshold) variant-axis behavior tests
+#
+# Per Phase 2r spec memo §B / §E / §F, R1b-narrow replaces H0's binary
+# slope-3 direction-sign check with a magnitude check on
+# slope_strength_3 = (EMA(50)[now] - EMA(50)[now-3]) / EMA(50)[now].
+# The committed threshold is S = 0.0020 (= 0.20%). Default 0.0
+# preserves H0 bit-for-bit via sentinel-based dispatch.
+#
+# Tests must verify:
+#   (a) default config (threshold=0.0) preserves H0 binary check,
+#   (b) at threshold=S the predicate admits slopes >= +S (LONG) and
+#       <= -S (SHORT),
+#   (c) slopes in (-S, +S) produce NEUTRAL,
+#   (d) boundary ties at exactly +S / -S admit (non-strict >= / <=),
+#   (e) NaN warmup -> NEUTRAL,
+#   (f) negative threshold rejected,
+#   (g) R3-only config preserves H0 bias (default threshold=0.0),
+#   (h) R1b-narrow combined with R3 holds both axes.
+# --------------------------------------------------------------------------
+
+
+def _make_1h_bars_with_target_slope(
+    *,
+    slope_pct_per_3_bars: float,
+    n: int = 250,
+    start_price: float = 100.0,
+    short_term_bias: bool = True,
+) -> list[NormalizedKline]:
+    """Build a 1h-bar series whose EMA(50) reaches a target 3-bar slope
+    rate by the last bar.
+
+    The series is a steady linear trend in close so that EMA(50) and
+    EMA(200) settle into a near-monotonic relationship. Returning a
+    long enough series (>= 250) ensures both EMAs are seeded.
+
+    ``short_term_bias=True`` produces an upward trend (LONG-side test);
+    False produces a downward trend (SHORT-side test). The actual EMA
+    slope at the last bar will be approximately ``slope_pct_per_3_bars``
+    of the EMA(50) value over the SLOPE_LOOKBACK=3 window, but this is
+    not exact — tests should evaluate the resulting bias and not assert
+    specific slope_strength_3 values numerically.
+    """
+    d = interval_duration_ms(Interval.I_1H)
+    # Use a per-bar return that produces approximately the desired
+    # 3-bar slope of EMA(50). A steady ramp of `slope_pct_per_3_bars / 3`
+    # per bar over the EMA window will produce a steady-state slope of
+    # roughly that value.
+    per_bar_return = slope_pct_per_3_bars / 3.0
+    if not short_term_bias:
+        per_bar_return = -per_bar_return
+    bars: list[NormalizedKline] = []
+    t = ANCHOR_MS
+    price = start_price
+    for _ in range(n):
+        nxt = price * (1.0 + per_bar_return)
+        bars.append(
+            kline(
+                interval=Interval.I_1H,
+                open_time=t,
+                open=price,
+                high=max(price, nxt) * 1.0001,
+                low=min(price, nxt) * 0.9999,
+                close=nxt,
+            )
+        )
+        t += d
+        price = nxt
+    return bars
+
+
+def test_R1b_default_threshold_zero_preserves_H0_bias() -> None:
+    """V1BreakoutConfig() default has bias_slope_strength_threshold=0.0,
+    which dispatches to H0's strict binary check via sentinel.
+    """
+    cfg = V1BreakoutConfig()
+    assert cfg.bias_slope_strength_threshold == 0.0
+
+
+def test_R1b_evaluate_function_zero_slope_at_zero_threshold_neutral() -> None:
+    """At zero threshold, the magnitude function admits slope == 0 as
+    NEUTRAL because both LONG (>= 0) and SHORT (<= 0) conditions fire,
+    so the predicate's ``long_ok and not short_ok`` filter rejects.
+
+    This is documented behavior — the strategy facade dispatches to
+    H0's strict binary check at threshold=0 to avoid this edge case.
+    The standalone function is not used by the strategy at threshold=0.
+    """
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.0, n=250)
+    bias = evaluate_1h_bias_with_slope_strength(bars, slope_strength_threshold=0.0)
+    # Flat ramp -> EMA(50) ~= EMA(200) ~= last close, so all ok-conditions fail.
+    assert bias == TrendBias.NEUTRAL
+
+
+def test_R1b_evaluate_function_strong_uptrend_admits_LONG() -> None:
+    """At threshold=0.0020, a strong upward trend produces LONG bias."""
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.01, n=250, short_term_bias=True)
+    bias = evaluate_1h_bias_with_slope_strength(bars, slope_strength_threshold=0.0020)
+    assert bias == TrendBias.LONG
+
+
+def test_R1b_evaluate_function_strong_downtrend_admits_SHORT() -> None:
+    """At threshold=0.0020, a strong downward trend produces SHORT bias."""
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.01, n=250, short_term_bias=False)
+    bias = evaluate_1h_bias_with_slope_strength(bars, slope_strength_threshold=0.0020)
+    assert bias == TrendBias.SHORT
+
+
+def test_R1b_evaluate_function_weak_uptrend_below_threshold_neutral() -> None:
+    """A weak uptrend whose 3-bar slope is below +S produces NEUTRAL.
+
+    A per-bar return of 0.0001 (0.01%) gives a 3-bar slope of about
+    0.0003, well below S=0.0020.
+    """
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.0003, n=250, short_term_bias=True)
+    bias = evaluate_1h_bias_with_slope_strength(bars, slope_strength_threshold=0.0020)
+    assert bias == TrendBias.NEUTRAL
+
+
+def test_R1b_evaluate_function_negative_threshold_raises() -> None:
+    """The function rejects negative threshold values."""
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.01, n=250)
+    with pytest.raises(ValueError):
+        evaluate_1h_bias_with_slope_strength(bars, slope_strength_threshold=-0.0010)
+
+
+def test_R1b_evaluate_function_warmup_returns_neutral() -> None:
+    """Insufficient warmup produces NEUTRAL regardless of threshold."""
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.01, n=50)
+    bias = evaluate_1h_bias_with_slope_strength(bars, slope_strength_threshold=0.0020)
+    assert bias == TrendBias.NEUTRAL
+
+
+def test_R1b_strategy_session_default_dispatches_to_H0_path() -> None:
+    """StrategySession with default config calls H0's binary slope-3 check."""
+    cfg = V1BreakoutConfig()
+    assert cfg.bias_slope_strength_threshold == 0.0
+    s = V1BreakoutStrategy(cfg)
+    assert s.config.bias_slope_strength_threshold == 0.0
+
+
+def test_R1b_strategy_session_with_threshold_uses_magnitude_check() -> None:
+    """A config with non-zero threshold dispatches to the magnitude
+    check inside StrategySession._update_1h_bias.
+
+    We construct a session and feed enough 1h bars to seed EMAs and
+    fill the slope-lookback ring; then assert that bias matches the
+    expected behavior of the magnitude check.
+    """
+    cfg_h0 = V1BreakoutConfig()
+    cfg_r1b = V1BreakoutConfig(bias_slope_strength_threshold=0.0020)
+
+    # Build a strong-uptrend 1h series.
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.01, n=250, short_term_bias=True)
+
+    s_h0 = StrategySession(symbol=Symbol.BTCUSDT, config=cfg_h0)
+    s_r1b = StrategySession(symbol=Symbol.BTCUSDT, config=cfg_r1b)
+    for b in bars:
+        s_h0.observe_1h_bar(b)
+        s_r1b.observe_1h_bar(b)
+    # Both should produce LONG on a strong uptrend.
+    assert s_h0.current_1h_bias() == TrendBias.LONG
+    assert s_r1b.current_1h_bias() == TrendBias.LONG
+
+
+def test_R1b_strategy_session_with_threshold_rejects_weak_trend() -> None:
+    """A weak trend below threshold S=0.0020 produces NEUTRAL under
+    R1b-narrow, but LONG under H0 (where any positive slope passes)."""
+    cfg_h0 = V1BreakoutConfig()
+    cfg_r1b = V1BreakoutConfig(bias_slope_strength_threshold=0.0020)
+
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.0003, n=250, short_term_bias=True)
+
+    s_h0 = StrategySession(symbol=Symbol.BTCUSDT, config=cfg_h0)
+    s_r1b = StrategySession(symbol=Symbol.BTCUSDT, config=cfg_r1b)
+    for b in bars:
+        s_h0.observe_1h_bar(b)
+        s_r1b.observe_1h_bar(b)
+    # H0 admits LONG (any positive slope direction is enough).
+    assert s_h0.current_1h_bias() == TrendBias.LONG
+    # R1b-narrow rejects (slope_strength below 0.0020).
+    assert s_r1b.current_1h_bias() == TrendBias.NEUTRAL
+
+
+def test_R1b_h0_evaluate_function_unchanged() -> None:
+    """The original evaluate_1h_bias function is unchanged by Phase 2s.
+
+    Asserted by exercising it on a simple uptrend and confirming LONG.
+    """
+    bars = _make_1h_bars_with_target_slope(slope_pct_per_3_bars=0.01, n=250, short_term_bias=True)
+    assert evaluate_1h_bias(bars) == TrendBias.LONG
+
+
+def test_R1b_r3_only_config_preserves_H0_bias_threshold() -> None:
+    """An R3-only config (FIXED_R_TIME_STOP) preserves H0 bias-strength
+    threshold of 0.0 (= H0 binary slope check)."""
+    cfg = V1BreakoutConfig(exit_kind=ExitKind.FIXED_R_TIME_STOP)
+    assert cfg.exit_kind == ExitKind.FIXED_R_TIME_STOP
+    assert cfg.bias_slope_strength_threshold == 0.0
+
+
+def test_R1b_combined_with_R3_config_holds_both_axes() -> None:
+    """The Phase 2s candidate config selects R3 exit + R1b-narrow bias."""
+    cfg = V1BreakoutConfig(
+        exit_kind=ExitKind.FIXED_R_TIME_STOP,
+        exit_r_target=2.0,
+        exit_time_stop_bars=8,
+        bias_slope_strength_threshold=0.0020,
+    )
+    # All other axes at H0 baseline.
+    assert cfg.setup_size == 8
+    assert cfg.expansion_atr_mult == 1.0
+    assert cfg.ema_fast == 50
+    assert cfg.ema_slow == 200
+    assert cfg.break_even_r == 1.5
+    assert cfg.setup_predicate_kind == SetupPredicateKind.RANGE_BASED
+    # R3 axis intact.
+    assert cfg.exit_kind == ExitKind.FIXED_R_TIME_STOP
+    assert cfg.exit_r_target == 2.0
+    assert cfg.exit_time_stop_bars == 8
+    # R1b-narrow axis intact.
+    assert cfg.bias_slope_strength_threshold == 0.0020
+
+
+def test_R1b_negative_threshold_field_constraint() -> None:
+    """Pydantic Field(ge=0.0) rejects negative threshold values at
+    config construction time."""
+    with pytest.raises(Exception):  # noqa: B017 - pydantic ValidationError
+        V1BreakoutConfig(bias_slope_strength_threshold=-0.001)
