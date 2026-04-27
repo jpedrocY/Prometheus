@@ -67,6 +67,7 @@ from ..types import (
     TrendBias,
 )
 from .bias import EMA_SLOW, SLOPE_LOOKBACK
+from .entry_lifecycle import PendingCandidate
 from .management import ManagementBarDiagnostic, TradeManagement
 from .setup import SETUP_SIZE, detect_setup, detect_setup_volatility_percentile
 from .stop import compute_initial_stop, passes_stop_distance_filter
@@ -128,6 +129,12 @@ class StrategySession:
     _active_trade: _ActiveTrade | None = None
     _last_exit_close_time_ms: int | None = None
     _bars_since_last_exit: int = 0
+    # R2 pending-candidate state (Phase 2u). None under
+    # entry_kind=MARKET_NEXT_BAR_OPEN (H0 default; preserved bit-for-bit).
+    # Populated when entry_kind=PULLBACK_RETEST and a registration
+    # passes the H0 trigger + bias + signal-time stop-distance filter.
+    # Cleared on FILL / EXPIRE / any CANCEL outcome.
+    _pending_candidate: PendingCandidate | None = None
 
     # --- 15m ATR(20) incremental state ---
     _15m_tr_warmup: list[float] = field(default_factory=list)
@@ -425,6 +432,50 @@ class StrategySession:
     @property
     def active_trade(self) -> _ActiveTrade | None:
         return self._active_trade
+
+    # ----- R2 pending-candidate lifecycle hooks (Phase 2u) -----
+
+    @property
+    def has_pending_candidate(self) -> bool:
+        """True iff a PendingCandidate is currently registered.
+
+        Always False under entry_kind=MARKET_NEXT_BAR_OPEN (H0 default;
+        no candidates are ever registered). True only between R2
+        registration and R2 terminal outcome (fill / expire / cancel).
+        """
+        return self._pending_candidate is not None
+
+    @property
+    def pending_candidate(self) -> PendingCandidate | None:
+        """Return the active PendingCandidate, or None if no candidate
+        is registered (the only state under H0 default).
+        """
+        return self._pending_candidate
+
+    def register_pending_candidate(self, candidate: PendingCandidate) -> None:
+        """Register an R2 pending candidate.
+
+        Per Phase 2u §E.5 pending uniqueness: at most one pending
+        candidate at a time. Registering when one already exists is a
+        programming error (the engine is responsible for handling
+        same-direction drop and opposite-direction cancel-then-register
+        per §E.5).
+        """
+        if self._pending_candidate is not None:
+            raise ValueError("cannot register pending candidate: one is already active")
+        if self._active_trade is not None:
+            raise ValueError("cannot register pending candidate: already in_trade")
+        self._pending_candidate = candidate
+
+    def clear_pending_candidate(self) -> None:
+        """Clear the pending-candidate slot.
+
+        Called by the engine on every terminal R2 outcome:
+        FILL (after the trade is opened), EXPIRE (validity-window
+        elapsed), or any CANCEL (bias-flip, opposite-signal,
+        structural-invalidation, stop-distance-at-fill).
+        """
+        self._pending_candidate = None
 
 
 class V1BreakoutStrategy:

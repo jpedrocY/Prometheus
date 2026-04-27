@@ -113,5 +113,16 @@ def test_table_schema_has_expected_columns() -> None:
         "slippage_bucket",
         "fee_rate_assumption",
         "stop_was_gap_through",
+        # R2 metadata (Phase 2u, Gate 2 amended; defaults preserve
+        # H0/R3/R1a/R1b-narrow trade-log economic columns bit-for-bit).
+        "registration_bar_index",
+        "fill_bar_index",
+        "time_to_fill_bars",
+        "pullback_level_at_registration",
+        "structural_stop_level_at_registration",
+        "atr_at_signal",
+        "fill_price",
+        "r_distance",
+        "cancellation_reason",
     }
     assert set(table.schema.names) == expected

@@ -35,6 +35,17 @@ non-zero opts in to R1b-narrow's magnitude check. The committed
 R1b-narrow value is 0.0020 (= 0.20%), anchored to the project's
 existing ``ATR_REGIME_MIN`` constant.
 
+Phase 2w (R2 — Pullback-retest entry) adds one entry-lifecycle field.
+``entry_kind`` selects between H0's locked market-on-next-bar-open
+fill (default; MARKET_NEXT_BAR_OPEN) and R2's conditional-pending
+pullback-retest topology (PULLBACK_RETEST). Per Phase 2u spec memo §F
+the four R2 sub-parameters (pullback level, confirmation rule, validity
+window, fill model) are committed singularly and hard-coded in the R2
+entry-lifecycle module — they are NOT exposed as config fields, to
+prevent parameter drift. Default MARKET_NEXT_BAR_OPEN preserves
+H0 / R3 / R1a / R1b-narrow behavior bit-for-bit through the strategy
+facade and the backtest engine.
+
 Any instance constructed with all defaults produces the baseline H0
 behavior exactly; see ``tests/unit/strategy/v1_breakout/test_variant_config.py``.
 """
@@ -72,6 +83,29 @@ class SetupPredicateKind(StrEnum):
 
     RANGE_BASED = "RANGE_BASED"
     VOLATILITY_PERCENTILE = "VOLATILITY_PERCENTILE"
+
+
+class EntryKind(StrEnum):
+    """Selects the entry-lifecycle topology.
+
+    MARKET_NEXT_BAR_OPEN is H0's locked Phase 2e baseline: the engine
+    fills a market order at the next 15m bar's open immediately after
+    a breakout-bar signal closes. This default preserves H0 / R3 /
+    R1a / R1b-narrow behavior bit-for-bit.
+
+    PULLBACK_RETEST is R2 per Phase 2u spec memo §B / §E (Gate 2
+    amended): the engine registers a PendingCandidate at signal close
+    and waits up to 8 completed 15m bars for a pullback-retest of the
+    setup boundary. The fill triggers when the bar's low touches
+    setup_high (LONG) or high touches setup_low (SHORT) AND the bar's
+    close is on the breakout-side of the structural-stop level. The
+    fill is a market order at the NEXT bar's open after confirmation.
+    Cancellation precedence: BIAS_FLIP > OPPOSITE_SIGNAL >
+    STRUCTURAL_INVALIDATION > TOUCH+CONFIRMATION > CONTINUE.
+    """
+
+    MARKET_NEXT_BAR_OPEN = "MARKET_NEXT_BAR_OPEN"
+    PULLBACK_RETEST = "PULLBACK_RETEST"
 
 
 class V1BreakoutConfig(BaseModel):
@@ -125,6 +159,22 @@ class V1BreakoutConfig(BaseModel):
     # constant in trigger.py per Phase 2r spec memo §F. Field constraint
     # le=0.10 is conservative; the spec only commits a single value.
     bias_slope_strength_threshold: float = Field(default=0.0, ge=0.0, le=0.10)
+
+    # R2 entry-lifecycle axis (Phase 2u, Gate 2 amended). Default
+    # MARKET_NEXT_BAR_OPEN preserves H0 / R3 / R1a / R1b-narrow
+    # behavior bit-for-bit. PULLBACK_RETEST opts in to R2's
+    # conditional-pending pullback-retest topology with sub-parameters
+    # committed singularly per Phase 2u §F (pullback level =
+    # setup_high/setup_low; confirmation = close not violating
+    # structural stop; validity window = 8 bars; fill model =
+    # next-bar-open after confirmation). The four R2 sub-parameters
+    # are intentionally NOT exposed as config fields — they are
+    # hard-coded in entry_lifecycle.py and the engine to prevent
+    # parameter drift toward sweeps. The diagnostic-only
+    # limit-at-pullback intrabar fill model lives behind a runner-
+    # script flag in 2w-B (not Phase 2w-A scope), never as a config
+    # field.
+    entry_kind: EntryKind = EntryKind.MARKET_NEXT_BAR_OPEN
 
     def model_post_init(self, __context: object) -> None:
         if self.ema_fast >= self.ema_slow:

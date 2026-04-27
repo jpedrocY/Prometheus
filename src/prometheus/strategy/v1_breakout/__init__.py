@@ -19,15 +19,30 @@ Locked decisions per docs/03-strategy-research/v1-breakout-strategy-spec.md:
 from __future__ import annotations
 
 from .bias import evaluate_1h_bias
+from .entry_lifecycle import (
+    R2_VALIDITY_WINDOW_BARS,
+    CancellationReason,
+    FillEvaluation,
+    PendingCandidate,
+    PendingEvaluation,
+    evaluate_fill_at_next_bar_open,
+    evaluate_pending_candidate,
+)
 from .management import TradeManagement
 from .setup import detect_setup, detect_setup_volatility_percentile
 from .stop import compute_initial_stop, passes_stop_distance_filter
 from .strategy import StrategySession, V1BreakoutStrategy
 from .trigger import evaluate_long_trigger, evaluate_short_trigger
-from .variant_config import ExitKind, SetupPredicateKind, V1BreakoutConfig
+from .variant_config import EntryKind, ExitKind, SetupPredicateKind, V1BreakoutConfig
 
 __all__ = [
+    "CancellationReason",
+    "EntryKind",
     "ExitKind",
+    "FillEvaluation",
+    "PendingCandidate",
+    "PendingEvaluation",
+    "R2_VALIDITY_WINDOW_BARS",
     "SetupPredicateKind",
     "StrategySession",
     "TradeManagement",
@@ -37,7 +52,9 @@ __all__ = [
     "detect_setup",
     "detect_setup_volatility_percentile",
     "evaluate_1h_bias",
+    "evaluate_fill_at_next_bar_open",
     "evaluate_long_trigger",
+    "evaluate_pending_candidate",
     "evaluate_short_trigger",
     "passes_stop_distance_filter",
 ]
