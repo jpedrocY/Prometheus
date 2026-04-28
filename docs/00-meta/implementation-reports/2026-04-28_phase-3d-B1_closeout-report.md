@@ -29,7 +29,13 @@ nothing to commit, working tree clean
 
 ## 3. Files changed
 
-Total: **8 files** added or modified across the entire Phase 3d-B1 branch (vs `main`):
+Total: **9 files** added or modified across the entire Phase 3d-B1 branch (vs `main`):
+
+- 3 modified engine/config/trade_log files (§3.1)
+- 2 modified test files (§3.2)
+- 1 new F1 engine-dispatch test file (§3.3)
+- 1 new runner scaffold (§3.3)
+- 2 new report files (§3.3)
 
 ### 3.1 Modified — engine + config + trade_log (3 files)
 
@@ -42,7 +48,7 @@ Total: **8 files** added or modified across the entire Phase 3d-B1 branch (vs `m
 - [tests/unit/research/backtest/test_config.py](../../../tests/unit/research/backtest/test_config.py) (+63 / −0): 5 new F1 BacktestConfig validator tests.
 - [tests/unit/research/backtest/test_trade_log.py](../../../tests/unit/research/backtest/test_trade_log.py) (+6 / −0): Added the 4 F1 column names to the parquet schema assertion.
 
-### 3.3 Created — F1 engine tests + runner scaffold + reports (3 files in this changeset, 2 + this closeout)
+### 3.3 Created — F1 engine-dispatch test file + runner scaffold + reports (4 files)
 
 - [tests/unit/research/backtest/test_engine_f1_dispatch.py](../../../tests/unit/research/backtest/test_engine_f1_dispatch.py) (~580 lines): 20 engine-level F1 tests covering dispatch acceptance / no-signal-on-flat / long entry / short entry / below-band rejection / above-band rejection / raw-vs-slipped band reference / target fill timing / target close-confirmation only / time-stop horizon / STOP > TARGET priority / TARGET > TIME_STOP priority / cooldown blocks / cooldown releases / frozen-target invariant / frozen-stop invariant / accounting identity / no V1-only exit reasons / V1 H0 default unchanged / direction-vs-displacement consistency.
 - [scripts/phase3d_F1_execution.py](../../../scripts/phase3d_F1_execution.py) (~140 lines): Phase 3d-B1 scaffold. `check-imports` verifies the F1 engine surface imports cleanly. `f1` action accepts the Phase 3d-B2 CLI argument shape but is hard-guarded by `--phase-3d-b2-authorized`; without that flag, exits with status 2 and a "Phase 3d-B1 forbids F1 candidate backtest execution" message.
