@@ -27,7 +27,11 @@ No other file is created, modified, or deleted by Phase 3f.
 
 ## 4. Commit hash(es)
 
-To be recorded after the Phase 3f commit lands. The Phase 3f commit message references both files and explicitly preserves the Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline.
+Single Phase 3f commit on `phase-3f/research-direction-discovery`:
+
+- `0371c5d` — `phase-3f: next research-direction discovery memo (docs-only)` (2 files, 627 insertions; both Phase 3f deliverables landed in one commit).
+
+The Phase 3f commit message references both files and explicitly preserves the Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. No subsequent commit is added by Phase 3f itself; an operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3e's pattern).
 
 ## 5. Confirmation that Phase 3f was docs-only
 
