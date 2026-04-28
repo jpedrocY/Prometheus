@@ -67,30 +67,43 @@ Prometheus v1 is not intended to be a lights-out autonomous AI trading agent.
 
 ## Current Phase
 
-Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 historical-data foundation, and the Phase 2 strategy/backtesting research arc are all complete. Phase 2w (R2 pullback-retest entry redesign) is the most recent phase and has been merged into `main`.
+Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 historical-data foundation, and **two complete strategy-research arcs** are all complete:
+
+1. The **V1 breakout-continuation arc** (Phases 2e through 2w) producing one locked baseline (H0), one cleanly-promoted structural redesign (R3 — baseline-of-record), and three post-R3 structural redesigns (R1a, R1b-narrow, R2 — retained research evidence).
+2. The **F1 mean-reversion-after-overextension arc** (Phases 3a through 3d-B2) producing one new strategy family (F1) which **HARD REJECTED** at first execution per Phase 3c §7.3 catastrophic-floor predicate.
+
+Phase 3e is a docs-only post-F1 research consolidation memo with operator decision menu; recommendation is **remain paused**.
 
 Current phase:
 
 ```text
-Phase 2w merged. No next phase authorized.
+Phase 3d-B2 merged. Phase 3e docs-only consolidation drafted.
+No next phase authorized.
 ```
 
 Most recent merge:
 
 ```text
-main HEAD: 955b2cd88aae9cdb890743dd5ac995290f89fc4b
-Merge title:  Merge Phase 2w (R2 pullback-retest entry) into main
+main HEAD: d0b26fdcc03d038b87a690a7e5d849fa54fed704
+Merge title:  Merge Phase 3d-B2 (F1 execution + diagnostics + HARD REJECT verdict) into main
+              + docs(phase-3d-B2): merge report
 ```
 
 ## Strategy Research Arc Outcomes
 
-The Phase 2 strategy/backtesting research arc (Phase 2e through Phase 2w) has produced these outcomes:
+The two complete strategy-research arcs produced these outcomes:
+
+### V1 breakout arc (Phase 2e through Phase 2w)
 
 - **H0** — locked Phase 2e baseline; remains the **framework anchor**.
 - **R3** (Fixed-R take-profit + unconditional time-stop, Phase 2p §C.1) — **baseline-of-record**.
 - **R1a** (volatility-percentile setup predicate) — retained as **research evidence**; **non-leading**.
 - **R1b-narrow** (bias-strength magnitude threshold) — retained as **research evidence**; **non-leading**.
 - **R2** (pullback-retest entry) — final verdict **FAILED — §11.6 cost-sensitivity gate blocks**. M1 ✓, M3 ✓, M2 ✗ (mechanism partially supported); slippage-fragile. Retained as **research evidence** per Phase 2p §D framing.
+
+### F1 mean-reversion arc (Phase 3a through Phase 3d-B2)
+
+- **F1** (mean-reversion-after-overextension; 8-bar cumulative displacement > 1.75 × ATR(20) → SMA(8) frozen target; structural stop with 0.10 × ATR buffer; 8-bar unconditional time-stop; same-direction cooldown until unwind). Phase 3a discovery rank-1 near-term family candidate; Phase 3b spec; Phase 3c execution-planning; Phase 3d-A implementation (deliberately non-runnable); Phase 3d-B1 engine wiring (runnable but guarded); Phase 3d-B2 first execution + first-execution-gate evaluation. **Final verdict: HARD REJECT** (Phase 3c §7.3 catastrophic-floor predicate; 5 separate violations across BTC/ETH × MED/HIGH cells: BTC MED expR=−0.5227, BTC HIGH expR=−0.7000 / PF=0.2181, ETH HIGH expR=−0.5712 / PF=0.2997). M1 BTC PARTIAL (mean +0.024 R below +0.10 threshold; fraction 55.4%); M2 BTC FAIL / ETH weak-PASS; M3 PASS-isolated on both symbols (TARGET subset profitable when isolated, but overwhelmed by 53–54% STOP exits in the wider trade population). **Phase 3d-B2 is terminal for F1.** F1 retained as **research evidence**; **non-leading**; no F1-prime authorized.
 
 No next strategy phase is authorized.
 
@@ -100,7 +113,7 @@ No Phase 4 (risk/state/persistence runtime) work is authorized.
 
 No live-readiness, deployment, exchange-write, or production-key work is authorized.
 
-The next step is operator-driven only: the operator decides whether and when any subsequent phase is authorized. Until then, the project remains at the post-Phase-2w research-arc closeout boundary.
+The next step is operator-driven only: the operator decides whether and when any subsequent phase is authorized. Until then, the project remains at the post-Phase-3d-B2 / Phase-3e consolidation boundary.
 
 ---
 
@@ -655,12 +668,15 @@ No new strategy phase, paper/shadow planning, Phase 4 runtime implementation, li
 
 The next step is operator-driven:
 
-1. Operator reviews Phase 2w final outputs:
-   - `docs/00-meta/implementation-reports/2026-04-27_phase-2w_R2_variant-comparison.md`
-   - `docs/00-meta/implementation-reports/2026-04-27_phase-2w-A_checkpoint-report.md`
-   - `docs/00-meta/implementation-reports/2026-04-27_phase-2w-B_R2_execution-diagnostics.md`
-2. Operator decides whether and when to authorize any subsequent phase.
-3. Until that authorization, the project remains at the post-Phase-2w research-arc closeout boundary.
+1. Operator reviews Phase 3d-B2 final outputs:
+   - `docs/00-meta/implementation-reports/2026-04-28_phase-3d-B2_F1_execution-diagnostics.md`
+   - `docs/00-meta/implementation-reports/2026-04-28_phase-3d-B2_closeout-report.md`
+   - `docs/00-meta/implementation-reports/2026-04-28_phase-3d-B2_merge-report.md`
+2. Operator reviews Phase 3e consolidation memo and decision menu:
+   - `docs/00-meta/implementation-reports/2026-04-28_phase-3e_post-F1-research-consolidation.md`
+   - `docs/00-meta/implementation-reports/2026-04-28_phase-3e_closeout-report.md`
+3. Operator decides whether and when to authorize any subsequent phase. Phase 3e recommendation is **remain paused**; the operator may also choose to authorize a docs-only discovery / spec / review phase, or hold for operator strategic choice. Implementation, backtesting, paper/shadow, Phase 4, or deployment authorizations are **NOT** recommended by Phase 3e.
+4. Until that authorization, the project remains at the post-Phase-3d-B2 / Phase-3e consolidation boundary.
 
 Implementation/code work that proceeds without explicit operator authorization for a specific phase is forbidden.
 
@@ -668,9 +684,9 @@ Implementation/code work that proceeds without explicit operator authorization f
 
 ## Claude Code Start Instruction
 
-Phase 0 (repo audit), Phase 1 (local development foundation), and the Phase 2 strategy/backtesting research arc (through Phase 2w) are complete and merged to `main`.
+Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 strategy/backtesting research arc (through Phase 2w), and the Phase 3 new-strategy-family research arc (Phase 3a through Phase 3d-B2) are complete and merged to `main`. Phase 3e is the docs-only post-F1 research consolidation memo with operator decision menu.
 
-Claude Code must not begin any subsequent strategy phase, paper/shadow planning, Phase 4 runtime implementation, live-readiness, or deployment work without explicit operator authorization for that specific phase.
+Claude Code must not begin any subsequent strategy phase, paper/shadow planning, Phase 4 runtime implementation, live-readiness, or deployment work without explicit operator authorization for that specific phase. Phase 3e's recommended next operator decision is **remain paused**; any subsequent phase requires explicit operator authorization beyond Phase 3e.
 
 The AI coding handoff at `docs/00-meta/ai-coding-handoff.md` remains the authoritative reference for phased implementation method, safety constraints, and reporting protocol. Phase-gate governance at `docs/12-roadmap/phase-gates.md` and the technical-debt register at `docs/12-roadmap/technical-debt-register.md` continue to bound any future phase.
 
@@ -731,11 +747,15 @@ by removing less immediately needed strategy/data/risk documents, because the re
 Current readiness:
 
 ```text
-Strategy/research:                Phase 2 research arc complete
+Strategy/research (V1 breakout):  Phase 2 research arc complete
                                   H0 anchor; R3 baseline-of-record;
                                   R1a, R1b-narrow, R2 retained as research evidence
+Strategy/research (F1 mean-rev):  Phase 3 research arc complete
+                                  F1 HARD REJECT (Phase 3d-B2 first execution);
+                                  retained as research evidence; non-leading;
+                                  Phase 3d-B2 terminal for F1
 Historical/live data design:      docs strong; Phase 2e v002 datasets locked
-Validation plan:                  implemented through Phase 2w
+Validation plan:                  implemented through Phase 3d-B2
 Risk model:                       docs strong; runtime not yet implemented
 Execution model:                  docs strong; runtime not yet implemented
 Runtime architecture:             docs strong; runtime not yet implemented
@@ -748,15 +768,20 @@ First-run setup checklist:        created
 Claude Code Phase 0 readiness:    completed
 Phase 1 local-dev foundation:     completed
 Phase 2 data foundation:          completed
-Phase 2 strategy research arc:    completed (Phase 2w merged at 955b2cd)
+Phase 2 strategy research arc:    completed (Phase 2w merged)
+Phase 3 strategy research arc:    completed (Phase 3d-B2 merged at f6df7c7;
+                                  merge-report d0b26fd)
+Phase 3e consolidation memo:      drafted (docs-only; remain-paused recommendation)
 Phase 4 runtime implementation:   NOT authorized
 Paper/shadow planning:            NOT authorized
 Live-readiness / deployment:      NOT authorized
 Production-key work:              NOT authorized
 Exchange-write capability:        NOT authorized
+F1-prime / target-subset spec:    NOT authorized; not proposed
+New family research:              NOT authorized; not proposed
 ```
 
-The project has completed the Phase 2 strategy/backtesting research arc.
+The project has completed two strategy/backtesting research arcs (V1 breakout through Phase 2w; F1 mean-reversion through Phase 3d-B2). Phase 3e is the docs-only post-F1 consolidation memo with operator decision menu; recommended next operator decision is **remain paused**.
 
 It is not ready for Phase 4 runtime implementation, paper/shadow operation, exchange-write capability, production Binance keys, or live trading. No subsequent phase has been authorized; the next step requires explicit operator authorization for that specific phase.
 
@@ -765,6 +790,6 @@ It is not ready for Phase 4 runtime implementation, paper/shadow operation, exch
 ## Document Status
 
 - Status: ACTIVE
-- Updated: 2026-04-27
+- Updated: 2026-04-28
 - Owner: Project operator
-- Role: High-level project memory checkpoint after Phase 2w research-arc closeout
+- Role: High-level project memory checkpoint after Phase 3d-B2 + Phase 3e consolidation
