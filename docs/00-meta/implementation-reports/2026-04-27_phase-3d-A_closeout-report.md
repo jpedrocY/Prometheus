@@ -73,11 +73,21 @@ Total: **18 files** added or modified across the entire Phase 3d-A branch (vs `m
 
 ## 4. Commit hash or hashes
 
-Single commit on `phase-3d-a/f1-implementation-controls` containing all Phase 3d-A artifacts (F1 source module, F1 tests, V1 modifications, checkpoint report, closeout report):
+The Phase 3d-A branch contains multiple commits (the original implementation/tests/reports commit; an operator-mandated docs-only scope-accounting clarification commit; this docs-only clerical-fix commit). The full Phase 3d-A commit chain on `phase-3d-a/f1-implementation-controls` (`main` → branch tip):
 
-**Full SHA recorded by the commit operation; visible via `git log --oneline -1` after the commit completes. The commit message follows the `docs(phase-3d-A): ...` + `feat(phase-3d-A): ...` precedent of prior phase commits.**
+| Commit | Short SHA | Full SHA | Description |
+|--------|-----------|----------|-------------|
+| 1 | `06ad2a8` | `06ad2a886653e567a434f64c8dd7a14b84d6da09` | `phase-3d-A: F1 implementation + tests + quality gates + H0/R3 control reproduction` — original Phase 3d-A artifact commit (18 files; +2254 / −2): F1 source module (7 files), F1 unit tests (7 files), V1 contact-surface modifications (2 files), Phase 3d-A checkpoint report, Phase 3d-A closeout report (initial). |
+| 2 | `1a53423` | `1a53423e6f8692c4b933025559d6b590cab26128` | `docs(phase-3d-A): clarify implementation-control objective vs Phase 3d-B deferrals` — operator-mandated docs-only scope-accounting clarification commit (2 files; +83 / −42): added explicit Completed-in-Phase-3d-A vs Deferred-to-Phase-3d-B boundary in checkpoint §1.1 and closeout §5; reframed "all objectives met" to "implementation-control objective passed". No code or metric changes. |
+| 3 | (this clerical-fix commit) | reported in the final chat response and the Phase 3d-A merge report after the commit lands | `docs(phase-3d-A): clerical fix to closeout §4 commit-hash listing` — this docs-only clerical-fix commit corrects the closeout's §4 to accurately list the multi-commit chain rather than describing the branch as a single-commit branch. No code, tests, scripts, config, data, threshold, parameter, or project-lock change. No alteration of metrics, quality-gate outputs, H0/R3 control reproduction values, scope boundaries, or recommendations. |
 
-(Self-referential note: this closeout report is part of the same commit, so its own SHA is determined when the commit operation completes. The post-commit chat report will record the full SHA explicitly.)
+**Current branch HEAD full SHA** (visible via `git rev-parse HEAD` after this clerical-fix commit lands; recorded in the final chat response and in the Phase 3d-A merge report on `main` after merge):
+
+```
+recorded in Step 3 / Step 4 of the operator's brief, after the clerical-fix commit completes
+```
+
+The branch is therefore **3 commits ahead of `main`** at the time the merge into `main` is performed. The `--no-ff` merge will preserve all three commits in history and add a single explicit merge commit.
 
 ## 5. Phase 3d-A scope-accounting: explicit Completed-in-3d-A vs Deferred-to-3d-B
 
