@@ -27,7 +27,11 @@ No other file is created, modified, or deleted by Phase 3g.
 
 ## 4. Commit hash(es)
 
-To be recorded after the Phase 3g commit lands. The Phase 3g commit message references both files and explicitly preserves the Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline.
+Single Phase 3g commit on `phase-3g/d1-funding-aware-spec`:
+
+- `2c3a91b` — `phase-3g: D1 funding-aware spec memo (docs-only)` (2 files, 856 insertions; both Phase 3g deliverables landed in one commit).
+
+The Phase 3g commit message references both files and explicitly preserves the Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. No subsequent commit is added by Phase 3g itself; an operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3f's pattern).
 
 ## 5. Confirmation that Phase 3g was docs-only
 
