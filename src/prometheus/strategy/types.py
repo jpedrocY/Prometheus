@@ -52,8 +52,11 @@ class ExitReason(StrEnum):
     exit philosophy (v1-breakout-strategy-spec.md §"Stage 5" and
     §"Stage 7"). TAKE_PROFIT and TIME_STOP are per the R3 fixed-R
     exit philosophy (Phase 2j memo §D, exit_kind=FIXED_R_TIME_STOP).
-    END_OF_DATA is a backtest-only terminator for trades still open
-    at the end of the simulation window.
+    TARGET is per the F1 mean-reversion-after-overextension exit
+    philosophy (Phase 3b §4): exit when a completed bar's close
+    crosses the frozen SMA(8) mean reference. END_OF_DATA is a
+    backtest-only terminator for trades still open at the end of
+    the simulation window.
     """
 
     STOP = "STOP"
@@ -61,6 +64,7 @@ class ExitReason(StrEnum):
     STAGNATION = "STAGNATION"
     TAKE_PROFIT = "TAKE_PROFIT"
     TIME_STOP = "TIME_STOP"
+    TARGET = "TARGET"
     END_OF_DATA = "END_OF_DATA"
 
 
