@@ -81,6 +81,26 @@ class TradeRecord(BaseModel):
     r_distance: float = float("nan")
     cancellation_reason: str | None = None
 
+    # ----- F1 mean-reversion-after-overextension metadata (Phase 3d-B1) -----
+    # Populated only on F1-family trades (strategy_family=
+    # MEAN_REVERSION_OVEREXTENSION). For V1 (H0/R3/R1a/R1b-narrow/R2)
+    # rows these stay at NaN defaults so the parquet schema remains
+    # additive and existing reports are unaffected. Per Phase 3c §4.6
+    # diagnostic-fields list:
+    #   - overextension_magnitude_at_signal:
+    #         |close(B) - close(B-8)| / ATR(20)(B)
+    #   - frozen_target_value:
+    #         SMA(8)(B) frozen at signal-time bar B's close
+    #   - entry_to_target_distance_atr:
+    #         |entry_fill_price - frozen_target_value| / ATR(20)(B)
+    #   - stop_distance_at_signal_atr:
+    #         stop_distance / ATR(20)(B), evaluated on the de-slipped
+    #         raw open(B+1) per Phase 3b §4.9 / Phase 3c §11.4
+    overextension_magnitude_at_signal: float = float("nan")
+    frozen_target_value: float = float("nan")
+    entry_to_target_distance_atr: float = float("nan")
+    stop_distance_at_signal_atr: float = float("nan")
+
 
 def trade_record_to_dict(rec: TradeRecord) -> dict[str, object]:
     data = rec.model_dump()
@@ -136,6 +156,13 @@ def trade_record_to_parquet_table(records: list[TradeRecord]) -> pa.Table:
             ("fill_price", pa.float64()),
             ("r_distance", pa.float64()),
             ("cancellation_reason", pa.string()),
+            # F1 mean-reversion-after-overextension diagnostic fields
+            # (Phase 3d-B1). NaN for V1 rows; populated by the F1
+            # engine path per Phase 3c §4.6.
+            ("overextension_magnitude_at_signal", pa.float64()),
+            ("frozen_target_value", pa.float64()),
+            ("entry_to_target_distance_atr", pa.float64()),
+            ("stop_distance_at_signal_atr", pa.float64()),
         ]
     )
     columns: dict[str, list[object]] = {name: [] for name in schema.names}

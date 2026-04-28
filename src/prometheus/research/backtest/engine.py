@@ -16,6 +16,7 @@ The engine does NOT:
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from uuid import uuid4
@@ -25,6 +26,12 @@ from prometheus.core.exchange_info import SymbolInfo
 from prometheus.core.klines import NormalizedKline
 from prometheus.core.mark_price_klines import MarkPriceKline
 from prometheus.core.symbols import Symbol
+from prometheus.strategy.indicators import wilder_atr
+from prometheus.strategy.mean_reversion_overextension import (
+    MeanReversionStrategy,
+    can_re_enter,
+    overextension_event,
+)
 from prometheus.strategy.types import (
     Direction,
     EntryIntent,
@@ -48,7 +55,7 @@ from prometheus.strategy.v1_breakout.stop import (
 )
 
 from .accounting import Accounting, TradePnL, compute_trade_pnl
-from .config import BacktestConfig, StopTriggerSource
+from .config import BacktestConfig, StopTriggerSource, StrategyFamily
 from .fills import entry_fill_price, exit_fill_price
 from .funding_join import apply_funding_accrual
 from .simulation_clock import next_15m_open_time
@@ -77,6 +84,29 @@ class _R2TradeMetadata:
 
 
 @dataclass
+class _F1TradeMetadata:
+    """F1 mean-reversion-after-overextension provenance for a filled trade.
+
+    Set on ``_OpenTrade`` only when the engine routes through the
+    Phase 3d-B1 F1 dispatch (``strategy_family ==
+    MEAN_REVERSION_OVEREXTENSION``). For V1 (H0/R3/R1a/R1b-narrow/R2)
+    paths this is None and the corresponding ``TradeRecord`` F1 fields
+    default to NaN per ``trade_log.TradeRecord``.
+
+    All values are frozen at signal-time bar B's close per Phase 3b §4
+    and Phase 3c §4.6.
+    """
+
+    signal_bar_index: int  # B
+    fill_bar_index: int  # B+1
+    frozen_target: float  # SMA(8)(B)
+    atr_at_signal: float  # ATR(20)(B)
+    displacement_at_signal: float  # close(B) - close(B-8)
+    stop_distance_at_signal: float  # |raw_open(B+1) - initial_stop|
+    raw_entry_reference: float  # raw (de-slipped) open(B+1)
+
+
+@dataclass
 class _OpenTrade:
     """Engine-side bookkeeping for a currently open position."""
 
@@ -94,6 +124,7 @@ class _OpenTrade:
     current_stop: float
     stop_was_gap_through: bool = False
     r2_metadata: _R2TradeMetadata | None = None
+    f1_metadata: _F1TradeMetadata | None = None
 
 
 @dataclass
@@ -131,6 +162,40 @@ class R2LifecycleCounters:
 
 
 @dataclass
+class F1LifecycleCounters:
+    """Per-symbol F1 mean-reversion overextension-event funnel counts.
+
+    Populated only under ``strategy_family ==
+    MEAN_REVERSION_OVEREXTENSION``. Under the V1 default
+    (``V1_BREAKOUT``) all counters remain 0 and the accounting identity
+    holds trivially. Per Phase 3b §4 / Phase 3c §4.7 the identity is:
+
+        detected = filled
+                 + rejected_stop_distance
+                 + blocked_cooldown
+
+    Each detected overextension event is attributed to exactly one
+    bucket: cooldown is checked first; on cooldown block the event is
+    counted in ``overextension_events_blocked_cooldown``; otherwise
+    stop-distance admissibility is checked and either fills the trade
+    or counts in ``overextension_events_rejected_stop_distance``.
+    """
+
+    overextension_events_detected: int = 0
+    overextension_events_filled: int = 0
+    overextension_events_rejected_stop_distance: int = 0
+    overextension_events_blocked_cooldown: int = 0
+
+    @property
+    def accounting_identity_holds(self) -> bool:
+        return self.overextension_events_detected == (
+            self.overextension_events_filled
+            + self.overextension_events_rejected_stop_distance
+            + self.overextension_events_blocked_cooldown
+        )
+
+
+@dataclass
 class _SymbolRun:
     symbol: Symbol
     session: StrategySession
@@ -154,6 +219,11 @@ class _SymbolRun:
     # "would-have-entered-at" reference for the §P.3 stop-distance
     # reduction diagnostic in 2w-B). Captured at registration.
     pending_next_bar_open_at_signal: float | None = None
+    # F1 mean-reversion-after-overextension per-symbol state
+    # (Phase 3d-B1). All zero / None for V1 paths.
+    f1_counters: F1LifecycleCounters = field(default_factory=F1LifecycleCounters)
+    f1_last_exit_direction: Direction | None = None
+    f1_last_exit_idx: int | None = None
 
 
 @dataclass
@@ -168,6 +238,10 @@ class BacktestRunResult:
     # paths (entry_kind=MARKET_NEXT_BAR_OPEN). 2w-B reporting consumes
     # these to populate the §P.1 fill-rate diagnostic.
     r2_counters_per_symbol: dict[Symbol, R2LifecycleCounters] = field(default_factory=dict)
+    # F1 overextension-event funnel counters per symbol. All zero for
+    # V1 paths (strategy_family=V1_BREAKOUT). Phase 3d-B1 populates
+    # these on the F1 dispatch path.
+    f1_counters_per_symbol: dict[Symbol, F1LifecycleCounters] = field(default_factory=dict)
 
     @property
     def total_trades(self) -> int:
@@ -228,6 +302,16 @@ class BacktestEngine:
             )
         self._config = config
         self._strategy = V1BreakoutStrategy(config.strategy_variant)
+        # F1 strategy is only constructed when the dispatch surface is
+        # set to MEAN_REVERSION_OVEREXTENSION; the V1 path does not
+        # consume it. Constructed here once so per-bar evaluation does
+        # not allocate.
+        self._mean_reversion_strategy: MeanReversionStrategy | None = None
+        if (
+            config.strategy_family == StrategyFamily.MEAN_REVERSION_OVEREXTENSION
+            and config.mean_reversion_variant is not None
+        ):
+            self._mean_reversion_strategy = MeanReversionStrategy(config.mean_reversion_variant)
         self._r2_fill_model = r2_fill_model
 
     def run(
@@ -243,12 +327,17 @@ class BacktestEngine:
         per_symbol_trades: dict[Symbol, list[TradeRecord]] = {}
         accounting_per_symbol: dict[Symbol, Accounting] = {}
         r2_counters_per_symbol: dict[Symbol, R2LifecycleCounters] = {}
+        f1_counters_per_symbol: dict[Symbol, F1LifecycleCounters] = {}
+
+        is_f1 = self._config.strategy_family == StrategyFamily.MEAN_REVERSION_OVEREXTENSION
 
         for symbol in self._config.symbols:
             if symbol not in klines_15m_per_symbol:
                 warnings.append(f"symbol {symbol} has no 15m data; skipping")
                 continue
-            if symbol not in klines_1h_per_symbol:
+            # 1h data is only required for V1 dispatch; F1 has no 1h
+            # bias filter per Phase 3b §4.8.
+            if not is_f1 and symbol not in klines_1h_per_symbol:
                 warnings.append(f"symbol {symbol} has no 1h data; skipping")
                 continue
             if symbol not in mark_15m_per_symbol:
@@ -265,18 +354,29 @@ class BacktestEngine:
                 session=StrategySession(symbol=symbol, config=self._config.strategy_variant),
             )
             accounting = Accounting.start(self._config.sizing_equity_usdt)
-            self._run_symbol(
-                run,
-                accounting=accounting,
-                klines_15m=klines_15m_per_symbol[symbol],
-                klines_1h=klines_1h_per_symbol[symbol],
-                mark_15m=mark_15m_per_symbol[symbol],
-                funding=funding_per_symbol[symbol],
-                symbol_info=symbol_info_per_symbol[symbol],
-            )
+            if is_f1:
+                self._run_symbol_f1(
+                    run,
+                    accounting=accounting,
+                    klines_15m=klines_15m_per_symbol[symbol],
+                    mark_15m=mark_15m_per_symbol[symbol],
+                    funding=funding_per_symbol[symbol],
+                    symbol_info=symbol_info_per_symbol[symbol],
+                )
+            else:
+                self._run_symbol(
+                    run,
+                    accounting=accounting,
+                    klines_15m=klines_15m_per_symbol[symbol],
+                    klines_1h=klines_1h_per_symbol[symbol],
+                    mark_15m=mark_15m_per_symbol[symbol],
+                    funding=funding_per_symbol[symbol],
+                    symbol_info=symbol_info_per_symbol[symbol],
+                )
             per_symbol_trades[symbol] = run.trades
             accounting_per_symbol[symbol] = accounting
             r2_counters_per_symbol[symbol] = run.r2_counters
+            f1_counters_per_symbol[symbol] = run.f1_counters
 
         return BacktestRunResult(
             config=self._config,
@@ -284,6 +384,7 @@ class BacktestEngine:
             accounting_per_symbol=accounting_per_symbol,
             warnings=warnings,
             r2_counters_per_symbol=r2_counters_per_symbol,
+            f1_counters_per_symbol=f1_counters_per_symbol,
         )
 
     # ------------------------------------------------------------------
@@ -926,6 +1027,24 @@ class BacktestEngine:
             r2_atr_at_signal = float("nan")
             r2_fill_price = float("nan")
             r2_r_distance = float("nan")
+        # F1 metadata population (Phase 3d-B1). For V1 paths, f1_metadata
+        # is None and the F1 TradeRecord fields stay at NaN defaults.
+        if trade.f1_metadata is not None:
+            f1m = trade.f1_metadata
+            atr_b = f1m.atr_at_signal
+            f1_overext_mag = abs(f1m.displacement_at_signal) / atr_b if atr_b > 0 else float("nan")
+            f1_frozen_target = f1m.frozen_target
+            f1_entry_to_target_atr = (
+                abs(trade.entry_fill_price - f1m.frozen_target) / atr_b
+                if atr_b > 0
+                else float("nan")
+            )
+            f1_stop_dist_atr = f1m.stop_distance_at_signal / atr_b if atr_b > 0 else float("nan")
+        else:
+            f1_overext_mag = float("nan")
+            f1_frozen_target = float("nan")
+            f1_entry_to_target_atr = float("nan")
+            f1_stop_dist_atr = float("nan")
         rec = TradeRecord(
             trade_id=trade_id,
             symbol=trade.symbol,
@@ -963,8 +1082,416 @@ class BacktestEngine:
             fill_price=r2_fill_price,
             r_distance=r2_r_distance,
             cancellation_reason=None,
+            overextension_magnitude_at_signal=f1_overext_mag,
+            frozen_target_value=f1_frozen_target,
+            entry_to_target_distance_atr=f1_entry_to_target_atr,
+            stop_distance_at_signal_atr=f1_stop_dist_atr,
         )
         run.trades.append(rec)
+
+    # ------------------------------------------------------------------
+    # F1 mean-reversion-after-overextension dispatch (Phase 3d-B1)
+    # ------------------------------------------------------------------
+
+    def _run_symbol_f1(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        klines_15m: Sequence[NormalizedKline],
+        mark_15m: Sequence[MarkPriceKline],
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+    ) -> None:
+        """Per-symbol F1 bar-by-bar lifecycle.
+
+        Phase 3b §4 / Phase 3c §4 binding spec: detect 8-bar cumulative
+        overextension > 1.75 × ATR(20)(B) at completed bar B's close;
+        market-fill at open(B+1); freeze SMA(8)(B) target and structural
+        stop with 0.10 × ATR buffer; honor [0.60, 1.80] × ATR(20)
+        stop-distance admissibility evaluated on the de-slipped raw
+        open(B+1); same-bar exit priority STOP > TARGET > TIME_STOP;
+        unconditional time-stop after 8 completed bars from fill;
+        same-direction cooldown blocks re-entry until cumulative
+        displacement unwinds.
+
+        F1 does NOT use the V1 1h-bias filter, V1 setup predicate, V1
+        breakout trigger, or V1 trade-management trail / break-even /
+        risk-reduction stages. F1 emits exactly STOP / TARGET /
+        TIME_STOP / END_OF_DATA exit reasons (P.14-style invariant per
+        Phase 3c §8.15).
+        """
+        config = self._config
+        assert self._mean_reversion_strategy is not None
+        f1_strategy = self._mean_reversion_strategy
+        f1_config = f1_strategy.config
+
+        # Pre-compute per-bar arrays once; F1 reads these many times.
+        closes: list[float] = [float(b.close) for b in klines_15m]
+        highs: list[float] = [float(b.high) for b in klines_15m]
+        lows: list[float] = [float(b.low) for b in klines_15m]
+        atr20_list: list[float] = wilder_atr(highs, lows, closes, period=20)
+
+        # Per-bar 8-bar cumulative displacement aligned with klines_15m
+        # by index. NaN entries before warmup so cooldown helpers can
+        # skip them defensively.
+        n = len(klines_15m)
+        displacement_history: list[float] = []
+        for i in range(n):
+            if i < f1_config.overextension_window_bars:
+                displacement_history.append(float("nan"))
+            else:
+                displacement_history.append(
+                    closes[i] - closes[i - f1_config.overextension_window_bars]
+                )
+
+        mark_by_open: dict[int, MarkPriceKline] = {m.open_time: m for m in mark_15m}
+
+        for idx_15m, bar_15m in enumerate(klines_15m):
+            # 1. Open trade: STOP > TARGET > TIME_STOP (same-bar priority).
+            if run.open_trade is not None:
+                assert run.open_trade.f1_metadata is not None
+                f1_meta = run.open_trade.f1_metadata
+                # STOP check via mark-price (default) or trade-price.
+                if config.stop_trigger_source == StopTriggerSource.MARK_PRICE:
+                    stop_eval_bar: MarkPriceKline | NormalizedKline | None = mark_by_open.get(
+                        bar_15m.open_time
+                    )
+                else:
+                    stop_eval_bar = bar_15m
+                if stop_eval_bar is not None:
+                    hit = evaluate_stop_hit(
+                        direction_long=run.open_trade.direction_long,
+                        current_stop=run.open_trade.current_stop,
+                        mark_bar=stop_eval_bar,
+                        slippage_bps=config.slippage_bps,
+                    )
+                    if hit is not None:
+                        self._close_f1_trade_on_stop(
+                            run,
+                            accounting=accounting,
+                            hit=hit,
+                            funding=funding,
+                            symbol_info=symbol_info,
+                            exit_bar_idx=idx_15m,
+                        )
+                        continue
+
+                # TARGET / TIME_STOP only fire on bars t > B (signal bar).
+                # The fill bar B+1 is t > B (B+1 > B), so target may fire
+                # at the fill bar's close per Phase 3b §4.5 wording
+                # ("first completed 15m bar t > B"). Time-stop counts
+                # bars from fill bar; idx_15m - fill_bar_idx >= 8 means
+                # 8 completed bars elapsed since fill (the
+                # ``time_stop_bars`` lock).
+                if idx_15m > f1_meta.signal_bar_index:
+                    direction = Direction.LONG if run.open_trade.direction_long else Direction.SHORT
+                    target_fires = (
+                        bar_15m.close >= f1_meta.frozen_target
+                        if direction == Direction.LONG
+                        else bar_15m.close <= f1_meta.frozen_target
+                    )
+                    if target_fires:
+                        next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+                        if next_bar is None:
+                            self._close_f1_trade_end_of_data(
+                                run,
+                                accounting=accounting,
+                                exit_price=bar_15m.close,
+                                exit_time_ms=bar_15m.close_time + 1,
+                                exit_reason_str=ExitReason.END_OF_DATA.value,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        else:
+                            fill_price = exit_fill_price(
+                                next_bar=next_bar,
+                                direction_long=run.open_trade.direction_long,
+                                config=config,
+                            )
+                            self._close_f1_trade_managed(
+                                run,
+                                accounting=accounting,
+                                next_bar=next_bar,
+                                exit_price=fill_price,
+                                exit_reason=ExitReason.TARGET,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        continue
+                    # TIME_STOP at close of bar B+1+time_stop_bars.
+                    bars_since_fill = idx_15m - f1_meta.fill_bar_index
+                    if bars_since_fill >= f1_config.time_stop_bars:
+                        next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+                        if next_bar is None:
+                            self._close_f1_trade_end_of_data(
+                                run,
+                                accounting=accounting,
+                                exit_price=bar_15m.close,
+                                exit_time_ms=bar_15m.close_time + 1,
+                                exit_reason_str=ExitReason.END_OF_DATA.value,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        else:
+                            fill_price = exit_fill_price(
+                                next_bar=next_bar,
+                                direction_long=run.open_trade.direction_long,
+                                config=config,
+                            )
+                            self._close_f1_trade_managed(
+                                run,
+                                accounting=accounting,
+                                next_bar=next_bar,
+                                exit_price=fill_price,
+                                exit_reason=ExitReason.TIME_STOP,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        continue
+
+            # 2. No open trade: evaluate F1 entry candidate at bar B's close.
+            if run.open_trade is not None:
+                continue
+            if not (config.window_start_ms <= bar_15m.open_time < config.window_end_ms):
+                continue
+            # Need 8-bar warmup for displacement; ATR(20) requires at
+            # least 21 bars (first ATR seed at index 20).
+            if idx_15m < f1_config.overextension_window_bars:
+                continue
+            atr_b = atr20_list[idx_15m]
+            if math.isnan(atr_b) or atr_b <= 0.0:
+                continue
+            # Need next bar to fill at open(B+1).
+            next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+            if next_bar is None:
+                continue
+            raw_open_b1 = float(next_bar.open)
+            # Detect overextension event first (drives the funnel
+            # counters' "detected" bucket regardless of cooldown /
+            # admissibility outcome).
+            fires, sign = overextension_event(
+                closes=closes,
+                atr20=atr20_list,
+                b_index=idx_15m,
+                threshold_atr_multiple=f1_config.overextension_threshold_atr_multiple,
+            )
+            if not fires:
+                continue
+            direction = Direction.SHORT if sign > 0 else Direction.LONG
+            run.f1_counters.overextension_events_detected += 1
+            # Cooldown gate: per Phase 3b §4.7, no same-direction
+            # re-entry until cumulative displacement unwinds since the
+            # prior exit. Opposite direction is never blocked.
+            if not can_re_enter(
+                candidate_direction=direction,
+                last_exit_direction=run.f1_last_exit_direction,
+                last_exit_index=run.f1_last_exit_idx,
+                displacement_history=displacement_history,
+                atr20_history=atr20_list,
+                current_index=idx_15m,
+                threshold_atr_multiple=f1_config.overextension_threshold_atr_multiple,
+            ):
+                run.f1_counters.overextension_events_blocked_cooldown += 1
+                continue
+            # Stop-distance admissibility gate via the strategy facade.
+            # ``reference_price`` is the de-slipped raw open(B+1) per
+            # Phase 3b §4.9 / Phase 3c §11.4.
+            signal = f1_strategy.evaluate_entry_signal(
+                b_index=idx_15m,
+                closes=closes,
+                highs=highs,
+                lows=lows,
+                atr20=atr20_list,
+                reference_price=raw_open_b1,
+            )
+            if signal is None:
+                # Cooldown was passed above, so the only remaining
+                # rejection cause is stop-distance admissibility.
+                run.f1_counters.overextension_events_rejected_stop_distance += 1
+                continue
+            run.f1_counters.overextension_events_filled += 1
+            self._open_f1_trade(
+                run,
+                signal=signal,
+                signal_bar=bar_15m,
+                next_bar=next_bar,
+                signal_bar_index=idx_15m,
+                fill_bar_index=idx_15m + 1,
+                symbol_info=symbol_info,
+            )
+
+        # End-of-window: close as END_OF_DATA at last bar's close.
+        if run.open_trade is not None:
+            last_bar = klines_15m[-1]
+            self._close_f1_trade_end_of_data(
+                run,
+                accounting=accounting,
+                exit_price=last_bar.close,
+                exit_time_ms=last_bar.close_time + 1,
+                exit_reason_str=ExitReason.END_OF_DATA.value,
+                exit_bar_idx=len(klines_15m) - 1,
+                funding=funding,
+                symbol_info=symbol_info,
+            )
+
+    def _open_f1_trade(
+        self,
+        run: _SymbolRun,
+        *,
+        signal: object,  # MeanReversionEntrySignal; typed via attribute access
+        signal_bar: NormalizedKline,
+        next_bar: NormalizedKline,
+        signal_bar_index: int,
+        fill_bar_index: int,
+        symbol_info: SymbolInfo,
+    ) -> None:
+        """Open an F1 trade from a validated entry signal."""
+        from prometheus.strategy.mean_reversion_overextension import (
+            MeanReversionEntrySignal,
+        )
+
+        assert isinstance(signal, MeanReversionEntrySignal)
+        config = self._config
+        is_long = signal.direction == Direction.LONG
+        # Recompute fill price using the engine's slippage convention
+        # (entry_fill_price applies adverse slippage). This may differ
+        # from signal.reference_price (raw); the stop-distance band has
+        # already been validated on the raw value per Phase 3c §11.4.
+        fill_price = entry_fill_price(next_bar=next_bar, direction_long=is_long, config=config)
+        # Sizing uses the actual filled price + filled stop distance for
+        # quantity computation; the band check is on the raw value.
+        post_slip_stop_distance = abs(fill_price - signal.initial_stop)
+        sizing = compute_size(
+            sizing_equity_usdt=config.sizing_equity_usdt,
+            risk_fraction=config.risk_fraction,
+            risk_usage_fraction=config.risk_usage_fraction,
+            stop_distance=post_slip_stop_distance,
+            reference_price=fill_price,
+            max_effective_leverage=config.max_effective_leverage,
+            max_notional_internal_usdt=config.max_notional_internal_usdt,
+            symbol_info=symbol_info,
+        )
+        if not sizing.approved:
+            # Sizing rejection at fill time: undo the filled-counter
+            # increment and treat as stop-distance rejection (no trade
+            # opened, identity preserved). Mirrors R2's fill-time
+            # rejection handling.
+            run.f1_counters.overextension_events_filled -= 1
+            run.f1_counters.overextension_events_rejected_stop_distance += 1
+            return
+        assert sizing.limited_by is not None
+        run.open_trade = _OpenTrade(
+            symbol=next_bar.symbol,
+            direction_long=is_long,
+            signal_bar_open_time_ms=signal_bar.open_time,
+            entry_fill_time_ms=next_bar.open_time,
+            entry_fill_price=fill_price,
+            initial_stop=signal.initial_stop,
+            stop_distance=post_slip_stop_distance,
+            quantity=sizing.quantity,
+            notional=sizing.quantity * fill_price,
+            sizing_limited_by=sizing.limited_by,
+            realized_risk_usdt=sizing.realized_risk_usdt,
+            current_stop=signal.initial_stop,
+            f1_metadata=_F1TradeMetadata(
+                signal_bar_index=signal_bar_index,
+                fill_bar_index=fill_bar_index,
+                frozen_target=signal.frozen_target,
+                atr_at_signal=signal.atr_at_signal,
+                displacement_at_signal=signal.displacement_at_signal,
+                stop_distance_at_signal=signal.stop_distance,
+                raw_entry_reference=signal.reference_price,
+            ),
+        )
+
+    def _close_f1_trade_on_stop(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        hit: StopHit,
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+        exit_bar_idx: int,
+    ) -> None:
+        assert run.open_trade is not None
+        assert run.open_trade.f1_metadata is not None
+        trade = run.open_trade
+        trade.stop_was_gap_through = hit.was_gap_through
+        direction = Direction.LONG if trade.direction_long else Direction.SHORT
+        self._record_trade(
+            run,
+            accounting=accounting,
+            exit_price=hit.fill_price,
+            exit_time_ms=hit.fill_time_ms,
+            exit_reason_str=ExitReason.STOP.value,
+            funding=funding,
+            symbol_info=symbol_info,
+        )
+        run.open_trade = None
+        run.f1_last_exit_direction = direction
+        run.f1_last_exit_idx = exit_bar_idx
+
+    def _close_f1_trade_managed(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        next_bar: NormalizedKline,
+        exit_price: float,
+        exit_reason: ExitReason,
+        exit_bar_idx: int,
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+    ) -> None:
+        assert run.open_trade is not None
+        assert run.open_trade.f1_metadata is not None
+        direction = Direction.LONG if run.open_trade.direction_long else Direction.SHORT
+        self._record_trade(
+            run,
+            accounting=accounting,
+            exit_price=exit_price,
+            exit_time_ms=next_bar.open_time,
+            exit_reason_str=exit_reason.value,
+            funding=funding,
+            symbol_info=symbol_info,
+        )
+        run.open_trade = None
+        run.f1_last_exit_direction = direction
+        run.f1_last_exit_idx = exit_bar_idx
+
+    def _close_f1_trade_end_of_data(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        exit_price: float,
+        exit_time_ms: int,
+        exit_reason_str: str,
+        exit_bar_idx: int,
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+    ) -> None:
+        assert run.open_trade is not None
+        assert run.open_trade.f1_metadata is not None
+        direction = Direction.LONG if run.open_trade.direction_long else Direction.SHORT
+        self._record_trade(
+            run,
+            accounting=accounting,
+            exit_price=exit_price,
+            exit_time_ms=exit_time_ms,
+            exit_reason_str=exit_reason_str,
+            funding=funding,
+            symbol_info=symbol_info,
+        )
+        run.open_trade = None
+        run.f1_last_exit_direction = direction
+        run.f1_last_exit_idx = exit_bar_idx
 
     # ------------------------------------------------------------------
     # Helpers

@@ -10,7 +10,10 @@ from prometheus.research.backtest.config import (
     BacktestAdapter,
     BacktestConfig,
     SlippageBucket,
+    StrategyFamily,
 )
+from prometheus.strategy.mean_reversion_overextension import MeanReversionConfig
+from prometheus.strategy.v1_breakout import V1BreakoutConfig
 
 from .conftest import default_config
 
@@ -128,4 +131,63 @@ def test_slippage_map_must_cover_all_buckets() -> None:
             bars_1h_root=Path("."),
             exchange_info_path=Path("."),
             reports_root=Path("."),
+        )
+
+
+# ---------- Phase 3d-B1: F1 strategy-family dispatch validation ----------
+
+
+def test_default_strategy_family_is_v1_breakout() -> None:
+    """Default ``BacktestConfig`` preserves V1_BREAKOUT dispatch."""
+    cfg = default_config()
+    assert cfg.strategy_family == StrategyFamily.V1_BREAKOUT
+    assert cfg.mean_reversion_variant is None
+
+
+def test_v1_breakout_rejects_mean_reversion_variant() -> None:
+    """V1_BREAKOUT family must keep ``mean_reversion_variant`` None."""
+    base = default_config()
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(exclude={"strategy_family", "mean_reversion_variant"}),
+            strategy_family=StrategyFamily.V1_BREAKOUT,
+            mean_reversion_variant=MeanReversionConfig(),
+        )
+
+
+def test_f1_family_accepts_mean_reversion_variant() -> None:
+    """F1 dispatch is admissible when ``mean_reversion_variant`` is set."""
+    base = default_config()
+    cfg = BacktestConfig(
+        **base.model_dump(exclude={"strategy_family", "mean_reversion_variant"}),
+        strategy_family=StrategyFamily.MEAN_REVERSION_OVEREXTENSION,
+        mean_reversion_variant=MeanReversionConfig(),
+    )
+    assert cfg.strategy_family == StrategyFamily.MEAN_REVERSION_OVEREXTENSION
+    assert cfg.mean_reversion_variant is not None
+
+
+def test_f1_family_requires_mean_reversion_variant() -> None:
+    """F1 dispatch without a config payload is rejected."""
+    base = default_config()
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(exclude={"strategy_family", "mean_reversion_variant"}),
+            strategy_family=StrategyFamily.MEAN_REVERSION_OVEREXTENSION,
+            mean_reversion_variant=None,
+        )
+
+
+def test_f1_family_rejects_non_default_v1_strategy_variant() -> None:
+    """F1 must not be combined with non-default V1 strategy_variant."""
+    base = default_config()
+    non_default_v1 = V1BreakoutConfig(setup_size=10)
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(
+                exclude={"strategy_family", "mean_reversion_variant", "strategy_variant"}
+            ),
+            strategy_family=StrategyFamily.MEAN_REVERSION_OVEREXTENSION,
+            mean_reversion_variant=MeanReversionConfig(),
+            strategy_variant=non_default_v1,
         )
