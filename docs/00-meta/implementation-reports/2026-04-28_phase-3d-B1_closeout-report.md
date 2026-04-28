@@ -62,13 +62,14 @@ Total: **8 files** added or modified across the entire Phase 3d-B1 branch (vs `m
 
 ## 4. Commit hash or hashes
 
-The Phase 3d-B1 branch contains a single commit on top of `main` (`e820acd71d9c9c3384a7c448666d9bcb8159af5c`):
+The Phase 3d-B1 branch is built on top of `main` at `e820acd71d9c9c3384a7c448666d9bcb8159af5c` (the post-Phase-3d-A merge-report tip). The full commit chain on `phase-3d-b1/f1-engine-wiring-controls` (`main` → branch tip):
 
 | Commit | Short SHA | Full SHA | Description |
 |--------|-----------|----------|-------------|
-| 1 | `fd0a9ca` | `fd0a9ca24677a2971639dbd6831d91416c32c5a8` | `phase-3d-B1: F1 engine wiring + tests + quality gates + H0/R3 control reproduction` — single artifact commit covering: engine dispatch wiring (`engine.py`), config validator update (`config.py`), TradeRecord F1 fields + parquet schema (`trade_log.py`), 5 BacktestConfig tests + 20 engine tests + parquet-schema test update, runner scaffold (`scripts/phase3d_F1_execution.py`), Phase 3d-B1 checkpoint report, Phase 3d-B1 closeout report. |
+| 1 | `fd0a9ca` | `fd0a9ca24677a2971639dbd6831d91416c32c5a8` | `phase-3d-B1: F1 engine wiring + tests + quality gates + H0/R3 control reproduction` — original Phase 3d-B1 artifact commit (9 files; +1990 / −28): engine dispatch wiring (`engine.py`), config validator update (`config.py`), TradeRecord F1 fields + parquet schema (`trade_log.py`), 5 BacktestConfig tests + 20 engine tests + parquet-schema test update, runner scaffold (`scripts/phase3d_F1_execution.py`), Phase 3d-B1 checkpoint report (initial), Phase 3d-B1 closeout report (initial). |
+| 2 | `1da8748` | `1da87480d73873d95153bb3f0d1e79cff2ffc202` | `docs(phase-3d-B1): clerical fix to closeout §4 commit-hash listing` — docs-only clerical-fix commit recording the actual SHAs of commit 1 in this §4. No code, tests, scripts, config, data, threshold, parameter, or project-lock change. No alteration of metrics, quality-gate outputs, H0/R3 control reproduction values, scope boundaries, or recommendations. |
 
-The branch is therefore **1 commit ahead of `main`** at the time of any future merge. A `--no-ff` merge will preserve the commit in history and add a single explicit merge commit.
+The branch is therefore **2 commits ahead of `main`** at the time of any future merge. A `--no-ff` merge will preserve both commits in history and add a single explicit merge commit.
 
 ## 5. Phase 3d-B1 was limited to engine wiring + tests + quality gates + H0/R3 control reproduction
 
