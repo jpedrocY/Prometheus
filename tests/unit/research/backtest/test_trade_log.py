@@ -124,5 +124,11 @@ def test_table_schema_has_expected_columns() -> None:
         "fill_price",
         "r_distance",
         "cancellation_reason",
+        # F1 mean-reversion-after-overextension metadata (Phase 3d-B1;
+        # NaN defaults preserve V1 trade-log columns bit-for-bit).
+        "overextension_magnitude_at_signal",
+        "frozen_target_value",
+        "entry_to_target_distance_atr",
+        "stop_distance_at_signal_atr",
     }
     assert set(table.schema.names) == expected

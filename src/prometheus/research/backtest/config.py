@@ -26,12 +26,14 @@ class StrategyFamily(StrEnum):
     """Selects the strategy family the backtest engine dispatches to.
 
     V1_BREAKOUT (default) is the locked Phase 2e family with the H0/R3/
-    R1a/R1b-narrow/R2 axes and is the only family wired into the
-    engine. MEAN_REVERSION_OVEREXTENSION is the F1 family from
-    Phase 3b §4; per Phase 3d-A scope its module exists but the engine
-    is not yet dispatched to it. Setting
-    ``strategy_family=MEAN_REVERSION_OVEREXTENSION`` is rejected by the
-    config validator until Phase 3d-B wires the engine path.
+    R1a/R1b-narrow/R2 axes. MEAN_REVERSION_OVEREXTENSION is the F1
+    family from Phase 3b §4. Phase 3d-B1 wires the engine dispatch:
+    selecting MEAN_REVERSION_OVEREXTENSION requires
+    ``mean_reversion_variant`` to be a non-None ``MeanReversionConfig``
+    and forbids passing ``strategy_variant`` overrides on top of the
+    V1 default. F1 candidate execution itself is reserved for Phase 3d-B2;
+    Phase 3d-B1 only proves the dispatch surface and engine path exist
+    without changing V1 H0/R3 behavior.
     """
 
     V1_BREAKOUT = "V1_BREAKOUT"
@@ -123,18 +125,20 @@ class BacktestConfig(BaseModel):
 
     # Strategy family dispatch. Default = V1_BREAKOUT preserves all
     # existing behavior bit-for-bit. MEAN_REVERSION_OVEREXTENSION is
-    # the F1 family per Phase 3b §4; per Phase 3d-A scope the engine
-    # is not yet wired to it and the validator rejects that value.
+    # the F1 family per Phase 3b §4; Phase 3d-B1 lifts the
+    # implementation guard to allow engine dispatch when the
+    # ``mean_reversion_variant`` field is also supplied.
     strategy_family: StrategyFamily = StrategyFamily.V1_BREAKOUT
 
     # Strategy variant overrides. Default = locked Phase 2e baseline (H0).
     # Phase 2g wave-1 sets exactly one field per variant.
     strategy_variant: V1BreakoutConfig = Field(default_factory=V1BreakoutConfig)
 
-    # F1 mean-reversion-after-overextension variant. Phase 3d-A: the
-    # field exists for forward-compatibility with the Phase 3d-B engine
-    # integration but must be ``None`` until that wiring lands. The
-    # validator below enforces the Phase 3d-A constraint.
+    # F1 mean-reversion-after-overextension variant. Phase 3d-B1: the
+    # engine routes per-bar evaluation to the F1 path when
+    # ``strategy_family == MEAN_REVERSION_OVEREXTENSION`` AND this
+    # field is a non-None ``MeanReversionConfig``. The validator below
+    # enforces the dispatch invariants.
     mean_reversion_variant: MeanReversionConfig | None = None
 
     # Which price stream evaluates stops. MARK_PRICE (default) mirrors
@@ -161,17 +165,29 @@ class BacktestConfig(BaseModel):
         for bucket in SlippageBucket:
             if bucket not in self.slippage_bps_map:
                 raise ValueError(f"slippage_bps_map missing bucket {bucket}")
-        # Strategy-family dispatch invariants (Phase 3d-A).
+        # Strategy-family dispatch invariants (Phase 3d-B1).
         if self.strategy_family == StrategyFamily.V1_BREAKOUT:
             if self.mean_reversion_variant is not None:
                 raise ValueError(
                     "mean_reversion_variant must be None when strategy_family=V1_BREAKOUT"
                 )
         elif self.strategy_family == StrategyFamily.MEAN_REVERSION_OVEREXTENSION:
-            raise ValueError(
-                "Phase 3d-A: F1 strategy_family is reserved; engine dispatch "
-                "will be wired in Phase 3d-B"
-            )
+            if self.mean_reversion_variant is None:
+                raise ValueError(
+                    "mean_reversion_variant must be a MeanReversionConfig when "
+                    "strategy_family=MEAN_REVERSION_OVEREXTENSION"
+                )
+            # Disallow non-default V1 strategy_variant overrides on the F1
+            # path. F1 does not consume ``strategy_variant``; allowing
+            # non-default V1 axes alongside F1 would suggest mixed-family
+            # behavior that the engine does not implement.
+            default_v1 = V1BreakoutConfig()
+            if self.strategy_variant != default_v1:
+                raise ValueError(
+                    "strategy_variant must be the V1BreakoutConfig default when "
+                    "strategy_family=MEAN_REVERSION_OVEREXTENSION; F1 does not "
+                    "consume V1 axes"
+                )
         return self
 
     @property
