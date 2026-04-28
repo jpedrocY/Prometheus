@@ -62,11 +62,11 @@ Total: **8 files** added or modified across the entire Phase 3d-B1 branch (vs `m
 
 ## 4. Commit hash or hashes
 
-The Phase 3d-B1 branch contains a single commit on top of `main` (`e820acd71d9c9c3384a7c448666d9bcb8159af5c`). The full SHA is recorded in the final chat response and in the Phase 3d-B1 merge report on `main` after merge:
+The Phase 3d-B1 branch contains a single commit on top of `main` (`e820acd71d9c9c3384a7c448666d9bcb8159af5c`):
 
-| Commit | Short SHA | Description |
-|--------|-----------|-------------|
-| 1 | (recorded post-commit) | `phase-3d-B1: F1 engine wiring + tests + quality gates + H0/R3 control reproduction` — single artifact commit covering: engine dispatch wiring (`engine.py`), config validator update (`config.py`), TradeRecord F1 fields + parquet schema (`trade_log.py`), 5 BacktestConfig tests + 20 engine tests + parquet-schema test update, runner scaffold (`scripts/phase3d_F1_execution.py`), Phase 3d-B1 checkpoint report, Phase 3d-B1 closeout report. |
+| Commit | Short SHA | Full SHA | Description |
+|--------|-----------|----------|-------------|
+| 1 | `fd0a9ca` | `fd0a9ca24677a2971639dbd6831d91416c32c5a8` | `phase-3d-B1: F1 engine wiring + tests + quality gates + H0/R3 control reproduction` — single artifact commit covering: engine dispatch wiring (`engine.py`), config validator update (`config.py`), TradeRecord F1 fields + parquet schema (`trade_log.py`), 5 BacktestConfig tests + 20 engine tests + parquet-schema test update, runner scaffold (`scripts/phase3d_F1_execution.py`), Phase 3d-B1 checkpoint report, Phase 3d-B1 closeout report. |
 
 The branch is therefore **1 commit ahead of `main`** at the time of any future merge. A `--no-ff` merge will preserve the commit in history and add a single explicit merge commit.
 
