@@ -41,11 +41,15 @@ No other file is created, modified, or deleted by Phase 3g.
 
 ## 4. Commit hash(es)
 
-Single Phase 3g commit on `phase-3g/d1-funding-aware-spec`:
+Three Phase 3g commits on `phase-3g/d1-funding-aware-spec`:
 
-- `2c3a91b` — `phase-3g: D1 funding-aware spec memo (docs-only)` (2 files, 856 insertions; both Phase 3g deliverables landed in one commit).
+- `2c3a91b` — `phase-3g: D1 funding-aware spec memo (docs-only)` — original Phase 3g memo + closeout (2 files, 856 insertions).
+- `e439c6b` — `phase-3g: record commit hash 2c3a91b in closeout report` — closeout §4 commit-hash backfill (1 file, +5 / −1).
+- `97085d9` — `phase-3g: amend spec memo for five spec-consistency corrections` — post-review docs-only amendment per §0 above (2 files, +89 / −29).
 
-The Phase 3g commit message references both files and explicitly preserves the Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. No subsequent commit is added by Phase 3g itself; an operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3f's pattern).
+**Branch HEAD full SHA (post-amendment):** `97085d9135965c4fbf3673745fb583687665f4ff`.
+
+The Phase 3g amendment preserves all Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. The amendment changes nothing other than docs in `docs/00-meta/implementation-reports/`. An operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3f's pattern).
 
 ## 5. Confirmation that Phase 3g was docs-only
 
@@ -99,7 +103,7 @@ No threshold, strategy parameter, project lock, paper/shadow plan, Phase 4 work,
 
 ## 7. Branch ready for operator review and possible merge
 
-**YES.** The branch tip is the Phase 3g single commit landing both deliverables. The branch is ready for operator review.
+**YES.** The branch tip after the post-review amendment is `97085d9135965c4fbf3673745fb583687665f4ff`. The branch contains three commits ahead of `main`: the original Phase 3g spec memo + closeout (`2c3a91b`), the closeout commit-hash backfill (`e439c6b`), and the post-review docs-only amendment (`97085d9`). The branch is ready for operator review and possible merge.
 
 If the operator approves the Phase 3g spec memo:
 
