@@ -6,7 +6,7 @@
 
 **Branch:** `phase-3d-a/f1-implementation-controls`. **Date:** 2026-04-28 UTC.
 
-**Status:** All Phase 3d-A objectives met. F1 family infrastructure implemented per Phase 3b §4 binding spec; 68 new F1 unit tests added; pytest 474 → 542 with no V1 regressions; ruff / format / mypy strict all green; H0/R3 control reproduction passes on all 48 metric cells. **No F1 candidate backtests run.** **No F1 first-execution gate evaluated.** **No F1 V-window run executed.** **No `data/` artifacts committed.** Phase 3d-B may be authorized.
+**Status:** **Phase 3d-A's implementation-control objective passed.** F1 family infrastructure (self-contained module + primitives + locked config + dispatch surface guard + unit tests) is implemented per Phase 3b §4 binding spec; 68 new F1 unit tests added; pytest 474 → 542 with no V1 regressions; ruff / format / mypy strict all green; H0/R3 control reproduction passes on all 48 metric cells. **F1 remains deliberately non-runnable** — the BacktestConfig validator hard-rejects `strategy_family=MEAN_REVERSION_OVEREXTENSION`. Several engine-output and execution-integration pieces are **deferred to Phase 3d-B as mandatory work before any F1 result can be produced or interpreted** (see §1.1 below for the explicit phase-boundary list). **No F1 candidate backtests run.** **No F1 first-execution gate evaluated.** **No F1 V-window run executed.** **No `data/` artifacts committed.** Phase 3d-B not started.
 
 ---
 
@@ -26,6 +26,40 @@ What Phase 3d-A explicitly did NOT do per Phase 3c §10.4 sequencing requirement
 - No engine integration of F1 — the engine remains V1-only; F1 is a self-contained module pending Phase 3d-B engine wiring.
 
 The implementation strategy followed Phase 3c §4's "minimal contact surface" guidance: F1 lives in its own module, V1 files were touched only for additive enum membership (`TARGET` exit reason; `StrategyFamily` enum; `mean_reversion_variant` field).
+
+### 1.1 Explicit phase-boundary scope-accounting
+
+To prevent the "implementation-control objective passed" framing from obscuring the Phase 3d-A → Phase 3d-B boundary, this section enumerates the boundary explicitly.
+
+**Completed in Phase 3d-A:**
+
+- F1 self-contained strategy module + primitives (`src/prometheus/strategy/mean_reversion_overextension/`).
+- Locked `MeanReversionConfig` with Phase 3b §4 values (7 fields locked via `Field(ge=v, le=v)` + `model_post_init` defense-in-depth).
+- F1 feature primitives (`features.py::cumulative_displacement_8bar`, `sma_8_close`, `overextension_event`).
+- F1 stop primitives (`stop.py::compute_initial_stop`, `passes_stop_distance_filter`).
+- F1 target primitives (`target.py::compute_target`, `target_hit`).
+- F1 cooldown primitives (`cooldown.py::cooldown_unwound`, `can_re_enter`).
+- F1 stateless strategy facade (`strategy.py::MeanReversionStrategy.evaluate_entry_signal`).
+- `StrategyFamily` / `BacktestConfig` dispatch surface guard (`strategy_family` enum field defaulting to `V1_BREAKOUT`; `mean_reversion_variant` field defaulting to `None`; validator hard-rejecting `MEAN_REVERSION_OVEREXTENSION`).
+- `TARGET = "TARGET"` ExitReason enum addition (placeholder for Phase 3d-B engine wiring).
+- 68 F1 unit tests across 7 test files (542 total pytest passing; +68 over baseline 474; zero V1 regressions).
+- Quality gates green: `pytest`, `ruff check`, `ruff format --check`, `mypy strict`.
+- H0/R3 control reproduction bit-for-bit on all 48 metric cells (proves V1 dispatch unchanged).
+- F1 remains deliberately non-runnable through the `BacktestConfig` validator until Phase 3d-B lifts that guard.
+
+**Deferred to Phase 3d-B (mandatory before any F1 result can be produced or interpreted):**
+
+- Actual `BacktestEngine` F1 dispatch wiring in `_run_symbol`. Phase 3d-A added the dispatch *surface* (enum + field + validator placeholder); Phase 3d-B must add the engine code path that routes per-bar evaluation to F1 when `strategy_family == MEAN_REVERSION_OVEREXTENSION`.
+- F1-specific TradeRecord output fields (e.g., `overextension_magnitude_at_signal`, `frozen_target_value`, `entry_to_target_distance_atr`, `stop_distance_at_signal_atr`, `cooldown_blocked_signal_count`) with NaN/None defaults for V1 rows. Phase 3d-A did not extend `trade_log.py`.
+- F1 lifecycle / funnel counters (analogous to `R2LifecycleCounters`): `overextension_events_detected`, `overextension_events_filled`, `overextension_events_rejected_stop_distance`, `overextension_events_blocked_cooldown`, plus the `accounting_identity_holds` property.
+- F1 time-stop engine integration. Phase 3d-A locked `time_stop_bars=8` in config and tested the value; Phase 3d-B must add the engine logic that exits at `open(B+10)` when no target/stop has fired by close of `B+9`.
+- F1 same-bar priority engine behavior: STOP > TARGET > TIME_STOP. Phase 3d-A did not implement same-bar priority; this is engine concern.
+- F1 target next-bar-open fill integration. Phase 3d-A's `target.target_hit` returns a boolean on a completed bar's close; Phase 3d-B must wire fill at `open(t+1)` for that target-cross.
+- F1 runner script (e.g., `scripts/phase3d_F1_execution.py`) parallel to `scripts/phase2w_R2_execution.py`.
+- F1 diagnostics + first-execution-gate analysis script (per Phase 3c §8 / §9 / §11 mandatory diagnostics; per Phase 3c §7.2 first-execution-gate conditions (i)–(v); per Phase 3c §9 M1 / M2 / M3 mechanism predictions).
+- F1 R-window candidate backtests (4 governing + sensitivity runs per Phase 3c §6.1) and conditional V-window run (per Phase 3c §6.2).
+
+The deferred-to-Phase-3d-B items above are **mandatory work before any F1 result can be produced or interpreted**. No subset of the F1 first-execution gate (Phase 3c §7.2) or mechanism predictions (Phase 3c §9) can be evaluated until those items are wired.
 
 ## 2. Files changed
 
@@ -315,4 +349,4 @@ Confirmed across all forbidden categories per the Phase 3d-A operator brief:
 
 ---
 
-**End of Phase 3d-A checkpoint report.** F1 family infrastructure implemented per Phase 3b §4 binding spec; 68 new F1 unit tests added (542 total pytest passing); ruff / format / mypy strict all green; H0/R3 control reproduction bit-for-bit on all 48 metric cells. **No F1 candidate backtests run; no F1 first-execution gate evaluated; no F1 V-window run executed; no `data/` commits.** Phase 3d-B may be authorized at the operator's discretion. R3 V1-breakout baseline-of-record / H0 V1-breakout framework anchor / R1a-R1b-narrow-R2 retained-research-evidence preserved. §11.6 = 8 bps HIGH per Phase 2y closeout preserved. §1.7.3 project-level locks preserved verbatim. Phase 3b F1 spec preserved verbatim per Phase 3c §3. Awaiting operator review.
+**End of Phase 3d-A checkpoint report.** **Phase 3d-A's implementation-control objective passed:** F1 self-contained module + primitives + locked config + dispatch surface guard + 68 unit tests; quality gates green; H0/R3 control reproduction bit-for-bit on all 48 metric cells. **F1 remains deliberately non-runnable** through the `BacktestConfig` validator. Per §1.1, the deferred-to-Phase-3d-B items (engine F1 dispatch wiring, F1 TradeRecord output fields, F1 lifecycle / funnel counters, F1 time-stop engine integration, F1 same-bar priority engine behavior, F1 target next-bar-open fill integration, F1 runner script, F1 diagnostics + first-execution-gate analysis, F1 R/V candidate backtests) are **mandatory Phase 3d-B work before any F1 result can be produced or interpreted**. **No F1 candidate backtests run; no F1 first-execution gate evaluated; no F1 V-window run executed; no `data/` commits.** Phase 3d-B not started; the operator decides whether to authorize it. R3 V1-breakout baseline-of-record / H0 V1-breakout framework anchor / R1a-R1b-narrow-R2 retained-research-evidence preserved. §11.6 = 8 bps HIGH per Phase 2y closeout preserved. §1.7.3 project-level locks preserved verbatim. Phase 3b F1 spec preserved verbatim per Phase 3c §3. Awaiting operator review.
