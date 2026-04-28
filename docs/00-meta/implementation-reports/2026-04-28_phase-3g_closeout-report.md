@@ -1,10 +1,24 @@
 # Phase 3g — Closeout Report
 
-**Phase:** 3g — Docs-only D1 funding-aware directional / carry-aware strategy spec memo (Phase-3b-style).
+**Phase:** 3g — Docs-only D1 funding-aware directional / carry-aware strategy spec memo (Phase-3b-style), with post-review docs-only amendment for spec-consistency corrections.
 
 **Branch:** `phase-3g/d1-funding-aware-spec`.
 
 **Date:** 2026-04-28 UTC.
+
+---
+
+## 0. Post-review docs-only amendment
+
+After the initial Phase 3g commit, operator review surfaced five small spec-consistency issues. A subsequent docs-only amendment to the Phase 3g spec memo (and this closeout) addressed them, all without changing D1-A signal threshold, lookback, stop, target, time-stop length, cooldown concept, or first-execution thresholds (other than making the already-implicit BTC HIGH PF floor explicit at the gate level):
+
+1. **Exit-reason consistency.** §6.8 / §7 / §12 standardized on D1-A recorded exit reason **TARGET** (matching F1 precedent), not TAKE_PROFIT (which is a V1-family multi-stage exit reason). Same-bar priority `STOP > TARGET > TIME_STOP`. D1-A emits only `STOP / TARGET / TIME_STOP / END_OF_DATA`.
+2. **Time-stop fill timing.** §6.9 clarified the completed-bar discipline: TIME_STOP triggers at the close of the 32nd completed 15m bar from entry fill (bar `B+1+32`); the position fills at the **next bar open** (`B+1+33`); no same-close TIME_STOP fill.
+3. **M1 displacement reference.** §10.1 changed the post-entry displacement reference from `close(B+1)` to **`fill_price`** (the actual next-bar-open fill price): `counter_displacement_h_R = ((close(entry_bar + h) − fill_price) × trade_direction_sign) / stop_distance`.
+4. **BTC HIGH PF floor explicitness.** §13.2 / §13.3 / §13.4 made the §10.4-style PF floor explicit at BTC R HIGH MARK: `PF > 0.30`. The HIGH-slip gate is now stated as four explicit conditions (BTC HIGH expR > 0; BTC HIGH PF > 0.30; ETH HIGH expR > −0.50; ETH HIGH PF > 0.30). **No threshold loosened**; the PF floor was already implicit via the §7.3 catastrophic-floor predicate, now explicit at the gate level.
+5. **Funnel counting level.** §9.4 / §12 renamed the lifecycle / funnel counters to **funding-event-level** (`funding_extreme_events_detected`, `funding_extreme_events_filled`, `funding_extreme_events_rejected_stop_distance`, `funding_extreme_events_blocked_cooldown`) with the identity preserved. Repeated 15m bars referencing the same `funding_event_id` must not inflate the event-level detected count.
+
+The amendment is **docs-only** and does not change source code, tests, scripts, configuration, data, thresholds, strategy parameters, or project locks.
 
 ---
 
@@ -18,10 +32,10 @@ Working tree clean after the Phase 3g commit. No untracked files outside the two
 
 ## 3. Files changed
 
-Two new files, both under `docs/00-meta/implementation-reports/`:
+Two files under `docs/00-meta/implementation-reports/`, both touched by the original Phase 3g commit and the post-review amendment commit:
 
-- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_D1_funding-aware-spec-memo.md` — Phase 3g spec memo (§§ 1–16 per the operator brief).
-- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_closeout-report.md` — this file.
+- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_D1_funding-aware-spec-memo.md` — Phase 3g spec memo (§§ 1–16 per the operator brief), amended in §§ 6.8 / 6.9 / 7 / 9.4 / 10.1 / 12 / 13.2 / 13.3 / 13.4 / end-summary for the five spec-consistency corrections in §0 above.
+- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_closeout-report.md` — this file (added §0 post-review amendment summary; updated §4 to record both commits).
 
 No other file is created, modified, or deleted by Phase 3g.
 

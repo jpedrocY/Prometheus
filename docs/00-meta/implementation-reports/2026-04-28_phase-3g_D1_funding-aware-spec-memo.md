@@ -286,15 +286,18 @@ The signal is computed at each 15m bar close as follows:
 
 ### 6.8 Target / exit definition
 
-- Take-profit at **+1.0 R** (i.e., 1.0 × stop_distance from fill in the favorable direction).
-- LONG TP: `tp_price = fill_price + stop_distance`.
-- SHORT TP: `tp_price = fill_price − stop_distance`.
-- Same-bar priority: STOP > TAKE_PROFIT > TIME_STOP (same as F1 §6.6 / R3 §D.6).
+- **Conceptual exit: +1.0 R target** (i.e., 1.0 × stop_distance from fill in the favorable direction).
+- LONG target price: `target_price = fill_price + stop_distance`.
+- SHORT target price: `target_price = fill_price − stop_distance`.
+- **Recorded exit reason: TARGET** (not TAKE_PROFIT — the V1-family TAKE_PROFIT exit reason must not be emitted by D1-A; cf. F1 precedent in Phase 3b §6 / Phase 3d-A which uses TARGET as the recorded exit reason for SMA(8)-target hits).
+- **Same-bar priority: STOP > TARGET > TIME_STOP** (analogous structure to F1 §6.6 / R3 §D.6 same-bar precedence; D1-A substitutes TARGET for TAKE_PROFIT).
+- D1-A emits only STOP / TARGET / TIME_STOP / END_OF_DATA exit reasons. D1-A must not emit TRAILING_BREACH, STAGNATION, or TAKE_PROFIT (those are V1-family multi-stage exit reasons; structurally inapplicable to D1-A).
 
 ### 6.9 Time stop / max hold rule
 
-- **Unconditional time-stop at 32 × 15m bars after fill** (= 8 hours = exactly one funding cycle).
-- If neither STOP nor TARGET has fired by bar `B+1+32`, exit at the close of bar `B+1+32` at TIME_STOP.
+- **Unconditional time-stop horizon: 32 × completed 15m bars from entry fill** (= 8 hours = exactly one funding cycle).
+- **TIME_STOP trigger:** if neither STOP nor TARGET has fired by the **close of the 32nd completed 15m bar from entry fill** (i.e., the bar at index `B+1+32` where the entry-fill bar is `B+1`), the time-stop triggers at that close.
+- **TIME_STOP fill:** the position closes at the **next bar open** (the open of bar `B+1+33`). **No same-close time-stop fill** — the time-stop fill respects the same completed-bar discipline as STOP and TARGET fills.
 - No extension. No conditional re-arming.
 
 ### 6.10 Cooldown / re-entry rule
@@ -337,7 +340,7 @@ Each axis above is justified by mechanism, project conventions, or data availabi
 | Allowed directionality | Symmetric long and short | The funding-extreme hypothesis is symmetric; no directional asymmetry mechanism is being claimed. |
 | Timeframe basis | 15m completed bars for entry / stop / target / time-stop / horizons | V1 / F1 / project convention. 15m is the V1 / F1 signal timeframe per Phase 2i §1.7.3. No alternative timeframe being tested. |
 | Stop | 1.0 × ATR(20) at fill, never moved | 1.0 × ATR(20) is the median of the V1 / F1 admissibility band [0.60, 1.80] × ATR (Phase 3b F1 §4.9). It is not fitted to any prior candidate's outcome. "Never moved" is the R3 / F1 invariant per Phase 2j §D / Phase 3b §6. |
-| Target | +1.0 R fixed | The smallest natural R-target consistent with V1 framework convention (R3 used +2.0 R; F1 used SMA(8) which produced effective ~0.3–1.0 R targets). +1.0 R is the natural unit-multiplier of stop-distance and the most conservative committed take-profit. Not fitted to outcomes. |
+| Target (+1.0 R; recorded as TARGET) | +1.0 R fixed; same-bar priority STOP > TARGET > TIME_STOP | The smallest natural R-target consistent with V1 framework convention (R3 used +2.0 R; F1 used SMA(8) which produced effective ~0.3–1.0 R targets). +1.0 R is the natural unit-multiplier of stop-distance and the most conservative committed target. Recorded exit reason is TARGET (matching F1 precedent), not TAKE_PROFIT (which is a V1-family multi-stage exit reason structurally inapplicable to D1-A). Not fitted to outcomes. |
 | Time stop | 32 × 15m bars (= 8h = one funding cycle) | Funding cycles are 8 hours by Binance protocol fact. One full funding cycle is the natural maximum-hold horizon for a hypothesis whose carry-tailwind accrues per cycle. 32 bars = 8h × 60min / 15min = 32 (protocol-anchored, not fitted). |
 | Cooldown | Per-funding-event consumption; same-direction requires fresh event after close | Prevents same-event stacking (a methodology guard, not a parameter). Opposite-direction allowed at any subsequent event because the hypothesis is symmetric and a sign flip in funding represents a new informational state. |
 | Stop-distance admissibility | [0.60, 1.80] × ATR(20) | Same band as F1 §4.9 / V1 framework convention (Phase 3b §4.9). Preserved as a future-drift guard; D1-A's 1.0 × ATR is inside the band by construction. |
@@ -457,13 +460,23 @@ The TradeRecord schema would be extended with D1-specific fields, structurally a
 - `entry_to_target_distance_atr`
 - `stop_distance_at_signal_atr`
 
-A `FundingAwareLifecycleCounters` model analogous to `F1LifecycleCounters` would track funnel accounting:
+A `FundingAwareLifecycleCounters` model analogous to `F1LifecycleCounters` would track funnel accounting at the **funding-event level** (NOT per-15m-bar):
 
-- `detected` (count of bars where `|Z_F| ≥ 2.0` was observed)
-- `filled` (count of entries that reached fill)
-- `rejected_stop_distance` (count of entries rejected by §6.11 admissibility — should be zero by construction)
-- `blocked_cooldown` (count of entries blocked by §6.10 cooldown)
-- Funnel identity: `detected = filled + rejected_stop_distance + blocked_cooldown`.
+- `funding_extreme_events_detected` — count of distinct Binance USDⓈ-M 8h funding events with `|Z_F| ≥ 2.0`. Each funding event is counted **at most once**, regardless of how many 15m bars subsequently reference that event as their "most recent completed funding event prior to bar close". Repeated 15m-bar references to the same funding event must not inflate the event-level detected count.
+- `funding_extreme_events_filled` — count of funding events that produced a filled D1-A entry.
+- `funding_extreme_events_rejected_stop_distance` — count of funding events whose entry candidate was rejected by §6.11 admissibility (should be zero by construction since `stop_distance_atr = 1.0` always lies inside `[0.60, 1.80]`).
+- `funding_extreme_events_blocked_cooldown` — count of funding events whose entry candidate was blocked by §6.10 cooldown (a position is currently open, or the funding event was already consumed by a prior position, or the same-direction cooldown blocks re-entry).
+
+Funnel identity (event-level):
+
+```text
+funding_extreme_events_detected
+= funding_extreme_events_filled
++ funding_extreme_events_rejected_stop_distance
++ funding_extreme_events_blocked_cooldown
+```
+
+Implementation guidance: at each 15m bar close, the engine must determine the funding event referenced and check whether that event has already been processed in this lifecycle pass (using `funding_event_id`); only the first-encounter 15m bar after a fresh extreme funding event should increment any of the event-level counters.
 
 ### 9.5 Funding-cost modeling
 
@@ -487,7 +500,21 @@ Three M-style mechanism checks, each with explicit PASS / FAIL / PARTIAL interpr
 
 **Hypothesis:** Contrarian-funding entries should show favorable post-entry directional displacement at funding-cycle horizons.
 
-**Definition:** For each D1-A trade, compute `counter_displacement_h_R = ((close(B+1+h) − close(B+1)) × trade_direction_sign) / stop_distance` where `trade_direction_sign = +1` for LONG and `−1` for SHORT, at horizons `h ∈ {8, 16, 32}` 15m bars (= 2h, 4h, 8h = 1/4, 1/2, full funding cycle).
+**Definition:** For each D1-A trade, compute
+
+```text
+counter_displacement_h_R = ((close(entry_bar + h) − fill_price) × trade_direction_sign) / stop_distance
+```
+
+where:
+
+- `entry_bar` is the fill bar (i.e., `B+1`, the bar whose open is the next-bar-open fill);
+- `fill_price` is the actual next-bar-open fill price;
+- `trade_direction_sign = +1` for LONG;
+- `trade_direction_sign = −1` for SHORT;
+- `stop_distance` is the per-trade ATR-based stop distance (1.0 × ATR(20) at fill per §6.7).
+
+Horizons: `h ∈ {8, 16, 32}` completed 15m bars (= 2h, 4h, 8h = 1/4, 1/2, full funding cycle).
 
 **PASS criterion at h=32:** `mean(counter_displacement_32_R) ≥ +0.10 R` AND `fraction(counter_displacement_32_R ≥ 0) ≥ 50%`.
 
@@ -575,13 +602,16 @@ If a future Phase 3h-equivalent execution-planning phase + Phase 3j-equivalent f
 P.14-style hard-block invariants (analogous to Phase 3c §8.15 / Phase 3d-B2 §13):
 
 - D1-A emits only STOP / TARGET / TIME_STOP / END_OF_DATA exit reasons.
-- Zero TRAILING_BREACH / STAGNATION / TAKE_PROFIT (the V1 multi-stage exit reasons must not appear).
+- Zero TRAILING_BREACH / STAGNATION / **TAKE_PROFIT** (the V1 multi-stage exit reasons; D1-A's recorded exit reason for the +1.0 R target hit is **TARGET**, never TAKE_PROFIT).
 - Exit-reason accounting identity: `STOP + TARGET + TIME_STOP + END_OF_DATA = n`.
-- Funnel accounting identity: `detected = filled + rejected_stop_distance + blocked_cooldown`.
+- Same-bar precedence: `STOP > TARGET > TIME_STOP` evaluated per Phase 3b §6 / Phase 3d-A precedent.
+- TIME_STOP completed-bar discipline: TIME_STOP triggers at the close of bar `B+1+32`; TIME_STOP **fills at the open of bar `B+1+33`** (next-bar-open fill); no same-close TIME_STOP fill.
+- **Funding-event-level funnel accounting identity:** `funding_extreme_events_detected = funding_extreme_events_filled + funding_extreme_events_rejected_stop_distance + funding_extreme_events_blocked_cooldown`. Repeated 15m bars referencing the same `funding_event_id` must not inflate event-level detected counts.
 - Stop-distance band [0.60, 1.80] enforcement (D1-A is 1.0 by construction; observed `min ≈ 1.0 ≈ max`).
 - Frozen stop invariant: stop never moved intra-trade.
 - Cooldown enforcement: no same-event same-direction re-entry.
-- No look-ahead leakage: funding event used at signal must satisfy `funding_time ≤ bar_close_time`.
+- No look-ahead leakage: funding event used at signal must satisfy `funding_time ≤ bar_close_time` (strict — the trailing-90-day Z-score normalization excludes the current event per §6.1).
+- M1 displacement reference: post-entry displacement uses **`fill_price`** (the next-bar-open fill price), not `close(B+1)` (per §10.1 definition).
 - H0 / R3 / F1 controls reproduce bit-for-bit before D1-A interpretation.
 
 ---
@@ -598,19 +628,28 @@ The Phase 2 §10.3 (a/b/c) / §10.4 / §11.3 / §11.4 / §11.6 framework was des
 
 ### 13.2 D1-A first-execution gate proposal (analogous to Phase 3c §7.2 F1 gate)
 
-The proposed first-execution gate evaluates D1-A against **self-anchored absolute thresholds**, not vs-H0 deltas. Five conditions, all required for PROMOTE:
+The proposed first-execution gate evaluates D1-A against **self-anchored absolute thresholds**, not vs-H0 deltas. All conditions required for PROMOTE:
 
 | # | Condition | Cell | Threshold |
 |---|-----------|------|-----------|
 | (i) | Absolute BTC MED edge | BTC R MED MARK | `expR > 0` |
 | (ii) | M1 BTC mechanism | BTC | `mean(counter_displacement_32_R) ≥ +0.10 R` AND `fraction ≥ 50%` |
 | (iii) | ETH MED non-catastrophic | ETH R MED MARK | `expR > −0.50` AND `PF > 0.30` |
-| (iv) | BTC HIGH cost-resilience | BTC R HIGH MARK | `expR > 0` |
-| (iv) | ETH HIGH non-catastrophic | ETH R HIGH MARK | `expR > −0.50` AND `PF > 0.30` |
+| (iv) | BTC HIGH cost-resilience expR | BTC R HIGH MARK | `expR > 0` |
+| (iv) | **BTC HIGH cost-resilience PF floor** | **BTC R HIGH MARK** | **`PF > 0.30`** (the §10.4-style absolute PF floor; explicit at HIGH) |
+| (iv) | ETH HIGH non-catastrophic expR | ETH R HIGH MARK | `expR > −0.50` |
+| (iv) | ETH HIGH non-catastrophic PF | ETH R HIGH MARK | `PF > 0.30` |
 | (v) | BTC MED absolute floor | BTC R MED MARK | `expR > −0.50` AND `PF > 0.30` |
 | (v) | ETH MED absolute floor | ETH R MED MARK | `expR > −0.50` AND `PF > 0.30` |
 
-This gate is **structurally identical to the Phase 3c §7.2 F1 gate** (with identical operator-mandated amendments §7.2(iv) BTC HIGH > 0 and §11.6 cost-sensitivity blocking; per Phase 2y closeout §11.6 = 8 bps HIGH preserved verbatim). The conditions are pre-declared and must not be loosened post-hoc per Phase 2f §11.3.5.
+The HIGH-slip gate is therefore the conjunction of four explicit conditions:
+
+1. `expR(D1-A, BTCUSDT, R, HIGH, MARK) > 0`
+2. `PF(D1-A, BTCUSDT, R, HIGH, MARK) > 0.30`
+3. `expR(D1-A, ETHUSDT, R, HIGH, MARK) > −0.50`
+4. `PF(D1-A, ETHUSDT, R, HIGH, MARK) > 0.30`
+
+This gate is **structurally identical to the Phase 3c §7.2 F1 gate** (with identical operator-mandated amendments §7.2(iv) BTC HIGH > 0 and §11.6 cost-sensitivity blocking; per Phase 2y closeout §11.6 = 8 bps HIGH per side preserved verbatim). The §10.4-style PF floor (`PF > 0.30`) at BTC HIGH was implicit in the F1 catastrophic-floor predicate via Phase 3c §7.3 (`PF ≤ 0.30 on BTC/ETH × MED/HIGH cells` triggers HARD REJECT); Phase 3g makes it explicit at the gate level for D1-A. **No threshold is loosened.** All conditions are pre-declared and must not be loosened post-hoc per Phase 2f §11.3.5.
 
 ### 13.3 Verdict mapping (analogous to Phase 3c §7.3)
 
@@ -618,7 +657,7 @@ This gate is **structurally identical to the Phase 3c §7.2 F1 gate** (with iden
 |---------|------------|---------|
 | **HARD REJECT** | Any catastrophic absolute-floor violation: `expR ≤ −0.50` OR `PF ≤ 0.30` on either symbol at either MED or HIGH slippage on MARK_PRICE cells. | HARD REJECT — no V-window run; D1-A retained as research evidence only; D1-A family research closed. |
 | **MECHANISM FAIL** | M1 BTC FAIL (mean < +0.10 R OR fraction < 50% at h=32) AND no catastrophic floor violation. | MECHANISM FAIL — D1-A retained as research evidence; no V-window run unless M1 PASS achievable; framework verdict FAILED. |
-| **MECHANISM PASS / FRAMEWORK FAIL — §11.6 cost-sensitivity blocks** | M1 BTC PASS AND BTC MED expR > 0 AND ETH MED non-catastrophic AND M2/M3 mechanism support, BUT BTC HIGH expR ≤ 0 OR ETH HIGH catastrophic. | FRAMEWORK FAIL — §11.6 cost-sensitivity blocks; D1-A retained as research evidence; no V-window run; same precedent as R2. |
+| **MECHANISM PASS / FRAMEWORK FAIL — §11.6 cost-sensitivity blocks** | M1 BTC PASS AND BTC MED expR > 0 AND ETH MED non-catastrophic AND M2/M3 mechanism support, BUT BTC HIGH expR ≤ 0 OR BTC HIGH PF ≤ 0.30 OR ETH HIGH catastrophic. | FRAMEWORK FAIL — §11.6 cost-sensitivity blocks; D1-A retained as research evidence; no V-window run; same precedent as R2. |
 | **MECHANISM PASS / FRAMEWORK FAIL — other** | M1 BTC PASS but a non-§11.6 framework condition fails (e.g., BTC MED expR ≤ 0). | FRAMEWORK FAIL — D1-A retained as research evidence; no V-window run. |
 | **PROMOTE** | All §13.2 conditions PASS AND no catastrophic-floor violation. | PROMOTE — V-window run authorized for confirmation; D1-A becomes a candidate-of-record candidate (subject to V-window confirmation per Phase 2f §11.3 no-peeking rule). |
 
@@ -626,12 +665,19 @@ This gate is **structurally identical to the Phase 3c §7.2 F1 gate** (with iden
 
 ### 13.4 §10.4-style hard reject absolute floors preserved
 
-The §10.4 absolute floors are preserved verbatim:
+The §10.4 absolute floors are preserved verbatim and apply to BOTH symbols at BOTH MED and HIGH slippage cells (MARK_PRICE):
 
 - `expR > −0.50` per symbol per MED / HIGH cell.
 - `PF > 0.30` per symbol per MED / HIGH cell.
 
-A violation on any of `{BTC MED, BTC HIGH, ETH MED, ETH HIGH}` × `{expR ≤ −0.50, PF ≤ 0.30}` triggers HARD REJECT.
+Specifically, for D1-A the binding HIGH-cell floors are:
+
+- `expR(D1-A, BTCUSDT, R, HIGH, MARK) > −0.50` (and per the §13.2(iv) operator-mandated strengthening, `> 0`).
+- `PF(D1-A, BTCUSDT, R, HIGH, MARK) > 0.30`.
+- `expR(D1-A, ETHUSDT, R, HIGH, MARK) > −0.50`.
+- `PF(D1-A, ETHUSDT, R, HIGH, MARK) > 0.30`.
+
+A violation on any of `{BTC MED, BTC HIGH, ETH MED, ETH HIGH}` × `{expR ≤ −0.50, PF ≤ 0.30}` triggers HARD REJECT (same precedent as Phase 3c §7.3 catastrophic-floor predicate; F1 HARD REJECT was driven by 5 such violations including BTC HIGH PF=0.2181 ≤ 0.30 and ETH HIGH PF=0.2997 ≤ 0.30).
 
 ### 13.5 §11.6 HIGH-slippage cost gate preserved
 
@@ -755,4 +801,4 @@ Phase 3g is docs-only and explicitly preserves all of the following verbatim:
 
 ---
 
-**End of Phase 3g D1 funding-aware spec memo.** Phase 3g specifies D1-A (funding-rate extreme contrarian directional signal at the most recent completed 8h funding event, |Z_F| ≥ 2.0 over trailing 90 days; 1.0 × ATR(20) stop; +1.0 R take-profit; 32-bar time-stop = one funding cycle; per-funding-event cooldown; symmetric direction; no regime filter) as the binding D1 family spec. D1-B not specified (structural problems on every base-thesis). v002 datasets sufficient; one new derived feature dataset (`funding_aware_features__v001`) required at any future implementation. M1 / M2 / M3 falsifiable mechanism predictions defined. First-execution gate proposed (analogous to Phase 3c §7.2 F1 gate; §10.4 floors and §11.6 = 8 bps HIGH preserved verbatim; operator-mandated BTC HIGH > 0 strengthening preserved). GO (provisional) recommended for any future Phase 3h execution-planning memo, contingent on operator authorization. R3 baseline-of-record / H0 framework anchor / R1a-R1b-narrow-R2-F1 retained-research-evidence preserved verbatim. F1 HARD REJECT preserved; Phase 3d-B2 terminal for F1 preserved. §1.7.3 locks preserved verbatim. No paper/shadow, no Phase 4, no live-readiness, no deployment, no implementation, no execution, no backtest, no parameter tuning, no threshold change, no project-lock change, no MCP / Graphify / `.mcp.json`, no credentials, no `data/` commits, no code change. No next phase started. Awaiting operator review.
+**End of Phase 3g D1 funding-aware spec memo.** Phase 3g specifies D1-A (funding-rate extreme contrarian directional signal at the most recent completed 8h funding event, |Z_F| ≥ 2.0 over trailing 90 days; 1.0 × ATR(20) stop never moved; +1.0 R target recorded as TARGET; STOP > TARGET > TIME_STOP same-bar priority; 32-bar time-stop = one funding cycle with completed-bar fill discipline at next bar open; per-funding-event funnel counters; symmetric direction; no regime filter) as the binding D1 family spec. D1-B not specified (structural problems on every base-thesis). v002 datasets sufficient; one new derived feature dataset (`funding_aware_features__v001`) required at any future implementation. M1 / M2 / M3 falsifiable mechanism predictions defined. First-execution gate proposed (analogous to Phase 3c §7.2 F1 gate; §10.4 floors and §11.6 = 8 bps HIGH preserved verbatim; operator-mandated BTC HIGH > 0 strengthening preserved). GO (provisional) recommended for any future Phase 3h execution-planning memo, contingent on operator authorization. R3 baseline-of-record / H0 framework anchor / R1a-R1b-narrow-R2-F1 retained-research-evidence preserved verbatim. F1 HARD REJECT preserved; Phase 3d-B2 terminal for F1 preserved. §1.7.3 locks preserved verbatim. No paper/shadow, no Phase 4, no live-readiness, no deployment, no implementation, no execution, no backtest, no parameter tuning, no threshold change, no project-lock change, no MCP / Graphify / `.mcp.json`, no credentials, no `data/` commits, no code change. No next phase started. Awaiting operator review.
