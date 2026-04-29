@@ -49,10 +49,18 @@ The diff is intentionally narrow. **No threshold change. No strategy-parameter c
 ## 4. Commit hash(es)
 
 ```text
-<recorded after the Phase 3k commit is created — see git log on the branch>
+Phase 3k consolidation commit (3 files together):
+    8f10d38ed62f6f88aa4270dafa9bc903079779e4
+    Subject: phase-3k: docs-only post-D1-A research consolidation memo + canonical-state update
+
+Phase 3k closeout commit-hash cleanup commit:
+    <recorded after this cleanup commit is created — see git log on the branch>
+
+Branch HEAD after cleanup commit:
+    <recorded after this cleanup commit is created — see git rev-parse HEAD on the branch>
 ```
 
-The Phase 3k branch contains a single commit recording all 3 file changes together. The commit message references the consolidation memo and the canonical-state update.
+The Phase 3k branch initially contained a single commit (`8f10d38`) recording all 3 file changes together (the consolidation memo, this closeout, and the canonical-state update). A small follow-up commit was added to fill in this section with the actual Phase 3k commit hash, replacing the original `<recorded ...>` placeholder.
 
 ## 5. Confirmation that Phase 3k was docs-only
 
