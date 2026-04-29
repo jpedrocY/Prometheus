@@ -75,10 +75,12 @@ Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 histor
 
 Phase 3k is the docs-only post-D1-A research consolidation memo with operator decision menu; primary recommendation is **remain paused** with external-cost-evidence review or regime-first framework memo as acceptable secondary / tertiary alternatives.
 
+Phase 3l is the docs-only external execution-cost evidence review (operator selected the Phase 3k secondary acceptable alternative). Primary assessment: **B — current cost model appears conservative but defensible.** §11.6 policy recommendation: **§11.6 remains unchanged pending stronger evidence.** No prior verdict revised; no backtests run; no threshold / strategy-parameter / project-lock changes. R2 remains FAILED — §11.6 cost-sensitivity blocks; F1 remains HARD REJECT; D1-A remains MECHANISM PASS / FRAMEWORK FAIL — other; R3 remains V1 breakout baseline-of-record; H0 remains framework anchor. No formal cost-model revision, regime-first, 5m timeframe feasibility, ML feasibility, new strategy-family discovery, D1-A-prime, D1-B, V1/D1 hybrid, F1/D1 hybrid, paper/shadow, Phase 4, live-readiness, deployment, MCP, Graphify, `.mcp.json`, credentials, exchange-write, or `data/` work started by Phase 3l. Recommended state remains **paused**.
+
 Current phase:
 
 ```text
-Phase 3j merged. Phase 3k docs-only consolidation drafted.
+Phase 3k merged. Phase 3l docs-only external execution-cost evidence review drafted.
 No next phase authorized.
 ```
 
