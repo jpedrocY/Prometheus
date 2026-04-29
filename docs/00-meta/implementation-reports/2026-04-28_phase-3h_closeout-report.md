@@ -1,10 +1,61 @@
 # Phase 3h — Closeout Report
 
-**Phase:** 3h — Docs-only D1-A execution-planning memo (Phase-3c-style).
+**Phase:** 3h — Docs-only D1-A execution-planning memo (Phase-3c-style), with post-review docs-only timing-clarification amendment.
 
 **Branch:** `phase-3h/d1-execution-planning`.
 
 **Date:** 2026-04-28 UTC.
+
+---
+
+## 0. Post-review docs-only clarification amendment
+
+After the initial Phase 3h commit, operator review surfaced two execution-plan timing details that needed unambiguous clarification before merge. A subsequent docs-only amendment to the Phase 3h execution-planning memo (and this closeout) addressed them, all without changing the D1-A locked spec values, thresholds, strategy parameters, project locks, or recommendations:
+
+### 0.1 TARGET trigger/fill timing clarification
+
+The original §5.6 said "check STOP > TARGET > TIME_STOP precedence at bar close; close position at next-bar open" while §7.2's `test_d1a_target_close_fill` test description said "If price reaches target during a bar, position closes with TARGET exit reason at the bar's close." This was internally inconsistent.
+
+The amendment standardizes D1-A TARGET behavior across all sections:
+
+- **TARGET trigger condition is completed-bar close confirmation** (LONG `close ≥ target_price`; SHORT `close ≤ target_price`).
+- **TARGET fills at the next bar open**, never at the trigger bar's close.
+- **No intrabar target-touch fill.** A bar whose high (LONG) or low (SHORT) touches `target_price` but whose completed close does NOT satisfy the trigger condition produces no TARGET exit; the position remains open.
+- **No same-close TARGET fill.**
+- **Same-bar priority remains STOP > TARGET > TIME_STOP**, evaluated on the completed bar; trigger evaluation is at bar close, fill is at next bar open.
+- **STOP behavior unchanged** — retains the existing MARK_PRICE stop-trigger machinery; this clarification does not alter existing stop modeling.
+- **TIME_STOP remains:** trigger at close of bar `B+1+32`; fill at open of bar `B+1+33`.
+
+Updated sections: §5.6 (engine dispatch step 5); §7.2 (engine wiring tests — replaced `test_d1a_target_close_fill` with `test_d1a_target_completed_close_trigger_long/_short` + `test_d1a_target_fills_at_next_bar_open` + `test_d1a_intrabar_target_touch_does_not_fill`; clarified `test_d1a_same_bar_priority_*` to specify completed-close evaluation and next-bar-open fill); §14 (added P.14 invariant 9b for TARGET trigger/fill timing; clarified invariant 10 same-bar precedence to specify completed-close evaluation).
+
+### 0.2 Funding timestamp equality clarification
+
+The original §4.5 said "funding event used at signal must satisfy `funding_time ≤ bar_close_time`" but also said "Strict inequality if `funding_time == bar_close_time` is treated implementation-defined." This implementation-defined ambiguity was removed.
+
+The amendment makes the equality case unambiguous:
+
+- A funding event is eligible for a 15m signal bar **if and only if `funding_time ≤ bar_close_time`** (non-strict ≤).
+- If `funding_time == bar_close_time`, the funding event IS treated as completed for that bar's signal evaluation (eligible).
+- No signal may use a funding event where `funding_time > bar_close_time` (strict ineligibility above).
+- Any trade triggered by such a signal still enters only at the next 15m bar open (bar B+1 open) per the §6.4 entry-timing rule; the equality case does not enable a same-close fill.
+- Rolling 90-day Z-score still excludes the current event from its own normalization (this is independent of the alignment rule and remains unchanged).
+
+Additionally, an **escalation rule** is now explicit: if any future implementation phase discovers that v002 `funding_time` does not represent a completed settlement timestamp (e.g., next-funding-due, in-progress-funding, or any forward-looking semantics), implementation must STOP and escalate before continuing. Lookahead in the funding-event source data would invalidate the entire D1-A specification.
+
+Updated sections: §4.5 (replaced implementation-defined ambiguity with non-strict ≤ rule and added v002 funding-timestamp semantics escalation paragraph); §7 (replaced `test_event_alignment_strict_lte` with `test_event_alignment_non_strict_lte` + `test_event_alignment_equality_eligible`; clarified `test_no_lookahead_funding_event_alignment` companion test for exact equality); §14 (clarified P.14 invariant 12 to specify non-strict ≤ and add the v002 escalation cross-reference).
+
+### 0.3 Scope confirmation
+
+Both clarifications are **docs-only** and do not change:
+
+- The D1-A locked spec values (signal threshold |Z_F| ≥ 2.0; 90-day lookback; 1.0 × ATR(20) stop; +2.0R TARGET; 32-bar time-stop; per-funding-event cooldown; symmetric direction; no regime filter).
+- Any Phase 2f-framework threshold (§10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side).
+- Any §1.7.3 project-level lock.
+- The Phase 3h §17 recommendation (authorize Phase 3i-A implementation-control only).
+- The Phase 3h precommitted run inventory or first-execution gate.
+- Source code, tests, scripts, configuration, data, credentials, MCP / Graphify / `.mcp.json`, or exchange-write paths.
+
+The clarifications strengthen the spec's unambiguous interpretability for any future Phase 3i-A / 3i-B1 / 3j implementation; they do not loosen, tighten, or substantively alter the spec's substance.
 
 ---
 

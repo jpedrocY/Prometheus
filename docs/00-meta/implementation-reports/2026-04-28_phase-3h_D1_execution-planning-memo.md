@@ -141,8 +141,9 @@ Each row of the derived dataset captures funding-event-grid and bar-grid feature
 
 ### 4.5 Timestamp and no-lookahead invariants
 
-- **Funding event used at signal must satisfy `funding_time ≤ bar_close_time`.** No 15m bar may use a funding event whose `funding_time > bar_close_time`. Strict inequality if `funding_time == bar_close_time` is treated implementation-defined; Phase 3i should commit to the strict-or-non-strict convention explicitly and document it.
-- **Rolling 90-day Z-score excludes the current event.** μ_F and σ_F at event `t` are computed over the 270 prior events `t−1, t−2, …, t−270`; event `t` is *not* used in its own normalization. This is the no-lookahead invariant.
+- **Funding-event eligibility (no implementation-defined ambiguity).** A funding event is eligible for a 15m signal bar **if and only if `funding_time ≤ bar_close_time`** — non-strict ≤. Specifically: if `funding_time == bar_close_time`, the funding event is treated as completed for that bar's signal evaluation (eligible). No signal may use a funding event where `funding_time > bar_close_time` (strict ineligibility). Any trade triggered by a signal at bar B close still enters only at the **next 15m bar open** (bar B+1 open) per §6.4 entry-timing rule; the equality case does not enable a same-close fill.
+- **Rolling 90-day Z-score excludes the current event from its own normalization.** μ_F and σ_F at event `t` are computed over the 270 prior completed events `t−1, t−2, …, t−270`; event `t` itself is **not** included in the rolling mean/std used to compute its own Z-score. This is the no-lookahead invariant for the Z-score normalization. (The eligibility ≤ rule above and this rolling-window exclusion are independent; they jointly enforce no-lookahead at both the alignment-to-bar and the Z-score-statistics layers.)
+- **v002 funding-timestamp semantics escalation.** The above rules assume v002 `usdm_funding_rate__v002` records `funding_time` as the completed settlement timestamp (Binance USDⓈ-M canonical). If any future implementation phase (Phase 3i-A primitives, Phase 3i-B1 engine wiring, or Phase 3j candidate runs) discovers that v002 `funding_time` does not represent a completed settlement timestamp (e.g., next-funding-due, in-progress-funding, or any other forward-looking semantics), the implementation must **STOP and escalate** before continuing. Lookahead in the funding-event source data would invalidate the entire D1-A specification; resolution requires a separately-authorized data-requirements review, not a Phase 3i / 3j workaround.
 - **Repeated 15m bars referencing the same funding event must not inflate event-level counts.** Funnel counters (`funding_extreme_events_detected` etc.) are at the funding-event level; a unique `funding_event_id` is counted once.
 - **All canonical timestamps are UTC Unix milliseconds** per `timestamp-policy.md`.
 - **Completed-bar discipline** per `data-requirements.md` §"Core Data Principles" §1: 15m signal evaluation only after the bar has fully closed; no partial-bar inputs to D1-A.
@@ -243,7 +244,7 @@ Extend `BacktestEngine` (file `src/prometheus/research/backtest/engine.py`) to d
   2. Compute the Z-score using the trailing 90-day rolling window (excluding current event).
   3. If `|Z_F| ≥ 2.0` AND the event has not been consumed AND no D1-A position is currently open AND cooldown does not block the candidate direction, register entry candidate at bar `B+1` open.
   4. On fill: compute stop, target, time-stop bar-index; record `funding_event_id`, `funding_z_score_at_signal`, `funding_rate_at_signal`, `bars_since_funding_event_at_signal`, `entry_to_target_distance_atr`, `stop_distance_at_signal_atr`.
-  5. Per-bar while position open: check STOP (MARK_PRICE) > TARGET > TIME_STOP precedence at bar close; close position at next-bar open with the chosen exit reason.
+  5. Per-bar while position open: check STOP (MARK_PRICE) > TARGET > TIME_STOP precedence on completed-bar close. **TARGET trigger condition is completed-close confirmation**: LONG `close ≥ target_price`; SHORT `close ≤ target_price`. **No intrabar target-touch fill; no same-close target fill.** When any of STOP / TARGET / TIME_STOP triggers at bar close, the position fills at the **next bar open** with the chosen exit reason. STOP retains the existing mark-price stop-trigger machinery (this clarification does not alter existing stop modeling).
   6. On position close: increment funding-event funnel counter; mark `funding_event_consumed = True` for that event id.
 - Per-symbol session state:
   - `latest_completed_funding_event_id`
@@ -424,8 +425,9 @@ Tests required at the Phase 3i-A and Phase 3i-B1 phases, at minimum. Each test n
 | `test_signal_no_signal_below_threshold` | `funding_extreme_event(z_score=1.99, threshold=2.0)` returns None; `z_score=−1.99` returns None. |
 | `test_signal_positive_extreme_creates_short` | `funding_extreme_event(z_score=2.0, threshold=2.0)` returns SHORT; `z_score=3.5` returns SHORT. |
 | `test_signal_negative_extreme_creates_long` | `funding_extreme_event(z_score=−2.0, threshold=2.0)` returns LONG; `z_score=−3.5` returns LONG. |
-| `test_event_alignment_strict_lte` | `align_funding_event_to_bar` uses `funding_time ≤ bar_close_time`; an event with `funding_time > bar_close_time` is excluded. |
-| `test_event_alignment_no_lookahead` | At bar 1000 (close at t=t_bar_1000_close), the most recent event used is one with `funding_time ≤ t_bar_1000_close`; events at `t > t_bar_1000_close` are not selectable. |
+| `test_event_alignment_non_strict_lte` | `align_funding_event_to_bar` uses `funding_time ≤ bar_close_time` (non-strict). An event with `funding_time == bar_close_time` IS eligible for that bar's signal evaluation; an event with `funding_time > bar_close_time` is excluded. |
+| `test_event_alignment_equality_eligible` | A funding event with `funding_time == bar_close_time` is treated as completed for that bar's signal evaluation. The trade triggered by this signal still enters at the next bar open (bar B+1), not at the same bar's close. |
+| `test_event_alignment_no_lookahead` | At bar 1000 (close at t=t_bar_1000_close), the most recent event used is one with `funding_time ≤ t_bar_1000_close`; events at `t > t_bar_1000_close` (strictly greater) are not selectable. |
 | `test_per_event_cooldown_consumes_event` | After a position opens on `funding_event_id=E1`, `E1` is marked consumed; same-direction signal on `E1` from later bars is blocked. |
 | `test_per_event_cooldown_fresh_event_allows_re_entry` | After position closes on `E1`, a fresh event `E2` with `|Z_F| ≥ 2.0` allows new same-direction entry. |
 | `test_per_event_cooldown_opposite_direction_allowed` | At a fresh event `E2` with sign-flipped Z_F, opposite-direction entry is allowed even if `E1` was consumed by the same-direction prior position. |
@@ -452,12 +454,15 @@ Tests required at the Phase 3i-A and Phase 3i-B1 phases, at minimum. Each test n
 | `test_d1a_stop_at_one_atr` | LONG stop = fill_price − 1.0 × ATR(20)(at fill bar B+1); SHORT stop = fill_price + 1.0 × ATR(20). |
 | `test_d1a_target_at_two_R` | LONG target = fill_price + 2.0 × stop_distance; SHORT target = fill_price − 2.0 × stop_distance. |
 | `test_d1a_stop_never_moves` | Stop price recorded at fill stays constant across the trade lifecycle; no intra-trade stop update is invoked. |
-| `test_d1a_target_close_fill` | If price reaches target during a bar, position closes with TARGET exit reason at the bar's close. |
-| `test_d1a_stop_close_fill` | If MARK_PRICE reaches stop during a bar, position closes with STOP exit reason. |
+| `test_d1a_target_completed_close_trigger_long` | LONG TARGET triggers when a completed bar's `close ≥ target_price`; the bar-high touching target without the close confirming does NOT trigger. |
+| `test_d1a_target_completed_close_trigger_short` | SHORT TARGET triggers when a completed bar's `close ≤ target_price`; the bar-low touching target without the close confirming does NOT trigger. |
+| `test_d1a_target_fills_at_next_bar_open` | After a completed-close TARGET trigger, the position fills at the **next bar open**; not at the trigger bar's close. No same-close TARGET fill. No intrabar TARGET fill. |
+| `test_d1a_stop_close_fill` | STOP behavior follows the existing MARK_PRICE stop-trigger machinery (unchanged by Phase 3h). |
 | `test_d1a_time_stop_at_close_of_b_plus_1_plus_32` | If neither STOP nor TARGET fires by close of bar `B+1+32`, TIME_STOP triggers at that close. |
 | `test_d1a_time_stop_fills_at_open_of_b_plus_1_plus_33` | TIME_STOP exit fills at open of bar `B+1+33`, not at close of B+1+32; no same-close fill. |
-| `test_d1a_same_bar_priority_stop_before_target` | If same bar contains both STOP-trigger and TARGET-touch, STOP fires first (tested with synthetic high-volatility bar). |
-| `test_d1a_same_bar_priority_target_before_time_stop` | If same bar at index B+1+32 contains both TARGET-touch and TIME_STOP-trigger, TARGET fires first. |
+| `test_d1a_same_bar_priority_stop_before_target` | If same bar's completed close satisfies both the STOP trigger condition and the TARGET completed-close condition, STOP fires first (priority STOP > TARGET). |
+| `test_d1a_same_bar_priority_target_before_time_stop` | If the bar at index `B+1+32` has its completed close satisfying the TARGET trigger condition (LONG `close ≥ target_price` / SHORT `close ≤ target_price`) AND the TIME_STOP horizon is reached, TARGET fires first; both fills occur at open of `B+1+33`. |
+| `test_d1a_intrabar_target_touch_does_not_fill` | A bar whose high (LONG) or low (SHORT) touches `target_price` but whose completed close does NOT satisfy the trigger condition produces no TARGET exit; the position remains open. |
 | `test_d1a_per_event_cooldown_blocks_same_direction` | Two consecutive 15m bars referencing the same `funding_event_id` produce only one entry candidate (the first); the second is blocked by cooldown. |
 | `test_d1a_per_event_cooldown_releases_on_fresh_event` | After position closes, a new event with `|Z_F| ≥ 2.0` allows a fresh same-direction entry. |
 | `test_d1a_event_level_funnel_identity` | After a synthetic run, `funding_extreme_events_detected = funding_extreme_events_filled + funding_extreme_events_rejected_stop_distance + funding_extreme_events_blocked_cooldown`. |
@@ -469,7 +474,7 @@ Tests required at the Phase 3i-A and Phase 3i-B1 phases, at minimum. Each test n
 | `test_h0_control_unchanged_after_d1a_wiring` | H0 R MED MARK on BTC/ETH reproduces Phase 2e v002 baseline bit-for-bit on all 6 summary metrics (n / WR / expR / PF / netPct / maxDD). |
 | `test_r3_control_unchanged_after_d1a_wiring` | R3 R MED MARK on BTC/ETH reproduces Phase 2l v002 baseline bit-for-bit. |
 | `test_f1_control_unchanged_after_d1a_wiring` | F1 R MED MARK on BTC/ETH reproduces Phase 3d-B2 baseline bit-for-bit. |
-| `test_no_lookahead_funding_event_alignment` | Synthetic test where a funding event at `funding_time = bar_B_close + 1ms` is NOT used at bar B's signal evaluation; only used from bar B+1 onward. |
+| `test_no_lookahead_funding_event_alignment` | Synthetic test where a funding event at `funding_time = bar_B_close + 1ms` is NOT used at bar B's signal evaluation; only used from bar B+1 onward. **Companion test:** an event at `funding_time = bar_B_close` (exact equality) IS used at bar B's signal evaluation per the §4.5 non-strict ≤ rule. |
 | `test_z_score_excludes_current_event_at_runtime` | At runtime, the rolling Z-score for event N uses events N−1..N−270 only; event N is not in the sample. |
 | `test_d1a_runner_requires_authorization_flag` | The Phase 3i-B1 runner script exits with non-zero status if invoked without `--phase-3X-authorized` (analogous to Phase 3d-B1 `--phase-3d-b2-authorized` precedent). |
 
@@ -724,9 +729,10 @@ Before any future Phase 3j verdict is issued, the following hard-block invariant
 | 7 | Stop never moves intra-trade | The engine must never invoke `_apply_stop_update` (or equivalent) on the D1-A path |
 | 8 | Target remains +2.0R | Empirical `entry_to_target_distance_atr / stop_distance_at_signal_atr = 2.0` for all filled trades |
 | 9 | TIME_STOP trigger/fill timing | TIME_STOP triggers at close of bar `B+1+32`; fills at open of bar `B+1+33`; no same-close fill |
-| 10 | Same-bar precedence | `STOP > TARGET > TIME_STOP` evaluated per Phase 3b §6 / Phase 3d-A precedent |
+| 9b | **TARGET trigger/fill timing** | TARGET triggers only on completed-close confirmation (LONG `close ≥ target_price`; SHORT `close ≤ target_price`); TARGET fills at the next bar open; no intrabar target-touch fill; no same-close TARGET fill |
+| 10 | Same-bar precedence | `STOP > TARGET > TIME_STOP` evaluated on the completed bar; trigger evaluation is at bar close, fill is at next bar open per Phase 3b §6 / Phase 3d-A precedent |
 | 11 | Cooldown enforcement | No same-event same-direction re-entry; verified by funnel counter `funding_extreme_events_blocked_cooldown > 0` if any same-event re-entry attempts occurred |
-| 12 | No look-ahead in funding-event alignment | Funding event used at signal must satisfy `funding_time ≤ bar_close_time`; no event with `funding_time > bar_close_time` is referenced |
+| 12 | No look-ahead in funding-event alignment | Funding event used at signal must satisfy `funding_time ≤ bar_close_time` (non-strict ≤; equality is eligible per §4.5); no event with `funding_time > bar_close_time` is referenced. If empirical inspection of v002 funding timestamps reveals they do not represent completed settlement timestamps, future implementation must STOP and escalate per §4.5 |
 | 13 | Rolling 90-day Z-score excludes current event | μ_F and σ_F at event N are computed over events N−1..N−270; event N is not in the sample |
 | 14 | M1 displacement uses fill_price | Post-entry displacement formula uses `fill_price` (next-bar-open fill price), not `close(B+1)` |
 | 15 | H0 / R3 / F1 controls reproduce bit-for-bit | All 9 control cells reproduce locked baselines on all summary metrics before D1-A interpretation |
