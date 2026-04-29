@@ -78,11 +78,15 @@ No other file is created, modified, or deleted by Phase 3h.
 
 ## 4. Commit hash(es)
 
-Single Phase 3h commit on `phase-3h/d1-execution-planning`:
+Three Phase 3h commits on `phase-3h/d1-execution-planning`:
 
-- `71c06f1` — `phase-3h: D1-A execution-planning memo (docs-only)` (2 files, 923 insertions; both Phase 3h deliverables landed in one commit).
+- `71c06f1` — `phase-3h: D1-A execution-planning memo (docs-only)` — original Phase 3h memo + closeout (2 files, 923 insertions).
+- `2f364ed` — `phase-3h: record commit hash 71c06f1 in closeout report` — closeout §4 commit-hash backfill (1 file, +5 / −1).
+- `4f996c6` — `phase-3h: clarify TARGET fill timing and funding timestamp equality` — post-review docs-only clarification amendment per §0 above (2 files, +70 / −13).
 
-The Phase 3h commit message references both files and explicitly preserves the Phase 3g + Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. No subsequent commit is added by Phase 3h itself; an operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3g's pattern).
+**Branch HEAD full SHA (current `git rev-parse HEAD`):** `4f996c68735586c1680f21c236cebc393963bd5f`.
+
+The clarification amendment preserves all Phase 3g + Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. The amendment changes nothing other than docs in `docs/00-meta/implementation-reports/`. An operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3g's pattern).
 
 ## 5. Confirmation that Phase 3h was docs-only
 
@@ -137,7 +141,7 @@ All Phase 3i-A architecture is described in Phase 3h §5 / §6 / §7 as **forwar
 
 ## 8. Branch ready for operator review and possible merge
 
-**YES.** The branch tip is the Phase 3h single commit landing both deliverables. The branch is ready for operator review.
+**YES.** The branch tip after the post-review timing-clarification amendment is `4f996c68735586c1680f21c236cebc393963bd5f`. The branch contains three commits ahead of `main`: the original Phase 3h memo + closeout (`71c06f1`), the closeout commit-hash backfill (`2f364ed`), and the post-review docs-only clarification amendment (`4f996c6` — TARGET fill timing + funding timestamp equality). The branch is ready for operator review and possible merge.
 
 If the operator approves the Phase 3h execution-planning memo:
 
