@@ -34,7 +34,11 @@ New files:
 
 ## 4. Commit hash(es)
 
-To be recorded after the Phase 3i-B1 commit lands. The Phase 3i-B1 commit message references all changed files and explicitly preserves the Phase 3i-A + Phase 3h + Phase 3g + Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline.
+Single Phase 3i-B1 commit on `phase-3i-b1/d1a-engine-wiring-controls`:
+
+- `fb7afa7` — `phase-3i-B1: D1-A engine wiring + lifecycle counters + runner scaffold` (8 files, +2242 / −47).
+
+The Phase 3i-B1 commit message references all changed files and explicitly preserves the Phase 3i-A + Phase 3h + Phase 3g + Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. No subsequent commit is added by Phase 3i-B1 itself; an operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3i-A's pattern).
 
 ## 5. Confirmation that Phase 3i-B1 was engine-wiring-control only
 
