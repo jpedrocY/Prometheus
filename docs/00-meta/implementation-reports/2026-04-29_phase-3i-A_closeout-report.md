@@ -43,7 +43,11 @@ New documentation files:
 
 ## 4. Commit hash(es)
 
-To be recorded after the Phase 3i-A commit lands. The Phase 3i-A commit message references all changed files and explicitly preserves the Phase 3h + Phase 3g + Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline.
+Single Phase 3i-A commit on `phase-3i-a/d1a-implementation-controls`:
+
+- `6c61b47` — `phase-3i-A: D1-A implementation controls (non-runnable scaffolding)` (14 files, +2149 / −8; 8 new files, 6 modified files; all Phase 3i-A deliverables landed in one commit).
+
+The Phase 3i-A commit message references all changed files and explicitly preserves the Phase 3h + Phase 3g + Phase 3f + Phase 3e + Phase 3d-B2 + Phase 2y + Phase 2x + §1.7.3 / §10.3 / §10.4 / §11.3 / §11.4 / §11.6 = 8 bps HIGH per side discipline. No subsequent commit is added by Phase 3i-A itself; an operator-authorized merge into `main` would add a separate `--no-ff` merge commit (and an optional follow-on merge-report commit modeled on Phase 3h's pattern).
 
 ## 5. Confirmation that Phase 3i-A was implementation-control only
 
