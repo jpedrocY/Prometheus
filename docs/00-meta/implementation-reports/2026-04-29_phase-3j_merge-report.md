@@ -25,8 +25,10 @@ ee6856262fc9376cdae9301f99c5b56e1f60e75a
 ## 3. Merge-report commit hash
 
 ```text
-<PENDING — recorded after this merge report itself is committed>
+5d18408daaed08ab30be47236f06c9d38c468f99
 ```
+
+(Subject: `docs(phase-3j): merge report`. The merge-report file itself; this section was filled in by the immediate follow-up commit `<see §6 latest commits>` so the report records its own provenance.)
 
 ## 4. Main / origin sync confirmation
 
