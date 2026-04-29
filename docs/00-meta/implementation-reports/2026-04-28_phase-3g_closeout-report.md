@@ -98,7 +98,7 @@ The two spec amendments and the methodology audit preserve all Phase 3f + Phase 
 
 ## 5. Confirmation that Phase 3g was docs-only
 
-Confirmed. Phase 3g produced two Markdown memos under `docs/00-meta/implementation-reports/` and no other artifacts. No source code, no tests, no scripts, no data, no configuration, no credentials, no MCP / Graphify integration, no `.mcp.json`, no exchange-write paths, no backtest run, no variant created, no parameter tuned.
+Confirmed. Phase 3g produced three Markdown documentation files under `docs/00-meta/implementation-reports/` (the D1-A spec memo, the methodology sanity audit, and this closeout report) and no other artifacts. No source code, no tests, no scripts, no data, no configuration, no credentials, no MCP / Graphify integration, no `.mcp.json`, no exchange-write paths, no backtest run, no variant created, no parameter tuned.
 
 ## 6. Confirmation of preserved scope
 
