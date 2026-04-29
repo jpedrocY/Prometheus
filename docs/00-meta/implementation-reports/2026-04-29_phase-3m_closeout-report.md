@@ -27,22 +27,31 @@ nothing to commit, working tree clean
 
 ## 3. Files changed
 
-Phase 3m branch contains exactly **2 files** changed (both new) — zero `data/` artifacts; zero source code; zero tests; zero scripts; zero modifications to `current-project-state.md` or any other existing doc:
+Phase 3m branch contains exactly **3 files** changed (1 modified + 2 new) — zero `data/` artifacts; zero source code; zero tests; zero scripts:
 
 ```text
+M  docs/00-meta/current-project-state.md
 A  docs/00-meta/implementation-reports/2026-04-29_phase-3m_regime-first-framework-memo.md
 A  docs/00-meta/implementation-reports/2026-04-29_phase-3m_closeout-report.md
 ```
 
-The Phase 3m regime-first framework memo + this closeout report are the only artifacts produced. No canonical-state document was updated (Phase 3m does not change any project-state fact: no verdicts revised; no thresholds changed; no spec axes touched; no successor authorization). The diff is intentionally narrow.
+The Phase 3m regime-first framework memo + this closeout report are the primary artifacts produced. The `current-project-state.md` modification is a narrow Phase 3m record (per the operator-mandated cleanup): it adds a Phase 3m completion line, the recommended-state-remains-paused affirmation, and an explicit "no prior verdict revised / no successor authorized" line. **No verdicts revised; no thresholds changed; no spec axes touched.** The diff is intentionally narrow.
 
 ## 4. Commit hash(es)
 
 ```text
-<recorded after the Phase 3m commit is created — see git log on the branch>
+Phase 3m regime-first framework memo commit (2 files together):
+    28616c456a0a360a3d469771d393ebeca9fdff44
+    Subject: phase-3m: docs-only regime-first research framework memo
+
+Phase 3m closeout commit-hash cleanup + minimal current-project-state update:
+    <recorded after this cleanup commit is created — see git log on the branch>
+
+Branch HEAD after cleanup commit:
+    <recorded after this cleanup commit is created — see git rev-parse HEAD on the branch>
 ```
 
-The Phase 3m branch contains a single commit recording the 2 file additions together. The commit message references the regime-first framework memo and the closeout report.
+The Phase 3m branch initially contained a single commit (`28616c4`) recording the regime-first framework memo + closeout together. A small follow-up commit was added to (a) fill in this section with the actual Phase 3m commit hash, replacing the original `<recorded ...>` placeholder, and (b) record a narrow Phase 3m update in `docs/00-meta/current-project-state.md`.
 
 ## 5. Confirmation that Phase 3m was docs-only
 
