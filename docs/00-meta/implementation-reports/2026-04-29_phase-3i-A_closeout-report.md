@@ -112,7 +112,7 @@ No threshold, strategy parameter (outside the Phase 3g D1-A locked spec which is
 
 ## 10. Branch ready for operator review and possible merge
 
-**YES.** All four quality gates green; H0 / R3 / F1 R MED MARK controls reproduce bit-for-bit on every summary metric; D1-A is deliberately non-runnable through the engine via the documented `RuntimeError` guard; ~78 new unit tests pass; total `pytest` count 645 passed (up from 567 at Phase 3d-B2 baseline). The Phase 3i-A D1A implementation-controls checkpoint report (`docs/00-meta/implementation-reports/2026-04-29_phase-3i-A_D1A_implementation-controls.md`) recommends Phase 3i-B1 is **safe to consider** after operator review.
+**YES.** All four quality gates green; H0 / R3 / F1 R MED MARK controls reproduce bit-for-bit on every summary metric; D1-A is deliberately non-runnable through the engine via the documented `RuntimeError` guard; 78 new unit tests pass; total `pytest` count 645 passed (up from 567 at Phase 3d-B2 baseline). The Phase 3i-A D1A implementation-controls checkpoint report (`docs/00-meta/implementation-reports/2026-04-29_phase-3i-A_D1A_implementation-controls.md`) recommends Phase 3i-B1 is **safe to consider** after operator review.
 
 If the operator approves Phase 3i-A:
 

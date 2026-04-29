@@ -15,10 +15,10 @@
 Phase 3i-A is the first implementation-only phase for D1-A, analogous to Phase 3d-A which performed the same role for F1. It adds the code surface for D1-A:
 
 - a new `StrategyFamily.FUNDING_AWARE_DIRECTIONAL` enum value;
-- a new self-contained Python package `src/prometheus/strategy/funding_aware_directional/` with locked `FundingAwareConfig`, eight pure primitive functions, and a stateless `FundingAwareStrategy` facade;
+- a new self-contained Python package `src/prometheus/strategy/funding_aware_directional/` with locked `FundingAwareConfig`, nine pure primitive helpers (`compute_funding_z_score`, `align_funding_event_to_bar`, `funding_extreme_event`, `signal_direction`, `compute_stop`, `compute_target`, `time_stop_bar_index`, `passes_stop_distance_filter`, `can_re_enter`), and a stateless `FundingAwareStrategy` facade;
 - extended `BacktestConfig` validator handling the new family;
 - an explicit `BacktestEngine.run` guard that raises `RuntimeError("D1-A engine wiring not yet authorized; see Phase 3i-B1.")` when D1-A dispatch is attempted (the engine path is deliberately not wired in 3i-A);
-- ~76 new unit tests covering config, primitives, strategy facade, BacktestConfig dispatch, and the engine guard.
+- 78 new unit tests covering config, primitives, strategy facade, BacktestConfig dispatch, and the engine guard.
 
 It then proves that all of the above does not perturb existing V1 / R3 / F1 behavior by running the H0 / R3 / F1 R MED MARK controls and comparing them bit-for-bit against the prior committed baselines.
 
@@ -44,7 +44,7 @@ New files (all under `src/prometheus/strategy/funding_aware_directional/` or `te
 
 - `src/prometheus/strategy/funding_aware_directional/__init__.py` — package public surface (config + primitives + strategy facade).
 - `src/prometheus/strategy/funding_aware_directional/variant_config.py` — `FundingAwareConfig` Pydantic model + locked module-level constants.
-- `src/prometheus/strategy/funding_aware_directional/primitives.py` — 8 pure helpers (`compute_funding_z_score`, `align_funding_event_to_bar`, `funding_extreme_event`, `signal_direction`, `compute_stop`, `compute_target`, `time_stop_bar_index`, `passes_stop_distance_filter`, `can_re_enter`) + `FundingEvent` dataclass.
+- `src/prometheus/strategy/funding_aware_directional/primitives.py` — 9 pure helpers (`compute_funding_z_score`, `align_funding_event_to_bar`, `funding_extreme_event`, `signal_direction`, `compute_stop`, `compute_target`, `time_stop_bar_index`, `passes_stop_distance_filter`, `can_re_enter`) + `FundingEvent` dataclass.
 - `src/prometheus/strategy/funding_aware_directional/strategy.py` — `FundingAwareStrategy` facade + `FundingAwareEntrySignal` dataclass.
 - `tests/unit/strategy/funding_aware_directional/__init__.py` — empty test package init.
 - `tests/unit/strategy/funding_aware_directional/test_variant_config.py` — locked-spec preservation tests.
@@ -155,14 +155,14 @@ The guard does NOT need to be deactivated for D1-A primitive testing; the primit
 
 | Test file | New tests | Purpose |
 |-----------|----------:|---------|
-| `tests/unit/strategy/funding_aware_directional/test_variant_config.py` | 14 | Locked-spec preservation: defaults match Phase 3g §6 + §5.6.5 Option A; rejects alternate threshold / target / lookback / time-stop / stop-distance / direction / cooldown; frozen; extra=forbid (regime_filter rejected); JSON round-trip. |
-| `tests/unit/strategy/funding_aware_directional/test_primitives.py` | 41 | Z-score warmup / exclusion / NaN safety / basic positive; alignment non-strict ≤ / equality eligible / strict-greater forbidden / no-lookahead / unsorted handling; extreme-event threshold inclusivity / NaN safety; signal direction contrarian / inclusive ±2.0 / NaN; stop / target LONG / SHORT geometry; time-stop horizon; admissibility band edges; per-event cooldown all 6 cases. |
-| `tests/unit/strategy/funding_aware_directional/test_strategy.py` | 9 | Facade end-to-end: no eligible event → None; below threshold → None; positive extreme → SHORT; negative extreme → LONG; cooldown blocks same-direction same-event; opposite direction allowed at same event; position-open blocks; warmup → None; time-stop trigger index = (b_index + 1) + 32; locked config exposed. |
+| `tests/unit/strategy/funding_aware_directional/test_variant_config.py` | 15 | Locked-spec preservation: defaults match Phase 3g §6 + §5.6.5 Option A; rejects alternate threshold / target / lookback (days + events) / time-stop / stop-distance multiplier / stop-distance band / direction / cooldown; frozen; extra=forbid (regime_filter rejected); JSON round-trip; baseline-classmethod identity. |
+| `tests/unit/strategy/funding_aware_directional/test_primitives.py` | 42 | Z-score warmup / exclusion / NaN safety / basic positive / invalid-lookback raises; alignment non-strict ≤ / equality eligible / strict-greater forbidden / no-lookahead / unsorted handling / all-future returns None; extreme-event threshold inclusivity / NaN safety; signal direction contrarian / inclusive ±2.0 / NaN; stop / target LONG / SHORT geometry / invalid-input raises / default target_r=2.0; time-stop horizon default + custom + invalid; admissibility band edges + invalid; per-event cooldown all 6 cases. |
+| `tests/unit/strategy/funding_aware_directional/test_strategy.py` | 10 | Facade end-to-end: no eligible event → None; below threshold → None; positive extreme → SHORT; negative extreme → LONG; cooldown blocks same-direction same-event; opposite direction allowed at same event; position-open blocks; warmup → None; time-stop trigger index = (b_index + 1) + 32; locked config exposed. |
 | `tests/unit/research/backtest/test_config.py` | 8 | D1-A enum exists; default V1 unchanged; V1 rejects funding_aware_variant; F1 rejects funding_aware_variant; D1-A accepts funding_aware_variant; D1-A requires funding_aware_variant; D1-A rejects mean_reversion_variant; D1-A rejects non-default V1 strategy_variant. |
 | `tests/unit/research/backtest/test_engine_d1a_guard.py` | 3 | D1-A dispatch raises documented RuntimeError; V1 dispatch unchanged; F1 dispatch unchanged. |
-| **Total new** | **75** | |
+| **Total new** | **78** | |
 
-Pytest count delta: prior **567** (Phase 3d-B2) → after Phase 3i-A **645** = +78 tests. (Slight discrepancy with the 75-by-file count is from cross-cutting coverage; final pytest output is the binding figure.)
+Pytest count delta: prior **567** (Phase 3d-B2) → after Phase 3i-A **645** = +78 tests, exactly matching the 15 + 42 + 10 + 8 + 3 per-file breakdown above. (The earlier draft of this section gave a coarser 14 / 41 / 9 split that under-counted by 3; per-file totals were re-verified with `pytest --collect-only -q`.)
 
 ```
 ============================= test session starts =============================
@@ -281,7 +281,7 @@ None of these constitute a Phase 2f-framework threshold change, §1.7.3 project-
 The Phase 3i-A scaffolding is the correct foundation for Phase 3i-B1's engine-wiring work:
 
 - The `FundingAwareConfig` is locked and tested.
-- The 8 primitive functions are tested with synthetic inputs covering warmup, equality boundaries, lookahead exclusion, NaN safety, and per-event cooldown.
+- The 9 primitive helpers are tested with synthetic inputs covering warmup, equality boundaries, lookahead exclusion, NaN safety, and per-event cooldown.
 - The `FundingAwareStrategy` facade is testable end-to-end without engine.
 - The `BacktestConfig` validator accepts the D1-A dispatch surface with all required invariants.
 - The `BacktestEngine.run` guard cleanly separates "implementation surface" from "runnable engine path" — Phase 3i-B1 lifts this guard and adds `_run_symbol_d1a`.
@@ -292,4 +292,4 @@ Phase 3i-B1 is **NOT** authorized by Phase 3i-A. Phase 3i-B1 requires a separate
 
 ---
 
-**End of Phase 3i-A D1-A implementation-controls checkpoint report.** Implementation surface added; D1-A deliberately non-runnable; engine dispatch guard documented; H0 / R3 / F1 controls reproduce bit-for-bit; ~78 new tests pass; quality gates all green; D1-A locked spec preserved verbatim per Phase 3g binding; no D1-A backtest run; no D1-A diagnostics computed; no derived dataset generated; no `data/` commit; no Phase 2f threshold change; no §1.7.3 lock change; no paper/shadow / Phase 4 / live-readiness / deployment / MCP / Graphify / `.mcp.json` / credentials / exchange-write change. Phase 3i-B1 NOT authorized. Awaiting operator review.
+**End of Phase 3i-A D1-A implementation-controls checkpoint report.** Implementation surface added; D1-A deliberately non-runnable; engine dispatch guard documented; H0 / R3 / F1 controls reproduce bit-for-bit; 78 new tests pass; quality gates all green; D1-A locked spec preserved verbatim per Phase 3g binding; no D1-A backtest run; no D1-A diagnostics computed; no derived dataset generated; no `data/` commit; no Phase 2f threshold change; no §1.7.3 lock change; no paper/shadow / Phase 4 / live-readiness / deployment / MCP / Graphify / `.mcp.json` / credentials / exchange-write change. Phase 3i-B1 NOT authorized. Awaiting operator review.
