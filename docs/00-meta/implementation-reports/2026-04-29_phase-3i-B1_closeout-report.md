@@ -89,7 +89,7 @@ No threshold, project lock, paper/shadow plan, Phase 4 work, live-readiness work
 
 ## 10. Branch ready for operator review and possible merge
 
-**YES.** All four quality gates green; full 9-cell H0 / R3 / F1 controls reproduce bit-for-bit on every summary metric; D1-A engine path is implemented and tested via 21 synthetic engine tests; lifecycle event-level identity enforced; runner scaffold double-gated; no D1-A candidate backtest run; no D1-A diagnostics computed; no derived dataset generated; D1-A locked spec preserved verbatim per Phase 3g binding. The Phase 3i-B1 D1A engine-wiring-controls checkpoint report (`docs/00-meta/implementation-reports/2026-04-29_phase-3i-B1_D1A_engine-wiring-controls.md`) recommends Phase 3j is **safe to consider** after operator review.
+**YES.** All four quality gates green (**668 pytest passing**; +23 net since Phase 3i-A); full control set (5 named controls / 10 symbol-level cells: H0 R, H0 V, R3 R, R3 V, F1 R; each × BTC + ETH) reproduces bit-for-bit on every summary metric; D1-A engine path is implemented and tested via 21 synthetic engine tests; lifecycle event-level identity enforced; runner scaffold double-gated; no D1-A candidate backtest run; no D1-A diagnostics computed; no derived dataset generated; D1-A locked spec preserved verbatim per Phase 3g binding. The Phase 3i-B1 D1A engine-wiring-controls checkpoint report (`docs/00-meta/implementation-reports/2026-04-29_phase-3i-B1_D1A_engine-wiring-controls.md`) recommends Phase 3j is **safe to consider** after operator review.
 
 If the operator approves Phase 3i-B1:
 

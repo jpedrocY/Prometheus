@@ -6,7 +6,7 @@
 
 **Branch:** `phase-3i-b1/d1a-engine-wiring-controls`. **Date:** 2026-04-29 UTC.
 
-**Status:** Engine-wiring control complete. **D1-A is now technically runnable through the engine, but no D1-A candidate backtest has been run.** **No D1-A diagnostics or first-execution gate evaluated.** **No derived `funding_aware_features__v001` dataset generated.** All four quality gates green; full 9-cell H0/R3/F1 controls (R+V × MED MARK; F1 R MED MARK) reproduce bit-for-bit on every summary metric.
+**Status:** Engine-wiring control complete. **D1-A is now technically runnable through the engine, but no D1-A candidate backtest has been run.** **No D1-A diagnostics or first-execution gate evaluated.** **No derived `funding_aware_features__v001` dataset generated.** All four quality gates green; full control set (5 named controls / 10 symbol-level cells: H0 R/V × BTC/ETH; R3 R/V × BTC/ETH; F1 R × BTC/ETH) reproduces bit-for-bit on every summary metric.
 
 ---
 
@@ -19,9 +19,9 @@ Phase 3i-B1 is the second implementation phase for D1-A, analogous to Phase 3d-B
 - **Added `FundingAwareLifecycleCounters`** with the event-level identity `detected = filled + rejected_stop_distance + blocked_cooldown` and the runtime bookkeeping that prevents repeated 15m bars from inflating the detected count.
 - **Extended `TradeRecord`** with 4 new D1-A fields (`funding_event_id_at_signal`, `funding_z_score_at_signal`, `funding_rate_at_signal`, `bars_since_funding_event_at_signal`) and reused 2 existing F1-precedent fields for the geometry diagnostic (`entry_to_target_distance_atr` ≈ 2.0, `stop_distance_at_signal_atr` ≈ 1.0 by construction). Added the corresponding parquet schema fields.
 - **Added a runner scaffold** `scripts/phase3j_D1A_execution.py` that fails closed without `--phase-3j-authorized` (analogous to Phase 3d-B1 `--phase-3d-b2-authorized` precedent).
-- **Added 23 D1-A engine dispatch tests** + updated 5 D1-A guard tests to reflect the lifted guard. Total D1-A tests at end of Phase 3i-B1: ~101 (15 config + 42 primitives + 10 facade + 8 BacktestConfig + 5 guard/post-lift + 21 engine dispatch).
-- **Ran the full 4 quality gates** all green (668 pytest passing, ruff/format/mypy clean).
-- **Reproduced the full 9-cell control set bit-for-bit** (H0 R/V × BTC/ETH; R3 R/V × BTC/ETH; F1 R × BTC/ETH).
+- **Added 21 new D1-A engine dispatch tests** in `test_engine_d1a_dispatch.py`, plus replaced the 3 prior Phase 3i-A guard-raising tests in `test_engine_d1a_guard.py` with 5 new dispatch tests (net +2 in that file). Total Phase 3i-B1 net pytest delta: **+23** (21 new dispatch + 2 net from guard-file replacement).
+- **Ran the full 4 quality gates** all green (**668 pytest passing**; **+23 net since Phase 3i-A** at 645; ruff / format / mypy clean).
+- **Reproduced the full control set bit-for-bit** (5 named controls: H0 R, H0 V, R3 R, R3 V, F1 R; 10 symbol-level cells: BTC + ETH for each).
 
 What Phase 3i-B1 explicitly did NOT do:
 
@@ -223,9 +223,14 @@ Verified by tests:
 | `tests/unit/research/backtest/test_engine_d1a_guard.py` | replaced | 5 | Phase 3i-A guard tests REPLACED with Phase 3i-B1 dispatch tests (guard lifted; V1/F1 unchanged; counters identity). Prior file had 3 tests; new file has 5. |
 | `tests/unit/research/backtest/test_engine_d1a_dispatch.py` | new | 21 | Comprehensive D1-A engine dispatch tests (synthetic in-memory runs covering signal generation, fill timing, stop / target / TIME_STOP geometry, completed-bar-close TARGET trigger, no intrabar fill, same-bar STOP > TARGET priority, END_OF_DATA, lifecycle identity, repeated-bar non-inflation, funding accrual sign, runner scaffold guard). |
 | `tests/unit/research/backtest/test_trade_log.py` | +0 (assertion list extended) | 5 | Parquet schema list updated to include 4 new D1-A column names. |
-| **Total D1-A-focused tests at end of Phase 3i-B1** | **+23** | **~95** | |
+| **Phase 3i-B1 net pytest delta** | **+23** | (binding figure is the pytest total: 668 passed) | |
 
-Pytest count delta: prior **645** (Phase 3i-A merge) → after Phase 3i-B1 **668** = +23 net (+21 new D1-A engine dispatch tests + 5 replacement guard/dispatch tests in `test_engine_d1a_guard.py` minus 3 prior guard tests = +2; minus 1 if any other adjustments). The pytest output is the binding figure: 668 passed.
+Pytest count delta is exactly **+23 net** since Phase 3i-A (prior 645 → after Phase 3i-B1 668), composed of:
+
+- **+21** new tests in `test_engine_d1a_dispatch.py` (the new engine dispatch test file).
+- **+2** net in `test_engine_d1a_guard.py`: the 3 Phase 3i-A guard-raising tests were replaced with 5 Phase 3i-B1 dispatch tests (net change = 5 − 3 = +2).
+
+The pytest output is the binding figure: **668 passed**. Approximate D1-A-focused totals are intentionally not summed here to avoid drift; rely on the per-file deltas above.
 
 ```
 ============================= test session starts =============================
@@ -245,7 +250,7 @@ All four pre-merge gates green on the Phase 3i-B1 branch tip:
 
 ## 13. H0 / R3 / F1 control reproduction results
 
-Per the Phase 3h §9 / Phase 3i-B1 brief: full 9-cell control set (5 controls × {BTC + ETH summary metrics each except F1 R) reproduces bit-for-bit via `diff` against prior committed baselines.
+Per the Phase 3h §9 / Phase 3i-B1 brief: full control set — **5 named controls / 10 symbol-level cells** (H0 R, H0 V, R3 R, R3 V, F1 R; each × BTC + ETH) — reproduces bit-for-bit via `diff` against prior committed baselines.
 
 | Control | Window | Slippage | Stop trigger | Symbol | `diff` vs prior baseline |
 |---------|--------|----------|--------------|--------|--------------------------|
@@ -343,4 +348,4 @@ Phase 3j is **NOT** authorized by Phase 3i-B1. Phase 3j requires a separately-au
 
 ---
 
-**End of Phase 3i-B1 D1-A engine-wiring controls checkpoint report.** Engine wiring complete; D1-A engine path implemented; Phase 3i-A guard lifted; lifecycle counters event-level with identity enforcement; TradeRecord extended; runner scaffold guarded; ~23 new D1-A engine dispatch tests pass; quality gates all green (668 pytest); H0 / R3 / F1 controls reproduce bit-for-bit on all 10 cells; D1-A locked spec preserved verbatim per Phase 3g binding; no D1-A candidate backtest run; no D1-A diagnostics computed; no derived dataset generated; no `data/` commit; no Phase 2f threshold change; no §1.7.3 lock change; no paper/shadow / Phase 4 / live-readiness / deployment / MCP / Graphify / `.mcp.json` / credentials / exchange-write change. Phase 3j NOT authorized. Awaiting operator review.
+**End of Phase 3i-B1 D1-A engine-wiring controls checkpoint report.** Engine wiring complete; D1-A engine path implemented; Phase 3i-A guard lifted; lifecycle counters event-level with identity enforcement; TradeRecord extended; runner scaffold guarded; **+23 net pytest delta** (21 new engine dispatch tests + 2 net from guard-file replacement); quality gates all green (**668 pytest passing**); full control set (5 named controls / 10 symbol-level cells) reproduces bit-for-bit; D1-A locked spec preserved verbatim per Phase 3g binding; no D1-A candidate backtest run; no D1-A diagnostics computed; no derived dataset generated; no `data/` commit; no Phase 2f threshold change; no §1.7.3 lock change; no paper/shadow / Phase 4 / live-readiness / deployment / MCP / Graphify / `.mcp.json` / credentials / exchange-write change. Phase 3j NOT authorized. Awaiting operator review.
