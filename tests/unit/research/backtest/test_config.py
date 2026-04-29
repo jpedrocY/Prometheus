@@ -12,6 +12,7 @@ from prometheus.research.backtest.config import (
     SlippageBucket,
     StrategyFamily,
 )
+from prometheus.strategy.funding_aware_directional import FundingAwareConfig
 from prometheus.strategy.mean_reversion_overextension import MeanReversionConfig
 from prometheus.strategy.v1_breakout import V1BreakoutConfig
 
@@ -189,5 +190,110 @@ def test_f1_family_rejects_non_default_v1_strategy_variant() -> None:
             ),
             strategy_family=StrategyFamily.MEAN_REVERSION_OVEREXTENSION,
             mean_reversion_variant=MeanReversionConfig(),
+            strategy_variant=non_default_v1,
+        )
+
+
+# ---------- Phase 3i-A: D1-A funding-aware dispatch validation ----------
+
+
+def test_strategy_family_funding_aware_directional_exists() -> None:
+    """Phase 3i-A: enum has the new D1-A value."""
+    assert StrategyFamily.FUNDING_AWARE_DIRECTIONAL == "FUNDING_AWARE_DIRECTIONAL"
+
+
+def test_default_config_has_no_funding_aware_variant() -> None:
+    """Default config remains V1_BREAKOUT with no funding_aware_variant."""
+    cfg = default_config()
+    assert cfg.strategy_family == StrategyFamily.V1_BREAKOUT
+    assert cfg.funding_aware_variant is None
+
+
+def test_v1_breakout_rejects_funding_aware_variant() -> None:
+    """V1_BREAKOUT family must keep ``funding_aware_variant`` None."""
+    base = default_config()
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(exclude={"strategy_family", "funding_aware_variant"}),
+            strategy_family=StrategyFamily.V1_BREAKOUT,
+            funding_aware_variant=FundingAwareConfig(),
+        )
+
+
+def test_f1_family_rejects_funding_aware_variant() -> None:
+    """F1 family must not be combined with a funding_aware_variant."""
+    base = default_config()
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(
+                exclude={
+                    "strategy_family",
+                    "mean_reversion_variant",
+                    "funding_aware_variant",
+                }
+            ),
+            strategy_family=StrategyFamily.MEAN_REVERSION_OVEREXTENSION,
+            mean_reversion_variant=MeanReversionConfig(),
+            funding_aware_variant=FundingAwareConfig(),
+        )
+
+
+def test_d1a_family_accepts_funding_aware_variant() -> None:
+    """D1-A dispatch is admissible when ``funding_aware_variant`` is set."""
+    base = default_config()
+    cfg = BacktestConfig(
+        **base.model_dump(exclude={"strategy_family", "funding_aware_variant"}),
+        strategy_family=StrategyFamily.FUNDING_AWARE_DIRECTIONAL,
+        funding_aware_variant=FundingAwareConfig(),
+    )
+    assert cfg.strategy_family == StrategyFamily.FUNDING_AWARE_DIRECTIONAL
+    assert cfg.funding_aware_variant is not None
+
+
+def test_d1a_family_requires_funding_aware_variant() -> None:
+    """D1-A dispatch without a config payload is rejected."""
+    base = default_config()
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(exclude={"strategy_family", "funding_aware_variant"}),
+            strategy_family=StrategyFamily.FUNDING_AWARE_DIRECTIONAL,
+            funding_aware_variant=None,
+        )
+
+
+def test_d1a_family_rejects_mean_reversion_variant() -> None:
+    """D1-A must not be combined with a mean_reversion_variant."""
+    base = default_config()
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(
+                exclude={
+                    "strategy_family",
+                    "mean_reversion_variant",
+                    "funding_aware_variant",
+                }
+            ),
+            strategy_family=StrategyFamily.FUNDING_AWARE_DIRECTIONAL,
+            funding_aware_variant=FundingAwareConfig(),
+            mean_reversion_variant=MeanReversionConfig(),
+        )
+
+
+def test_d1a_family_rejects_non_default_v1_strategy_variant() -> None:
+    """D1-A must not be combined with non-default V1 strategy_variant
+    (Phase 3g §14 / Phase 3h §3 forbid V1/D1 hybrid)."""
+    base = default_config()
+    non_default_v1 = V1BreakoutConfig(setup_size=10)
+    with pytest.raises(ValidationError):
+        BacktestConfig(
+            **base.model_dump(
+                exclude={
+                    "strategy_family",
+                    "funding_aware_variant",
+                    "strategy_variant",
+                }
+            ),
+            strategy_family=StrategyFamily.FUNDING_AWARE_DIRECTIONAL,
+            funding_aware_variant=FundingAwareConfig(),
             strategy_variant=non_default_v1,
         )
