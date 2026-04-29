@@ -185,7 +185,7 @@ When the funding rate at the most recent completed 8-hour funding settlement eve
 
 - Over the next 1–2 funding cycles (8–16 hours = 32–64 × 15m bars), a SHORT position will produce **non-negative directional displacement** at the 32-bar horizon: mean ≥ +0.10 R AND fraction of non-negative outcomes ≥ 50%.
 - The SHORT position accrues funding *to the strategy* at each funding settlement during the hold (longs pay shorts); this is a structural cost-discount that should contribute mean ≥ +0.05 R per trade after fee + slippage + funding accounting.
-- A subset of trades that reach a +1.0 R take-profit before any time-stop or stop-out should produce mean ≥ +0.30 R aggregate (the M3-style descriptive subset check).
+- A subset of trades that reach the **+2.0 R target** before any time-stop or stop-out should produce mean ≥ +0.30 R aggregate (the M3-style descriptive subset check; +2.0R selected per §5.6 RR/target sanity review using R3's non-fitting project convention).
 
 Symmetric mirror-image hypothesis applies to extreme negative funding (≤ −2.0σ): LONG position; longs collect funding at settlements; same M1 / M2 / M3 form.
 
@@ -222,12 +222,96 @@ The ETH §11.4 non-catastrophic constraint applies (ETH expR > −0.50 AND PF > 
 
 ### 5.5 Why the hypothesis should survive fees, slippage, and funding cost
 
-- **Stop-distance is 1.0 × ATR(20)** (§6.7 below). Per-trade R-multiple potential at +1.0 R take-profit is structurally larger than R2's small-post-pullback R-distance regime.
-- **Round-trip taker fee is 0.0005 + 0.0005 = 0.0010 = 10 bps** of notional per round-trip. On a stop-distance of 1.0 × ATR ≈ ~30 bps for BTC (typical ATR / price ≈ 0.003), 10 bps round-trip fee = ~33% of stop-distance = ~0.33 R per trade. A +1.0 R take-profit yields net +0.67 R after fee.
-- **HIGH slippage at 8 bps per side = 16 bps round-trip** = ~53% of stop-distance = ~0.53 R per trade additional cost. A +1.0 R take-profit yields net +0.14 R after fee+slip at HIGH. This is plausibly positive but tight; M1 mean must be measurably positive AND M2 funding-tailwind must contribute meaningfully for net-of-all-costs to clear §10.4 at HIGH.
-- **Funding accrual is a benefit on the contrarian side.** Average extreme funding ≈ ±0.0005 per 8h (the cap); a 1-cycle hold collects 0.0005 = 5 bps notional; a 2-cycle hold collects 10 bps. On a 1.0 × ATR stop-distance ≈ 30 bps, funding accrual contributes 0.17 R / 0.33 R per trade for 1 / 2 cycle holds — comparable to the round-trip fee/slip cost.
+- **Stop-distance is 1.0 × ATR(20)** (§6.7 below). Per-trade R-multiple potential at the **+2.0 R target** (revised per §5.6 RR/target sanity review) is structurally larger than R2's small-post-pullback R-distance regime.
+- **Round-trip taker fee is 0.0005 + 0.0005 = 0.0010 = 10 bps** of notional per round-trip. On a stop-distance of 1.0 × ATR ≈ ~30 bps for BTC (typical ATR / price ≈ 0.003), 10 bps round-trip fee = ~33% of stop-distance = ~0.33 R per trade. A +2.0 R target yields net +1.67 R after fee.
+- **HIGH slippage at 8 bps per side = 16 bps round-trip** = ~53% of stop-distance = ~0.53 R per trade additional cost. A +2.0 R target yields net +1.14 R after fee+slip at HIGH; +1.47 R at MED; +1.60 R at LOW. This provides meaningful R-multiple room for M1 mean magnitude AND M2 funding-tailwind contribution to clear §10.4 at HIGH.
+- **Funding accrual is a benefit on the contrarian side.** Average extreme funding ≈ ±0.0005 per 8h (the cap); a 1-cycle hold collects 0.0005 = 5 bps notional. On a 1.0 × ATR stop-distance ≈ 30 bps, funding accrual contributes ~0.17 R per trade for a one-cycle hold — comparable to the round-trip fee/slip cost.
 
-The cost arithmetic is plausibly survivable but tight. Phase 3g records this honestly: D1-A may PASS or FAIL §11.6 = 8 bps HIGH at first execution; the outcome is empirical.
+The cost arithmetic is plausibly survivable with meaningful R-multiple cushion at +2.0R target. Phase 3g records this honestly: D1-A may PASS or FAIL §11.6 = 8 bps HIGH at first execution; the outcome is empirical. The §5.6 RR/target sanity review derives the breakeven win-rate burden formally.
+
+---
+
+### 5.6 Risk-reward and target sanity review (post-review amendment)
+
+Operator review of the original Phase 3g spec surfaced a structural concern: a +1.0R target paired with a −1.0R stop creates an excessive required win-rate after costs and uncertain funding accrual. This subsection documents the analysis and decision.
+
+#### 5.6.1 Gross-breakeven analysis at the original +1.0R target
+
+A +1.0R target paired with a −1.0R stop has a 50% gross breakeven win-rate before costs. After round-trip costs the asymmetry tilts unfavorably: the winner is reduced by the cost-stack while the loser is increased by it, but on a smaller R-multiple base.
+
+Round-trip cost stack (BTC, stop-distance ≈ 30 bps notional):
+
+| Component | Round-trip notional | R-multiple equivalent |
+|-----------|---------------------|-----------------------|
+| Taker fee (0.0005/side) | 10 bps | ~0.33 R |
+| LOW slippage (1 bps/side) | 2 bps | ~0.07 R |
+| MED slippage (3 bps/side) | 6 bps | ~0.20 R |
+| HIGH slippage (8 bps/side) | 16 bps | ~0.53 R |
+
+Gross-breakeven win-rate at +1.0R target / −1.0R stop, *no funding accrual*:
+
+| Slippage | Winner net (R) | Loser net (R) | Breakeven WR |
+|----------|---------------:|--------------:|-------------:|
+| LOW | +0.60 | −1.40 | 70.0% |
+| MED | +0.47 | −1.53 | 76.5% |
+| HIGH | +0.14 | −1.86 | 93.0% |
+
+#### 5.6.2 Effect of fees, slippage, and uncertain funding accrual
+
+Adding a conservative ~0.17 R one-cycle funding-accrual benefit per trade (extreme-funding cap × one cycle ÷ stop-distance) moderates the win-rate burden but does not eliminate it:
+
+| Slippage | Winner net (with funding, R) | Loser net (with funding, R) | Breakeven WR |
+|----------|-----------------------------:|----------------------------:|-------------:|
+| LOW | +0.77 | −1.23 | 61.5% |
+| MED | +0.64 | −1.36 | 68.0% |
+| HIGH | +0.31 | −1.69 | 84.5% |
+
+**Funding accrual is uncertain.** The strategy assumes one-cycle holds with the contrarian-receiving direction; in practice some trades will exit before completing a cycle, some funding rates will compress quickly post-extreme, and some will reverse sign during hold. A conservative estimate of ~0.10–0.17 R funding contribution is plausible but not guaranteed.
+
+#### 5.6.3 Required win-rate burden is impractical at +1.0R
+
+A +1.0R target therefore implies the strategy must produce a 76–93% net win rate at MED–HIGH slippage to break even (without funding) or 68–85% with funding. **A 70%+ structural win-rate requirement is impractical for a contrarian-extreme strategy** whose hypothesis is empirically uncertain (Phase 3a §6.2 ranked F6 second, not first; Phase 3g §11 enumerates 11 expected failure modes).
+
+V1 / R3 / F1 historical empirical win rates were 21–42%; even R3's broad-based PROMOTE produced BTC WR=42% / ETH=33%. Demanding 70%+ from D1-A would require an edge magnitude that the project has never observed in any prior candidate.
+
+#### 5.6.4 Structural compatibility with the cost-sensitivity thesis
+
+Phase 3f §3.6 / Phase 3g §3.6 motivated D1-A specifically as a candidate that *should address* R2's §11.6 cost-sensitivity failure. A +1.0R target structurally undermines this motivation: it sits in the same small-R-multiple regime where R2 failed §11.6 (Phase 2w §16.3). A +1.0R target makes the cost-sensitivity gate harder to clear, not easier.
+
+**The original Phase 3g spec's +1.0R target is structurally inconsistent with the Phase 3f / Phase 3g thesis that D1-A should address cost sensitivity.** A reasonable specification must use a target that gives the strategy meaningful R-multiple room to absorb the cost stack and uncertain funding accrual.
+
+#### 5.6.5 Decision: Option A — revise D1-A target to +2.0R
+
+**Decision: Option A.** The Phase 3g spec is amended to use **+2.0R target** in place of the original +1.0R.
+
+**Non-fitting rationale:**
+
+- **+2.0R is an established R3 non-fitting project convention.** R3 (Phase 2j §D, Phase 2p §C.1 baseline-of-record) uses `exit_r_target=2.0`. R3's +2.0R was committed singularly per Phase 2j §C.6 / §11.3.5 single-spec discipline as part of R3's structural exit redesign and was not selected based on F1 / D1 / R1a / R1b-narrow / R2 outcomes. Reusing +2.0R for D1-A inherits the project precedent without introducing a new fitted parameter.
+- **+2.0R provides meaningful R-multiple room for cost absorption.** At MED slippage, +2.0R yields net winner ~+1.47 R (vs +0.47 at +1.0R); at HIGH slippage, ~+1.14 R (vs +0.14). The breakeven win-rate without funding becomes 51% (MED) / 62% (HIGH) — within the band of empirical V1 / R3 / F1 win rates (21–42% has been observed; 51–62% is challenging but not impractical). With one-cycle funding accrual (~0.17 R per trade), the breakeven moderates to 45% (MED) / 56% (HIGH).
+- **+2.0R does not fit any prior candidate's outcome.** The +2.0R value predates D1-A by phase history; no D1-A backtest has been run; the +2.0R is selected on existing project convention, not on empirical fit.
+
+**Tradeoff acknowledged:**
+
+- **+2.0R may be harder to reach within the 32-bar / one-funding-cycle hold.** A 2.0 × ATR(20) move within 32 × 15m bars (8 hours) is roughly equivalent to a typical 1-day BTC range compressed into one third of a day — empirically not trivial. Most D1-A trades that capture mean-reversion direction will likely hit TIME_STOP at intermediate R-multiples (~+0.3 to +0.8 R) before reaching +2.0R.
+- **TARGET-exit fraction will be lower than F1's ~33%.** D1-A's TARGET-exit fraction will likely be in the 5–20% range (rough estimate, not a parameter; descriptive only). The bulk of D1-A trades will exit at TIME_STOP; the TIME_STOP-exit subset's mean R will be a primary determinant of the framework outcome.
+- **TIME_STOP outcomes are NOT symmetric to STOP outcomes.** Unlike R-multiple stop-out at −1.0R, a TIME_STOP exit reflects whatever price the strategy has at bar `B+1+33` open — could be near-flat, partially reverted, or near-target. The TIME_STOP-subset mean drives the framework verdict; the +2.0R target only matters as the upper-bound exit for the small TARGET subset.
+
+**Why Option B (keep +1.0R) is rejected:**
+
+- The required-win-rate burden (76–93% at MED–HIGH without funding; 68–85% with funding) is impractical given empirical V1 / R3 / F1 win rates (21–42%).
+- +1.0R sits in the small-R-multiple regime where R2 failed §11.6.
+- +1.0R is structurally inconsistent with Phase 3f / Phase 3g's stated motivation that D1-A should *address* cost-sensitivity, not inherit it.
+- Justifying +1.0R conceptually under unchanged §11.6 = 8 bps HIGH would require a non-fitting argument that the funding accrual mechanically dominates the cost stack — but funding accrual is uncertain and partial-cycle holds may reduce it. No conceptual non-fitting argument is available.
+
+**Why Option C (NO-GO) is rejected:**
+
+- +2.0R provides a clean non-fitting target choice that preserves the strategy's intent while addressing the RR concern.
+- The 32-bar / one-funding-cycle thesis remains compatible with +2.0R via TIME_STOP exits at intermediate R-multiples (the time-stop's purpose is precisely to exit when the target is not reached within the cycle).
+- D1-A's M1 / M2 / M3 mechanism predictions remain falsifiable.
+- No threshold sweep, no parameter range, no fitted decision is required.
+- A NO-GO at this point would prematurely close D1-A on a target-magnitude objection that R3's existing convention already resolves.
+
+**Phase 3g decision: GO (provisional) with target revised from +1.0R to +2.0R per Option A.** All other axes preserved verbatim (signal threshold |Z_F| ≥ 2.0; 90-day lookback; 1.0 × ATR(20) stop never moved; 32-bar time-stop; per-funding-event cooldown; symmetric direction; no regime filter; recorded exit reason TARGET; same-bar priority STOP > TARGET > TIME_STOP).
 
 ---
 
@@ -286,9 +370,9 @@ The signal is computed at each 15m bar close as follows:
 
 ### 6.8 Target / exit definition
 
-- **Conceptual exit: +1.0 R target** (i.e., 1.0 × stop_distance from fill in the favorable direction).
-- LONG target price: `target_price = fill_price + stop_distance`.
-- SHORT target price: `target_price = fill_price − stop_distance`.
+- **Conceptual exit: +2.0 R target** (i.e., 2.0 × stop_distance from fill in the favorable direction). The +2.0R value reuses R3's established non-fitting project convention (Phase 2j §D R3 baseline-of-record `exit_r_target=2.0`); the §5.6 RR/target sanity review derives this from Option A.
+- LONG target price: `target_price = fill_price + 2.0 × stop_distance`.
+- SHORT target price: `target_price = fill_price − 2.0 × stop_distance`.
 - **Recorded exit reason: TARGET** (not TAKE_PROFIT — the V1-family TAKE_PROFIT exit reason must not be emitted by D1-A; cf. F1 precedent in Phase 3b §6 / Phase 3d-A which uses TARGET as the recorded exit reason for SMA(8)-target hits).
 - **Same-bar priority: STOP > TARGET > TIME_STOP** (analogous structure to F1 §6.6 / R3 §D.6 same-bar precedence; D1-A substitutes TARGET for TAKE_PROFIT).
 - D1-A emits only STOP / TARGET / TIME_STOP / END_OF_DATA exit reasons. D1-A must not emit TRAILING_BREACH, STAGNATION, or TAKE_PROFIT (those are V1-family multi-stage exit reasons; structurally inapplicable to D1-A).
@@ -340,7 +424,7 @@ Each axis above is justified by mechanism, project conventions, or data availabi
 | Allowed directionality | Symmetric long and short | The funding-extreme hypothesis is symmetric; no directional asymmetry mechanism is being claimed. |
 | Timeframe basis | 15m completed bars for entry / stop / target / time-stop / horizons | V1 / F1 / project convention. 15m is the V1 / F1 signal timeframe per Phase 2i §1.7.3. No alternative timeframe being tested. |
 | Stop | 1.0 × ATR(20) at fill, never moved | 1.0 × ATR(20) is the median of the V1 / F1 admissibility band [0.60, 1.80] × ATR (Phase 3b F1 §4.9). It is not fitted to any prior candidate's outcome. "Never moved" is the R3 / F1 invariant per Phase 2j §D / Phase 3b §6. |
-| Target (+1.0 R; recorded as TARGET) | +1.0 R fixed; same-bar priority STOP > TARGET > TIME_STOP | The smallest natural R-target consistent with V1 framework convention (R3 used +2.0 R; F1 used SMA(8) which produced effective ~0.3–1.0 R targets). +1.0 R is the natural unit-multiplier of stop-distance and the most conservative committed target. Recorded exit reason is TARGET (matching F1 precedent), not TAKE_PROFIT (which is a V1-family multi-stage exit reason structurally inapplicable to D1-A). Not fitted to outcomes. |
+| Target (+2.0 R; recorded as TARGET) | +2.0 R fixed; same-bar priority STOP > TARGET > TIME_STOP | **+2.0 R reuses R3's established non-fitting project convention** (Phase 2j §D `exit_r_target=2.0`; Phase 2p §C.1 baseline-of-record). R3's +2.0R was committed singularly per Phase 2j §C.6 / §11.3.5 single-spec discipline as part of R3's structural exit redesign — predates D1-A by phase history; not selected based on F1 / D1 / R1a / R1b-narrow / R2 outcomes. Per §5.6 RR/target sanity review: +2.0R provides meaningful R-multiple room (+1.47R MED / +1.14R HIGH net of fee+slippage) to absorb the cost stack and uncertain funding accrual; +1.0R was rejected because its 76–93% required win-rate burden is impractical given empirical V1 / R3 / F1 win rates (21–42%). Recorded exit reason is TARGET (matching F1 precedent), not TAKE_PROFIT (which is a V1-family multi-stage exit reason structurally inapplicable to D1-A). Not fitted to outcomes. |
 | Time stop | 32 × 15m bars (= 8h = one funding cycle) | Funding cycles are 8 hours by Binance protocol fact. One full funding cycle is the natural maximum-hold horizon for a hypothesis whose carry-tailwind accrues per cycle. 32 bars = 8h × 60min / 15min = 32 (protocol-anchored, not fitted). |
 | Cooldown | Per-funding-event consumption; same-direction requires fresh event after close | Prevents same-event stacking (a methodology guard, not a parameter). Opposite-direction allowed at any subsequent event because the hypothesis is symmetric and a sign flip in funding represents a new informational state. |
 | Stop-distance admissibility | [0.60, 1.80] × ATR(20) | Same band as F1 §4.9 / V1 framework convention (Phase 3b §4.9). Preserved as a future-drift guard; D1-A's 1.0 × ATR is inside the band by construction. |
@@ -438,13 +522,15 @@ The new `FundingAwareConfig` would lock the following defaults (read-only at ins
 funding_z_score_threshold = 2.0
 funding_z_score_lookback_days = 90
 stop_distance_atr_multiplier = 1.0
-take_profit_r_multiple = 1.0
+target_r_multiple = 2.0      # revised from 1.0 per §5.6 RR/target sanity review (Option A; reuses R3 non-fitting convention)
 time_stop_bars = 32
 cooldown_rule = "per_funding_event"
 stop_distance_admissibility_band = [0.60, 1.80]
 direction_logic = "contrarian"
 regime_filter = None
 ```
+
+The field name is `target_r_multiple` (matching the TARGET exit-reason naming convention) rather than `take_profit_r_multiple` (which would suggest the V1-family TAKE_PROFIT exit reason inapplicable to D1-A).
 
 No alternate values would be configurable; the spec is binding.
 
@@ -536,7 +622,7 @@ Horizons: `h ∈ {8, 16, 32}` completed 15m bars (= 2h, 4h, 8h = 1/4, 1/2, full 
 
 ### 10.3 M3 — TARGET-exit subset positive contribution
 
-**Hypothesis:** D1-A's TARGET-exit subset (trades that reach +1.0 R take-profit before any STOP / TIME_STOP) should produce mean ≥ +0.30 R AND aggregate > 0 per symbol.
+**Hypothesis:** D1-A's TARGET-exit subset (trades that reach the +2.0 R target before any STOP / TIME_STOP) should produce mean ≥ +0.30 R AND aggregate > 0 per symbol.
 
 **Definition:** Filter D1-A trades to TARGET-exit subset only. Compute `mean(net_R)` and `aggregate(net_R)` per symbol.
 
@@ -545,6 +631,8 @@ Horizons: `h ∈ {8, 16, 32}` completed 15m bars (= 2h, 4h, 8h = 1/4, 1/2, full 
 **FAIL:** mean < +0.30 R OR aggregate ≤ 0.
 
 **PARTIAL:** PASS on one symbol, FAIL on the other.
+
+**Note on TARGET-exit fraction at +2.0R:** Per §5.6 tradeoff analysis, the TARGET-exit fraction at +2.0R is expected to be lower than F1's ~33% (rough estimate 5–20%; descriptive only, not a parameter). The bulk of D1-A trades are expected to exit at TIME_STOP at intermediate R-multiples; M3's PASS threshold is preserved verbatim from Phase 3c F1 precedent and is not loosened. M3 PASS-isolated on a smaller subset is informative descriptive evidence; the framework verdict (§13) is determined by §10.4 absolute floors and §11.6 cost-resilience on the full trade population, not by M3 PASS alone.
 
 ### 10.4 Combined interpretation
 
@@ -571,6 +659,8 @@ Phase 3g records the hypothesis honestly: D1-A may fail at first execution. Anti
 9. **Z-score window edge effects.** The trailing 90-day Z-score normalization assumes a roughly stationary funding-rate distribution over 90 days. During regime shifts (e.g., post-halving, post-major-policy events), the Z-score may produce artifactual extreme readings as the window catches up to the new distribution. This could cause clustered false-positive signals.
 10. **Liquidity at funding-event-adjacent 15m bars.** Execution slippage at the 15m bar immediately following an extreme funding event may exceed the §11.6 HIGH = 8 bps assumption. The §11.6 gate is calibrated for general 15m execution; funding-event-adjacent execution may be empirically worse.
 11. **R-window vs V-window stationarity.** The Phase 2e R-window (2022-01-01 → 2025-01-01) and V-window (2025-01-01 → 2026-04-01) may differ in funding-rate distribution characteristics. A R-window PASS could fail to replicate in V-window if the funding-rate regime has shifted.
+12. **+2.0R target may rarely be reached within the 32-bar / one-funding-cycle hold.** Per §5.6 tradeoff analysis, a 2.0 × ATR(20) move within 32 × 15m bars is empirically not trivial. If TARGET-exit fraction is too low (e.g., < 5%), the strategy's outcome distribution becomes dominated by TIME_STOP exits at intermediate R-multiples, and the M3 TARGET-subset evidence becomes statistically thin. M3 PASS-isolated on a very small subset would be less informative than F1's ~33% TARGET fraction was.
+13. **TIME_STOP-subset mean R may dominate the framework verdict at +2.0R.** With TARGET fraction expected to be 5–20% and STOP fraction roughly comparable to F1's 53–54%, TIME_STOP exits could be 25–45% of trades. If the typical TIME_STOP exit is near-flat or slightly negative (e.g., reversion got partway but reverted before bar `B+1+33` open), the per-trade expR could remain negative even with a clean +2.0R TARGET subset. The framework verdict at +2.0R depends materially on the TIME_STOP-subset mean, not just the TARGET-subset mean.
 
 The expected-failure-mode list is **not exhaustive**; first-execution diagnostics may reveal others.
 
@@ -602,7 +692,7 @@ If a future Phase 3h-equivalent execution-planning phase + Phase 3j-equivalent f
 P.14-style hard-block invariants (analogous to Phase 3c §8.15 / Phase 3d-B2 §13):
 
 - D1-A emits only STOP / TARGET / TIME_STOP / END_OF_DATA exit reasons.
-- Zero TRAILING_BREACH / STAGNATION / **TAKE_PROFIT** (the V1 multi-stage exit reasons; D1-A's recorded exit reason for the +1.0 R target hit is **TARGET**, never TAKE_PROFIT).
+- Zero TRAILING_BREACH / STAGNATION / **TAKE_PROFIT** (the V1 multi-stage exit reasons; D1-A's recorded exit reason for the +2.0 R target hit is **TARGET**, never TAKE_PROFIT).
 - Exit-reason accounting identity: `STOP + TARGET + TIME_STOP + END_OF_DATA = n`.
 - Same-bar precedence: `STOP > TARGET > TIME_STOP` evaluated per Phase 3b §6 / Phase 3d-A precedent.
 - TIME_STOP completed-bar discipline: TIME_STOP triggers at the close of bar `B+1+32`; TIME_STOP **fills at the open of bar `B+1+33`** (next-bar-open fill); no same-close TIME_STOP fill.
@@ -698,6 +788,7 @@ Three vulnerability classes:
 1. **Z-score threshold |Z_F| ≥ 2.0** is a single tunable knob that, at any future execution, would produce a different trade count and different per-trade expR. Phase 3a §4.6(i) flagged "moderate overfitting risk" for the funding-aware family at the menu level. A future researcher with access to the empirical results could find a |Z_F| threshold that improves the §13.2 outcome — that is exactly the post-hoc loosening Phase 2f §11.3.5 forbids.
 2. **Lookback window N=90 days** is similarly tunable. A different lookback window changes the Z-score distribution; the empirical fit could be improved by tuning. The single committed value 90 days must not be revised after seeing the first-execution data.
 3. **Time-stop bars=32** is anchored to one funding cycle (8h × 60min / 15min). A future researcher could try alternative time-stops (e.g., 16 / 64 / 96 bars) and find one that improves the §13.2 outcome — also forbidden post-hoc.
+4. **Target r-multiple=2.0** reuses R3's non-fitting project convention per §5.6. A future researcher could try alternative targets (e.g., +1.0 R, +1.5 R, +3.0 R) and find one that improves the §13.2 outcome — forbidden post-hoc. The +2.0R value is locked. The §5.6 RR/target sanity review's Option A decision was made on conceptual grounds (R3 convention + cost-stack analysis), not on empirical fit to D1-A backtest results (no D1-A backtest has been run).
 
 ### 14.2 How the single-spec rule prevents this
 
@@ -714,6 +805,7 @@ If a Phase 3h-equivalent execution-planning phase + Phase 3j-equivalent first-ex
 - **No threshold sweep** on |Z_F| ≥ 2.0; the value is locked. A sweep would be exactly the Phase 2f §11.3.5 forbidden post-hoc loosening.
 - **No lookback sweep** on N=90 days; locked.
 - **No time-stop sweep** on 32 bars; locked.
+- **No target sweep** on +2.0R; locked. The +2.0R value reuses R3's existing convention per §5.6 RR/target sanity review (Option A); revisiting the target post-execution is forbidden post-hoc loosening regardless of outcome.
 - **No regime-conditional D1-A-prime spec** without a separately-authorized phase with an independently-developed regime-conditional hypothesis.
 - **No directional-asymmetric D1-A-prime spec** (e.g., "only short on positive funding extremes, not long on negative"); the symmetric direction is locked.
 - **No retrospective TARGET-subset selection** to rescue D1-A if M3 PASS but framework FAIL (same Phase 3e §5.4 / §8.6 / Phase 3f §5.7 prohibition).
@@ -742,8 +834,9 @@ A Phase 3h execution-planning memo (Phase-3c-style) is **GO (provisional)** if a
 3. **v002 funding data is sufficient** — confirmed by §8.
 4. **The hypothesis is not too sample-starved at the framework level** — provisionally OK; expected R-window n=60–180 per symbol is comparable to V1/R3's 33 but smaller than F1's 4700; per-fold n=10–30 per symbol is sample-fragile but inside the band V1/R3/R1b-narrow operated in.
 5. **D1-A does not degenerate into V1 breakout, F1-prime, or target-subset rescue** — confirmed by §3.3, §3.4, §4.
-6. **Cost sensitivity does not appear structurally fatal** — provisional plausibility per §3.6 / §5.5; final §11.6 outcome is empirical at any future execution.
-7. **The operator independently authorizes Phase 3h.** Phase 3g does not authorize Phase 3h.
+6. **Cost sensitivity does not appear structurally fatal** — provisional plausibility per §3.6 / §5.5; final §11.6 outcome is empirical at any future execution. **The §5.6 RR/target sanity review revised the target from +1.0R to +2.0R precisely to address this concern;** breakeven win-rate burden moderated from 76–93% (impractical) to 51–62% (challenging but plausible) at MED–HIGH slippage without funding.
+7. **Risk-reward and target sanity holds** — confirmed by §5.6 RR/target sanity review (Option A; +2.0R target reuses R3's non-fitting project convention).
+8. **The operator independently authorizes Phase 3h.** Phase 3g does not authorize Phase 3h.
 
 ### 15.2 NO-GO conditions
 
@@ -757,7 +850,7 @@ Phase 3h is **NO-GO** if:
 
 ### 15.3 Phase 3g recommendation
 
-**Phase 3g recommends GO (provisional) for a future Phase 3h execution-planning memo for D1-A**, contingent on operator authorization. The spec is single-spec-compliant; the data is v002-sufficient; the hypothesis is falsifiable; the strategy does not degenerate into prior-failed candidates; the cost arithmetic is plausibly survivable.
+**Phase 3g recommends GO (provisional) for a future Phase 3h execution-planning memo for D1-A** with target revised to **+2.0R per §5.6 RR/target sanity review (Option A)**, contingent on operator authorization. The spec is single-spec-compliant; the data is v002-sufficient; the hypothesis is falsifiable; the strategy does not degenerate into prior-failed candidates; the cost arithmetic is plausibly survivable at the +2.0R target (winner net +1.14 R at HIGH after fee+slip; breakeven WR 56% with one-cycle funding accrual).
 
 **Phase 3g does NOT authorize Phase 3h.** Phase 3h requires a separately-authorized operator decision. Phase 3g terminates at the spec memo.
 
@@ -801,4 +894,4 @@ Phase 3g is docs-only and explicitly preserves all of the following verbatim:
 
 ---
 
-**End of Phase 3g D1 funding-aware spec memo.** Phase 3g specifies D1-A (funding-rate extreme contrarian directional signal at the most recent completed 8h funding event, |Z_F| ≥ 2.0 over trailing 90 days; 1.0 × ATR(20) stop never moved; +1.0 R target recorded as TARGET; STOP > TARGET > TIME_STOP same-bar priority; 32-bar time-stop = one funding cycle with completed-bar fill discipline at next bar open; per-funding-event funnel counters; symmetric direction; no regime filter) as the binding D1 family spec. D1-B not specified (structural problems on every base-thesis). v002 datasets sufficient; one new derived feature dataset (`funding_aware_features__v001`) required at any future implementation. M1 / M2 / M3 falsifiable mechanism predictions defined. First-execution gate proposed (analogous to Phase 3c §7.2 F1 gate; §10.4 floors and §11.6 = 8 bps HIGH preserved verbatim; operator-mandated BTC HIGH > 0 strengthening preserved). GO (provisional) recommended for any future Phase 3h execution-planning memo, contingent on operator authorization. R3 baseline-of-record / H0 framework anchor / R1a-R1b-narrow-R2-F1 retained-research-evidence preserved verbatim. F1 HARD REJECT preserved; Phase 3d-B2 terminal for F1 preserved. §1.7.3 locks preserved verbatim. No paper/shadow, no Phase 4, no live-readiness, no deployment, no implementation, no execution, no backtest, no parameter tuning, no threshold change, no project-lock change, no MCP / Graphify / `.mcp.json`, no credentials, no `data/` commits, no code change. No next phase started. Awaiting operator review.
+**End of Phase 3g D1 funding-aware spec memo.** Phase 3g specifies D1-A (funding-rate extreme contrarian directional signal at the most recent completed 8h funding event, |Z_F| ≥ 2.0 over trailing 90 days; 1.0 × ATR(20) stop never moved; **+2.0 R target** recorded as TARGET — revised from +1.0R per §5.6 RR/target sanity review Option A using R3's non-fitting project convention; STOP > TARGET > TIME_STOP same-bar priority; 32-bar time-stop = one funding cycle with completed-bar fill discipline at next bar open; per-funding-event funnel counters; symmetric direction; no regime filter) as the binding D1 family spec. D1-B not specified (structural problems on every base-thesis). v002 datasets sufficient; one new derived feature dataset (`funding_aware_features__v001`) required at any future implementation. M1 / M2 / M3 falsifiable mechanism predictions defined. First-execution gate proposed (analogous to Phase 3c §7.2 F1 gate; §10.4 floors and §11.6 = 8 bps HIGH preserved verbatim; operator-mandated BTC HIGH > 0 strengthening preserved). GO (provisional) recommended for any future Phase 3h execution-planning memo, contingent on operator authorization. R3 baseline-of-record / H0 framework anchor / R1a-R1b-narrow-R2-F1 retained-research-evidence preserved verbatim. F1 HARD REJECT preserved; Phase 3d-B2 terminal for F1 preserved. §1.7.3 locks preserved verbatim. No paper/shadow, no Phase 4, no live-readiness, no deployment, no implementation, no execution, no backtest, no parameter tuning, no threshold change, no project-lock change, no MCP / Graphify / `.mcp.json`, no credentials, no `data/` commits, no code change. No next phase started. Awaiting operator review.

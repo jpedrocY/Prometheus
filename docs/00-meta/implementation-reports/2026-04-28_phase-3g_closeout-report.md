@@ -8,9 +8,11 @@
 
 ---
 
-## 0. Post-review docs-only amendment
+## 0. Post-review docs-only amendments
 
-After the initial Phase 3g commit, operator review surfaced five small spec-consistency issues. A subsequent docs-only amendment to the Phase 3g spec memo (and this closeout) addressed them, all without changing D1-A signal threshold, lookback, stop, target, time-stop length, cooldown concept, or first-execution thresholds (other than making the already-implicit BTC HIGH PF floor explicit at the gate level):
+After the initial Phase 3g commit, two rounds of operator review surfaced spec-consistency and risk-reward concerns. Two subsequent docs-only amendments addressed them.
+
+### 0.1 First amendment — five spec-consistency corrections
 
 1. **Exit-reason consistency.** §6.8 / §7 / §12 standardized on D1-A recorded exit reason **TARGET** (matching F1 precedent), not TAKE_PROFIT (which is a V1-family multi-stage exit reason). Same-bar priority `STOP > TARGET > TIME_STOP`. D1-A emits only `STOP / TARGET / TIME_STOP / END_OF_DATA`.
 2. **Time-stop fill timing.** §6.9 clarified the completed-bar discipline: TIME_STOP triggers at the close of the 32nd completed 15m bar from entry fill (bar `B+1+32`); the position fills at the **next bar open** (`B+1+33`); no same-close TIME_STOP fill.
@@ -18,7 +20,27 @@ After the initial Phase 3g commit, operator review surfaced five small spec-cons
 4. **BTC HIGH PF floor explicitness.** §13.2 / §13.3 / §13.4 made the §10.4-style PF floor explicit at BTC R HIGH MARK: `PF > 0.30`. The HIGH-slip gate is now stated as four explicit conditions (BTC HIGH expR > 0; BTC HIGH PF > 0.30; ETH HIGH expR > −0.50; ETH HIGH PF > 0.30). **No threshold loosened**; the PF floor was already implicit via the §7.3 catastrophic-floor predicate, now explicit at the gate level.
 5. **Funnel counting level.** §9.4 / §12 renamed the lifecycle / funnel counters to **funding-event-level** (`funding_extreme_events_detected`, `funding_extreme_events_filled`, `funding_extreme_events_rejected_stop_distance`, `funding_extreme_events_blocked_cooldown`) with the identity preserved. Repeated 15m bars referencing the same `funding_event_id` must not inflate the event-level detected count.
 
-The amendment is **docs-only** and does not change source code, tests, scripts, configuration, data, thresholds, strategy parameters, or project locks.
+This first amendment is docs-only and does not change source code, tests, scripts, configuration, data, thresholds, strategy parameters, or project locks (the BTC HIGH PF floor was already implicit; making it explicit does not loosen any threshold).
+
+### 0.2 Second amendment — RR / target sanity review (Option A: target revised to +2.0R)
+
+A second round of operator review raised a structural concern that the original +1.0R target produced an excessive required win-rate after fees, slippage, and uncertain funding accrual. Specifically, at MED–HIGH slippage the +1.0R target implied a 76–93% breakeven win-rate without funding (68–85% with one-cycle funding accrual), which is impractical given empirical V1 / R3 / F1 win rates of 21–42%, and is structurally inconsistent with the Phase 3f / Phase 3g thesis that D1-A should *address* cost-sensitivity (not inherit R2's small-R-multiple slippage-fragility regime).
+
+A new dedicated section **§5.6 — Risk-reward and target sanity review** was added containing:
+
+- **§5.6.1** — Gross-breakeven analysis at the original +1.0R target (winner net +0.60 / +0.47 / +0.14 R at LOW / MED / HIGH; breakeven WR 70 / 76.5 / 93%).
+- **§5.6.2** — Effect of fees, slippage, and uncertain funding accrual.
+- **§5.6.3** — Required win-rate burden is impractical at +1.0R (70%+ structural requirement vs 21–42% empirical V1 / R3 / F1 win rates).
+- **§5.6.4** — Structural compatibility with the cost-sensitivity thesis (+1.0R sits in R2's failed-§11.6 small-R-multiple regime).
+- **§5.6.5** — Decision: **Option A** — revise D1-A target to **+2.0R**, reusing R3's established non-fitting project convention (Phase 2j §D `exit_r_target=2.0`; Phase 2p §C.1 baseline-of-record). Option B (keep +1.0R) and Option C (NO-GO) explicitly rejected.
+
+The +2.0R target moderates breakeven WR to 51% (MED) / 62% (HIGH) without funding, or 45% / 56% with one-cycle funding accrual — within the band of empirical observed V1 / R3 / F1 win rates (challenging but plausible). Tradeoff acknowledged: TARGET-exit fraction will be lower than F1's ~33% (estimated 5–20% range; descriptive only), with the bulk of trades exiting at TIME_STOP at intermediate R-multiples; the 32-bar / one-funding-cycle hold remains compatible because TIME_STOP catches partial-reversion outcomes.
+
+Updated sections (in addition to new §5.6): §5.1 hypothesis statement; §5.5 cost arithmetic; §6.8 target / exit definition (LONG/SHORT target_price formulas; conceptual exit "+2.0 R target"); §7 non-fitting rationale Target row; §9.3 config model (`target_r_multiple = 2.0`; renamed from `take_profit_r_multiple`); §10.3 M3 description; §11 expected failure modes (added items 12–13 on +2.0R reachability and TIME_STOP-subset dominance); §12 P.14 invariants ("+1.0 R target hit" → "+2.0 R target hit"); §14 overfitting risk (added target-sweep prohibition); §15.1 / §15.3 GO/NO-GO conditions; end-of-memo summary.
+
+**No changes to:** funding Z-score threshold |Z_F| ≥ 2.0; 90-day lookback; entry timing (next-bar open); allowed directionality (symmetric long/short); cooldown concept (per-funding-event consumption); §11.6 = 8 bps HIGH per side; §10.4 absolute floors; §1.7.3 project locks; recorded exit reason TARGET; same-bar priority STOP > TARGET > TIME_STOP; 32-bar time-stop length; 1.0 × ATR(20) stop. The target rule is the only locked axis revised (per the brief's explicit allowance for revising the D1-A target rule under Option A).
+
+The second amendment is **docs-only** and does not change source code, tests, scripts, configuration, data, project locks, or any threshold (other than revising the D1-A target rule per Option A; no Phase 2f §10.3 / §10.4 / §11.3 / §11.4 / §11.6 threshold changed).
 
 ---
 
