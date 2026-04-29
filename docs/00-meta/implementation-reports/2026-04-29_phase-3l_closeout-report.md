@@ -27,22 +27,31 @@ nothing to commit, working tree clean
 
 ## 3. Files changed
 
-Phase 3l branch contains exactly **2 files** changed (both new) — zero `data/` artifacts; zero source code; zero tests; zero scripts; zero modifications to `current-project-state.md` or any other existing doc:
+Phase 3l branch contains exactly **3 files** changed (1 modified + 2 new) — zero `data/` artifacts; zero source code; zero tests; zero scripts:
 
 ```text
+M  docs/00-meta/current-project-state.md
 A  docs/00-meta/implementation-reports/2026-04-29_phase-3l_external-cost-evidence-review.md
 A  docs/00-meta/implementation-reports/2026-04-29_phase-3l_closeout-report.md
 ```
 
-The Phase 3l consolidation memo + this closeout report are the only artifacts produced. No canonical-state document was updated (Phase 3l does not change any project-state fact: no verdicts revised; no thresholds changed; no spec axes touched). The diff is intentionally narrow.
+The Phase 3l consolidation memo + this closeout report are the primary artifacts produced. The `current-project-state.md` modification is a narrow Phase 3l record (per the operator-mandated cleanup): it adds a Phase 3l completion line, the primary assessment, the §11.6 policy recommendation (unchanged pending stronger evidence), and an explicit "no prior verdict revised / no next phase started" affirmation. **No verdicts revised; no thresholds changed; no spec axes touched.** The diff is intentionally narrow.
 
 ## 4. Commit hash(es)
 
 ```text
-<recorded after the Phase 3l commit is created — see git log on the branch>
+Phase 3l cost-evidence review commit (2 files together):
+    f342dfbc70513b7dc18931355dbd6fa630317c44
+    Subject: phase-3l: docs-only external execution-cost evidence review
+
+Phase 3l closeout commit-hash cleanup + minimal current-project-state update:
+    <recorded after this cleanup commit is created — see git log on the branch>
+
+Branch HEAD after cleanup commit:
+    <recorded after this cleanup commit is created — see git rev-parse HEAD on the branch>
 ```
 
-The Phase 3l branch contains a single commit recording the 2 file additions together. The commit message references the cost-evidence review memo and the closeout report.
+The Phase 3l branch initially contained a single commit (`f342dfb`) recording the cost-evidence review memo + closeout together. A small follow-up commit was added to (a) fill in this section with the actual Phase 3l commit hash, replacing the original `<recorded ...>` placeholder, and (b) record a narrow Phase 3l update in `docs/00-meta/current-project-state.md`.
 
 ## 5. Confirmation that Phase 3l was docs-only
 
