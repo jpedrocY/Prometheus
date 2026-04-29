@@ -26,6 +26,31 @@ from prometheus.core.exchange_info import SymbolInfo
 from prometheus.core.klines import NormalizedKline
 from prometheus.core.mark_price_klines import MarkPriceKline
 from prometheus.core.symbols import Symbol
+from prometheus.strategy.funding_aware_directional import (
+    FundingAwareStrategy,
+    FundingEvent,
+)
+from prometheus.strategy.funding_aware_directional import (
+    can_re_enter as can_re_enter_d1a,
+)
+from prometheus.strategy.funding_aware_directional import (
+    compute_funding_z_score as compute_d1a_z_score,
+)
+from prometheus.strategy.funding_aware_directional import (
+    compute_stop as compute_d1a_stop,
+)
+from prometheus.strategy.funding_aware_directional import (
+    compute_target as compute_d1a_target,
+)
+from prometheus.strategy.funding_aware_directional import (
+    funding_extreme_event as is_funding_extreme,
+)
+from prometheus.strategy.funding_aware_directional import (
+    passes_stop_distance_filter as passes_d1a_stop_distance_filter,
+)
+from prometheus.strategy.funding_aware_directional import (
+    signal_direction as d1a_signal_direction,
+)
 from prometheus.strategy.indicators import wilder_atr
 from prometheus.strategy.mean_reversion_overextension import (
     MeanReversionStrategy,
@@ -107,6 +132,33 @@ class _F1TradeMetadata:
 
 
 @dataclass
+class _D1ATradeMetadata:
+    """D1-A funding-aware directional / carry-aware provenance for a filled trade.
+
+    Set on ``_OpenTrade`` only when the engine routes through the
+    Phase 3i-B1 D1-A dispatch (``strategy_family ==
+    FUNDING_AWARE_DIRECTIONAL``). For V1 / F1 paths this is None and
+    the corresponding ``TradeRecord`` D1-A fields default to None /
+    NaN per ``trade_log.TradeRecord``.
+
+    All values are frozen at signal-time bar B's close per Phase 3g §6
+    (with §5.6.5 Option A target +2.0R) and Phase 3h §3 + §6.
+    """
+
+    signal_bar_index: int  # B
+    fill_bar_index: int  # B+1
+    target_price: float  # +2.0R fixed target
+    atr_at_signal: float  # ATR(20)(B)
+    stop_distance_at_signal: float  # |raw_open(B+1) - initial_stop|
+    raw_entry_reference: float  # raw (de-slipped) open(B+1)
+    funding_event_id: str  # consumed funding event id (for cooldown)
+    funding_time: int  # UTC ms of consumed funding event
+    funding_rate: float  # signed funding rate at signal
+    funding_z_score: float  # trailing-90-day Z-score at signal
+    bars_since_funding_event: int  # bars elapsed at signal-time bar B
+
+
+@dataclass
 class _OpenTrade:
     """Engine-side bookkeeping for a currently open position."""
 
@@ -125,6 +177,7 @@ class _OpenTrade:
     stop_was_gap_through: bool = False
     r2_metadata: _R2TradeMetadata | None = None
     f1_metadata: _F1TradeMetadata | None = None
+    d1a_metadata: _D1ATradeMetadata | None = None
 
 
 @dataclass
@@ -196,6 +249,43 @@ class F1LifecycleCounters:
 
 
 @dataclass
+class FundingAwareLifecycleCounters:
+    """Per-symbol D1-A funding-extreme-event funnel counts.
+
+    Populated only under ``strategy_family ==
+    FUNDING_AWARE_DIRECTIONAL``. Under V1 default or F1 dispatch all
+    counters remain 0 and the accounting identity holds trivially.
+    Per Phase 3g §9.4 (first amendment) / Phase 3h §5.8 the identity
+    is event-level, not bar-level:
+
+        funding_extreme_events_detected
+        = funding_extreme_events_filled
+        + funding_extreme_events_rejected_stop_distance
+        + funding_extreme_events_blocked_cooldown
+
+    Each detected funding extreme event (|Z_F| >= 2.0) is attributed
+    to exactly one bucket. Repeated 15m bars referencing the same
+    ``funding_event_id`` must NOT inflate ``funding_extreme_events_detected``.
+    The engine enforces this by tracking the last-processed event id
+    per symbol and only invoking funnel bookkeeping on first-encounter
+    of each fresh event id.
+    """
+
+    funding_extreme_events_detected: int = 0
+    funding_extreme_events_filled: int = 0
+    funding_extreme_events_rejected_stop_distance: int = 0
+    funding_extreme_events_blocked_cooldown: int = 0
+
+    @property
+    def accounting_identity_holds(self) -> bool:
+        return self.funding_extreme_events_detected == (
+            self.funding_extreme_events_filled
+            + self.funding_extreme_events_rejected_stop_distance
+            + self.funding_extreme_events_blocked_cooldown
+        )
+
+
+@dataclass
 class _SymbolRun:
     symbol: Symbol
     session: StrategySession
@@ -224,6 +314,23 @@ class _SymbolRun:
     f1_counters: F1LifecycleCounters = field(default_factory=F1LifecycleCounters)
     f1_last_exit_direction: Direction | None = None
     f1_last_exit_idx: int | None = None
+    # D1-A funding-aware directional per-symbol state (Phase 3i-B1).
+    # All zero / None for V1 / F1 paths.
+    d1a_counters: FundingAwareLifecycleCounters = field(
+        default_factory=FundingAwareLifecycleCounters
+    )
+    # Track the last funding event id we've evaluated to prevent
+    # repeated 15m bars referencing the same event from inflating the
+    # event-level "detected" counter (Phase 3g §9.4 amended; Phase 3h
+    # §14 P.14 invariant 5).
+    d1a_last_processed_event_id: str | None = None
+    # Per-direction cooldown bookkeeping. After a position closes, the
+    # event id that triggered it is recorded here so same-direction
+    # re-entries on that same event are blocked per Phase 3g §6.10.
+    # Opposite-direction re-entries are never blocked at the event
+    # level.
+    d1a_last_consumed_event_id: str | None = None
+    d1a_last_consumed_direction: Direction | None = None
 
 
 @dataclass
@@ -242,6 +349,12 @@ class BacktestRunResult:
     # V1 paths (strategy_family=V1_BREAKOUT). Phase 3d-B1 populates
     # these on the F1 dispatch path.
     f1_counters_per_symbol: dict[Symbol, F1LifecycleCounters] = field(default_factory=dict)
+    # D1-A funding-extreme-event funnel counters per symbol. All zero
+    # for V1 / F1 paths. Phase 3i-B1 populates these on the D1-A
+    # dispatch path.
+    funding_aware_counters_per_symbol: dict[Symbol, FundingAwareLifecycleCounters] = field(
+        default_factory=dict
+    )
 
     @property
     def total_trades(self) -> int:
@@ -312,6 +425,17 @@ class BacktestEngine:
             and config.mean_reversion_variant is not None
         ):
             self._mean_reversion_strategy = MeanReversionStrategy(config.mean_reversion_variant)
+        # D1-A funding-aware strategy is constructed only when the
+        # dispatch surface is set to FUNDING_AWARE_DIRECTIONAL; V1 / F1
+        # paths do not consume it. Phase 3i-B1 wires per-bar evaluation;
+        # the BacktestConfig validator enforces that ``funding_aware_variant``
+        # is non-None when ``strategy_family == FUNDING_AWARE_DIRECTIONAL``.
+        self._funding_aware_strategy: FundingAwareStrategy | None = None
+        if (
+            config.strategy_family == StrategyFamily.FUNDING_AWARE_DIRECTIONAL
+            and config.funding_aware_variant is not None
+        ):
+            self._funding_aware_strategy = FundingAwareStrategy(config.funding_aware_variant)
         self._r2_fill_model = r2_fill_model
 
     def run(
@@ -323,32 +447,30 @@ class BacktestEngine:
         funding_per_symbol: dict[Symbol, Sequence[FundingRateEvent]],
         symbol_info_per_symbol: dict[Symbol, SymbolInfo],
     ) -> BacktestRunResult:
-        # Phase 3i-A guard: the BacktestConfig validator accepts the
-        # FUNDING_AWARE_DIRECTIONAL family + FundingAwareConfig dispatch
-        # surface, but the engine path is deliberately not wired in
-        # Phase 3i-A. Any attempt to dispatch D1-A through the engine
-        # raises a clear error; Phase 3i-B1 will lift this guard and
-        # add the per-bar D1-A lifecycle. This guard is evaluated
-        # before any V1/F1 work begins so it never perturbs existing
-        # paths (V1 default and F1 dispatch are unchanged).
-        if self._config.strategy_family == StrategyFamily.FUNDING_AWARE_DIRECTIONAL:
-            raise RuntimeError("D1-A engine wiring not yet authorized; see Phase 3i-B1.")
-
+        # Phase 3i-A guard lifted by Phase 3i-B1. The D1-A engine
+        # dispatch is now wired via ``_run_symbol_d1a``. V1 default and
+        # F1 dispatch paths are unchanged; the new D1-A path is
+        # selected only when ``strategy_family ==
+        # FUNDING_AWARE_DIRECTIONAL`` AND the BacktestConfig validator
+        # has approved a non-None ``funding_aware_variant``.
         warnings: list[str] = []
         per_symbol_trades: dict[Symbol, list[TradeRecord]] = {}
         accounting_per_symbol: dict[Symbol, Accounting] = {}
         r2_counters_per_symbol: dict[Symbol, R2LifecycleCounters] = {}
         f1_counters_per_symbol: dict[Symbol, F1LifecycleCounters] = {}
+        funding_aware_counters_per_symbol: dict[Symbol, FundingAwareLifecycleCounters] = {}
 
         is_f1 = self._config.strategy_family == StrategyFamily.MEAN_REVERSION_OVEREXTENSION
+        is_d1a = self._config.strategy_family == StrategyFamily.FUNDING_AWARE_DIRECTIONAL
 
         for symbol in self._config.symbols:
             if symbol not in klines_15m_per_symbol:
                 warnings.append(f"symbol {symbol} has no 15m data; skipping")
                 continue
             # 1h data is only required for V1 dispatch; F1 has no 1h
-            # bias filter per Phase 3b §4.8.
-            if not is_f1 and symbol not in klines_1h_per_symbol:
+            # bias filter per Phase 3b §4.8; D1-A has no 1h bias filter
+            # per Phase 3g §6.13 / Phase 3h §3 (no regime filter).
+            if not is_f1 and not is_d1a and symbol not in klines_1h_per_symbol:
                 warnings.append(f"symbol {symbol} has no 1h data; skipping")
                 continue
             if symbol not in mark_15m_per_symbol:
@@ -365,7 +487,16 @@ class BacktestEngine:
                 session=StrategySession(symbol=symbol, config=self._config.strategy_variant),
             )
             accounting = Accounting.start(self._config.sizing_equity_usdt)
-            if is_f1:
+            if is_d1a:
+                self._run_symbol_d1a(
+                    run,
+                    accounting=accounting,
+                    klines_15m=klines_15m_per_symbol[symbol],
+                    mark_15m=mark_15m_per_symbol[symbol],
+                    funding=funding_per_symbol[symbol],
+                    symbol_info=symbol_info_per_symbol[symbol],
+                )
+            elif is_f1:
                 self._run_symbol_f1(
                     run,
                     accounting=accounting,
@@ -388,6 +519,7 @@ class BacktestEngine:
             accounting_per_symbol[symbol] = accounting
             r2_counters_per_symbol[symbol] = run.r2_counters
             f1_counters_per_symbol[symbol] = run.f1_counters
+            funding_aware_counters_per_symbol[symbol] = run.d1a_counters
 
         return BacktestRunResult(
             config=self._config,
@@ -396,6 +528,7 @@ class BacktestEngine:
             warnings=warnings,
             r2_counters_per_symbol=r2_counters_per_symbol,
             f1_counters_per_symbol=f1_counters_per_symbol,
+            funding_aware_counters_per_symbol=funding_aware_counters_per_symbol,
         )
 
     # ------------------------------------------------------------------
@@ -1038,8 +1171,9 @@ class BacktestEngine:
             r2_atr_at_signal = float("nan")
             r2_fill_price = float("nan")
             r2_r_distance = float("nan")
-        # F1 metadata population (Phase 3d-B1). For V1 paths, f1_metadata
-        # is None and the F1 TradeRecord fields stay at NaN defaults.
+        # F1 metadata population (Phase 3d-B1). For V1 / D1-A paths,
+        # f1_metadata is None and the F1 TradeRecord fields stay at
+        # NaN defaults.
         if trade.f1_metadata is not None:
             f1m = trade.f1_metadata
             atr_b = f1m.atr_at_signal
@@ -1056,6 +1190,33 @@ class BacktestEngine:
             f1_frozen_target = float("nan")
             f1_entry_to_target_atr = float("nan")
             f1_stop_dist_atr = float("nan")
+        # D1-A metadata population (Phase 3i-B1). For V1 / F1 paths,
+        # d1a_metadata is None and the D1-A TradeRecord fields stay at
+        # None / NaN defaults. D1-A trades reuse the F1 ``entry_to_target_distance_atr``
+        # and ``stop_distance_at_signal_atr`` fields (semantically the
+        # same: distance to target / stop in ATR multiples). The F1
+        # entry/stop-distance values above are NaN for D1-A trades, so
+        # we overwrite them here.
+        if trade.d1a_metadata is not None:
+            dm = trade.d1a_metadata
+            atr_b_d1a = dm.atr_at_signal
+            d1a_funding_event_id: str | None = dm.funding_event_id
+            d1a_funding_z = dm.funding_z_score
+            d1a_funding_rate = dm.funding_rate
+            d1a_bars_since = dm.bars_since_funding_event
+            f1_entry_to_target_atr = (
+                abs(trade.entry_fill_price - dm.target_price) / atr_b_d1a
+                if atr_b_d1a > 0
+                else float("nan")
+            )
+            f1_stop_dist_atr = (
+                dm.stop_distance_at_signal / atr_b_d1a if atr_b_d1a > 0 else float("nan")
+            )
+        else:
+            d1a_funding_event_id = None
+            d1a_funding_z = float("nan")
+            d1a_funding_rate = float("nan")
+            d1a_bars_since = -1
         rec = TradeRecord(
             trade_id=trade_id,
             symbol=trade.symbol,
@@ -1097,6 +1258,10 @@ class BacktestEngine:
             frozen_target_value=f1_frozen_target,
             entry_to_target_distance_atr=f1_entry_to_target_atr,
             stop_distance_at_signal_atr=f1_stop_dist_atr,
+            funding_event_id_at_signal=d1a_funding_event_id,
+            funding_z_score_at_signal=d1a_funding_z,
+            funding_rate_at_signal=d1a_funding_rate,
+            bars_since_funding_event_at_signal=d1a_bars_since,
         )
         run.trades.append(rec)
 
@@ -1503,6 +1668,551 @@ class BacktestEngine:
         run.open_trade = None
         run.f1_last_exit_direction = direction
         run.f1_last_exit_idx = exit_bar_idx
+
+    # ------------------------------------------------------------------
+    # D1-A funding-aware directional dispatch (Phase 3i-B1)
+    # ------------------------------------------------------------------
+
+    def _run_symbol_d1a(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        klines_15m: Sequence[NormalizedKline],
+        mark_15m: Sequence[MarkPriceKline],
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+    ) -> None:
+        """Per-symbol D1-A bar-by-bar lifecycle.
+
+        Phase 3g §6 + §5.6.5 Option A binding spec (with Phase 3h
+        timing-clarification amendments): at each completed 15m bar B,
+        identify the most-recent completed funding event with
+        ``funding_time <= bar_close_time`` (non-strict ≤; equality
+        eligible). Compute the trailing-90-day Z-score of that event's
+        funding rate (270 prior events; current event excluded from
+        its own mean/std). If ``|Z_F| >= 2.0``, emit a contrarian
+        entry signal (``Z >= +2`` -> SHORT; ``Z <= -2`` -> LONG).
+
+        Repeated 15m bars referencing the same ``funding_event_id``
+        must NOT inflate the event-level "detected" counter; the
+        engine tracks the last-processed event id per symbol.
+
+        Entry fills at the next 15m bar's open. Stop = ``1.0 × ATR(20)``
+        at fill, never moved (MARK_PRICE trigger). TARGET = ``+2.0R``
+        fixed, recorded as TARGET (not TAKE_PROFIT). TARGET triggers
+        only on completed-bar close confirmation; LONG ``close >=
+        target_price``, SHORT ``close <= target_price``; fills at next
+        bar open. No intrabar target-touch fill, no same-close fill.
+        Same-bar priority STOP > TARGET > TIME_STOP. TIME_STOP at
+        ``B+1+32`` close trigger; ``B+1+33`` open fill. Per-funding-
+        event cooldown: same-direction re-entry requires a fresh
+        funding event after position close; opposite-direction always
+        allowed at any subsequent event.
+
+        D1-A does NOT use the V1 1h-bias filter, V1 setup predicate,
+        V1 breakout trigger, V1 trade-management trail / break-even /
+        risk-reduction stages, or any F1 overextension predicate. D1-A
+        emits exactly STOP / TARGET / TIME_STOP / END_OF_DATA exit
+        reasons (P.14-style invariant per Phase 3h §14).
+        """
+        config = self._config
+        assert self._funding_aware_strategy is not None
+        d1a_config = self._funding_aware_strategy.config
+
+        closes: list[float] = [float(b.close) for b in klines_15m]
+        highs: list[float] = [float(b.high) for b in klines_15m]
+        lows: list[float] = [float(b.low) for b in klines_15m]
+        atr20_list: list[float] = wilder_atr(highs, lows, closes, period=20)
+
+        # Build sorted FundingEvent list (sorted ascending by funding_time)
+        # plus a parallel funding_rates list and a funding_times list for
+        # bisect-based lookup.
+        sorted_funding: list[FundingRateEvent] = sorted(funding, key=lambda e: e.funding_time)
+        funding_event_objs: list[FundingEvent] = [
+            FundingEvent(
+                event_id=f"{e.symbol.value}-{e.funding_time}",
+                funding_time=e.funding_time,
+                funding_rate=e.funding_rate,
+            )
+            for e in sorted_funding
+        ]
+        funding_rates_chronological: list[float] = [e.funding_rate for e in sorted_funding]
+        funding_times: list[int] = [e.funding_time for e in sorted_funding]
+
+        mark_by_open: dict[int, MarkPriceKline] = {m.open_time: m for m in mark_15m}
+
+        for idx_15m, bar_15m in enumerate(klines_15m):
+            # 1. Manage open trade: STOP > TARGET > TIME_STOP (same-bar priority).
+            if run.open_trade is not None:
+                assert run.open_trade.d1a_metadata is not None
+                d1a_meta = run.open_trade.d1a_metadata
+                # STOP check via mark-price (default) or trade-price.
+                if config.stop_trigger_source == StopTriggerSource.MARK_PRICE:
+                    stop_eval_bar: MarkPriceKline | NormalizedKline | None = mark_by_open.get(
+                        bar_15m.open_time
+                    )
+                else:
+                    stop_eval_bar = bar_15m
+                if stop_eval_bar is not None:
+                    hit = evaluate_stop_hit(
+                        direction_long=run.open_trade.direction_long,
+                        current_stop=run.open_trade.current_stop,
+                        mark_bar=stop_eval_bar,
+                        slippage_bps=config.slippage_bps,
+                    )
+                    if hit is not None:
+                        self._close_d1a_trade_on_stop(
+                            run,
+                            accounting=accounting,
+                            hit=hit,
+                            funding=funding,
+                            symbol_info=symbol_info,
+                            exit_bar_idx=idx_15m,
+                        )
+                        continue
+                # TARGET / TIME_STOP only fire on bars t >= fill_bar_index
+                # (the fill bar B+1 itself is the first eligible bar to
+                # check completed-close TARGET; the fill at B+1 happens
+                # at B+1's OPEN, so by B+1's close the position is open).
+                if idx_15m >= d1a_meta.fill_bar_index:
+                    direction = Direction.LONG if run.open_trade.direction_long else Direction.SHORT
+                    target_fires = (
+                        bar_15m.close >= d1a_meta.target_price
+                        if direction == Direction.LONG
+                        else bar_15m.close <= d1a_meta.target_price
+                    )
+                    if target_fires:
+                        next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+                        if next_bar is None:
+                            self._close_d1a_trade_end_of_data(
+                                run,
+                                accounting=accounting,
+                                exit_price=bar_15m.close,
+                                exit_time_ms=bar_15m.close_time + 1,
+                                exit_reason_str=ExitReason.END_OF_DATA.value,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        else:
+                            fill_price = exit_fill_price(
+                                next_bar=next_bar,
+                                direction_long=run.open_trade.direction_long,
+                                config=config,
+                            )
+                            self._close_d1a_trade_managed(
+                                run,
+                                accounting=accounting,
+                                next_bar=next_bar,
+                                exit_price=fill_price,
+                                exit_reason=ExitReason.TARGET,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        continue
+                    # TIME_STOP: trigger at close of bar
+                    # ``fill_bar_index + time_stop_bars`` per Phase 3g §6.9
+                    # / Phase 3h §6.9 clarification. Fill at next bar
+                    # open (no same-close fill).
+                    time_stop_trigger_idx = d1a_meta.fill_bar_index + d1a_config.time_stop_bars
+                    if idx_15m >= time_stop_trigger_idx:
+                        next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+                        if next_bar is None:
+                            self._close_d1a_trade_end_of_data(
+                                run,
+                                accounting=accounting,
+                                exit_price=bar_15m.close,
+                                exit_time_ms=bar_15m.close_time + 1,
+                                exit_reason_str=ExitReason.END_OF_DATA.value,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        else:
+                            fill_price = exit_fill_price(
+                                next_bar=next_bar,
+                                direction_long=run.open_trade.direction_long,
+                                config=config,
+                            )
+                            self._close_d1a_trade_managed(
+                                run,
+                                accounting=accounting,
+                                next_bar=next_bar,
+                                exit_price=fill_price,
+                                exit_reason=ExitReason.TIME_STOP,
+                                exit_bar_idx=idx_15m,
+                                funding=funding,
+                                symbol_info=symbol_info,
+                            )
+                        continue
+
+            # 2. Identify the latest eligible funding event for bar B's close.
+            latest_evt_idx = self._latest_eligible_funding_event_idx(
+                funding_times, bar_15m.close_time
+            )
+            if latest_evt_idx is None:
+                continue
+            eligible_event = funding_event_objs[latest_evt_idx]
+            eligible_event_id = eligible_event.event_id
+
+            # 3. Skip event-funnel bookkeeping if we've already processed
+            # this event id (Phase 3g §9.4 amended; Phase 3h §14 P.14
+            # invariant 5: repeated bars must not inflate detected count).
+            if run.d1a_last_processed_event_id == eligible_event_id:
+                continue
+
+            # 4. Pre-detection warmup checks. We deliberately do NOT
+            # mark the event as processed if these warmup checks fail,
+            # so a later bar (with valid ATR / window / next_bar) can
+            # re-evaluate the same event. Per Phase 3g §9.4, detection
+            # is event-level — but only events the engine could
+            # actually attempt are counted. If a fresh extreme funding
+            # event fires entirely before ATR warmup completes, no
+            # detection occurs (no trade was ever attemptable).
+            if not (config.window_start_ms <= bar_15m.open_time < config.window_end_ms):
+                continue
+            atr_b = atr20_list[idx_15m]
+            if math.isnan(atr_b) or atr_b <= 0.0:
+                continue
+            next_bar = self._find_next_15m(klines_15m, next_15m_open_time(bar_15m))
+            if next_bar is None:
+                continue
+
+            # 5. Compute Z-score over the trailing N prior events
+            # (current event explicitly excluded from rolling mean/std).
+            prior_rates = funding_rates_chronological[:latest_evt_idx]
+            z_score = compute_d1a_z_score(
+                prior_rates,
+                eligible_event.funding_rate,
+                lookback_events=d1a_config.funding_z_score_lookback_events,
+            )
+
+            if not is_funding_extreme(z_score, threshold=d1a_config.funding_z_score_threshold):
+                # Not extreme; mark this event as processed (so we don't
+                # recompute Z-score on every subsequent bar referencing
+                # it) but do NOT increment the detected counter — only
+                # extreme events count.
+                run.d1a_last_processed_event_id = eligible_event_id
+                continue
+
+            maybe_direction = d1a_signal_direction(
+                z_score, threshold=d1a_config.funding_z_score_threshold
+            )
+            if maybe_direction is None:
+                run.d1a_last_processed_event_id = eligible_event_id
+                continue
+            direction = maybe_direction
+
+            # Detected extreme event — increment funnel and mark
+            # processed so subsequent bars referencing this event id
+            # are skipped.
+            run.d1a_counters.funding_extreme_events_detected += 1
+            run.d1a_last_processed_event_id = eligible_event_id
+
+            # 6. Cooldown gate (per-funding-event consumption).
+            position_open = run.open_trade is not None
+            if not can_re_enter_d1a(
+                candidate_direction=direction,
+                candidate_event_id=eligible_event_id,
+                last_consumed_event_id=run.d1a_last_consumed_event_id,
+                last_consumed_direction=run.d1a_last_consumed_direction,
+                position_open=position_open,
+            ):
+                run.d1a_counters.funding_extreme_events_blocked_cooldown += 1
+                continue
+
+            # 7. Stop-distance admissibility on the de-slipped raw
+            # open(B+1) per Phase 3g §6.11. D1-A's stop_distance is
+            # 1.0 × ATR(20) by construction, so the admissibility band
+            # [0.60, 1.80] always passes; the check is a guard.
+            raw_open_b1 = float(next_bar.open)
+            stop_distance_raw = d1a_config.stop_distance_atr_multiplier * atr_b
+            if not passes_d1a_stop_distance_filter(
+                stop_distance_raw,
+                atr_b,
+                min_atr=d1a_config.stop_distance_min_atr,
+                max_atr=d1a_config.stop_distance_max_atr,
+            ):
+                run.d1a_counters.funding_extreme_events_rejected_stop_distance += 1
+                continue
+
+            initial_stop_raw = compute_d1a_stop(
+                fill_price=raw_open_b1,
+                atr20=atr_b,
+                side=direction,
+                multiplier=d1a_config.stop_distance_atr_multiplier,
+            )
+            target_price_raw = compute_d1a_target(
+                fill_price=raw_open_b1,
+                stop_distance=stop_distance_raw,
+                side=direction,
+                target_r=d1a_config.target_r_multiple,
+            )
+
+            # Compute bars_since_funding_event diagnostic (signal time).
+            # Use the first 15m bar whose open_time >= funding_time as
+            # bar 0; subtract from current idx_15m. If funding_time
+            # precedes the dataset, count from idx 0.
+            bars_since = self._bars_since_funding_event(
+                klines_15m, eligible_event.funding_time, idx_15m
+            )
+
+            # 9. Open the trade.
+            self._open_d1a_trade(
+                run,
+                next_bar=next_bar,
+                signal_bar=bar_15m,
+                signal_bar_index=idx_15m,
+                fill_bar_index=idx_15m + 1,
+                direction=direction,
+                raw_open_b1=raw_open_b1,
+                initial_stop_raw=initial_stop_raw,
+                target_price_raw=target_price_raw,
+                stop_distance_raw=stop_distance_raw,
+                atr_b=atr_b,
+                eligible_event=eligible_event,
+                z_score=z_score,
+                bars_since=bars_since,
+                symbol_info=symbol_info,
+            )
+
+        # End-of-window: close any still-open D1-A trade as END_OF_DATA.
+        if run.open_trade is not None:
+            last_bar = klines_15m[-1]
+            self._close_d1a_trade_end_of_data(
+                run,
+                accounting=accounting,
+                exit_price=last_bar.close,
+                exit_time_ms=last_bar.close_time + 1,
+                exit_reason_str=ExitReason.END_OF_DATA.value,
+                exit_bar_idx=len(klines_15m) - 1,
+                funding=funding,
+                symbol_info=symbol_info,
+            )
+
+    # ------------------------------------------------------------------
+    # D1-A helpers (Phase 3i-B1)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _latest_eligible_funding_event_idx(
+        funding_times: Sequence[int], bar_close_time: int
+    ) -> int | None:
+        """Return the index of the most recent funding event with
+        ``funding_time <= bar_close_time`` (non-strict ≤; equality
+        eligible per Phase 3h §4.5 clarification).
+
+        ``funding_times`` must be sorted ascending. Returns None if no
+        event satisfies the condition.
+        """
+        from bisect import bisect_right
+
+        if not funding_times:
+            return None
+        # bisect_right finds insertion point for bar_close_time; idx-1
+        # is the largest index with funding_time <= bar_close_time
+        # (because bisect_right places equal values to the right).
+        pos = bisect_right(funding_times, bar_close_time) - 1
+        if pos < 0:
+            return None
+        return pos
+
+    @staticmethod
+    def _bars_since_funding_event(
+        klines_15m: Sequence[NormalizedKline], funding_time: int, current_idx: int
+    ) -> int:
+        """Count the number of completed 15m bars between
+        ``funding_time`` and the bar at ``current_idx`` (inclusive of
+        the current bar). Diagnostic only; -1 if funding_time is after
+        the current bar (should not happen at signal time).
+        """
+        # Find the first bar whose open_time is >= funding_time (the bar
+        # that contains or starts at the settlement). bars_since =
+        # current_idx - that_idx.
+        for i, bar in enumerate(klines_15m):
+            if bar.open_time >= funding_time:
+                return max(0, current_idx - i)
+        # Funding event is after all bars — should not happen at signal
+        # time given alignment rule funding_time <= bar_close_time.
+        return -1
+
+    def _open_d1a_trade(
+        self,
+        run: _SymbolRun,
+        *,
+        next_bar: NormalizedKline,
+        signal_bar: NormalizedKline,
+        signal_bar_index: int,
+        fill_bar_index: int,
+        direction: Direction,
+        raw_open_b1: float,
+        initial_stop_raw: float,
+        target_price_raw: float,
+        stop_distance_raw: float,
+        atr_b: float,
+        eligible_event: FundingEvent,
+        z_score: float,
+        bars_since: int,
+        symbol_info: SymbolInfo,
+    ) -> None:
+        """Open a D1-A trade from a validated funding-extreme entry."""
+        config = self._config
+        is_long = direction == Direction.LONG
+        # Recompute fill price using engine's slippage convention
+        # (entry_fill_price applies adverse slippage). The stop-distance
+        # band check has already been validated on the de-slipped raw
+        # open(B+1) per Phase 3g §6.11.
+        fill_price = entry_fill_price(next_bar=next_bar, direction_long=is_long, config=config)
+        post_slip_stop_distance = abs(fill_price - initial_stop_raw)
+        sizing = compute_size(
+            sizing_equity_usdt=config.sizing_equity_usdt,
+            risk_fraction=config.risk_fraction,
+            risk_usage_fraction=config.risk_usage_fraction,
+            stop_distance=post_slip_stop_distance,
+            reference_price=fill_price,
+            max_effective_leverage=config.max_effective_leverage,
+            max_notional_internal_usdt=config.max_notional_internal_usdt,
+            symbol_info=symbol_info,
+        )
+        if not sizing.approved:
+            # Sizing rejection at fill time: count as stop-distance
+            # rejection (no trade opened, identity preserved).
+            run.d1a_counters.funding_extreme_events_rejected_stop_distance += 1
+            return
+        run.d1a_counters.funding_extreme_events_filled += 1
+        # Recompute target on the actual filled price so target_price
+        # reflects the post-slip entry. The +2.0R geometry is preserved
+        # using the post-slip stop distance.
+        target_price_filled = compute_d1a_target(
+            fill_price=fill_price,
+            stop_distance=post_slip_stop_distance,
+            side=direction,
+            target_r=self._funding_aware_strategy.config.target_r_multiple
+            if self._funding_aware_strategy is not None
+            else 2.0,
+        )
+        assert sizing.limited_by is not None
+        run.open_trade = _OpenTrade(
+            symbol=next_bar.symbol,
+            direction_long=is_long,
+            signal_bar_open_time_ms=signal_bar.open_time,
+            entry_fill_time_ms=next_bar.open_time,
+            entry_fill_price=fill_price,
+            initial_stop=initial_stop_raw,
+            stop_distance=post_slip_stop_distance,
+            quantity=sizing.quantity,
+            notional=sizing.quantity * fill_price,
+            sizing_limited_by=sizing.limited_by,
+            realized_risk_usdt=sizing.realized_risk_usdt,
+            current_stop=initial_stop_raw,
+            d1a_metadata=_D1ATradeMetadata(
+                signal_bar_index=signal_bar_index,
+                fill_bar_index=fill_bar_index,
+                target_price=target_price_filled,
+                atr_at_signal=atr_b,
+                stop_distance_at_signal=stop_distance_raw,
+                raw_entry_reference=raw_open_b1,
+                funding_event_id=eligible_event.event_id,
+                funding_time=eligible_event.funding_time,
+                funding_rate=eligible_event.funding_rate,
+                funding_z_score=z_score,
+                bars_since_funding_event=bars_since,
+            ),
+        )
+
+    def _close_d1a_trade_on_stop(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        hit: StopHit,
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+        exit_bar_idx: int,
+    ) -> None:
+        assert run.open_trade is not None
+        assert run.open_trade.d1a_metadata is not None
+        trade = run.open_trade
+        trade.stop_was_gap_through = hit.was_gap_through
+        direction = Direction.LONG if trade.direction_long else Direction.SHORT
+        consumed_event_id = run.open_trade.d1a_metadata.funding_event_id
+        self._record_trade(
+            run,
+            accounting=accounting,
+            exit_price=hit.fill_price,
+            exit_time_ms=hit.fill_time_ms,
+            exit_reason_str=ExitReason.STOP.value,
+            funding=funding,
+            symbol_info=symbol_info,
+        )
+        run.open_trade = None
+        run.d1a_last_consumed_event_id = consumed_event_id
+        run.d1a_last_consumed_direction = direction
+        # exit_bar_idx is unused for D1-A cooldown (event-level), but
+        # parity with F1 is maintained for diagnostic continuity.
+        _ = exit_bar_idx
+
+    def _close_d1a_trade_managed(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        next_bar: NormalizedKline,
+        exit_price: float,
+        exit_reason: ExitReason,
+        exit_bar_idx: int,
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+    ) -> None:
+        assert run.open_trade is not None
+        assert run.open_trade.d1a_metadata is not None
+        direction = Direction.LONG if run.open_trade.direction_long else Direction.SHORT
+        consumed_event_id = run.open_trade.d1a_metadata.funding_event_id
+        self._record_trade(
+            run,
+            accounting=accounting,
+            exit_price=exit_price,
+            exit_time_ms=next_bar.open_time,
+            exit_reason_str=exit_reason.value,
+            funding=funding,
+            symbol_info=symbol_info,
+        )
+        run.open_trade = None
+        run.d1a_last_consumed_event_id = consumed_event_id
+        run.d1a_last_consumed_direction = direction
+        _ = exit_bar_idx
+
+    def _close_d1a_trade_end_of_data(
+        self,
+        run: _SymbolRun,
+        *,
+        accounting: Accounting,
+        exit_price: float,
+        exit_time_ms: int,
+        exit_reason_str: str,
+        exit_bar_idx: int,
+        funding: Sequence[FundingRateEvent],
+        symbol_info: SymbolInfo,
+    ) -> None:
+        assert run.open_trade is not None
+        assert run.open_trade.d1a_metadata is not None
+        direction = Direction.LONG if run.open_trade.direction_long else Direction.SHORT
+        consumed_event_id = run.open_trade.d1a_metadata.funding_event_id
+        self._record_trade(
+            run,
+            accounting=accounting,
+            exit_price=exit_price,
+            exit_time_ms=exit_time_ms,
+            exit_reason_str=exit_reason_str,
+            funding=funding,
+            symbol_info=symbol_info,
+        )
+        run.open_trade = None
+        run.d1a_last_consumed_event_id = consumed_event_id
+        run.d1a_last_consumed_direction = direction
+        _ = exit_bar_idx
 
     # ------------------------------------------------------------------
     # Helpers
