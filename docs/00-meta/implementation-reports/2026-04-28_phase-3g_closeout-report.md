@@ -10,7 +10,7 @@
 
 ## 0. Post-review docs-only amendments
 
-After the initial Phase 3g commit, two rounds of operator review surfaced spec-consistency and risk-reward concerns. Two subsequent docs-only amendments addressed them.
+After the initial Phase 3g commit, three rounds of operator review surfaced spec-consistency, risk-reward, and methodology-audit concerns. Two docs-only spec amendments + one docs-only retrospective methodology audit addressed them.
 
 ### 0.1 First amendment — five spec-consistency corrections
 
@@ -42,6 +42,24 @@ Updated sections (in addition to new §5.6): §5.1 hypothesis statement; §5.5 c
 
 The second amendment is **docs-only** and does not change source code, tests, scripts, configuration, data, project locks, or any threshold (other than revising the D1-A target rule per Option A; no Phase 2f §10.3 / §10.4 / §11.3 / §11.4 / §11.6 threshold changed).
 
+### 0.3 Third addition — methodology sanity audit
+
+A third operator-review round requested a docs-only methodology sanity audit ahead of merge: a retrospective methodological review of all V1-family + F1 candidates and the amended D1-A spec to identify whether structural oversights similar to the +1.0R RR concern exist elsewhere.
+
+A new file `docs/00-meta/implementation-reports/2026-04-28_phase-3g_methodology-sanity-audit.md` was added containing seven sections:
+
+- **§1** Plain-English explanation of why the audit exists.
+- **§2** Cross-strategy matrix (H0, R3, R1a, R1b-narrow, R2, F1, amended D1-A) covering target/stop, gross/net breakeven WR, empirical WR, trade count, cost-dominance risk, and final verdict.
+- **§3** Per-candidate methodological assessment across 11 attributes (RR profile; gross/net BE WR; cost dominance; sample-size risk; target/stop/time-stop coherence; fill timing / same-bar priority; timestamp/lookahead leakage risk; target-subset evidence; descriptive vs governing separation; final verdict handling).
+- **§4** Retrospective concerns triage (already-contained; documentation-clarification-only; future-planning observations).
+- **§5** Specific audit of the amended D1-A +2.0R spec (4 confirmations: structural sanity; 32-bar coherence; TIME_STOP centrality; no target sweep / D1-prime).
+- **§6** Future-spec checklist (12 mandatory pre-execution disciplines for any subsequent strategy-family spec).
+- **§7** Final recommendation: Phase 3g safe to merge; no additional docs-only amendment required; Phase 3h remains only a future operator decision.
+
+**Audit conclusion:** Phase 3g is safe to merge. All prior verdicts (R1a mixed-PROMOTE; R1b-narrow PROMOTE-with-caveats; R2 FRAMEWORK FAILED — §11.6; F1 HARD REJECT) correctly handle the structural concerns identified retrospectively. The amended D1-A +2.0R spec is structurally sane and aligned with R3's non-fitting project convention. The future-spec checklist documents the disciplines for any subsequent operator-authorized strategy spec.
+
+The methodology sanity audit is **docs-only and read-only** — it does not amend the D1-A spec or any other prior phase's record; it is a separate retrospective audit memo. It does not change source code, tests, scripts, configuration, data, project locks, thresholds, strategy parameters, or any verdict.
+
 ---
 
 ## 1. Current branch
@@ -54,10 +72,11 @@ Working tree clean after the Phase 3g commit. No untracked files outside the two
 
 ## 3. Files changed
 
-Two files under `docs/00-meta/implementation-reports/`, both touched by the original Phase 3g commit and the post-review amendment commit:
+Three files under `docs/00-meta/implementation-reports/`:
 
-- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_D1_funding-aware-spec-memo.md` — Phase 3g spec memo (§§ 1–16 per the operator brief), amended in §§ 6.8 / 6.9 / 7 / 9.4 / 10.1 / 12 / 13.2 / 13.3 / 13.4 / end-summary for the five spec-consistency corrections in §0 above.
-- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_closeout-report.md` — this file (added §0 post-review amendment summary; updated §4 to record both commits).
+- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_D1_funding-aware-spec-memo.md` — Phase 3g spec memo (§§ 1–16 per the operator brief), with both spec amendments per §0.1 and §0.2 above.
+- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_methodology-sanity-audit.md` — Phase 3g retrospective methodology sanity audit per §0.3 above (cross-strategy matrix; per-candidate assessment; retrospective triage; amended-D1-A confirmations; future-spec checklist).
+- `docs/00-meta/implementation-reports/2026-04-28_phase-3g_closeout-report.md` — this file (added §0 post-review amendments + audit summary; updated §4 to record all commits).
 
 No other file is created, modified, or deleted by Phase 3g.
 
