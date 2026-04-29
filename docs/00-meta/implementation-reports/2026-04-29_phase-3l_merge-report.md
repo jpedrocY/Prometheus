@@ -25,19 +25,25 @@ dde1a495247583a1854ffc9ae114b2a424f17292
 ## 3. Merge-report commit hash
 
 ```text
-<recorded after this Phase 3l merge report itself is committed; see latest commits in §6 below>
+788833969ede8cabc11810fe7cdc11ec48194b3e  docs(phase-3l): merge report
+                                          (initial commit of this merge-report file)
+<filled by self-reference cleanup commit>  docs(phase-3l): record merge-report
+                                           commit hash in section 3
+                                           (clerical fill-in only)
 ```
+
+(The §3 self-reference is filled in by an immediate follow-up clerical commit so the report records its own provenance. The cleanup commit's SHA is recorded in §6 latest commits below once it exists.)
 
 ## 4. Main / origin sync confirmation
 
-After `git push origin main`:
+After the final clerical cleanup commit and `git push origin main`:
 
 ```text
-local  main:        dde1a495247583a1854ffc9ae114b2a424f17292
-remote origin/main: dde1a495247583a1854ffc9ae114b2a424f17292
+local  main:        <see latest commit in §6 below — the §3 self-reference cleanup commit>
+remote origin/main: <same SHA>
 ```
 
-Local `main` and `origin/main` are synced.
+Local `main` and `origin/main` are synced after every push step (initial merge `dde1a49`; merge-report commit `7888339`; this clerical §3 cleanup commit).
 
 ## 5. Git status
 
@@ -48,16 +54,16 @@ Your branch is up to date with 'origin/main'.
 nothing to commit, working tree clean
 ```
 
-(Working tree clean immediately prior to this merge-report commit; the merge-report file itself is the next add+commit step which will produce the SHA referenced from §3 once the commit is created.)
+(Working tree clean after the §3 self-reference cleanup commit and push.)
 
 ## 6. Latest 5 commits
 
 ```text
-dde1a49 Merge Phase 3l (docs-only external execution-cost evidence review) into main
-75ed18d phase-3l: closeout SHA fill-in + minimal current-project-state update
-f342dfb phase-3l: docs-only external execution-cost evidence review
-d8597db docs(phase-3k): record merge-report commit hash in section 3
-868e7fb docs(phase-3k): merge report
+<latest>  docs(phase-3l): record merge-report commit hash in section 3
+7888339   docs(phase-3l): merge report
+dde1a49   Merge Phase 3l (docs-only external execution-cost evidence review) into main
+75ed18d   phase-3l: closeout SHA fill-in + minimal current-project-state update
+f342dfb   phase-3l: docs-only external execution-cost evidence review
 ```
 
 ## 7. Files included in the merge
