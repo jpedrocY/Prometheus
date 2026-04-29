@@ -27,7 +27,7 @@ dde1a495247583a1854ffc9ae114b2a424f17292
 ```text
 788833969ede8cabc11810fe7cdc11ec48194b3e  docs(phase-3l): merge report
                                           (initial commit of this merge-report file)
-<filled by self-reference cleanup commit>  docs(phase-3l): record merge-report
+2e7cc4aa9064cb77a843a83ea18b06f7e535a71b  docs(phase-3l): record merge-report
                                            commit hash in section 3
                                            (clerical fill-in only)
 ```
@@ -39,8 +39,8 @@ dde1a495247583a1854ffc9ae114b2a424f17292
 After the final clerical cleanup commit and `git push origin main`:
 
 ```text
-local  main:        <see latest commit in §6 below — the §3 self-reference cleanup commit>
-remote origin/main: <same SHA>
+local  main:        2e7cc4aa9064cb77a843a83ea18b06f7e535a71b
+remote origin/main: 2e7cc4aa9064cb77a843a83ea18b06f7e535a71b
 ```
 
 Local `main` and `origin/main` are synced after every push step (initial merge `dde1a49`; merge-report commit `7888339`; this clerical §3 cleanup commit).
@@ -59,7 +59,7 @@ nothing to commit, working tree clean
 ## 6. Latest 5 commits
 
 ```text
-<latest>  docs(phase-3l): record merge-report commit hash in section 3
+2e7cc4a   docs(phase-3l): record merge-report commit hash in section 3
 7888339   docs(phase-3l): merge report
 dde1a49   Merge Phase 3l (docs-only external execution-cost evidence review) into main
 75ed18d   phase-3l: closeout SHA fill-in + minimal current-project-state update
