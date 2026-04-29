@@ -323,6 +323,17 @@ class BacktestEngine:
         funding_per_symbol: dict[Symbol, Sequence[FundingRateEvent]],
         symbol_info_per_symbol: dict[Symbol, SymbolInfo],
     ) -> BacktestRunResult:
+        # Phase 3i-A guard: the BacktestConfig validator accepts the
+        # FUNDING_AWARE_DIRECTIONAL family + FundingAwareConfig dispatch
+        # surface, but the engine path is deliberately not wired in
+        # Phase 3i-A. Any attempt to dispatch D1-A through the engine
+        # raises a clear error; Phase 3i-B1 will lift this guard and
+        # add the per-bar D1-A lifecycle. This guard is evaluated
+        # before any V1/F1 work begins so it never perturbs existing
+        # paths (V1 default and F1 dispatch are unchanged).
+        if self._config.strategy_family == StrategyFamily.FUNDING_AWARE_DIRECTIONAL:
+            raise RuntimeError("D1-A engine wiring not yet authorized; see Phase 3i-B1.")
+
         warnings: list[str] = []
         per_symbol_trades: dict[Symbol, list[TradeRecord]] = {}
         accounting_per_symbol: dict[Symbol, Accounting] = {}

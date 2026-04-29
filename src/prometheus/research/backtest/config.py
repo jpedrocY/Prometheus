@@ -18,6 +18,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from prometheus.core.symbols import Symbol
+from prometheus.strategy.funding_aware_directional.variant_config import FundingAwareConfig
 from prometheus.strategy.mean_reversion_overextension.variant_config import MeanReversionConfig
 from prometheus.strategy.v1_breakout.variant_config import V1BreakoutConfig
 
@@ -27,17 +28,29 @@ class StrategyFamily(StrEnum):
 
     V1_BREAKOUT (default) is the locked Phase 2e family with the H0/R3/
     R1a/R1b-narrow/R2 axes. MEAN_REVERSION_OVEREXTENSION is the F1
-    family from Phase 3b §4. Phase 3d-B1 wires the engine dispatch:
-    selecting MEAN_REVERSION_OVEREXTENSION requires
-    ``mean_reversion_variant`` to be a non-None ``MeanReversionConfig``
-    and forbids passing ``strategy_variant`` overrides on top of the
-    V1 default. F1 candidate execution itself is reserved for Phase 3d-B2;
-    Phase 3d-B1 only proves the dispatch surface and engine path exist
-    without changing V1 H0/R3 behavior.
+    family from Phase 3b §4. FUNDING_AWARE_DIRECTIONAL is the D1-A
+    family from Phase 3g §6 (with Phase 3g §5.6.5 Option A target
+    revision to +2.0R) — Phase 3i-A adds the dispatch surface but
+    deliberately does NOT wire the engine path; ``BacktestEngine.run``
+    raises a documented RuntimeError if D1-A dispatch is attempted
+    until Phase 3i-B1 lifts the guard.
+
+    Phase 3d-B1 wires the engine dispatch for F1: selecting
+    MEAN_REVERSION_OVEREXTENSION requires ``mean_reversion_variant``
+    to be a non-None ``MeanReversionConfig`` and forbids passing
+    ``strategy_variant`` overrides on top of the V1 default.
+
+    Phase 3i-A wires the dispatch surface for D1-A: selecting
+    FUNDING_AWARE_DIRECTIONAL requires ``funding_aware_variant`` to
+    be a non-None ``FundingAwareConfig`` and forbids both
+    ``mean_reversion_variant`` and non-default V1 ``strategy_variant``.
+    The engine still rejects D1-A runtime dispatch with a RuntimeError
+    until Phase 3i-B1 lands.
     """
 
     V1_BREAKOUT = "V1_BREAKOUT"
     MEAN_REVERSION_OVEREXTENSION = "MEAN_REVERSION_OVEREXTENSION"
+    FUNDING_AWARE_DIRECTIONAL = "FUNDING_AWARE_DIRECTIONAL"
 
 
 class BacktestAdapter(StrEnum):
@@ -141,6 +154,13 @@ class BacktestConfig(BaseModel):
     # enforces the dispatch invariants.
     mean_reversion_variant: MeanReversionConfig | None = None
 
+    # D1-A funding-aware directional / carry-aware variant. Phase 3i-A:
+    # the validator accepts ``strategy_family == FUNDING_AWARE_DIRECTIONAL``
+    # only when this field is a non-None ``FundingAwareConfig``. The
+    # engine guard at ``BacktestEngine.run`` raises a documented
+    # RuntimeError until Phase 3i-B1 wires the engine dispatch path.
+    funding_aware_variant: FundingAwareConfig | None = None
+
     # Which price stream evaluates stops. MARK_PRICE (default) mirrors
     # the live protective-stop workingType; TRADE_PRICE is a Phase 2g
     # sensitivity switch (GAP-20260424-032).
@@ -165,16 +185,26 @@ class BacktestConfig(BaseModel):
         for bucket in SlippageBucket:
             if bucket not in self.slippage_bps_map:
                 raise ValueError(f"slippage_bps_map missing bucket {bucket}")
-        # Strategy-family dispatch invariants (Phase 3d-B1).
+        # Strategy-family dispatch invariants (Phase 3d-B1 for F1;
+        # Phase 3i-A for D1-A).
         if self.strategy_family == StrategyFamily.V1_BREAKOUT:
             if self.mean_reversion_variant is not None:
                 raise ValueError(
                     "mean_reversion_variant must be None when strategy_family=V1_BREAKOUT"
                 )
+            if self.funding_aware_variant is not None:
+                raise ValueError(
+                    "funding_aware_variant must be None when strategy_family=V1_BREAKOUT"
+                )
         elif self.strategy_family == StrategyFamily.MEAN_REVERSION_OVEREXTENSION:
             if self.mean_reversion_variant is None:
                 raise ValueError(
                     "mean_reversion_variant must be a MeanReversionConfig when "
+                    "strategy_family=MEAN_REVERSION_OVEREXTENSION"
+                )
+            if self.funding_aware_variant is not None:
+                raise ValueError(
+                    "funding_aware_variant must be None when "
                     "strategy_family=MEAN_REVERSION_OVEREXTENSION"
                 )
             # Disallow non-default V1 strategy_variant overrides on the F1
@@ -187,6 +217,29 @@ class BacktestConfig(BaseModel):
                     "strategy_variant must be the V1BreakoutConfig default when "
                     "strategy_family=MEAN_REVERSION_OVEREXTENSION; F1 does not "
                     "consume V1 axes"
+                )
+        elif self.strategy_family == StrategyFamily.FUNDING_AWARE_DIRECTIONAL:
+            if self.funding_aware_variant is None:
+                raise ValueError(
+                    "funding_aware_variant must be a FundingAwareConfig when "
+                    "strategy_family=FUNDING_AWARE_DIRECTIONAL"
+                )
+            if self.mean_reversion_variant is not None:
+                raise ValueError(
+                    "mean_reversion_variant must be None when "
+                    "strategy_family=FUNDING_AWARE_DIRECTIONAL"
+                )
+            # Disallow non-default V1 strategy_variant overrides on the
+            # D1-A path. D1-A does not consume ``strategy_variant``;
+            # allowing non-default V1 axes alongside D1-A would suggest
+            # a V1/D1 hybrid that the engine does not implement (and
+            # that Phase 3g §14 / Phase 3h §3 explicitly forbid).
+            default_v1 = V1BreakoutConfig()
+            if self.strategy_variant != default_v1:
+                raise ValueError(
+                    "strategy_variant must be the V1BreakoutConfig default when "
+                    "strategy_family=FUNDING_AWARE_DIRECTIONAL; D1-A does not "
+                    "consume V1 axes (Phase 3g §14 / Phase 3h §3 forbid V1/D1 hybrid)"
                 )
         return self
 
