@@ -67,26 +67,30 @@ Prometheus v1 is not intended to be a lights-out autonomous AI trading agent.
 
 ## Current Phase
 
-Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 historical-data foundation, and **two complete strategy-research arcs** are all complete:
+Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 historical-data foundation, and **three complete strategy-research arcs** are all complete:
 
 1. The **V1 breakout-continuation arc** (Phases 2e through 2w) producing one locked baseline (H0), one cleanly-promoted structural redesign (R3 — baseline-of-record), and three post-R3 structural redesigns (R1a, R1b-narrow, R2 — retained research evidence).
-2. The **F1 mean-reversion-after-overextension arc** (Phases 3a through 3d-B2) producing one new strategy family (F1) which **HARD REJECTED** at first execution per Phase 3c §7.3 catastrophic-floor predicate.
+2. The **F1 mean-reversion-after-overextension arc** (Phases 3a through 3d-B2) producing one new strategy family (F1) which **HARD REJECTED** at first execution per Phase 3c §7.3 catastrophic-floor predicate. Phase 3e is the docs-only post-F1 research consolidation memo with remain-paused recommendation.
+3. The **D1-A funding-aware directional / carry-aware arc** (Phases 3f through 3j) producing one new strategy family (D1-A) which **FRAMEWORK FAILED** at first execution per Phase 3h §11.2 (verdict: MECHANISM PASS / FRAMEWORK FAIL — other; catastrophic-floor predicate NOT triggered; cond_i BTC MED expR > 0 FAILED; cond_iv BTC HIGH cost-resilience FAILED).
 
-Phase 3e is a docs-only post-F1 research consolidation memo with operator decision menu; recommendation is **remain paused**.
+Phase 3k is the docs-only post-D1-A research consolidation memo with operator decision menu; primary recommendation is **remain paused** with external-cost-evidence review or regime-first framework memo as acceptable secondary / tertiary alternatives.
 
 Current phase:
 
 ```text
-Phase 3d-B2 merged. Phase 3e docs-only consolidation drafted.
+Phase 3j merged. Phase 3k docs-only consolidation drafted.
 No next phase authorized.
 ```
 
 Most recent merge:
 
 ```text
-main HEAD: d0b26fdcc03d038b87a690a7e5d849fa54fed704
-Merge title:  Merge Phase 3d-B2 (F1 execution + diagnostics + HARD REJECT verdict) into main
-              + docs(phase-3d-B2): merge report
+main HEAD: a7f653123fce822e67fefb62b05bcd152e167267
+Merge title:  Merge Phase 3j (D1-A first execution + diagnostics + first-execution-gate eval) into main
+              + docs(phase-3j): merge report (5d18408)
+              + docs(phase-3j): record merge-report commit hash in section 3 (a7f6531)
+Phase 3j merge commit:        5c8537bde462d328985b5c917729c663deaabc04
+Phase 3j merge-report commit: 5d18408daaed08ab30be47236f06c9d38c468f99
 ```
 
 ## Strategy Research Arc Outcomes
@@ -105,6 +109,10 @@ The two complete strategy-research arcs produced these outcomes:
 
 - **F1** (mean-reversion-after-overextension; 8-bar cumulative displacement > 1.75 × ATR(20) → SMA(8) frozen target; structural stop with 0.10 × ATR buffer; 8-bar unconditional time-stop; same-direction cooldown until unwind). Phase 3a discovery rank-1 near-term family candidate; Phase 3b spec; Phase 3c execution-planning; Phase 3d-A implementation (deliberately non-runnable); Phase 3d-B1 engine wiring (runnable but guarded); Phase 3d-B2 first execution + first-execution-gate evaluation. **Final verdict: HARD REJECT** (Phase 3c §7.3 catastrophic-floor predicate; 5 separate violations across BTC/ETH × MED/HIGH cells: BTC MED expR=−0.5227, BTC HIGH expR=−0.7000 / PF=0.2181, ETH HIGH expR=−0.5712 / PF=0.2997). M1 BTC PARTIAL (mean +0.024 R below +0.10 threshold; fraction 55.4%); M2 BTC FAIL / ETH weak-PASS; M3 PASS-isolated on both symbols (TARGET subset profitable when isolated, but overwhelmed by 53–54% STOP exits in the wider trade population). **Phase 3d-B2 is terminal for F1.** F1 retained as **research evidence**; **non-leading**; no F1-prime authorized.
 
+### D1-A funding-aware arc (Phase 3f through Phase 3j)
+
+- **D1-A** (funding-aware directional / carry-aware contrarian; trailing-90-day funding-rate Z-score |Z_F| ≥ 2.0 at completed funding-settlement time → enter contrarian at next 15m bar's open; stop = 1.0 × ATR(20); fixed +2.0R target; 32-bar (8-hour) unconditional time-stop; per-funding-event cooldown; band [0.60, 1.80] × ATR(20); contrarian direction; no regime filter). Phase 3f research-direction discovery (post-F1 rank-1 active-path candidate); Phase 3g spec memo + methodology audit; Phase 3h execution-planning memo with timing-clarification amendments; Phase 3i-A implementation-controls (deliberately non-runnable); Phase 3i-B1 engine-wiring (runnable but guarded); Phase 3j first execution + first-execution-gate evaluation. **Final verdict: MECHANISM PASS / FRAMEWORK FAIL — other** (Phase 3h §11.2; catastrophic-floor predicate NOT triggered; cond_i BTC MED expR > 0 FAILED with BTC R MED expR=−0.3217; cond_iv BTC HIGH cost-resilience FAILED with BTC R HIGH expR=−0.4755 / PF=0.5145). M1 BTC h=32 PASS (mean +0.1748 R AND fraction-non-negative 0.5101 — both above thresholds); M2 FAIL on both symbols (BTC funding benefit +0.00234 R ~21× below +0.05 R threshold; ETH +0.00452 R ~11× below); M3 PASS-isolated on both symbols (TARGET subset BTC mean +2.143 R / aggregate +111.46 R; ETH mean +2.447 R / aggregate +119.89 R — overwhelmed by 67–68% STOP exits at −1.30 / −1.24 R mean per loser). Empirical WR ~30% / ~31% vs forecast +51% breakeven. **Phase 3j is terminal for D1-A under the current locked spec.** D1-A retained as **research evidence**; **non-leading**; **no D1-A-prime, D1-B, V1/D1 hybrid, or F1/D1 hybrid authorized**.
+
 No next strategy phase is authorized.
 
 No paper/shadow planning is authorized.
@@ -113,7 +121,7 @@ No Phase 4 (risk/state/persistence runtime) work is authorized.
 
 No live-readiness, deployment, exchange-write, or production-key work is authorized.
 
-The next step is operator-driven only: the operator decides whether and when any subsequent phase is authorized. Until then, the project remains at the post-Phase-3d-B2 / Phase-3e consolidation boundary.
+The next step is operator-driven only: the operator decides whether and when any subsequent phase is authorized. Until then, the project remains at the post-Phase-3j / Phase-3k consolidation boundary.
 
 ---
 
@@ -668,15 +676,15 @@ No new strategy phase, paper/shadow planning, Phase 4 runtime implementation, li
 
 The next step is operator-driven:
 
-1. Operator reviews Phase 3d-B2 final outputs:
-   - `docs/00-meta/implementation-reports/2026-04-28_phase-3d-B2_F1_execution-diagnostics.md`
-   - `docs/00-meta/implementation-reports/2026-04-28_phase-3d-B2_closeout-report.md`
-   - `docs/00-meta/implementation-reports/2026-04-28_phase-3d-B2_merge-report.md`
-2. Operator reviews Phase 3e consolidation memo and decision menu:
-   - `docs/00-meta/implementation-reports/2026-04-28_phase-3e_post-F1-research-consolidation.md`
-   - `docs/00-meta/implementation-reports/2026-04-28_phase-3e_closeout-report.md`
-3. Operator decides whether and when to authorize any subsequent phase. Phase 3e recommendation is **remain paused**; the operator may also choose to authorize a docs-only discovery / spec / review phase, or hold for operator strategic choice. Implementation, backtesting, paper/shadow, Phase 4, or deployment authorizations are **NOT** recommended by Phase 3e.
-4. Until that authorization, the project remains at the post-Phase-3d-B2 / Phase-3e consolidation boundary.
+1. Operator reviews Phase 3j final outputs:
+   - `docs/00-meta/implementation-reports/2026-04-29_phase-3j_D1A_execution-diagnostics.md`
+   - `docs/00-meta/implementation-reports/2026-04-29_phase-3j_closeout-report.md`
+   - `docs/00-meta/implementation-reports/2026-04-29_phase-3j_merge-report.md`
+2. Operator reviews Phase 3k consolidation memo and decision menu:
+   - `docs/00-meta/implementation-reports/2026-04-29_phase-3k_post-D1A-research-consolidation.md`
+   - `docs/00-meta/implementation-reports/2026-04-29_phase-3k_closeout-report.md`
+3. Operator decides whether and when to authorize any subsequent phase. Phase 3k primary recommendation is **remain paused**; acceptable secondary / tertiary alternatives are **external execution-cost evidence review (docs-only)** or **regime-first research framework memo (docs-only)**, each conditional on explicit ex-ante operator commitment to symmetric-outcome / anti-circular-reasoning discipline. Implementation, backtesting, paper/shadow, Phase 4, live-readiness, deployment, D1-A-prime, D1-B, V1/D1 hybrid, F1/D1 hybrid, and ML-feasibility authorizations are **NOT** recommended by Phase 3k.
+4. Until that authorization, the project remains at the post-Phase-3j / Phase-3k consolidation boundary.
 
 Implementation/code work that proceeds without explicit operator authorization for a specific phase is forbidden.
 
@@ -684,9 +692,9 @@ Implementation/code work that proceeds without explicit operator authorization f
 
 ## Claude Code Start Instruction
 
-Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 strategy/backtesting research arc (through Phase 2w), and the Phase 3 new-strategy-family research arc (Phase 3a through Phase 3d-B2) are complete and merged to `main`. Phase 3e is the docs-only post-F1 research consolidation memo with operator decision menu.
+Phase 0 (repo audit), Phase 1 (local development foundation), the Phase 2 strategy/backtesting research arc (through Phase 2w), the Phase 3 F1 mean-reversion research arc (Phase 3a through Phase 3d-B2 + Phase 3e consolidation), and the Phase 3 D1-A funding-aware research arc (Phase 3f through Phase 3j) are complete and merged to `main`. Phase 3k is the docs-only post-D1-A research consolidation memo with operator decision menu.
 
-Claude Code must not begin any subsequent strategy phase, paper/shadow planning, Phase 4 runtime implementation, live-readiness, or deployment work without explicit operator authorization for that specific phase. Phase 3e's recommended next operator decision is **remain paused**; any subsequent phase requires explicit operator authorization beyond Phase 3e.
+Claude Code must not begin any subsequent strategy phase, paper/shadow planning, Phase 4 runtime implementation, live-readiness, or deployment work without explicit operator authorization for that specific phase. Phase 3k's recommended next operator decision is **remain paused** with **external execution-cost evidence review (docs-only)** or **regime-first research framework memo (docs-only)** as acceptable secondary / tertiary alternatives. Any subsequent phase requires explicit operator authorization beyond Phase 3k. **No D1-A-prime, D1-B, V1/D1 hybrid, F1/D1 hybrid, or ML-training authorization flows from Phase 3k.**
 
 The AI coding handoff at `docs/00-meta/ai-coding-handoff.md` remains the authoritative reference for phased implementation method, safety constraints, and reporting protocol. Phase-gate governance at `docs/12-roadmap/phase-gates.md` and the technical-debt register at `docs/12-roadmap/technical-debt-register.md` continue to bound any future phase.
 
@@ -754,8 +762,13 @@ Strategy/research (F1 mean-rev):  Phase 3 research arc complete
                                   F1 HARD REJECT (Phase 3d-B2 first execution);
                                   retained as research evidence; non-leading;
                                   Phase 3d-B2 terminal for F1
+Strategy/research (D1-A funding): Phase 3 research arc complete
+                                  D1-A MECHANISM PASS / FRAMEWORK FAIL - other
+                                  (Phase 3j first execution);
+                                  retained as research evidence; non-leading;
+                                  Phase 3j terminal for D1-A under current locked spec
 Historical/live data design:      docs strong; Phase 2e v002 datasets locked
-Validation plan:                  implemented through Phase 3d-B2
+Validation plan:                  implemented through Phase 3j
 Risk model:                       docs strong; runtime not yet implemented
 Execution model:                  docs strong; runtime not yet implemented
 Runtime architecture:             docs strong; runtime not yet implemented
@@ -769,19 +782,25 @@ Claude Code Phase 0 readiness:    completed
 Phase 1 local-dev foundation:     completed
 Phase 2 data foundation:          completed
 Phase 2 strategy research arc:    completed (Phase 2w merged)
-Phase 3 strategy research arc:    completed (Phase 3d-B2 merged at f6df7c7;
-                                  merge-report d0b26fd)
-Phase 3e consolidation memo:      drafted (docs-only; remain-paused recommendation)
+Phase 3 F1 research arc:          completed (Phase 3d-B2 merged + Phase 3e consolidation)
+Phase 3 D1-A research arc:        completed (Phase 3j merged at 5c8537b;
+                                  merge-report 5d18408 / 5d18408+a7f6531)
+Phase 3k consolidation memo:      drafted (docs-only; remain-paused primary
+                                  recommendation; external-cost-evidence or
+                                  regime-first memo as acceptable secondary /
+                                  tertiary alternatives)
 Phase 4 runtime implementation:   NOT authorized
 Paper/shadow planning:            NOT authorized
 Live-readiness / deployment:      NOT authorized
 Production-key work:              NOT authorized
 Exchange-write capability:        NOT authorized
 F1-prime / target-subset spec:    NOT authorized; not proposed
+D1-A-prime / D1-B / hybrid spec:  NOT authorized; not proposed
+ML feasibility memo:              NOT authorized; not proposed
 New family research:              NOT authorized; not proposed
 ```
 
-The project has completed two strategy/backtesting research arcs (V1 breakout through Phase 2w; F1 mean-reversion through Phase 3d-B2). Phase 3e is the docs-only post-F1 consolidation memo with operator decision menu; recommended next operator decision is **remain paused**.
+The project has completed three strategy/backtesting research arcs (V1 breakout through Phase 2w; F1 mean-reversion through Phase 3d-B2; D1-A funding-aware through Phase 3j). Phase 3k is the docs-only post-D1-A consolidation memo with operator decision menu; recommended next operator decision is **remain paused** with external-cost-evidence review or regime-first framework memo as acceptable secondary / tertiary alternatives.
 
 It is not ready for Phase 4 runtime implementation, paper/shadow operation, exchange-write capability, production Binance keys, or live trading. No subsequent phase has been authorized; the next step requires explicit operator authorization for that specific phase.
 
@@ -790,6 +809,6 @@ It is not ready for Phase 4 runtime implementation, paper/shadow operation, exch
 ## Document Status
 
 - Status: ACTIVE
-- Updated: 2026-04-28
+- Updated: 2026-04-29
 - Owner: Project operator
-- Role: High-level project memory checkpoint after Phase 3d-B2 + Phase 3e consolidation
+- Role: High-level project memory checkpoint after Phase 3j + Phase 3k consolidation
