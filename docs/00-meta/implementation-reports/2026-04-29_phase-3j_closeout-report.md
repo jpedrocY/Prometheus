@@ -80,7 +80,7 @@ Per Phase 3h §10 (4 mandatory R-window cells; V conditional on PROMOTE).
 | **R HIGH MARK** | 197 | **−0.4755** | **0.5145** | 178 | **−0.2543** | **0.7217** |
 | R MED TRADE_PRICE | 198 | −0.3703 | 0.6014 | 180 | −0.2222 | 0.7478 |
 
-**No catastrophic-floor predicate violation.** All 4 cells stay above the (expR > −0.50 OR PF > 0.30) thresholds on both symbols. This is materially better than Phase 3d-B2 F1 (which tripped 5 catastrophic-floor violations producing HARD REJECT).
+**No catastrophic-floor predicate violation.** A cell is non-catastrophic iff `expR > −0.50 AND PF > 0.30` (both conditions); equivalently, the catastrophic-floor predicate triggers iff `expR ≤ −0.50 OR PF ≤ 0.30`. All 4 R-window × 2 symbols cells satisfy the non-catastrophic conjunction on both metrics simultaneously. This is materially better than Phase 3d-B2 F1 (which tripped 5 catastrophic-floor violations producing HARD REJECT).
 
 V MED MARK cell **NOT EXECUTED** — verdict was not PROMOTE.
 
@@ -108,7 +108,7 @@ V MED MARK cell **NOT EXECUTED** — verdict was not PROMOTE.
 | **M3** TARGET-exit subset (n / aggregate R / mean R) | 52 / +111.46 / +2.143 R | 49 / +119.89 / +2.447 R | mean ≥ +0.30 R AND aggregate > 0 |
 | M3 verdict | **PASS** | **PASS** | — |
 
-The mechanism (M1) IS empirically present — D1-A's post-extreme-funding contrarian entries do produce positive expected counter-displacement at the 32-bar horizon. The TARGET-exit subset (M3) is highly profitable when isolated. But the realized framework expectation fails because the win rate (~30%) is far below the +51% breakeven WR forecast — too many trades hit the −1.0R stop before reaching the +2.0R target. M2 (funding-cost benefit) is two orders of magnitude below threshold; funding accrual does not offset costs.
+The mechanism (M1) IS empirically present — D1-A's post-extreme-funding contrarian entries do produce positive expected counter-displacement at the 32-bar horizon. The TARGET-exit subset (M3) is highly profitable when isolated. But the realized framework expectation fails because the win rate (~30%) is far below the +51% breakeven WR forecast — too many trades hit the −1.0R stop before reaching the +2.0R target. M2 (funding-cost benefit) fails clearly: BTC is ~21× below the +0.05R PASS threshold (+0.00234 R vs +0.05 R); ETH is ~11× below (+0.00452 R vs +0.05 R). Funding accrual does not offset costs.
 
 ## 8. RR / breakeven realized-vs-expected (Phase 3h §13 #24)
 

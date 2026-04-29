@@ -22,8 +22,8 @@ Phase 3j is the **first time D1-A has been run on real BTCUSDT / ETHUSDT v002 da
 - **The TARGET-subset is highly profitable when isolated.** TARGET-exit subset on BTC: n=52, mean +2.14R, aggregate +111.5R. ETH: n=49, mean +2.45R, aggregate +119.9R. Both pass the M3 §12.3 thresholds.
 - **But the realized strategy is unprofitable at MED slippage on BTC.** BTC R MED MARK: trades=198, expR=−0.32R, PF=0.65, WR=0.30. ETH R MED MARK: trades=179, expR=−0.14R, PF=0.83, WR=0.31. Both BTC and ETH fall well below the +0.51 breakeven win rate forecast in Phase 3h §5.6.5.
 - **Cost-resilience also fails.** BTC R HIGH MARK: expR=−0.48R, PF=0.51 (above catastrophic-floor −0.50 / 0.30 thresholds, but condition (iv) requires `BTC HIGH expR > 0` and PF > 0.30 simultaneously — only the second holds).
-- **Funding-cost benefit is negligible.** M2 mean funding_pnl / realized_risk_usdt is +0.0023R BTC / +0.0045R ETH — three orders of magnitude below the +0.05R PASS threshold per §12.2. Funding accrual does not offset fees/slippage.
-- **No catastrophic-floor violation.** All 4 R-window cells stay above (expR > −0.50 OR PF > 0.30) for both symbols. This is materially better than F1's Phase 3d-B2 outcome (5 catastrophic-floor violations producing HARD REJECT).
+- **Funding-cost benefit is negligible.** M2 mean funding_pnl / realized_risk_usdt is +0.00234R BTC (~21× below the +0.05R PASS threshold per §12.2) and +0.00452R ETH (~11× below threshold). M2 fails clearly on both symbols; funding accrual does not offset fees/slippage.
+- **No catastrophic-floor violation.** All 4 R-window × 2 symbols cells satisfy `expR > −0.50 AND PF > 0.30` simultaneously (the catastrophic-floor predicate is `expR ≤ −0.50 OR PF ≤ 0.30`, so non-catastrophic requires *both* conditions to hold). This is materially better than F1's Phase 3d-B2 outcome (5 catastrophic-floor violations producing HARD REJECT).
 
 Net: the mechanism produces a directional edge (M1 PASS) and the geometry delivers the expected per-trade R magnitudes (winners +1.98R BTC / +2.26R ETH, both above the +1.47R MED forecast; losers −1.30R BTC / −1.24R ETH, both better than the −1.53R MED forecast), but the strategy hits its 1.0 × ATR stop too often (~68% of trades) before reaching its +2.0R target. The realized win rate (~30%) is far below the +51% breakeven, so the better-than-expected winner / loser R cannot rescue the framework expectation.
 
@@ -101,7 +101,7 @@ Per Phase 3h §11.1 the gate has 5 conditions evaluated against the BTC + ETH ME
 | **(iv) BTC HIGH cost-resilience** | BTC R HIGH MARK expR > 0 AND PF > 0.30 AND ETH R HIGH MARK non-catastrophic | BTC HIGH expR = **−0.4755** (FAIL); BTC HIGH PF = 0.5145 (above 0.30); ETH HIGH expR = −0.2543; ETH HIGH PF = 0.7217 | **FAIL** |
 | **(v) MED absolute floors** | BTC + ETH R MED MARK expR > −0.50 AND PF > 0.30 | BTC: −0.32 / 0.65; ETH: −0.14 / 0.83 | **PASS** |
 
-**Catastrophic-floor predicate (Phase 3h §10.4):** `expR ≤ −0.50 OR PF ≤ 0.30` on any of the 4 BTC/ETH × MED/HIGH MARK cells.
+**Catastrophic-floor predicate (Phase 3h §10.4):** A cell triggers a catastrophic-floor violation iff `expR ≤ −0.50 OR PF ≤ 0.30`. Equivalently, a cell is non-catastrophic iff `expR > −0.50 AND PF > 0.30`. Evaluated on each of the 4 BTC/ETH × MED/HIGH MARK cells:
 
 | Cell | expR | PF | expR ≤ −0.50? | PF ≤ 0.30? | Catastrophic? |
 |------|-----:|---:|--------------:|-----------:|--------------:|
@@ -161,7 +161,7 @@ PASS if mean funding_benefit_R ≥ +0.05 R per trade per symbol.
 | BTC | 198 | +0.00234 | **FAIL** |
 | ETH | 179 | +0.00452 | **FAIL** |
 
-M2 is **FAIL on both symbols** by ~10× the threshold. The funding-rate carry collected by holding the contrarian position through the next funding cycle is negligible relative to fees/slippage/realized risk. This is consistent with the empirical observation that 96% (BTC) / 94% (ETH) of trades exit on STOP or TARGET within ≤ 32 bars (≤ 8 hours), so most trades cross at most 1 funding cycle, and the per-cycle accrual is small.
+M2 is **FAIL on both symbols** clearly: BTC is roughly 21× below the +0.05R PASS threshold (+0.00234 R vs +0.05 R) and ETH is roughly 11× below (+0.00452 R vs +0.05 R). The funding-rate carry collected by holding the contrarian position through the next funding cycle is negligible relative to fees/slippage/realized risk. This is consistent with the empirical observation that 96% (BTC) / 94% (ETH) of trades exit on STOP or TARGET within ≤ 32 bars (≤ 8 hours), so most trades cross at most 1 funding cycle, and the per-cycle accrual is small.
 
 ### 6.3 M3 — TARGET-exit subset positive contribution
 
@@ -178,32 +178,91 @@ Per Phase 3h §12.3 framing, M3 PASS is **descriptive only** and cannot rescue a
 
 ## 7. Phase 3h §14 P.14 hard-block invariants
 
-Subset checkable from the trade log alone:
+The Phase 3h §14 P.14 hard-block surface spans four verification categories. Phase 3j evaluates each category independently and reports the full status table below. **All P.14 hard-block checks pass; no escalation report is required.**
+
+### 7.1 Category A — Trade-log verified checks (Phase 3j candidate runs)
+
+Computed from the actual D1-A R MED MARK trade-log artifact:
 
 | Invariant | BTC | ETH | Pass? |
 |-----------|-----|-----|------:|
 | Exit reasons in allowed set {STOP, TARGET, TIME_STOP, END_OF_DATA} | All 198 | All 179 | **PASS** |
 | No V1-only forbidden exit reasons {TRAILING_BREACH, STAGNATION, TAKE_PROFIT} | 0 / 198 | 0 / 179 | **PASS** |
 | Raw `stop_distance_at_signal_atr` in band [0.60, 1.80] | min=1.000 max=1.000 | min=1.000 max=1.000 | **PASS** |
-| `funding_event_id_at_signal` populated on all D1-A trades | 198 / 198 | 179 / 179 | **PASS** |
+| `funding_event_id_at_signal` populated on every D1-A trade | 198 / 198 | 179 / 179 | **PASS** |
 | Lifecycle accounting identity (event-level) | detected (201) = filled (198) + rejected_stop_distance (0) + blocked_cooldown (3) ✓ | detected (188) = filled (179) + rejected_stop_distance (0) + blocked_cooldown (9) ✓ | **PASS** |
 
-Notes:
+`stop_distance_at_signal_atr` = 1.0 exactly on every trade because the raw stop is 1.0 × ATR(B) by construction (Phase 3g §6.7) and the field stores the pre-slippage ratio. The Phase 3h §10.4 catastrophic-floor predicate evaluation (§5 above) belongs to this category and was checked separately; no violation.
 
-- `stop_distance_at_signal_atr` = 1.0 exactly on every trade because the raw stop is 1.0 × ATR(B) by construction (Phase 3g §6.7) and the field stores the pre-slippage ratio.
-- The +2.0R target geometry IS enforced by construction in `BacktestEngine._open_d1a_trade` (`compute_d1a_target(fill_price, stop_distance=post_slip_stop_distance, target_r=2.0)`). The diagnostic field `entry_to_target_distance_atr` measures `|fill − target| / ATR(B)` and ranges 2.03 – 2.54 (mean 2.17 BTC / 2.13 ETH) because `post_slip_stop_distance > 1.0 × ATR(B)` after slippage. This is a known consequence of the slippage model, not a violation of the +2.0R construction. The construction-level invariant `(target − fill) / stop_distance == 2.0` cannot be reconstructed from the trade log alone because `atr_at_signal` is an R2-specific TradeRecord field that stays NaN for D1-A rows; a future trade-log extension may add a D1-A-specific `atr_at_signal` field if needed.
-- All other P.14 invariants pass.
+### 7.2 Category B — Construction-level / engine-invariant checks (engine code path)
+
+These invariants are enforced by the engine code path itself; they cannot be reconstructed from the trade-log artifact alone but are guaranteed structurally:
+
+| Invariant | Mechanism | Pass? |
+|-----------|-----------|------:|
+| Stop = 1.0 × ATR(20)(B) (raw, pre-slippage) | `compute_d1a_stop(atr=ATR_20_B, multiplier=cfg.stop_multiplier=1.0, side=direction)` at engine entry-open path | **PASS** (also evidenced by min=max=1.000 in Cat A) |
+| Target = entry_fill ± 2.0 × post_slip_stop_distance | `compute_d1a_target(fill_price, stop_distance=post_slip_stop_distance, target_r=cfg.target_r_multiple=2.0)` at `engine.py:2088` | **PASS** (indirectly evidenced: M3 TARGET-exit mean R is +2.143 BTC / +2.447 ETH, within +0.14 / +0.45 R of nominal +2.0R, only consistent with intact +2.0R geometry plus completed-bar-close trigger / next-bar-open fill overshoot) |
+| Per-funding-event cooldown enforced via `can_re_enter` gate | `can_re_enter_d1a(last_consumed_event_id, last_consumed_direction, candidate_event_id, candidate_direction, cooldown_policy=PER_FUNDING_EVENT)` | **PASS** (evidenced by lifecycle: blocked_cooldown=3 BTC / 9 ETH > 0; identity holds) |
+| 32-bar TIME_STOP horizon | TIME_STOP triggers at close of `fill_bar_index + 32`; fill at `fill_bar_index + 33` open | **PASS** (evidenced by 11 BTC / 10 ETH TIME_STOP exits with mean R ≈ 0.33 / 0.57, far smaller magnitude than STOP / TARGET as expected for a low-magnitude time-out) |
+| Z-score over trailing 270 events with current-event exclusion | `compute_d1a_z_score(prior_funding_rates[:latest_evt_idx], window_events=270)` slices up to but not including current event | **PASS** (Phase 3i-B1 unit-tested; preserved at Phase 3j) |
+| Funding-event eligibility non-strict ≤ (`funding_time ≤ bar_close_time`) | `_latest_eligible_funding_event_idx` uses `bisect.bisect_right(funding_times, bar_close_time) - 1` | **PASS** (Phase 3i-B1 unit-tested; preserved at Phase 3j) |
+| Same-bar STOP > TARGET > TIME_STOP precedence | engine per-bar trade-management priority order in `_run_symbol_d1a` | **PASS** (Phase 3i-B1 unit-tested; preserved at Phase 3j) |
+| TARGET fires on completed-bar close confirmation only (no intrabar / no same-close fill) | LONG `bar.close ≥ target_price`; SHORT `bar.close ≤ target_price`; fill on next-bar open | **PASS** (Phase 3i-B1 unit-tested; preserved at Phase 3j) |
+
+The `entry_to_target_distance_atr` diagnostic field (range 2.03 – 2.54; mean 2.17 BTC / 2.13 ETH) measures `|fill − target| / ATR(B)`, where `|fill − target| = 2.0 × post_slip_stop_distance` and `post_slip_stop_distance > 1.0 × ATR(B)` after slippage. This is a known consequence of the slippage model, not a violation of the +2.0R construction. A direct `(target − fill) / stop_distance == 2.0` arithmetic check cannot be reconstructed from the trade log alone because `atr_at_signal` is an R2-specific TradeRecord field that stays NaN for D1-A rows; the construction is verified by the engine code path and indirectly by the M3 TARGET-subset realized magnitudes. Adding a D1-A-specific `atr_at_signal` field is a candidate technical-debt item if a successor D1-A-related phase is ever authorized; it is **not** a Phase 3j hard-block.
+
+### 7.3 Category C — Phase 3i-B1 unit-tested invariants (preserved at Phase 3j)
+
+The Phase 3i-B1 engine-test surface (21 dispatch tests in `test_engine_d1a_dispatch.py` + 5 in `test_engine_d1a_guard.py` = 26 D1-A-specific tests) covers the synthetic-data hard-block invariants. All 26 tests continue to pass at the Phase 3j branch tip:
+
+| Invariant family | Test file | Test count | Pass? |
+|------------------|-----------|-----------:|------:|
+| D1-A engine dispatch (signal generation; warmup; Z-score; cooldown; stop-distance admissibility) | `test_engine_d1a_dispatch.py` | 21 | **PASS** |
+| D1-A engine guard / V1+F1 unchanged / counters identity | `test_engine_d1a_guard.py` | 5 | **PASS** |
+| Trade-log schema includes 4 new D1-A columns | `test_trade_log.py` | 1 (assertion-list) | **PASS** |
+| Variant config locked-spec preservation | `test_variant_config.py` | 15 | **PASS** |
+| D1-A primitives | `test_primitives.py` | 42 | **PASS** |
+| D1-A facade | `test_strategy.py` | 10 | **PASS** |
+| BacktestConfig dispatch validation | `test_config.py` | 19 | **PASS** |
+
+Total project pytest count remains **668 passed** at the Phase 3j branch tip. No test was modified or removed in Phase 3j.
+
+### 7.4 Category D — Control reproduction (V1 / F1 dispatch unperturbed)
+
+The full 5-control / 10-symbol-cell set re-executed at Phase 3j re-entry and compared against Phase 3i-B1 baselines:
+
+| Control | Symbols | Reproduces bit-for-bit (summary metrics + trade-log content) |
+|---------|---------|--------------------------------------------------------------|
+| H0 R MED MARK | BTC + ETH | **PASS** (n=33 each) |
+| H0 V MED MARK | BTC + ETH | **PASS** (n=8 / 14) |
+| R3 R MED MARK | BTC + ETH | **PASS** (n=33 each) |
+| R3 V MED MARK | BTC + ETH | **PASS** (n=8 / 14) |
+| F1 R MED MARK | BTC + ETH | **PASS** (n=4720 / 4826) |
+
+No V1 / F1 dispatch perturbation. The Phase 3j runner-loop body addition only consumes the existing `_run_symbol_d1a` path; V1 and F1 paths remain unchanged from Phase 3i-B1.
+
+### 7.5 Overall P.14 status
+
+All four categories: **PASS**. No bug surfaced; no escalation report required; Phase 3h §14 hard-block surface is satisfied.
 
 ## 8. Phase 3h §13 mandatory diagnostics
 
-### 8.1 Direction breakdown (D1-A R MED MARK)
+### 8.1 Direction breakdown (D1-A; all 4 R-window cells)
 
-| Symbol | LONG | SHORT |
-|--------|-----:|------:|
-| BTC | varies (LONG below −2σ; SHORT above +2σ) | — |
-| ETH | varies | — |
+LONG fires when `funding_z_score_at_signal ≤ −2.0` (contrarian-long after extreme negative funding); SHORT fires when `funding_z_score_at_signal ≥ +2.0` (contrarian-short after extreme positive funding). Exact counts from the executed run artifacts:
 
-(Direction breakdown is encoded in `funding_z_score_at_signal` distribution per §8.4 below.)
+| Cell | Symbol | n | LONG | SHORT | LONG fraction |
+|------|--------|--:|-----:|------:|--------------:|
+| **D1-A R MED MARK** | BTC | 198 | 100 | 98 | 0.5051 |
+| **D1-A R MED MARK** | ETH | 179 | 92 | 87 | 0.5140 |
+| D1-A R LOW MARK | BTC | 198 | 100 | 98 | 0.5051 |
+| D1-A R LOW MARK | ETH | 180 | 92 | 88 | 0.5111 |
+| D1-A R HIGH MARK | BTC | 197 | 100 | 97 | 0.5076 |
+| D1-A R HIGH MARK | ETH | 178 | 91 | 87 | 0.5112 |
+| D1-A R MED TRADE_PRICE | BTC | 198 | 100 | 98 | 0.5051 |
+| D1-A R MED TRADE_PRICE | ETH | 180 | 92 | 88 | 0.5111 |
+
+The LONG / SHORT split is approximately 51% / 49% on every cell × symbol combination, indicating the trailing-90-day funding-rate distribution is approximately symmetric around zero on both BTC and ETH over the R window — extreme negative-funding events (LONG triggers) and extreme positive-funding events (SHORT triggers) occur at similar rates. The slight asymmetry across cost-sensitivity cells reflects 1-3 trades dropped at LOW/HIGH/TRADE_PRICE because of cost-driven exit-time sequencing (trades that hit TIME_STOP at one cost regime can hit STOP earlier or later at another, slightly shifting the eligible-event sequence near R-window boundaries). The funding_z_score distribution per §8.4 below corroborates the symmetry.
 
 ### 8.2 Per-fold breakdown (6 half-year folds across the R-window)
 
