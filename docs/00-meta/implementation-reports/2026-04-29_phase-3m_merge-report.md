@@ -25,19 +25,21 @@
 ## 3. Merge-report commit hash
 
 ```text
-<recorded after this Phase 3m merge report itself is committed; see latest commits in §6 below>
+e7e27ebcf4c8b4a123cb3f8db464dcb6ee057d60
 ```
+
+(Subject: `docs(phase-3m): merge report`. The merge-report file itself; this section was filled in by an immediate clerical follow-up commit so the report records its own provenance.)
 
 ## 4. Main / origin sync confirmation
 
-After `git push origin main`:
+After the merge-report commit and `git push origin main`:
 
 ```text
-local  main:        17349e382d55e8d502e53b85e0b8b3b8c53408bb
-remote origin/main: 17349e382d55e8d502e53b85e0b8b3b8c53408bb
+local  main:        e7e27ebcf4c8b4a123cb3f8db464dcb6ee057d60
+remote origin/main: e7e27ebcf4c8b4a123cb3f8db464dcb6ee057d60
 ```
 
-Local `main` and `origin/main` are synced.
+Local `main` and `origin/main` are synced. (State recorded immediately after the merge-report commit `e7e27eb` push. An immediate clerical follow-up commit then resolved this section's self-reference placeholder; main HEAD advances by one further clerical commit listed in §6 below.)
 
 ## 5. Git status
 
@@ -48,17 +50,19 @@ Your branch is up to date with 'origin/main'.
 nothing to commit, working tree clean
 ```
 
-(Working tree clean immediately prior to this merge-report commit; the merge-report file itself is the next add+commit step which will produce the SHA referenced from §3 once the commit is created.)
+(Working tree clean after the merge-report commit and after the clerical self-reference cleanup commit.)
 
 ## 6. Latest 5 commits
 
 ```text
+e7e27eb docs(phase-3m): merge report
 17349e3 Merge Phase 3m (docs-only regime-first research framework memo) into main
 432b517 phase-3m: closeout SHA fill-in + minimal current-project-state update
 28616c4 phase-3m: docs-only regime-first research framework memo
 d80b3a7 docs(phase-3l): resolve remaining merge-report self-reference placeholders
-2e7cc4a docs(phase-3l): record merge-report commit hash in section 3
 ```
+
+(Snapshot at the merge-report commit `e7e27eb`; the immediate clerical follow-up commit that resolves §3 / §4 / §6 placeholders advances main HEAD by one further clerical commit not shown in this 5-commit window.)
 
 ## 7. Files included in the merge
 
