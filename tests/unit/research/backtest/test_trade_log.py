@@ -130,5 +130,12 @@ def test_table_schema_has_expected_columns() -> None:
         "frozen_target_value",
         "entry_to_target_distance_atr",
         "stop_distance_at_signal_atr",
+        # D1-A funding-aware directional metadata (Phase 3i-B1;
+        # None / NaN / -1 defaults preserve V1 / F1 trade-log columns
+        # bit-for-bit).
+        "funding_event_id_at_signal",
+        "funding_z_score_at_signal",
+        "funding_rate_at_signal",
+        "bars_since_funding_event_at_signal",
     }
     assert set(table.schema.names) == expected

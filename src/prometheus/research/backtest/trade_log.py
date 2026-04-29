@@ -101,6 +101,22 @@ class TradeRecord(BaseModel):
     entry_to_target_distance_atr: float = float("nan")
     stop_distance_at_signal_atr: float = float("nan")
 
+    # ----- D1-A funding-aware directional metadata (Phase 3i-B1) -----
+    # Populated only on D1-A-family trades (strategy_family=
+    # FUNDING_AWARE_DIRECTIONAL). For V1 / F1 rows these stay at
+    # None / NaN / -1 defaults so the parquet schema remains additive
+    # and existing reports are unaffected. Per Phase 3g §9.4 + Phase
+    # 3h §5.7 fields list. The ``entry_to_target_distance_atr`` and
+    # ``stop_distance_at_signal_atr`` fields above are reused for D1-A
+    # (semantically the same: distance to target / stop in ATR
+    # multiples). For D1-A by construction:
+    #   entry_to_target_distance_atr = 2.0 (target = +2.0R per Phase 3g §5.6.5)
+    #   stop_distance_at_signal_atr  = 1.0 (stop = 1.0 × ATR per Phase 3g §6.7)
+    funding_event_id_at_signal: str | None = None
+    funding_z_score_at_signal: float = float("nan")
+    funding_rate_at_signal: float = float("nan")
+    bars_since_funding_event_at_signal: int = -1
+
 
 def trade_record_to_dict(rec: TradeRecord) -> dict[str, object]:
     data = rec.model_dump()
@@ -163,6 +179,13 @@ def trade_record_to_parquet_table(records: list[TradeRecord]) -> pa.Table:
             ("frozen_target_value", pa.float64()),
             ("entry_to_target_distance_atr", pa.float64()),
             ("stop_distance_at_signal_atr", pa.float64()),
+            # D1-A funding-aware directional diagnostic fields
+            # (Phase 3i-B1). None/NaN/-1 for V1 / F1 rows; populated
+            # by the D1-A engine path per Phase 3g §9.4 + Phase 3h §5.7.
+            ("funding_event_id_at_signal", pa.string()),
+            ("funding_z_score_at_signal", pa.float64()),
+            ("funding_rate_at_signal", pa.float64()),
+            ("bars_since_funding_event_at_signal", pa.int64()),
         ]
     )
     columns: dict[str, list[object]] = {name: [] for name in schema.names}
