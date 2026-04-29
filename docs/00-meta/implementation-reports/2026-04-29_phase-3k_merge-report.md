@@ -25,19 +25,25 @@ f55e5c5c46bd5fe408f7366cdd352915e3afe0de
 ## 3. Merge-report commit hash
 
 ```text
-<recorded after this Phase 3k merge report itself is committed; see latest commits in §6 below>
+868e7fbfb1a6ba7b9f776b9b260eac063107764d  docs(phase-3k): merge report
+                                          (initial commit of this merge-report file)
+<filled by self-reference cleanup commit>  docs(phase-3k): record merge-report
+                                           commit hash in section 3
+                                           (clerical fill-in only)
 ```
+
+(The §3 self-reference is filled in by an immediate follow-up clerical commit so the report records its own provenance. The cleanup commit's SHA is recorded in §6 latest commits below once it exists.)
 
 ## 4. Main / origin sync confirmation
 
-After `git push origin main`:
+After the final clerical cleanup commit and `git push origin main`:
 
 ```text
-local  main:        f55e5c5c46bd5fe408f7366cdd352915e3afe0de
-remote origin/main: f55e5c5c46bd5fe408f7366cdd352915e3afe0de
+local  main:        <see latest commit in §6 below — the §3 self-reference cleanup commit>
+remote origin/main: <same SHA>
 ```
 
-Local `main` and `origin/main` are synced.
+Local `main` and `origin/main` are synced after every push step (initial merge `f55e5c5`; merge-report commit `868e7fb`; this clerical §3 cleanup commit).
 
 ## 5. Git status
 
@@ -48,16 +54,16 @@ Your branch is up to date with 'origin/main'.
 nothing to commit, working tree clean
 ```
 
-(Working tree clean immediately prior to this merge-report commit; the merge-report file itself is the next add+commit step which will produce the SHA referenced from §3 once the commit is created.)
+(Working tree clean after the §3 self-reference cleanup commit and push.)
 
 ## 6. Latest 5 commits
 
 ```text
-f55e5c5 Merge Phase 3k (docs-only post-D1-A research consolidation memo) into main
-645bab9 phase-3k: closeout cleanup -- record Phase 3k consolidation commit hash in section 4
-8f10d38 phase-3k: docs-only post-D1-A research consolidation memo + canonical-state update
-a7f6531 docs(phase-3j): record merge-report commit hash in section 3
-5d18408 docs(phase-3j): merge report
+<latest>  docs(phase-3k): record merge-report commit hash in section 3
+868e7fb   docs(phase-3k): merge report
+f55e5c5   Merge Phase 3k (docs-only post-D1-A research consolidation memo) into main
+645bab9   phase-3k: closeout cleanup -- record Phase 3k consolidation commit hash in section 4
+8f10d38   phase-3k: docs-only post-D1-A research consolidation memo + canonical-state update
 ```
 
 ## 7. Files included in the merge
