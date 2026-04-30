@@ -91,14 +91,14 @@ Phase 3r is the docs-only mark-price gap governance memo (Phase 3p §10 / Phase 
 
 Phase 3s is the diagnostics-and-reporting phase that executed the predeclared Phase 3o / Phase 3p Q1–Q7 diagnostic question set **exactly once** on the v002-locked retained-evidence trade populations (R3, R2, F1, D1-A; R-window MEDIUM-slip canonical runs; 10 031 trades total: 4 974 BTC + 5 057 ETH), using the Phase 3q v001-of-5m supplemental datasets, and applying the Phase 3r §8 Q6 invalid-window exclusion rule verbatim. **Q1, Q2, Q3 (+1R), Q6 (D1-A only), and Q7 meta classified informative under Phase 3p §8 outcome-interpretation rules; Q4 and Q5 classified non-informative; Q3 ambiguous for +2R.** Phase 3r §8 exclusion rule applied with **zero trades excluded empirically** (retained-evidence trade lifetimes ≤ 8 h are too short to straddle the four mark-price gap windows). Headline findings: Q1 — IAE > IFE in 7 of 8 candidate × symbol cells (universal entry-path adverse bias; F1 most pronounced ~0.5 R consumed in first 5 min); Q2 — V1-family wick-dominated stop pathology (R3/R2 wick-fraction 0.571–1.000) vs F1/D1-A sustained-dominated stop pathology (0.269–0.347), the cleanest cross-family mechanism finding; Q3 — +1R intrabar-touch fraction ≥ 25% in 6 of 8 cells (descriptive-only per Phase 3p §8.3 / Phase 3o §6.3); Q6 — D1-A mark-stop lag ~1.3–1.8 5m bars (mark triggers later than trade); Q4 — D1-A funding-decay curve has no monotone shape, SEM > displacement magnitude (non-informative); Q5 — no |signed| > 8 bps cell, consistent with Phase 3l "B — conservative but defensible". **All findings are descriptive only and cannot license verdict revision, parameter change, threshold revision, project-lock revision, strategy rescue, 5m strategy / hybrid / variant proposal, paper/shadow planning, Phase 4, live-readiness, deployment, or any successor authorization.** Phase 3o §6 forbidden question forms, Phase 3o §10 analysis boundary, Phase 3p §8 critical reminders, and Phase 3r §8 binding constraints all preserved. **5m research thread is operationally complete.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks all preserved verbatim. No backtest run. No retained-evidence trade population regenerated. No v002 dataset / manifest modification. No Phase 3q v001-of-5m manifest modification. No data acquisition / download / patch / regeneration / modification. No forward-fill / interpolation / imputation / replacement. No 5m strategy / hybrid / variant. No paper/shadow / Phase 4 / live-readiness / deployment / production-key / exchange-write / MCP / Graphify / `.mcp.json` / credentials. No private endpoints / user stream / WebSocket / public endpoints consulted. No secrets. Recommended state remains **paused**.
 
+Phase 3t is the docs-only post-5m-diagnostics consolidation and research-thread closure memo. Phase 3t records what the 5m research thread (Phases 3o → 3p → 3q → 3r → 3s) taught the project, what it explicitly did not teach, and why the correct project state remains paused. **The 5m research thread is operationally complete and closed.** Phase 3t consolidates the strategic answers: useful timing information exists inside 15m bars, descriptively only (Q1 universal entry-path adverse bias; Q2 V1-family-vs-F1/D1A stop pathology differentiation; Q3 +1R intrabar-touch frequency in adverse-exit trades; Q6 D1-A mark-stop lag); regime-first remains unanswered and risky (Phase 3m's "remain paused" recommendation stands; Phase 3s did not test regime-classification questions); 5m helped diagnostically but finer-than-5m data is not justified (sub-minute / tick would add noise without offsetting signal-to-noise ratio gain); no implementation-grade new hypothesis emerged (informative findings are not strategy candidates per §9.1; Phase 3o §6 forbidden question forms preserved). **Informative diagnostics do not revise verdicts, do not authorize strategy rescue, do not authorize parameter changes, do not authorize a 5m strategy, do not authorize Phase 4 / paper-shadow / live-readiness / deployment.** Phase 3t §12 records the validity gate for any future research: a genuinely new ex-ante hypothesis (not derived from observed Q1–Q7 patterns); full written specification before testing; no conversion of Q3 / Q6 findings into post-hoc rules; no rescue framing; no reuse of 5m findings as parameter-optimization hints; predeclared evidence thresholds; separate operator authorization. R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks; mark-price stops; v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false` — all preserved verbatim. No diagnostics rerun; no Q1–Q7 rerun; no backtests; no data acquisition / patching / regeneration / modification; no manifest modification; no Phase 3p §4.7 amendment; no 5m strategy / hybrid / retained-evidence successor / new variant proposal; no paper/shadow / Phase 4 / live-readiness / deployment / production-key / exchange-write / MCP / Graphify / `.mcp.json` / credentials work. **Recommended state remains paused.**
+
 Current phase:
 
 ```text
-Phase 3s merged into main (5m diagnostics execution Q1-Q7 once with Phase 3r §8 exclusion rule).
-Q1, Q2, Q3 (+1R), Q6 (D1-A only), Q7: informative.
-Q4, Q5: non-informative.
-Phase 3r §8 Q6 exclusions: zero (empirical).
-5m research thread operationally complete; findings descriptive only.
+Phase 3t merged into main (docs-only post-5m diagnostics consolidation and research thread closure memo).
+5m research thread (Phases 3o → 3p → 3q → 3r → 3s → 3t) operationally complete and closed.
+Findings descriptive only; informative diagnostics do not revise verdicts or authorize strategy rescue.
 Recommended state: paused.
 No next phase authorized.
 ```
@@ -106,11 +106,11 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-main HEAD:                    3f6e015a7a0fc9263dbd7e4f60ff690cbab83042
-Merge title:                  Merge Phase 3s (5m diagnostics execution Q1-Q7 once with Phase 3r §8 exclusion rule applied) into main
-Phase 3s diagnostics commit:  af7a95ba2402b8ba2298c75ec884a6847cd04b18
-Phase 3s closeout commit:     a93695f23d78f8975f33211439d66f8e5c90b49a
-Phase 3s merge commit:        3f6e015a7a0fc9263dbd7e4f60ff690cbab83042
+main HEAD:                    56b5b72c1635396044c11ef89496caad4f5c1adb
+Merge title:                  Merge Phase 3t (docs-only post-5m diagnostics consolidation and research thread closure memo) into main
+Phase 3t memo commit:         5842413fff968747d293d5fd79ffed2995af38fc
+Phase 3t closeout commit:     fcf8192e150e7dc783da345d2e54be8cff1611db
+Phase 3t merge commit:        56b5b72c1635396044c11ef89496caad4f5c1adb
 ```
 
 ## Strategy Research Arc Outcomes
