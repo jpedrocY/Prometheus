@@ -12,9 +12,11 @@ data.binance.vision URL convention proven by `prometheus.research.data.binance_b
 in Phase 2b/2c.
 
 Outputs:
-- Raw ZIPs:           data/raw/binance_usdm/<klines|markPriceKlines>/symbol=X/interval=5m/year=Y/month=M/X-5m-Y-M.zip
-- Normalized parquet: data/normalized/<klines|mark_price_klines>/symbol=X/interval=5m/year=Y/month=M/part-0000.parquet
-- Manifests:          data/manifests/<dataset_version>.manifest.json (4 new manifests)
+- Raw ZIPs:
+  data/raw/binance_usdm/<klines|markPriceKlines>/symbol=X/interval=5m/year=Y/month=M/X-5m-Y-M.zip
+- Normalized parquet:
+  data/normalized/<klines|mark_price_klines>/symbol=X/interval=5m/year=Y/month=M/part-0000.parquet
+- Manifests: data/manifests/<dataset_version>.manifest.json (4 new manifests)
 
 Idempotent. If a raw ZIP already exists with valid SHA256, the download is
 skipped. If a parquet partition already exists, it is regenerated from raw ZIP.
@@ -33,7 +35,6 @@ import json
 import sys
 import time
 import zipfile
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -101,7 +102,7 @@ def http_get(client: httpx.Client, url: str) -> bytes:
     """GET with retry/backoff. Public endpoints only. No credentials."""
     last_exc: Exception | None = None
     delay = BACKOFF_START_S
-    for attempt in range(1, MAX_RETRIES + 1):
+    for _attempt in range(1, MAX_RETRIES + 1):
         try:
             resp = client.get(url, follow_redirects=True, timeout=60)
             if resp.status_code == 200:
@@ -222,7 +223,8 @@ def parse_kline_zip(zip_path: Path) -> list[dict[str, Any]]:
                 parts = line.split(",")
                 if len(parts) != KLINE_COLUMNS_EXPECTED:
                     raise AcquisitionError(
-                        f"{zip_path} line {index}: expected {KLINE_COLUMNS_EXPECTED} cols, got {len(parts)}"
+                        f"{zip_path} line {index}: expected "
+                        f"{KLINE_COLUMNS_EXPECTED} cols, got {len(parts)}"
                     )
                 if not seen_first:
                     seen_first = True
@@ -274,7 +276,8 @@ def parse_markprice_zip(zip_path: Path) -> list[dict[str, Any]]:
                 parts = line.split(",")
                 if len(parts) != KLINE_COLUMNS_EXPECTED:
                     raise AcquisitionError(
-                        f"{zip_path} line {index}: expected {KLINE_COLUMNS_EXPECTED} cols, got {len(parts)}"
+                        f"{zip_path} line {index}: expected "
+                        f"{KLINE_COLUMNS_EXPECTED} cols, got {len(parts)}"
                     )
                 if not seen_first:
                     seen_first = True
@@ -434,10 +437,7 @@ def acquire_one_month(
         sha = actual
 
     # Step 2: parse rows.
-    if family == "klines":
-        rows = parse_kline_zip(rp)
-    else:
-        rows = parse_markprice_zip(rp)
+    rows = parse_kline_zip(rp) if family == "klines" else parse_markprice_zip(rp)
     if not rows:
         raise AcquisitionError(f"empty rows from {rp}")
 
@@ -541,7 +541,9 @@ def integrity_check_dataset(
     boundary_violations = sum(1 for ot in open_times if ot % INTERVAL_MS != 0)
     # Close time consistency
     close_violations = sum(
-        1 for ot, ct in zip(open_times, close_times) if ct != ot + INTERVAL_MS - 1
+        1
+        for ot, ct in zip(open_times, close_times, strict=True)
+        if ct != ot + INTERVAL_MS - 1
     )
     # Monotone & gaps
     monotone = True
@@ -559,21 +561,21 @@ def integrity_check_dataset(
 
     # OHLC sanity
     ohlc_violations = 0
-    for o, h, l, c in zip(opens, highs, lows, closes):
-        if not (l > 0 and h > 0 and o > 0 and c > 0):
+    for o, h, lo, c in zip(opens, highs, lows, closes, strict=True):
+        if not (lo > 0 and h > 0 and o > 0 and c > 0):
             ohlc_violations += 1
             continue
-        if not (l <= o <= h):
+        if not (lo <= o <= h):
             ohlc_violations += 1
             continue
-        if not (l <= c <= h):
+        if not (lo <= c <= h):
             ohlc_violations += 1
             continue
 
     # Volume sanity
     volume_violations = 0
     if family == "klines":
-        for v, qv, tc in zip(volumes, qvols, tcounts):
+        for v, qv, tc in zip(volumes, qvols, tcounts, strict=True):
             if v < 0 or qv < 0 or tc < 0:
                 volume_violations += 1
 
@@ -649,7 +651,8 @@ def write_manifest(
         "invalid_windows": invalid_windows,
         "notes": (
             f"Phase 3q supplemental 5m bulk ingest from data.binance.vision. "
-            f"Months: {months[0][0]:04d}-{months[0][1]:02d} to {months[-1][0]:04d}-{months[-1][1]:02d}. "
+            f"Months: {months[0][0]:04d}-{months[0][1]:02d} to "
+            f"{months[-1][0]:04d}-{months[-1][1]:02d}. "
             f"Phase 3p Option B versioning (supplemental v001-of-5m alongside v002). "
             f"v002 datasets and manifests untouched. Public unauthenticated endpoints only."
         ),
@@ -720,7 +723,9 @@ def main() -> int:
                     all_records[(family, symbol)].append(rec)
                     if n_done % 25 == 0 or n_done == n_total:
                         print(
-                            f"[{n_done}/{n_total}] {family} {symbol} {year:04d}-{month:02d} sha={rec.sha256[:12]} rows={rec.row_count}"
+                            f"[{n_done}/{n_total}] {family} {symbol} "
+                            f"{year:04d}-{month:02d} "
+                            f"sha={rec.sha256[:12]} rows={rec.row_count}"
                         )
                         sys.stdout.flush()
 
@@ -754,7 +759,10 @@ def main() -> int:
     if failed:
         print(f"INTEGRITY FAILURE: {failed}")
         return 1
-    print(f"Phase 3q acquisition + integrity validation complete. {len(manifest_paths)} manifests written.")
+    print(
+        f"Phase 3q acquisition + integrity validation complete. "
+        f"{len(manifest_paths)} manifests written."
+    )
     return 0
 
 
