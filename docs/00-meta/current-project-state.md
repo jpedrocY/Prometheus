@@ -83,22 +83,23 @@ Phase 3n is the docs-only 5m timeframe feasibility / execution-timing memo. Phas
 
 Phase 3o is the docs-only 5m diagnostics-spec memo. Phase 3o **predeclared the 5m diagnostic question set Q1–Q7** (with per-question definitions of informative versus non-informative, explicitly forbidden rescue-shaped question forms, diagnostic-term definitions, data-boundary rules, timestamp / leakage guardrails, allowed-vs-forbidden analysis boundary, per-strategy diagnostic mapping, required outputs, and stop conditions) **before any 5m data exists in the repository**. Phase 3o recommends **remain paused** as primary. No 5m data was downloaded. No v003 dataset was created. No 5m diagnostics were executed. No 5m data-requirements / v003 planning memo was started. No 5m diagnostics-execution plan was started. No 5m strategy, implementation, backtest, data acquisition, or analysis was authorized. No formal regime-first spec / planning, ML feasibility, formal cost-model revision, new strategy-family discovery, D1-A-prime, D1-B, V1/D1 hybrid, or F1/D1 hybrid work started. No prior verdict revised; no backtests run; no threshold / strategy-parameter / project-lock changes. R3 remains V1 breakout baseline-of-record; H0 remains framework anchor; R2 remains FAILED — §11.6 cost-sensitivity blocks; F1 remains HARD REJECT; D1-A remains MECHANISM PASS / FRAMEWORK FAIL — other. Recommended state remains **paused**.
 
+Phase 3p is the docs-only 5m diagnostics data-requirements and execution-plan memo. Phase 3p converts the Phase 3o predeclared question set Q1–Q7 into a concrete *future* diagnostics plan: defines exact 5m data requirements (BTCUSDT + ETHUSDT 5m trade-price klines, 5m mark-price klines; strict v002 date-range superset coverage; UTC ms timestamps; no gaps; canonical schema; public Binance endpoints, no credentials); specifies the dataset-versioning approach (recommends supplemental v001-of-5m alongside v002 over a v003 family bump); enumerates manifest + integrity-check evidence required; specifies the per-question diagnostic outputs (Q1–Q7 tables, distributions, classifications); and **predeclares per-question outcome-interpretation rules** (informative / non-informative / ambiguous thresholds; Q4 informative requires monotone decay shape replicable across BTC + ETH with standard-error bands tighter than displacement magnitude; Q5 informative requires |mean signed slippage| > 8 bps in at least one cell with replicability; Q3 critical reminder: even informative outcome cannot license retained-evidence candidate revision; Q7 meta requires ≥3 of Q1–Q6 informative; non-informative Q7 strengthens remain-paused) **before any 5m data exists in the repository**. Phase 3p recommends **remain paused** as primary. No 5m data downloaded. No v003 / supplemental 5m dataset created. No 5m diagnostics executed. No formal regime-first spec / planning, ML feasibility, formal cost-model revision, new strategy-family discovery, D1-A-prime, D1-B, V1/D1 hybrid, F1/D1 hybrid, paper/shadow, Phase 4, live-readiness, deployment, MCP, Graphify, `.mcp.json`, credentials, exchange-write, or `data/` work started. No prior verdict revised; no backtests run; no threshold / strategy-parameter / project-lock changes. R3 remains V1 breakout baseline-of-record; H0 remains framework anchor; R2 remains FAILED — §11.6 cost-sensitivity blocks; F1 remains HARD REJECT; D1-A remains MECHANISM PASS / FRAMEWORK FAIL — other. Recommended state remains **paused**.
+
 Current phase:
 
 ```text
-Phase 3l merged. Phase 3m docs-only regime-first research framework memo drafted.
+Phase 3p merged (docs-only 5m diagnostics data-requirements and execution-plan memo).
+Recommended state: paused.
 No next phase authorized.
 ```
 
 Most recent merge:
 
 ```text
-main HEAD: a7f653123fce822e67fefb62b05bcd152e167267
-Merge title:  Merge Phase 3j (D1-A first execution + diagnostics + first-execution-gate eval) into main
-              + docs(phase-3j): merge report (5d18408)
-              + docs(phase-3j): record merge-report commit hash in section 3 (a7f6531)
-Phase 3j merge commit:        5c8537bde462d328985b5c917729c663deaabc04
-Phase 3j merge-report commit: 5d18408daaed08ab30be47236f06c9d38c468f99
+main HEAD:                    b78ee63876974f637cc28f2a66eb19f4b5c834bc
+Merge title:                  Merge Phase 3p (docs-only 5m diagnostics data-requirements and execution-plan memo) into main
+Phase 3p branch tip:          2c6c84e0f05d4af1979f6aeced6ae0d4d3d92d87
+Phase 3p merge commit:        b78ee63876974f637cc28f2a66eb19f4b5c834bc
 ```
 
 ## Strategy Research Arc Outcomes
