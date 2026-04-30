@@ -21,7 +21,10 @@ No other files (source code, tests, scripts, configs, datasets, manifests, dashb
 
 ## 4. Commit hash or hashes
 
-Single commit on branch `phase-3o/5m-diagnostics-spec`: **`<filled by Phase 3o closeout commit>`** (filled in once the commit is recorded; will be replaced by a clerical-cleanup step before any merge).
+Phase 3o commits on branch `phase-3o/5m-diagnostics-spec`:
+
+- **`1e1d09a4ab2a99ffd39f4c003ff711a5af4c3ee1`** — original Phase 3o 5m diagnostics-spec memo + closeout commit (`phase-3o: 5m diagnostics-spec memo (docs-only)`). Created both `2026-04-30_phase-3o_5m-diagnostics-spec.md` and `2026-04-30_phase-3o_closeout-report.md`.
+- A subsequent clerical cleanup commit on this branch fills in this commit-hash section, removes the placeholder, and adds a narrow Phase 3o update line to `docs/00-meta/current-project-state.md`. Its SHA will be the branch tip at merge time and is reported as current branch HEAD in the Phase 3o merge report.
 
 ## 5. Confirmation that Phase 3o was docs-only
 
