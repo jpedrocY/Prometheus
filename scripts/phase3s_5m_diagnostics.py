@@ -22,7 +22,6 @@ Outputs JSON tables under docs/00-meta/implementation-reports/phase-3s/.
 
 from __future__ import annotations
 
-import dataclasses
 import json
 import sys
 from collections import defaultdict
@@ -85,7 +84,7 @@ def load_5m_klines(symbol: str, family: str) -> dict[int, dict[str, float]]:
     open_time = combined.column("open_time").to_pylist()
     o = combined.column("open").to_pylist()
     h = combined.column("high").to_pylist()
-    l = combined.column("low").to_pylist()
+    lo = combined.column("low").to_pylist()
     c = combined.column("close").to_pylist()
     if family == "trade":
         v = combined.column("volume").to_pylist()
@@ -97,7 +96,7 @@ def load_5m_klines(symbol: str, family: str) -> dict[int, dict[str, float]]:
         idx[int(open_time[i])] = {
             "open": float(o[i]),
             "high": float(h[i]),
-            "low": float(l[i]),
+            "low": float(lo[i]),
             "close": float(c[i]),
             "volume": v[i] if family == "trade" else None,
             "quote_asset_volume": qv[i] if family == "trade" else None,
@@ -249,7 +248,7 @@ def q3_per_trade(trade: dict, klines: dict[int, dict]) -> dict[str, Any]:
     intrabar_2 = False
     confirmed_1 = False
     confirmed_2 = False
-    for ot, b in iter_5m_bars(klines, entry_ot, exit_ot):
+    for _ot, b in iter_5m_bars(klines, entry_ot, exit_ot):
         if direction == "LONG":
             if b["high"] >= t1:
                 intrabar_1 = True
@@ -486,7 +485,10 @@ def main() -> int:
         klines_trade[sym] = load_5m_klines(sym, "trade")
         klines_mark[sym] = load_5m_klines(sym, "mark")
         invalid[sym] = load_invalid_windows(sym)
-        print(f"loaded {sym}: trade={len(klines_trade[sym])} mark={len(klines_mark[sym])} invalid={len(invalid[sym])}")
+        print(
+            f"loaded {sym}: trade={len(klines_trade[sym])} "
+            f"mark={len(klines_mark[sym])} invalid={len(invalid[sym])}"
+        )
         sys.stdout.flush()
 
     # Per-candidate results
@@ -549,7 +551,14 @@ def main() -> int:
             q5_unsigned[sym].append(q5["fill_realism_unsigned_bps"])
             # Q6
             q6 = q6_per_trade(tr, tk, mk, iw)
-            q6_results.append({"sym": sym, "direction": tr["direction"], "exit_reason": tr["exit_reason"], **q6})
+            q6_results.append(
+                {
+                    "sym": sym,
+                    "direction": tr["direction"],
+                    "exit_reason": tr["exit_reason"],
+                    **q6,
+                }
+            )
             if q6["excluded"]:
                 key = (label, sym, tr["direction"], tr["exit_reason"], q6["exclusion_reason"])
                 excl_keys[key] += 1
@@ -559,7 +568,9 @@ def main() -> int:
             "candidate": label,
             "run": f"{run_dir}/{run_id}",
             "n_trades": len(trades),
-            "n_trades_by_symbol": {sym: sum(1 for tr in trades if tr["symbol"] == sym) for sym in SYMBOLS},
+            "n_trades_by_symbol": {
+                sym: sum(1 for tr in trades if tr["symbol"] == sym) for sym in SYMBOLS
+            },
             "q1": {},
             "q2": {},
             "q3": {},
@@ -597,8 +608,16 @@ def main() -> int:
                 "intrabar_2r_count": q3_counts.get((sym, "intrabar_2r"), 0),
                 "confirmed_1r_count": q3_counts.get((sym, "confirmed_1r"), 0),
                 "confirmed_2r_count": q3_counts.get((sym, "confirmed_2r"), 0),
-                "intrabar_1r_fraction": (q3_counts.get((sym, "intrabar_1r"), 0) / adverse_n) if adverse_n else None,
-                "intrabar_2r_fraction": (q3_counts.get((sym, "intrabar_2r"), 0) / adverse_n) if adverse_n else None,
+                "intrabar_1r_fraction": (
+                    (q3_counts.get((sym, "intrabar_1r"), 0) / adverse_n)
+                    if adverse_n
+                    else None
+                ),
+                "intrabar_2r_fraction": (
+                    (q3_counts.get((sym, "intrabar_2r"), 0) / adverse_n)
+                    if adverse_n
+                    else None
+                ),
             }
             if label == "D1A":
                 results["q4"][sym] = {}
@@ -627,18 +646,30 @@ def main() -> int:
             }
             applicable = [r for r in q6_results if r["sym"] == sym and r["applicable"]]
             excluded = [r for r in applicable if r["excluded"]]
-            included = [r for r in applicable if not r["excluded"] and r["mark_minus_trade_5m_bars"] is not None]
+            included = [
+                r
+                for r in applicable
+                if not r["excluded"] and r["mark_minus_trade_5m_bars"] is not None
+            ]
             diffs = [r["mark_minus_trade_5m_bars"] for r in included]
             results["q6"][sym] = {
                 "n_applicable": len(applicable),
                 "n_excluded": len(excluded),
                 "n_included": len(included),
-                "n_inconclusive_5m_trigger": len(applicable) - len(excluded) - len(included),
+                "n_inconclusive_5m_trigger": (
+                    len(applicable) - len(excluded) - len(included)
+                ),
                 "mean_mark_minus_trade_5m_bars": safe_mean(diffs),
                 "median_mark_minus_trade_5m_bars": safe_median(diffs),
-                "fraction_simultaneous_trigger": (sum(1 for d in diffs if d == 0) / len(diffs)) if diffs else None,
-                "fraction_mark_lags_trade": (sum(1 for d in diffs if d > 0) / len(diffs)) if diffs else None,
-                "fraction_mark_leads_trade": (sum(1 for d in diffs if d < 0) / len(diffs)) if diffs else None,
+                "fraction_simultaneous_trigger": (
+                    (sum(1 for d in diffs if d == 0) / len(diffs)) if diffs else None
+                ),
+                "fraction_mark_lags_trade": (
+                    (sum(1 for d in diffs if d > 0) / len(diffs)) if diffs else None
+                ),
+                "fraction_mark_leads_trade": (
+                    (sum(1 for d in diffs if d < 0) / len(diffs)) if diffs else None
+                ),
             }
         # Q6 exclusion-counts table
         for key, cnt in excl_keys.items():
@@ -654,8 +685,12 @@ def main() -> int:
         all_results[label] = results
 
     # Write outputs
-    (OUT / "q1_q5_results.json").write_text(json.dumps(all_results, indent=2, default=str), encoding="utf-8")
-    (OUT / "q6_exclusion_counts.json").write_text(json.dumps(q6_excl_table, indent=2), encoding="utf-8")
+    (OUT / "q1_q5_results.json").write_text(
+        json.dumps(all_results, indent=2, default=str), encoding="utf-8"
+    )
+    (OUT / "q6_exclusion_counts.json").write_text(
+        json.dumps(q6_excl_table, indent=2), encoding="utf-8"
+    )
 
     # Summary print
     print()
