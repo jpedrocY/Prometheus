@@ -888,12 +888,12 @@ pending execution-phase Gate 1 plan that pins the definition.
 
 ## GAP-20260424-032 — Backtest uses trade-price stops; live uses MARK_PRICE stops
 
-Status:              OPEN
+Status:              RESOLVED — Phase 3v governance memo (2026-04-30)
 Phase discovered:    2f (strategy review)
 Area:                STRATEGY
-Blocking phase:      NON_BLOCKING for 2f; PRE_PAPER_SHADOW for live-readiness claims
-Risk level:          MEDIUM
-Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 332), `docs/03-strategy-research/v1-breakout-backtest-plan.md` (§"Stop trigger reference", lines 180–181), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+Blocking phase:      Resolved as a governance question by Phase 3v; remains procedurally relevant for any future runtime / paper / live work via the §8.4 stop-trigger-domain label scheme.
+Risk level:          MEDIUM (originally); reclassified by Phase 3u §8.5 as HIGH-priority pre-coding blocker; resolved by Phase 3v at governance level.
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 332), `docs/03-strategy-research/v1-breakout-backtest-plan.md` (§"Stop trigger reference", lines 180–181), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`, `docs/00-meta/implementation-reports/2026-04-30_phase-3s_5m-diagnostics-execution.md` (Q6), `docs/00-meta/implementation-reports/2026-04-30_phase-3u_implementation-readiness-and-phase-4-boundary-review.md` (§8.5), **`docs/00-meta/implementation-reports/2026-04-30_phase-3v_gap-20260424-032-stop-trigger-domain-resolution.md` (resolution authority)**, `docs/07-risk/stop-loss-policy.md`, `docs/06-execution-exchange/binance-usdm-order-model.md`.
 
 Description:
 The live protective stop uses `workingType=MARK_PRICE` (spec line 332, per the Binance USDⓈ-M order model). The backtest plan specifies that the primary backtest simulation uses trade-price bars, with mark-price sensitivity as a separate, explicitly scoped sensitivity test (backtest-plan §Stop trigger reference, lines 180–181). The Phase 2e baseline reports zero stop gap-through events under the trade-price model; whether the same is true under a mark-price stop-trigger model is not yet measured.
@@ -910,10 +910,10 @@ Recommended resolution:
 Option A. Mark-price sensitivity is a pre-declared required report cut in the Phase 2f Gate 1 plan's comparison framework for any future execution phase. Cost for Phase 2f itself: zero (docs only).
 
 Operator decision:
-pending (for execution-phase commitment)
+Resolved by Phase 3v governance memo (2026-04-30): historical retained-evidence backtests remain valid under their original `trade_price_backtest` provenance with verdicts unchanged (R3 baseline-of-record; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; H0 framework anchor; R1a / R1b-narrow retained research evidence only — all preserved verbatim); future runtime / paper / live stop handling remains MARK_PRICE-locked per §1.7.3 + `docs/07-risk/stop-loss-policy.md` + `docs/06-execution-exchange/binance-usdm-order-model.md`; future evidence and runtime artifacts must label stop-trigger domain explicitly using the §8.4 label scheme (`trade_price_backtest` | `mark_price_runtime` | `mark_price_backtest_candidate`); `mixed_or_unknown` is invalid and fails closed at any decision boundary; future backtests intended to support paper/shadow/live readiness must explicitly use or validate `mark_price_backtest_candidate` modeling, or disclose that they are not live-readiness evidence; Phase 3s Q6 D1-A mark-stop-lag finding (~1.3–1.8 5m bars) remains descriptive only and does NOT revise verdicts, change stop-policy, or authorize strategy rescue; future Phase 4a (if ever authorized) may implement labels and fail-closed validation locally subject to Phase 3u §10 prohibitions (no order placement; no exchange-write; no paper-shadow / live-readiness implication; no production keys / credentials / MCP / Graphify / `.mcp.json`); Phase 3v authorizes no successor phase, no verdict revision, no strategy rescue, no parameter change, no threshold revision, no project-lock revision, no stop-loss-policy substantive change.
 
 Resolution evidence:
-pending — to be cited from the execution-phase Gate 1 plan.
+`docs/00-meta/implementation-reports/2026-04-30_phase-3v_gap-20260424-032-stop-trigger-domain-resolution.md` (Phase 3v memo §8 formal-resolution rule, eight clauses).
 
 ---
 
