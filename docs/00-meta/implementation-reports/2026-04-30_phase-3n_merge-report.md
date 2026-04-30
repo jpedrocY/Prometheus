@@ -19,28 +19,27 @@ Merged with `git merge --no-ff phase-3n/5m-timeframe-feasibility -m "Merge Phase
 
 ## 3. Merge-report commit hash
 
-This merge report (`docs/00-meta/implementation-reports/2026-04-30_phase-3n_merge-report.md`) is being written and committed *after* the Phase 3n merge commit `a76b7091e54e434d5c854b61d1920ab7bfbf59d0`. The merge-report commit's own SHA is `<recorded after this Phase 3n merge report itself is committed>` and will become the next commit on `main` advancing past `a76b7091e54e434d5c854b61d1920ab7bfbf59d0`. Per prior phase patterns (Phase 3k / 3l / 3m), a small clerical follow-up may be needed to fill in this section's self-reference; if so, that follow-up commit will be reflected in §4 (current main HEAD) and §6 (latest 5 commits) of this report after that cleanup.
+The Phase 3n merge report (`docs/00-meta/implementation-reports/2026-04-30_phase-3n_merge-report.md`) was committed on `main` after the Phase 3n merge commit `a76b7091e54e434d5c854b61d1920ab7bfbf59d0`. The relevant cleanup-commit pair is:
+
+- `c82c01859c35ac209f4272f13642d43aa349ffd4` — `docs(phase-3n): merge report` (initial merge-report commit creating this file).
+- `c82c01859c35ac209f4272f13642d43aa349ffd4` is the final self-reference cleanup commit referenced in this section; the present clerical follow-up commit on `main` resolves the §3 / §4 / §6 self-reference placeholders that the initial merge-report commit could not embed in itself.
 
 ## 4. Main / origin sync confirmation
 
-After the Phase 3n merge commit `a76b7091e54e434d5c854b61d1920ab7bfbf59d0`:
-
-- Local `main` HEAD: `a76b7091e54e434d5c854b61d1920ab7bfbf59d0`.
-- `origin/main` HEAD: `a76b7091e54e434d5c854b61d1920ab7bfbf59d0`.
+- Local `main` HEAD: `c82c01859c35ac209f4272f13642d43aa349ffd4`.
+- `origin/main` HEAD: `c82c01859c35ac209f4272f13642d43aa349ffd4`.
 - Sync state: synced.
 
-After this merge report's own commit (and any required clerical self-reference cleanup), main and origin/main will advance together to that final cleanup commit's SHA.
+The Phase 3n merge commit `a76b7091e54e434d5c854b61d1920ab7bfbf59d0` is preserved on `main` as the parent of the merge-report commit `c82c018`.
 
 ## 5. Git status
 
-Working tree clean after the Phase 3n merge commit. The merge-report file added by this section will produce one further `main`-only commit; that commit will be pushed to `origin/main` immediately after creation.
+Working tree clean.
 
 ## 6. Latest 5 commits
 
-Snapshot at the merge-report commit:
-
 ```text
-<recorded after this Phase 3n merge report itself is committed>  docs(phase-3n): merge report
+c82c01859c35ac209f4272f13642d43aa349ffd4  docs(phase-3n): merge report
 a76b7091e54e434d5c854b61d1920ab7bfbf59d0  Merge Phase 3n (docs-only 5m timeframe feasibility / execution-timing memo) into main
 59340a85cdcde53b1fc75886e7af9e696af16471  phase-3n: closeout SHA fill-in + minimal current-project-state update
 e04af8ede52306948d0cbee077869f20d3817bbe  phase-3n: 5m timeframe feasibility / execution-timing memo (docs-only)
