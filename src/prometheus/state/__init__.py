@@ -19,6 +19,7 @@ that talks to a real exchange, places orders, or implements a strategy.
 
 from __future__ import annotations
 
+from .control import RuntimeControlState, fresh_control_state
 from .errors import (
     EntriesBlockedError,
     KillSwitchActiveError,
@@ -26,7 +27,6 @@ from .errors import (
     UnknownStateError,
 )
 from .mode import RuntimeMode
-from .control import RuntimeControlState, fresh_control_state
 from .transitions import (
     activate_kill_switch,
     clear_kill_switch,
