@@ -21,31 +21,25 @@ Merged with `git merge --no-ff phase-3o/5m-diagnostics-spec -m "Merge Phase 3o (
 
 The Phase 3o merge report (`docs/00-meta/implementation-reports/2026-04-30_phase-3o_merge-report.md`) was committed on `main` after the Phase 3o merge commit `87a59fbd6f586b42fbfdf4df351010ffddcb39e2`. The relevant cleanup-commit pair is:
 
-- The initial merge-report commit creating this file.
-- The final self-reference cleanup commit referenced in this section is the present clerical follow-up commit on `main` that resolves the §3 / §4 / §6 self-reference placeholders that the initial merge-report commit could not embed in itself.
-
-Per the prior phase pattern (Phase 3k / 3l / 3m / 3n), a small clerical follow-up may be required to fill in the merge-report commit's own SHA in this section. The final commit on `main` will be reflected in §4 (current main HEAD) and §6 (latest 5 commits) of this report after that cleanup.
+- `ff14331ddabe29065fe3342523f3ebe1b1fb1b5c` — `docs(phase-3o): merge report` (initial merge-report commit creating this file).
+- `ff14331ddabe29065fe3342523f3ebe1b1fb1b5c` is the final self-reference cleanup commit referenced in this section; the present clerical follow-up commit on `main` resolves the §3 / §4 / §6 self-reference placeholders that the initial merge-report commit could not embed in itself.
 
 ## 4. Main / origin sync confirmation
 
-After the Phase 3o merge commit `87a59fbd6f586b42fbfdf4df351010ffddcb39e2`:
-
-- Local `main` HEAD: `87a59fbd6f586b42fbfdf4df351010ffddcb39e2`.
-- `origin/main` HEAD: `87a59fbd6f586b42fbfdf4df351010ffddcb39e2`.
+- Local `main` HEAD: `ff14331ddabe29065fe3342523f3ebe1b1fb1b5c`.
+- `origin/main` HEAD: `ff14331ddabe29065fe3342523f3ebe1b1fb1b5c`.
 - Sync state: synced.
 
-After this merge report's own commit (and any required clerical self-reference cleanup), main and origin/main will advance together to that final commit's SHA.
+The Phase 3o merge commit `87a59fbd6f586b42fbfdf4df351010ffddcb39e2` is preserved on `main` as the parent of the merge-report commit `ff14331`.
 
 ## 5. Git status
 
-Working tree clean after the Phase 3o merge commit. The merge-report file added by this section will produce one further `main`-only commit; that commit will be pushed to `origin/main` immediately after creation.
+Working tree clean.
 
 ## 6. Latest 5 commits
 
-Snapshot at the merge-report commit:
-
 ```text
-<recorded after this Phase 3o merge report itself is committed>  docs(phase-3o): merge report
+ff14331ddabe29065fe3342523f3ebe1b1fb1b5c  docs(phase-3o): merge report
 87a59fbd6f586b42fbfdf4df351010ffddcb39e2  Merge Phase 3o (docs-only 5m diagnostics-spec memo) into main
 86302772ee8dea4d9d1716ea0fc46fc47f2bae6f  phase-3o: closeout SHA fill-in + minimal current-project-state update
 1e1d09a4ab2a99ffd39f4c003ff711a5af4c3ee1  phase-3o: 5m diagnostics-spec memo (docs-only)
