@@ -16,6 +16,20 @@ from .exchange_info import (
     PriceFilter,
     SymbolInfo,
 )
+from .governance import (
+    BreakEvenRule,
+    EmaSlopeMethod,
+    GovernanceLabel,
+    GovernanceLabelError,
+    StagnationWindowRole,
+    StopTriggerDomain,
+    is_fail_closed,
+    parse_break_even_rule,
+    parse_ema_slope_method,
+    parse_stagnation_window_role,
+    parse_stop_trigger_domain,
+    require_valid,
+)
 from .intervals import Interval, interval_duration_ms
 from .klines import NormalizedKline
 from .mark_price_klines import MarkPriceKline
@@ -29,10 +43,14 @@ from .time import (
 )
 
 __all__ = [
+    "BreakEvenRule",
     "ClockFn",
     "DataIntegrityError",
+    "EmaSlopeMethod",
     "ExchangeInfoSnapshot",
     "FundingRateEvent",
+    "GovernanceLabel",
+    "GovernanceLabelError",
     "Interval",
     "LotSizeFilter",
     "ManifestError",
@@ -42,11 +60,19 @@ __all__ = [
     "NormalizedKline",
     "PriceFilter",
     "PrometheusError",
+    "StagnationWindowRole",
+    "StopTriggerDomain",
     "Symbol",
     "SymbolInfo",
     "close_time_for",
     "floor_to_interval",
     "interval_duration_ms",
     "is_aligned_open_time",
+    "is_fail_closed",
+    "parse_break_even_rule",
+    "parse_ema_slope_method",
+    "parse_stagnation_window_role",
+    "parse_stop_trigger_domain",
+    "require_valid",
     "utc_now_ms",
 ]

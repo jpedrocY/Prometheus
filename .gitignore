@@ -63,10 +63,11 @@ data/manifests/**
 # Generated artifacts
 artifacts/
 
-# Local runtime state
-state/
-runtime/
-cache/
+# Local runtime state (root-level directories only; source packages
+# named state/ or runtime/ under src/ or tests/ are NOT ignored).
+/state/
+/runtime/
+/cache/
 
 # Claude Code + local secrets (pack additions)
 CLAUDE.local.md
