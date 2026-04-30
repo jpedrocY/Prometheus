@@ -826,12 +826,12 @@ Resolution evidence:
 
 ## GAP-20260424-030 — Break-even rule text conflicts with spec Open Question #8
 
-Status:              OPEN
+Status:              RESOLVED — Phase 3w governance memo (2026-04-30)
 Phase discovered:    2f (strategy review)
 Area:                STRATEGY
-Blocking phase:      NON_BLOCKING
-Risk level:          LOW
-Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 380, 564), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+Blocking phase:      Resolved as a governance question by Phase 3w; remains procedurally relevant for any future runtime / paper / live work via the Phase 3w §6.3 `break_even_rule` label scheme.
+Risk level:          LOW (Phase 3u §8.5 pre-coding blocker classification)
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 380, 564), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`, **`docs/00-meta/implementation-reports/2026-04-30_phase-3w_remaining-ambiguity-log-resolution.md` (resolution authority)**, `docs/00-meta/implementation-reports/2026-04-30_phase-3v_gap-20260424-032-stop-trigger-domain-resolution.md` (precedent pattern), `docs/00-meta/implementation-reports/2026-04-30_phase-3u_implementation-readiness-and-phase-4-boundary-review.md` (§8.5 pre-coding-blocker review).
 
 Description:
 The strategy spec asserts the Stage-4 break-even rule as "when the trade reaches +1.5 R MFE, move the stop to break-even" (line 380). The same spec's Open Questions section (line 564) lists "Should the break-even transition happen at +1.5 R or +2.0 R?" as an unresolved research question. Treating the same value as both a locked rule and an open question is internally inconsistent.
@@ -848,21 +848,21 @@ Recommended resolution:
 Option C for 2f (docs-only). The H-D3 result (from a future execution phase) produces the empirical basis for a later Option B spec edit if the alternative threshold is accepted, or a formal Option A declaration if +1.5 R is retained.
 
 Operator decision:
-pending
+Resolved by Phase 3w governance memo (2026-04-30): historical retained-evidence verdicts preserved verbatim (R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A retained research evidence only — all preserved); historical break-even-rule provenance recorded canonically per Phase 3w §6.1 (H0 / R1a / R1b-narrow / R2 = `break_even_rule = enabled_plus_1_5R_mfe`; R3 / F1 / D1-A = `break_even_rule = disabled`); no retroactive spec edit (lines 380 + 564 unchanged); no break-even behavior added, removed, or changed; future runtime / paper / live phases (if ever authorized — Phase 3w does NOT authorize any) must declare `break_even_rule` as a first-class config / persistence label with valid values `disabled` | `enabled_plus_1_5R_mfe` | `enabled_plus_2_0R_mfe` | `enabled_<other_predeclared>`; `mixed_or_unknown` is invalid and fails closed at any decision boundary; H-D3 wave-1 variant remains its own provenance (`enabled_plus_2_0R_mfe`) and was not promoted forward to retained-evidence verdict; no future H-D3-style break-even variant phase authorized.
 
 Resolution evidence:
-pending H-D3 execution-phase results and subsequent spec update.
+`docs/00-meta/implementation-reports/2026-04-30_phase-3w_remaining-ambiguity-log-resolution.md` (Phase 3w memo §6 GAP-20260424-030 resolution).
 
 ---
 
 ## GAP-20260424-031 — EMA slope wording ambiguous: discrete comparison vs. fitted slope
 
-Status:              OPEN
+Status:              RESOLVED — Phase 3w governance memo (2026-04-30)
 Phase discovered:    2f (strategy review)
 Area:                STRATEGY
-Blocking phase:      NON_BLOCKING for 2f; PRE_DRY_RUN for HTF-bias variant implementation
-Risk level:          MEDIUM
-Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 156–172), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+Blocking phase:      Resolved as a governance question by Phase 3w; remains procedurally relevant for any future runtime / paper / live work via the Phase 3w §7.3 `ema_slope_method` label scheme.
+Risk level:          MEDIUM (originally); LOW-MEDIUM per Phase 3u §8.5 pre-coding-blocker reclassification.
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (lines 156–172), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`, **`docs/00-meta/implementation-reports/2026-04-30_phase-3w_remaining-ambiguity-log-resolution.md` (resolution authority)**, `docs/00-meta/implementation-reports/2026-04-30_phase-3v_gap-20260424-032-stop-trigger-domain-resolution.md` (precedent pattern), `docs/00-meta/implementation-reports/2026-04-30_phase-3u_implementation-readiness-and-phase-4-boundary-review.md` (§8.5 pre-coding-blocker review).
 
 Description:
 The spec defines long bias as "1h EMA(50) is rising versus 3 completed 1h candles earlier" (line 160) and short bias as "1h EMA(50) is falling versus 3 completed 1h candles earlier" (line 168). The phrase is ambiguous: "rising versus N candles earlier" could mean (a) a discrete comparison `EMA[now] > EMA[now − 3h]`, or (b) a fitted slope over the last 3 (or 4) completed 1h bars. These are materially different definitions and can yield different bias outputs at regime turning points.
@@ -879,10 +879,10 @@ Recommended resolution:
 Option C for 2f. The memo records the discrete-comparison interpretation as the working default. An execution-phase Gate 1 plan explicitly re-declares the interpretation. A separate wave-1 / wave-2 hypothesis H-C2 may later compare discrete vs. fitted as a standalone test.
 
 Operator decision:
-pending
+Resolved by Phase 3w governance memo (2026-04-30): historical retained-evidence verdicts preserved verbatim; historical EMA-slope provenance recorded canonically per Phase 3w §7.1 (V1-family retained-evidence backtests — H0 / R1a / R1b-narrow / R2 / R3 — all used `ema_slope_method = discrete_comparison`, i.e. `EMA[now] > EMA[now − 3h]` for long bias and the symmetric inequality for short bias; F1 / D1-A used `ema_slope_method = not_applicable` since they do not use 1h EMA bias as primary entry filter); no retroactive spec edit (lines 156–172 unchanged); no EMA logic changed; future runtime / paper / live phases or future research backtests (if ever authorized — Phase 3w does NOT authorize any) must declare `ema_slope_method` as a first-class config / persistence label with valid values `discrete_comparison` | `fitted_slope` | `other_predeclared` | `not_applicable`; `mixed_or_unknown` is invalid and fails closed at any decision boundary; H-C2 fitted-slope variant remains a separately-predeclared future hypothesis (not authorized; no fitted-slope evidence exists in the retained-evidence record); no future H-C2-style fitted-slope variant phase authorized.
 
 Resolution evidence:
-pending execution-phase Gate 1 plan that pins the definition.
+`docs/00-meta/implementation-reports/2026-04-30_phase-3w_remaining-ambiguity-log-resolution.md` (Phase 3w memo §7 GAP-20260424-031 resolution).
 
 ---
 
@@ -919,12 +919,12 @@ Resolution evidence:
 
 ## GAP-20260424-033 — Stagnation window not in Open Questions but discussed as metric
 
-Status:              OPEN
+Status:              RESOLVED — Phase 3w governance memo (2026-04-30)
 Phase discovered:    2f (strategy review)
 Area:                STRATEGY
-Blocking phase:      NON_BLOCKING
-Risk level:          LOW
-Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 415), `docs/03-strategy-research/v1-breakout-backtest-plan.md` (§Metrics — stagnation-exit frequency), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`
+Blocking phase:      Resolved as a governance question by Phase 3w; remains procedurally relevant for any future runtime / paper / live work via the Phase 3w §8.3 `stagnation_window_role` label scheme.
+Risk level:          LOW (Phase 3u §8.5 pre-coding-blocker classification; weak pre-coding blocker)
+Related docs:        `docs/03-strategy-research/v1-breakout-strategy-spec.md` (line 415), `docs/03-strategy-research/v1-breakout-backtest-plan.md` (§Metrics — stagnation-exit frequency), `docs/00-meta/implementation-reports/2026-04-24_phase-2f_strategy-review-memo.md`, **`docs/00-meta/implementation-reports/2026-04-30_phase-3w_remaining-ambiguity-log-resolution.md` (resolution authority)**, `docs/00-meta/implementation-reports/2026-04-30_phase-3v_gap-20260424-032-stop-trigger-domain-resolution.md` (precedent pattern), `docs/00-meta/implementation-reports/2026-04-30_phase-3u_implementation-readiness-and-phase-4-boundary-review.md` (§8.5 pre-coding-blocker review).
 
 Description:
 The spec fixes the stagnation exit as "if, after 8 completed 15m bars from entry, the trade has not reached at least +1.0 R MFE, exit at market" (line 415). This rule is not listed in the spec's Open Questions section. The backtest plan, however, treats "stagnation-exit frequency" as a trade-quality metric to review (implying the value may be revisable based on evidence). The Phase 2e baseline shows stagnation is the second most common exit reason (BTC 19/41, ETH 11/47) — non-trivial share.
@@ -941,10 +941,10 @@ Recommended resolution:
 Option C for 2f (defer). Wave 1 does not include H-D5 (gate 1 condition 3 caps exit/management variants at one — H-D3 takes that slot). If a later wave wants H-D5, its Gate 1 plan resolves this GAP first.
 
 Operator decision:
-pending (for execution-phase decision if H-D5 is ever proposed)
+Resolved by Phase 3w governance memo (2026-04-30): historical retained-evidence verdicts preserved verbatim; historical stagnation-window-role provenance recorded canonically per Phase 3w §8.1 (H0 / R1a / R1b-narrow / R2 = `stagnation_window_role = active_rule_predeclared` with `stagnation_bars = 8`, `stagnation_min_mfe_R = +1.0 R`; R3 / F1 / D1-A = `stagnation_window_role = not_active` because their exit families replaced staged-trailing with unconditional time-stops); no retroactive spec edit (line 415 unchanged); backtest plan §Metrics — stagnation-exit frequency unchanged; no stagnation rule, filter, exit, or metric added or removed from any retained-evidence candidate; future runtime / paper / live phases or future research backtests (if ever authorized — Phase 3w does NOT authorize any) must declare `stagnation_window_role` as a first-class config / persistence label with valid values `not_active` | `metric_only` | `active_rule_predeclared`; `mixed_or_unknown` is invalid and fails closed at any decision boundary; H-D5 stagnation-window variant remains its own predeclared future hypothesis (not authorized; no H-D5 evidence exists in the retained-evidence record); no future H-D5-style stagnation-window variant phase authorized.
 
 Resolution evidence:
-pending — see future execution-phase Gate 1 plan if H-D5 is proposed.
+`docs/00-meta/implementation-reports/2026-04-30_phase-3w_remaining-ambiguity-log-resolution.md` (Phase 3w memo §8 GAP-20260424-033 resolution).
 
 ---
 
