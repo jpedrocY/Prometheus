@@ -21,7 +21,10 @@ No other files (source code, tests, scripts, configs, datasets, manifests, dashb
 
 ## 4. Commit hash or hashes
 
-Single commit on branch `phase-3n/5m-timeframe-feasibility`: **`<filled by Phase 3n closeout commit>`** (filled in once the commit is recorded; will be replaced by a clerical-cleanup step before any merge).
+Phase 3n commits on branch `phase-3n/5m-timeframe-feasibility`:
+
+- **`e04af8ede52306948d0cbee077869f20d3817bbe`** — original Phase 3n 5m feasibility memo + closeout commit (`phase-3n: 5m timeframe feasibility / execution-timing memo (docs-only)`). Created both `2026-04-30_phase-3n_5m-timeframe-feasibility.md` and `2026-04-30_phase-3n_closeout-report.md`.
+- A subsequent clerical cleanup commit on this branch fills in this commit-hash section, removes the placeholder, and adds a narrow Phase 3n update line to `docs/00-meta/current-project-state.md`. Its SHA will be the branch tip at merge time and is reported as current branch HEAD in the Phase 3n merge report.
 
 ## 5. Confirmation that Phase 3n was docs-only
 
