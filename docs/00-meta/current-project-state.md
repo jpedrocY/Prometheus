@@ -89,12 +89,16 @@ Phase 3q is the docs-and-data 5m supplemental dataset acquisition + integrity-va
 
 Phase 3r is the docs-only mark-price gap governance memo (Phase 3p §10 / Phase 3q decision menu Option B). Phase 3r recommends **Option B (known invalid-window exclusion for Q6 only)** as the formally adopted governance posture: Phase 3p §4.7 strict integrity gate stays unchanged; mark-price 5m datasets remain `research_eligible: false`; no data is patched, forward-filled, interpolated, imputed, or replaced; Phase 3q manifests are not modified. Phase 3r §8 specifies a full normative **Q6 invalid-window exclusion rule** (known invalid windows are exclusion zones, not patch zones; per-trade exclusion test based on Q6 analysis-window intersection; excluded trades counted and reported by candidate / symbol / side / exit-type / gap-window; Q6 conclusions labeled "conditional on valid mark-price coverage"; no automatic prior-verdict revision; no strategy rescue, parameter change, or live-readiness implication; no silent §8 rule revision; per-trade exclusion algorithm must be predeclared in any future diagnostics-execution phase brief) that any future Q6-running phase must obey *if* Q6 is ever authorized. **Q6 disposition: bounded-conditional optionality.** Q6 stays on the menu but only as a §8-bounded option; Q6 is NOT permanently retired and NOT currently authorized. Q1, Q2 (trade-price base), Q3, Q4, Q5, Q7 unaffected by §8. Phase 3r preserves all prior boundaries: Phase 3p §4.7 unchanged; v002 datasets and manifests unchanged; Phase 3q manifests unchanged; mark-price 5m datasets remain `research_eligible: false`; R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks all preserved verbatim. No diagnostics run; no Q1–Q7 answered; no backtests; no data acquisition / patching / regeneration / modification; no manifest modification; no Phase 3p text modification; no 5m strategy / hybrid / variant; no diagnostics-execution started; no paper/shadow / Phase 4 / live-readiness / deployment / production-key / exchange-write / MCP / Graphify / `.mcp.json` / credentials work. Recommended state remains **paused**.
 
+Phase 3s is the diagnostics-and-reporting phase that executed the predeclared Phase 3o / Phase 3p Q1–Q7 diagnostic question set **exactly once** on the v002-locked retained-evidence trade populations (R3, R2, F1, D1-A; R-window MEDIUM-slip canonical runs; 10 031 trades total: 4 974 BTC + 5 057 ETH), using the Phase 3q v001-of-5m supplemental datasets, and applying the Phase 3r §8 Q6 invalid-window exclusion rule verbatim. **Q1, Q2, Q3 (+1R), Q6 (D1-A only), and Q7 meta classified informative under Phase 3p §8 outcome-interpretation rules; Q4 and Q5 classified non-informative; Q3 ambiguous for +2R.** Phase 3r §8 exclusion rule applied with **zero trades excluded empirically** (retained-evidence trade lifetimes ≤ 8 h are too short to straddle the four mark-price gap windows). Headline findings: Q1 — IAE > IFE in 7 of 8 candidate × symbol cells (universal entry-path adverse bias; F1 most pronounced ~0.5 R consumed in first 5 min); Q2 — V1-family wick-dominated stop pathology (R3/R2 wick-fraction 0.571–1.000) vs F1/D1-A sustained-dominated stop pathology (0.269–0.347), the cleanest cross-family mechanism finding; Q3 — +1R intrabar-touch fraction ≥ 25% in 6 of 8 cells (descriptive-only per Phase 3p §8.3 / Phase 3o §6.3); Q6 — D1-A mark-stop lag ~1.3–1.8 5m bars (mark triggers later than trade); Q4 — D1-A funding-decay curve has no monotone shape, SEM > displacement magnitude (non-informative); Q5 — no |signed| > 8 bps cell, consistent with Phase 3l "B — conservative but defensible". **All findings are descriptive only and cannot license verdict revision, parameter change, threshold revision, project-lock revision, strategy rescue, 5m strategy / hybrid / variant proposal, paper/shadow planning, Phase 4, live-readiness, deployment, or any successor authorization.** Phase 3o §6 forbidden question forms, Phase 3o §10 analysis boundary, Phase 3p §8 critical reminders, and Phase 3r §8 binding constraints all preserved. **5m research thread is operationally complete.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks all preserved verbatim. No backtest run. No retained-evidence trade population regenerated. No v002 dataset / manifest modification. No Phase 3q v001-of-5m manifest modification. No data acquisition / download / patch / regeneration / modification. No forward-fill / interpolation / imputation / replacement. No 5m strategy / hybrid / variant. No paper/shadow / Phase 4 / live-readiness / deployment / production-key / exchange-write / MCP / Graphify / `.mcp.json` / credentials. No private endpoints / user stream / WebSocket / public endpoints consulted. No secrets. Recommended state remains **paused**.
+
 Current phase:
 
 ```text
-Phase 3r merged into main (docs-only mark-price gap governance memo).
-Phase 3q acquisition evidence (8d99375 + 3078b44) included transitively via Phase 3r merge.
-Phase 3r §8 Q6 invalid-window exclusion rule predeclared and immutable.
+Phase 3s merged into main (5m diagnostics execution Q1-Q7 once with Phase 3r §8 exclusion rule).
+Q1, Q2, Q3 (+1R), Q6 (D1-A only), Q7: informative.
+Q4, Q5: non-informative.
+Phase 3r §8 Q6 exclusions: zero (empirical).
+5m research thread operationally complete; findings descriptive only.
 Recommended state: paused.
 No next phase authorized.
 ```
@@ -102,13 +106,11 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-main HEAD:                    3cf2ba200e2d107a01a499e22ddc4d55dce32adb
-Merge title:                  Merge Phase 3r (docs-only mark-price gap governance memo + Phase 3q acquisition evidence) into main
-Phase 3q acquisition commit:  8d99375c39ab25508b800b8378996d40290f03dc
-Phase 3q closeout commit:     3078b448e5850f943079899c9048b2c19e07adb3
-Phase 3r memo commit:         0082488c3238fcd35330603b7a4d08601771f79c
-Phase 3r closeout commit:     06111957e465a4fc5d59190d82db379cc0f7cc86
-Phase 3r merge commit:        3cf2ba200e2d107a01a499e22ddc4d55dce32adb
+main HEAD:                    3f6e015a7a0fc9263dbd7e4f60ff690cbab83042
+Merge title:                  Merge Phase 3s (5m diagnostics execution Q1-Q7 once with Phase 3r §8 exclusion rule applied) into main
+Phase 3s diagnostics commit:  af7a95ba2402b8ba2298c75ec884a6847cd04b18
+Phase 3s closeout commit:     a93695f23d78f8975f33211439d66f8e5c90b49a
+Phase 3s merge commit:        3f6e015a7a0fc9263dbd7e4f60ff690cbab83042
 ```
 
 ## Strategy Research Arc Outcomes
