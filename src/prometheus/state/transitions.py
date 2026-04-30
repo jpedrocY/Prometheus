@@ -46,9 +46,7 @@ def _derive_entries_blocked(
         return True
     if operator_review_required:
         return True
-    if incident_active:
-        return True
-    return False
+    return bool(incident_active)
 
 
 def enter_safe_mode(
