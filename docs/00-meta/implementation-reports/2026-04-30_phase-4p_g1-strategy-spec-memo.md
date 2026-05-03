@@ -89,12 +89,13 @@ be required to honor:
   (not V1's 0.60–1.80 × ATR): minimum 0.50 × ATR(20), maximum 2.20 ×
   ATR(20) — both justified inside the spec from active-regime
   structure analysis.
-- **Target model:** fixed-R take-profit; **N_R ∈ {2.0, 2.5}** (2-
-  variant axis). No break-even. No trailing stop. Same-bar
-  ambiguity = stop-first conservative.
-- **Time-stop:** **T_stop ∈ {12, 16}** completed 30m bars (= 6h or
-  8h). Position-vs-regime: **Option A** (position lifecycle
-  independent of regime; degradation does NOT force exit).
+- **Target model:** fixed-R take-profit; **N_R = 2.0 fixed** (single
+  value; not a Phase 4p threshold-grid axis). No break-even. No
+  trailing stop. Same-bar ambiguity = stop-first conservative.
+- **Time-stop:** **T_stop = 16 completed 30m bars fixed** (= 8h;
+  single value; not a Phase 4p threshold-grid axis). Position-vs-
+  regime: **Option A** (position lifecycle independent of regime;
+  degradation does NOT force exit).
 - **Position sizing:** 0.25% risk per trade; 2× leverage cap; one
   position max (§1.7.3 preserved verbatim).
 - **Cost model:** §11.6 = 8 bps slippage per side preserved;
@@ -968,7 +969,10 @@ Per Phase 3v §8 binding (preserved verbatim):
 
 `take_profit_short(t_30m) = entry_price - N_R × R`
 
-**`N_R ∈ {2.0, 2.5}`** (axis 6 of threshold grid).
+**`N_R = 2.0`** (single fixed value; **NOT** an active Phase 4p
+threshold-grid axis). The Phase 4p threshold grid has exactly 5
+binary axes (see "Threshold grid" section); N_R is held fixed at
+2.0 to keep the grid at 32 variants.
 
 ### No break-even
 
@@ -1001,25 +1005,27 @@ realizing and matches V1 / R3 / V2 convention.
 
 ## Time-stop model
 
-**`T_stop ∈ {12, 16}`** completed 30m bars (= 6h or 8h) (axis 7 of
-threshold grid).
+**`T_stop = 16` completed 30m bars** (= 8h) (single fixed value;
+**NOT** an active Phase 4p threshold-grid axis). The Phase 4p
+threshold grid has exactly 5 binary axes (see "Threshold grid"
+section); T_stop is held fixed at 16 to keep the grid at 32 variants.
 
 After T_stop completed 30m bars elapsed since entry, the position
 exits at the next 30m bar's open at market regardless of MFE / MAE.
 
 **Rationale:**
 
-- 6h–8h matches the expected regime persistence for a confirmed
-  active 4h-classifier regime with K_confirm = 2-3 4h bars. A
-  trade that hasn't reached its target or stop within 6-8 hours is
-  likely caught in regime degradation; closing at time-stop avoids
-  drawn-out time-decay losses.
-- Matches Phase 4g §29 axis 9 cardinality (2 values) but NOT the
-  same values blindly: V2 used T_stop ∈ {12, 16}; G1 uses the same
-  cardinality and values *deliberately* because they correspond to
-  the same calendar-time horizons; this is conceptual reuse of a
-  reasonable horizon, NOT V2 rescue (V2 failed at the stop-distance
-  filter level, not the time-stop level).
+- 8h matches the expected regime persistence for a confirmed active
+  4h-classifier regime with K_confirm = 2-3 4h bars. A trade that
+  hasn't reached its target or stop within 8 hours is likely caught
+  in regime degradation; closing at time-stop avoids drawn-out
+  time-decay losses.
+- V2 historically used T_stop ∈ {12, 16} as an active axis; G1
+  Phase 4p deliberately holds T_stop fixed at 16 (the longer of the
+  V2 values) to keep the grid compact and avoid V2-style
+  overbreadth. This is a conscious narrowing relative to V2's spec,
+  NOT V2 rescue (V2 failed at the stop-distance filter level, not
+  the time-stop level).
 
 ### Position-vs-regime interaction
 
