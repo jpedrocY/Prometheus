@@ -141,7 +141,176 @@ Phase 4s is the **Post-G1 Strategy Research Consolidation Memo** (docs-only) (op
 
 Phase 4t is the **Post-G1 Fresh-Hypothesis Discovery Memo** (docs-only) (operator selected the Phase 4s §"Operator decision menu" Option B conditional secondary alternative — docs-only fresh-hypothesis discovery memo, conditional on operator explicitly choosing to continue research after consolidation; operator has so chosen). **Phase 4t is the project's second fresh-hypothesis discovery memo** (after Phase 4n, which led to Phase 4o → 4p → 4q → 4r → 4s — i.e., the G1 research arc that ended in Verdict C HARD REJECT). Phase 4t evaluates eight candidate spaces (A — Structural-R trend continuation revisited; B — Funding-context trend/risk filter revisited; C — Structural pullback continuation revisited; D — Volatility-contraction expansion breakout; E — Event-risk / funding-stress avoidance overlay; F — Market microstructure / liquidity-timing research; G — Cross-timeframe continuation without hard regime gate; H — No new candidate / remain paused) under (1) the Phase 4m 18-requirement fresh-hypothesis validity gate; (2) the Phase 4s rejection topology (R2 cost-fragility; F1 catastrophic-floor; D1-A mechanism / framework mismatch; V2 design-stage incompatibility; G1 regime-gate-meets-setup intersection sparseness); (3) the Phase 4s reusable insights; (4) the Phase 4s forbidden-rescue observations. **Phase 4t preserves the full rejection topology** verbatim and reaffirms every retained verdict and project lock (H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; 5m thread OPERATIONALLY CLOSED; V2 HARD REJECT — terminal for V2 first-spec; **G1 HARD REJECT — terminal for G1 first-spec**). **Phase 4t's primary recommendation: Option A — remain paused.** **Phase 4t's conditional secondary: Option B — Phase 4u Volatility-Contraction Expansion Breakout Hypothesis Spec Memo (docs-only) on Candidate D**, only if separately authorized. Phase 4t identified Candidate D as the strongest candidate among A–G under the Phase 4m validity gate, but **NOT strong enough to displace remain-paused as the primary recommendation**. Candidate D's critical caveat: **rescue-risk distance from G1 / R1a / V2-prime is "Moderate", NOT "Strong"**. Candidate D, if ever authorized for Phase 4u, must require elevated discipline: predeclared opportunity-rate viability before any data is touched (intrinsic to contraction-to-expansion theory; NOT derived from Phase 4r forensic numbers); contraction-state designed as local precondition with high frequency, NOT as top-level state machine that gates entry evaluation (anti-G1 design); entry rule designed to fire on the contraction-to-expansion transition itself, not despite the state; explicit anti-G1-AND-classifier design pattern; explicit avoidance of R1a per-bar volatility-percentile bolt-on filter rescue; explicit avoidance of V2-prime setup geometry / stop-distance-filter rescue; explicit avoidance of D1-A funding-Z-score directional rule rescue; explicit avoidance of F1 mean-reversion rescue; explicit avoidance of R2 pullback-retest rescue; preserved §11.6 = 8 bps HIGH per side; preserved §1.7.3 0.25% / 2× / one-position locks; docs-only; no acquisition; no exact thresholds beyond the Phase 4u layer; no runnable strategy name. **Phase 4t rejected / deprioritized:** Candidate F at this boundary because of unavailable-data dependency (would require aggTrades / mark-price / spread / order book / spot data; Phase 4t cannot authorize acquisition); Candidate E as most likely a risk overlay rather than a primary strategy hypothesis; Candidates A / B / C / G as Moderate but not clearly dominant; all G1 / V2 / R2 / F1 / D1-A rescue paths; immediate 5m strategy; ML-first black-box forecasting; market-making / HFT; immediate backtest; immediate data acquisition; paper / shadow / live; Phase 4 canonical. **Phase 4t did NOT authorize Phase 4u.** **Phase 4u / any successor phase remains unauthorized.** **Phase 4t did NOT** create a strategy spec; create V3 / H2 / G2 / any runnable candidate; create G1-prime / G1-narrow / G1-extension / G1 hybrid; create V2-prime / V2-narrow / V2-relaxed / V2 hybrid; create F1 / D1-A / R2 rescue; define exact thresholds; define a backtest plan; run a backtest; run diagnostics; acquire data; modify data; modify manifests; write code; modify source code; modify tests; modify scripts. Phase 4t adds `docs/00-meta/implementation-reports/2026-04-30_phase-4t_post-g1-fresh-hypothesis-discovery.md` and `docs/00-meta/implementation-reports/2026-04-30_phase-4t_closeout.md`. **Whole-repo quality gates remain clean** (verified during Phase 4t): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 / G1 retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; V2 HARD REJECT (Phase 4l, terminal); **G1 HARD REJECT (Phase 4r — Verdict C; CFP-1 critical binding; CFP-9 independent; terminal for G1 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule (preserved; unused by G1); Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT; Phase 4m 18-requirement fresh-hypothesis validity gate; Phase 4n Candidate B avoidance pattern; Phase 4o G1 hypothesis-spec layer; Phase 4p G1 strategy-spec memo; Phase 4q G1 backtest-plan methodology; Phase 4r G1 backtest execution Verdict C HARD REJECT; Phase 4s post-G1 strategy research consolidation memo — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4u / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** No diagnostics run. No backtests run. No data acquired or modified. No manifests modified. No v003 created. No `src/prometheus/` modification. No test modification. No existing-script modification. No `scripts/phase4r_g1_backtest.py` execution. No private endpoints / user stream / WebSocket / authenticated REST consulted in code. No secrets stored or requested. **Recommended state remains paused (Option A primary).** **No next phase authorized.**
 
+Phase 4u is the **C1 Volatility-Contraction Expansion Breakout Hypothesis Spec Memo** (docs-only) (operator selected the Phase 4t §"Operator decision menu" Option B conditional secondary alternative — docs-only hypothesis-spec memo on Phase 4t Candidate D, only if separately authorized; operator has so chosen). **Phase 4u defines C1 — Volatility-Contraction Expansion Breakout** as the project's second regime-aware breakout candidate after G1's terminal failure. **C1 is a CONCEPTUAL HYPOTHESIS LAYER ONLY:** not a strategy spec; not a threshold grid; not a backtest plan; not implemented; not backtested; not validated; not live-ready; **not a rescue of R3 / R2 / F1 / D1-A / V2 / G1**. **C1's core distinction from G1:** G1 used a top-level multi-dimension regime state machine that suppressed entry evaluation on most bars (causing the Phase 4r 2.03% active-fraction outcome and zero qualifying trades); **C1 uses local volatility-contraction state as a setup precondition**, with **the entry rule firing on or near the contraction-to-expansion transition itself**. **C1's five binding hypothesis clauses:** (1) contraction is local, not broad; (2) contraction is a precondition, not a gate; (3) entry fires on the transition itself; (4) the purpose is to detect compression releasing into directional movement; (5) opportunity-rate viability is intrinsic to the theory. **Central anti-G1 discipline:** C1 must NOT replace G1's five-dimension AND classifier with a one-dimension volatility-only gate; the failure shape (broad gate; sparse joint with entry rule) is what matters, not the dimension count; no top-level state machine that suppresses most bars; no multi-dimension AND classifier; no broad regime gate. **C1 conceptual design principles:** identify local contraction; require an expansion transition; consider directional breakout tied to the transition; contraction must be local / short-lived; entry opportunity is generated by the transition itself; all calculations use prior-completed data only; no thresholds chosen from V2 or G1 forensic outcomes; opportunity-rate viability must be predeclared before any data touch in any future Phase 4v. **C1 candidate design dimensions (qualitative; Phase 4v decides exact values):** contraction measure (ATR percentile / Donchian width / high-low range compression / realized volatility / inside-bar / narrow-range structure); expansion trigger (range expansion / close beyond compression boundary / ATR expansion / directional close); directional confirmation (close location / candle body fraction / HTF context as continuous shaping (NOT gate) / volume expansion); stop model (compression-box invalidation (recommended) / ATR-buffered boundary derived from compression-box / structural low/high); target model (measured move based on compression range (recommended) / fixed-R / hybrid + time-stop); timeframe (30m signal (recommended) / 1h optional context / 4h context only). **Phase 4u does NOT choose** exact contraction measure; exact expansion transition rule; exact signal timeframe; exact breakout setup geometry; exact structural-stop / target / time-stop / sizing rules; exact threshold grid; exact opportunity-rate floor; exact mechanism-check thresholds; exact CFP thresholds; exact validation windows. **C1's opportunity-rate viability principle:** opportunity-rate viability must be defined before any backtest; future Phase 4v must predeclare minimum candidate-transition rate, joint setup rate, and post-stop-distance-pass rate; opportunity-rate floors must be derived from first principles, NOT from Phase 4r forensic numbers. **Conceptual mechanism-check framework (numeric thresholds deferred to Phase 4v):** M1 contraction-state validity (vs non-contraction baseline); M2 expansion-transition value-add (vs always-active baseline + delayed-breakout baseline); M3 opportunity-rate / sample viability; M4 BTC primary / ETH comparison (ETH cannot rescue BTC); optional M5 compression-box structural validity. **Conceptual negative tests:** non-contraction breakout baseline; optional random-contraction baseline; always-active breakout baseline; delayed-breakout baseline; active opportunity-rate diagnostic. **Conceptual pass / fail gates (10):** sufficient OOS trade count; positive BTC OOS HIGH expectancy; C1 > non-contraction baseline; C1 > always-active same-geometry baseline; transition-tied > delayed / arbitrary breakout baseline; no overconcentration; no PBO / DSR / CSCV failure if grid is used; no forbidden input access; no data governance violation; no opportunity-rate collapse. **Conceptual catastrophic-floor predicates CFP-1..CFP-12 with C1-specific enrichment:** CFP-9 as opportunity-rate / sparse-intersection collapse (active fraction collapse OR transition-AND-setup-AND-stop-pass joint collapse); CFP-11 as lookahead / transition-dependency violation. **Likely data readiness:** existing trade-price klines and existing volume appear sufficient for a future docs-only Phase 4v if C1 stays on trade-price klines + existing volume (Phase 4i 30m / 4h klines; v002 15m / 1h-derived klines; v002 funding optional risk context only; existing volume column). **Phase 4u does NOT authorize data acquisition.** **Forbidden inputs:** mark-price (any timeframe) unless separately authorized later; aggTrades; spot data; cross-venue data; order book; private / authenticated data; user stream / WebSocket / listenKey; metrics OI; optional metrics ratio columns; 5m Q1–Q7 diagnostic outputs as rule inputs; V2 Phase 4l forensic stop-distance numbers; G1 Phase 4r active-fraction / 124-trade / −0.34 mean_R numbers as tuning targets. **Phase 4u explicitly forbids:** C1 as G1 with one-dimension volatility-only regime gate; C1 as G1 with relaxed thresholds; C1 as R1a with volatility compression filter; C1 as V2 with different Donchian windows; C1 as V2 stop-distance rescue; C1 as R2 pullback-retest; C1 as F1 mean-reversion; C1 as D1-A funding-trigger; C1 as always-active G1; C1 as 5m Q1–Q7 strategy; C1 using Phase 4r active-fraction or always-active numbers as tuning targets; C1 using V2 stop-distance forensic numbers; C1 using optional metrics ratio columns; C1 using unavailable microstructure data without separate authorization; immediate C1 backtest; immediate C1 implementation; immediate data acquisition. **Phase 4u recommendation:** Option A — Phase 4v C1 Strategy Spec Memo (docs-only) primary; Option B — remain paused conditional secondary. **Phase 4u did NOT authorize Phase 4v.** **Phase 4v / any successor phase remains unauthorized.** **Phase 4u did NOT** create a strategy spec; create a runnable strategy; create V3 / H2 / G2 / any runnable candidate; define exact thresholds; define a threshold grid; define a backtest plan; run a backtest; run diagnostics; acquire data; modify data; modify manifests; write code; modify source code; modify tests; modify scripts. Phase 4u adds `docs/00-meta/implementation-reports/2026-04-30_phase-4u_volatility-contraction-expansion-hypothesis-spec.md` and `docs/00-meta/implementation-reports/2026-04-30_phase-4u_closeout.md`. **Whole-repo quality gates remain clean** (verified during Phase 4u): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 / G1 retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; V2 HARD REJECT (Phase 4l, terminal); **G1 HARD REJECT (Phase 4r — Verdict C; CFP-1 critical binding; CFP-9 independent; terminal for G1 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule (preserved; unused by G1); Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT; Phase 4m 18-requirement fresh-hypothesis validity gate; Phase 4n Candidate B avoidance pattern; Phase 4o G1 hypothesis-spec layer; Phase 4p G1 strategy-spec memo; Phase 4q G1 backtest-plan methodology; Phase 4r G1 backtest execution Verdict C HARD REJECT; Phase 4s post-G1 strategy research consolidation memo; Phase 4t post-G1 fresh-hypothesis discovery memo — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4v / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** No diagnostics run. No backtests run. No data acquired or modified. No manifests modified. No v003 created. No `src/prometheus/` modification. No test modification. No existing-script modification. No `scripts/phase4r_g1_backtest.py` execution. No private endpoints / user stream / WebSocket / authenticated REST consulted in code. No secrets stored or requested. **Recommended state: Phase 4v conditional primary; remain-paused conditional secondary.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4u merged into main (C1 Volatility-Contraction Expansion Breakout Hypothesis Spec Memo, docs-only).
+Phase 4u defines C1 — Volatility-Contraction Expansion Breakout as a CONCEPTUAL HYPOTHESIS LAYER ONLY.
+C1 is pre-research only:
+- not a strategy spec;
+- not a threshold grid;
+- not a backtest plan;
+- not implemented;
+- not backtested;
+- not validated;
+- not live-ready;
+- not a rescue of R3 / R2 / F1 / D1-A / V2 / G1.
+C1 is the project's second regime-aware breakout candidate after G1's terminal failure but structurally distinct from G1.
+C1's core distinction from G1:
+- G1 used a top-level multi-dimension regime state machine that suppressed entry evaluation on most bars;
+- C1 uses local volatility-contraction state as a setup precondition;
+- C1's entry rule must fire on or near the contraction-to-expansion transition itself.
+C1's five binding hypothesis clauses:
+1. contraction is local, not broad;
+2. contraction is a precondition, not a gate;
+3. entry fires on the transition itself;
+4. the purpose is to detect compression releasing into directional movement;
+5. opportunity-rate viability is intrinsic to the theory.
+Phase 4u central anti-G1 discipline:
+- C1 must NOT replace G1's five-dimension AND classifier with a one-dimension volatility-only gate;
+- the failure shape matters, not only the number of dimensions;
+- no top-level state machine that suppresses most bars;
+- no multi-dimension AND classifier;
+- no broad regime gate.
+Phase 4u C1 conceptual design principles:
+- identify local contraction;
+- require an expansion transition;
+- consider directional breakout tied to the transition;
+- contraction must be local / short-lived;
+- entry opportunity is generated by the transition itself;
+- all calculations use prior-completed data only;
+- no thresholds chosen from V2 or G1 forensic outcomes;
+- opportunity-rate viability must be predeclared before any data touch in any future Phase 4v.
+Phase 4u candidate design dimensions (qualitative; Phase 4v decides exact values):
+- contraction measure: ATR percentile / Donchian width / high-low range compression / realized volatility / inside-bar / narrow-range structure;
+- expansion trigger: range expansion / close beyond compression boundary / ATR expansion / directional close;
+- directional confirmation: close location / candle body fraction / HTF context as continuous shaping (NOT gate) / volume expansion;
+- stop model: compression-box invalidation (recommended) / ATR-buffered boundary derived from compression-box / structural low-high (NOT V1/V2/G1 inherited);
+- target model: measured move based on compression range (recommended) / fixed-R / hybrid + time-stop;
+- timeframe: 30m signal (recommended) / 1h optional context / 4h context only.
+Phase 4u does NOT choose:
+- exact contraction measure;
+- exact expansion transition rule;
+- exact signal timeframe;
+- exact breakout setup geometry;
+- exact structural stop model;
+- exact target model;
+- exact time-stop;
+- exact threshold grid;
+- exact opportunity-rate floor;
+- exact mechanism-check thresholds;
+- exact CFP thresholds;
+- exact validation windows.
+Phase 4u opportunity-rate viability principle:
+- opportunity-rate viability must be defined before any backtest;
+- candidate-transition rate, joint setup rate, post-stop-distance-pass rate must be predeclared in any future Phase 4v;
+- opportunity-rate floors derived from first principles, NOT Phase 4r forensic numbers;
+- Phase 4u does NOT set exact numeric floors.
+Conceptual mechanism checks (numeric thresholds deferred to Phase 4v):
+- M1 contraction-state validity (vs non-contraction baseline);
+- M2 expansion-transition value-add (vs always-active + delayed-breakout baselines);
+- M3 opportunity-rate / sample viability;
+- M4 BTC primary / ETH comparison; ETH cannot rescue BTC;
+- optional M5 compression-box structural validity.
+Conceptual negative tests:
+- non-contraction breakout baseline;
+- optional random-contraction baseline;
+- always-active breakout baseline;
+- delayed-breakout baseline;
+- active opportunity-rate diagnostic.
+Conceptual pass / fail gates (10):
+1. sufficient OOS trade count;
+2. positive BTC OOS HIGH expectancy;
+3. C1 > non-contraction baseline;
+4. C1 > always-active same-geometry baseline;
+5. transition-tied > delayed / arbitrary breakout baseline;
+6. no overconcentration;
+7. no PBO / DSR / CSCV failure if grid is used;
+8. no forbidden input access;
+9. no data governance violation;
+10. no opportunity-rate collapse.
+Conceptual catastrophic-floor predicates CFP-1..CFP-12 with C1-specific enrichment:
+- CFP-9 as opportunity-rate / sparse-intersection collapse;
+- CFP-11 as lookahead / transition-dependency violation.
+Likely data readiness:
+- existing trade-price klines + existing volume sufficient for future docs-only Phase 4v if C1 stays on klines + volume;
+- Phase 4i 30m / 4h klines + v002 15m / 1h-derived klines + v002 funding (optional risk context) + existing volume column.
+Phase 4u does NOT authorize data acquisition.
+Forbidden inputs:
+- mark-price (any timeframe) unless separately authorized later;
+- aggTrades; spot; cross-venue; order book;
+- private / authenticated data; user stream / WebSocket / listenKey;
+- metrics OI; optional metrics ratio columns;
+- 5m Q1–Q7 diagnostic outputs as rule inputs;
+- V2 Phase 4l forensic stop-distance numbers;
+- G1 Phase 4r active-fraction / 124-trade / -0.34 mean_R numbers as tuning targets.
+Phase 4u explicitly forbids:
+- C1 as G1 with one-dimension volatility-only regime gate;
+- C1 as G1 with relaxed thresholds;
+- C1 as R1a with volatility compression filter;
+- C1 as V2 with different Donchian windows;
+- C1 as V2 stop-distance rescue;
+- C1 as R2 pullback-retest;
+- C1 as F1 mean-reversion;
+- C1 as D1-A funding-trigger;
+- C1 as always-active G1;
+- C1 as 5m Q1–Q7 strategy;
+- C1 using Phase 4r active-fraction or always-active numbers as tuning targets;
+- C1 using V2 stop-distance forensic numbers;
+- C1 using optional metrics ratio columns;
+- C1 using unavailable microstructure data without separate authorization;
+- immediate C1 backtest;
+- immediate C1 implementation;
+- immediate data acquisition.
+Phase 4u recommendation:
+- Option A primary: Phase 4v — C1 Strategy Spec Memo (docs-only);
+- Option B conditional secondary: remain paused.
+Phase 4u did NOT authorize Phase 4v.
+Phase 4v / successor phase remains unauthorized.
+Phase 4u did NOT:
+- create a strategy spec;
+- create a runnable strategy;
+- create V3 / H2 / G2 / any runnable candidate;
+- define exact thresholds;
+- define a threshold grid;
+- define a backtest plan;
+- run a backtest;
+- run diagnostics;
+- acquire data;
+- modify data;
+- modify manifests;
+- write code;
+- modify source code;
+- modify tests;
+- modify scripts.
+Whole-repo quality gates remain clean: ruff check . passed; pytest 785 passed; mypy strict 0 issues across 82 source files.
+No retained verdicts were revised.
+No project locks changed.
+Phase 4 (canonical) remains unauthorized.
+Phase 4v / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+All four Phase 3u §8.5 pre-coding governance blockers remain RESOLVED at governance level.
+Four governance label schemes binding prospectively: stop_trigger_domain | break_even_rule | ema_slope_method | stagnation_window_role.
+mixed_or_unknown is invalid and fails closed for all four schemes.
+Phase 4j §11 metrics OI-subset partial-eligibility rule is binding (preserved; unused by G1).
+Phase 4k V2 backtest-plan methodology is binding.
+Phase 4l Verdict C HARD REJECT is terminal for V2 first-spec.
+Phase 4m 18-requirement fresh-hypothesis validity gate is binding for any future ex-ante hypothesis.
+Phase 4n recommended Phase 4o on Candidate B Regime-First Breakout as primary.
+Phase 4o predeclared G1 — Regime-First Breakout Continuation as the project's first regime-first hypothesis candidate.
+Phase 4p locks G1 first-spec content.
+Phase 4q locks the Phase 4r G1 backtest methodology.
+Phase 4r executed the G1 backtest exactly under Phase 4q methodology and emitted Verdict C HARD REJECT.
+Phase 4s consolidated the Phase 4r outcome into the project record without authorizing rescue or successor.
+Phase 4t evaluated eight candidate spaces after the G1 hard reject; primary remain-paused; conditional secondary Phase 4u on Candidate D.
+Phase 4u defines C1 — Volatility-Contraction Expansion Breakout as a conceptual hypothesis layer; primary recommendation Phase 4v; conditional secondary remain paused.
+Recommended state: Phase 4v conditional primary; remain-paused conditional secondary.
+No next phase authorized.
+```
+
+Phase 4t context (preserved for historical reference):
 
 ```text
 Phase 4t merged into main (Post-G1 Fresh-Hypothesis Discovery Memo, docs-only).
@@ -553,11 +722,11 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-main HEAD:                          5e831d2a1f0e881f963a44d1cf8b1a7fb6b83b5b
-Merge title:                        Merge Phase 4t (post-G1 fresh-hypothesis discovery, docs-only) into main
-Phase 4t memo commit:               c6d9b30bbd76c5f0fb30a63ba1fc0276a11a89c3
-Phase 4t closeout commit:           d377d0882667f752d17b6b3e44a431f1af556bc8
-Phase 4t merge commit:              5e831d2a1f0e881f963a44d1cf8b1a7fb6b83b5b
+main HEAD:                          f1b1a30fbc0ae4d120a63c38c9edb9d9b30e734c
+Merge title:                        Merge Phase 4u (C1 Volatility-Contraction Expansion Breakout hypothesis-spec memo, docs-only) into main
+Phase 4u memo commit:               0c017f64b57d57a5591a1970c79ecd8c23f15abd
+Phase 4u closeout commit:           af746dc923f87d4df485c081a1bdba177c300599
+Phase 4u merge commit:              f1b1a30fbc0ae4d120a63c38c9edb9d9b30e734c
 ```
 
 ## Strategy Research Arc Outcomes
