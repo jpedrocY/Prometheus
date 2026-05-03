@@ -127,39 +127,44 @@ Phase 4l is the **V2 Backtest Execution** phase (docs-and-code; operator selecte
 
 Phase 4m is the **Post-V2 Strategy Research Consolidation Memo** (docs-only) (operator selected the Phase 4l §"Operator decision menu" Option B conditional secondary alternative — docs-only post-V2 research consolidation memo, analogous to Phase 3e (post-F1) or Phase 3k (post-D1-A) precedents). **Phase 4m is a retrospective consolidation of the project's complete strategy-research arc:** H0 framework anchor (Phase 2i §1.7.3); R3 baseline-of-record (Phase 2p §C.1); R1a / R1b-narrow retained research evidence non-leading; R2 FAILED — §11.6 cost-sensitivity blocks (Phase 2w §16.1); F1 HARD REJECT (Phase 3c §7.3 catastrophic-floor predicate; Phase 3d-B2 terminal); D1-A MECHANISM PASS / FRAMEWORK FAIL — other (Phase 3h §11.2; Phase 3j terminal); 5m diagnostic thread operationally complete and closed (Phase 3t); **V2 HARD REJECT** under Phase 4l (structural CFP-1 critical, terminal for V2 first-spec). **Phase 4m documents four orthogonal rejection modes:** cost-fragility (R2); catastrophic-floor (F1); mechanism / framing mismatch (D1-A); design-stage incompatibility (V2). **Phase 4m records the central V2 lesson:** V2 produced zero trades; raw V2 candidates existed before the stop-distance filter; all raw candidates were rejected by the V1-inherited 0.60–1.80 × ATR stop-distance filter; V2's 20/40-bar Donchian setup window per Phase 4g §29 axis 1 naturally produced structural stops around 3–5 × ATR; setup window, structural stop, target model, and position sizing must be co-designed; this does NOT authorize widening the V2 stop filter or rerunning V2. **Phase 4m compiled 15 reusable insights** spanning trend-continuation, mean-reversion, funding-as-context, cost realism, mechanism evidence, setup / stop / target / sizing co-design, participation features, regime gating, partial-eligibility governance pattern, multi-layer non-access verification, predeclaration discipline, catastrophic-floor predicates, and 5m diagnostic-only role. **Phase 4m made forbidden-rescue observations explicit:** no V2 with widened stop-distance; no V2 N1 change; no V2 stop-filter removal; no V2-prime / V2-narrow / V2-relaxed / V2 hybrid; no F1 with extra filters / F1-prime; no D1-A with extra filters / D1-A-prime / D1-B / V1-D1 hybrid / F1-D1 hybrid; no R2 with cheaper costs; no immediate backtest based on Phase 4l observed root cause; no Phase 4g / Phase 4j / Phase 4k methodology amendment based on Phase 4l result; no choosing parameters from Phase 4l forensic numbers; no treating Q1 / Q2 / Q3 / Q6 5m diagnostic findings as rule candidates. **Phase 4m defines an 18-requirement fresh-hypothesis validity gate** any future ex-ante hypothesis must satisfy: must be named as new hypothesis (not rescue label); must be specified before any data is touched; must explain why it is new in theory; must define entry / stop / target / sizing / cost / timeframe / exit together; must predeclare data requirements; must predeclare mechanism checks; must predeclare pass / fail gates including catastrophic-floor predicates; must predeclare forbidden comparisons and forbidden rescue interpretations; must NOT choose thresholds from prior failed outcomes; must NOT use Phase 4l root-cause analysis as direct optimization target; must preserve §11.6 cost sensitivity; must preserve project locks and governance; must commit to predeclared chronological train / validation / OOS holdout windows before backtest; must commit to deflated Sharpe / PBO / CSCV correction if grid search; must distinguish mechanism evidence from framework promotion; must preserve BTCUSDT-primary / ETHUSDT-comparison protocol; must NOT propose live-readiness / paper / shadow / Phase 4 canonical as part of first phase; must satisfy separate operator authorization. **Phase 4m identifies candidate future research spaces but does NOT authorize them:** structural-R trend continuation (allowed if defined from first principles, not as V2 with widened stops); regime-first breakout continuation (possible if regime is primary design choice, not bolt-on filter; Phase 3m precedent); funding-context trend filter (possible if funding is context, not directional trigger; structurally distinct from D1-A); structural pullback continuation (possible if cost model and stop geometry designed together; structurally distinct from R2); mean-reversion de-prioritized (F1 hard-rejected; future use requires materially new thesis); market-making / HFT rejected (not transferable to Prometheus substrate); ML-first black-box forecasting rejected (project remains rules-based per §1.7.3); paper / shadow / live forbidden. **Phase 4m recommendation:** Option A (remain paused) primary; Option B (docs-only fresh-hypothesis discovery memo) conditional secondary only if operator explicitly chooses to continue research. **Phase 4m was docs-only.** **Whole-repo quality gates remain clean** (verified during Phase 4m): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No new strategy spec was created.** **No V3 was created.** **No V2 rescue was created.** **No backtest was run.** **No implementation code was written.** **No source code changed.** **No tests changed.** **No scripts changed.** **No data acquired.** **No data modified.** **No manifests modified.** **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; **V2 HARD REJECT (Phase 4l, structural CFP-1 critical, terminal for V2 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule; Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4n / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** No diagnostics run. No Q1–Q7 run. No backtests run. No mark-price 30m / 4h acquired. No aggTrades acquired. No spot data acquired. No cross-venue data acquired. No funding-rate re-acquired. No v002 dataset / manifest modification. No Phase 3q v001-of-5m manifest modification. No Phase 4i manifest modification. No v003 dataset created. No `scripts/phase3q_5m_acquisition.py` or `scripts/phase3s_5m_diagnostics.py` or `scripts/phase4i_v2_acquisition.py` or `scripts/phase4l_v2_backtest.py` execution. No private endpoints / user stream / WebSocket / authenticated REST consulted in code. No secrets stored or requested. **Recommended state remains paused.** **No next phase authorized.**
 
+Phase 4n is the **Fresh-Hypothesis Discovery Memo** (docs-only) (operator selected the Phase 4m §"Operator decision menu" Option B conditional secondary alternative — docs-only fresh-hypothesis discovery memo, conditional on operator explicitly choosing to continue research after consolidation; operator has so chosen). **Phase 4n evaluated four Phase 4m candidate future research spaces** against the Phase 4m 18-requirement fresh-hypothesis validity gate, identified per-candidate rescue-risk traps and avoidance patterns, and recommended ONE candidate family for a future docs-only strategy-spec phase. **Candidates evaluated:** A (Structural-R trend continuation); B (Regime-first breakout continuation); C (Funding-context trend filter); D (Structural pullback continuation). **Phase 4n used a qualitative 10-dimension scoring matrix:** new-theory strength; rescue-risk; co-design clarity; data feasibility; mechanism-check clarity; cost-risk plausibility; expected sample-size feasibility; compatibility with project constraints; research value; recommended / not recommended. **Per-candidate rescue-risk traps identified:** A trap "V2 but with a wider stop filter"; B trap "R1a / R1b-narrow but with another bolt-on regime filter"; C trap "D1-A but with extra filters / D1-A-prime"; D trap "R2 but with lower assumed costs". **Phase 4n primary recommendation:** Phase 4o — Regime-First Breakout Hypothesis Spec Memo (Candidate B, docs-only). Selected on the basis of strongest theoretical novelty (regime-as-primary categorically distinct from R1a / R1b-narrow / V2 bolt-on patterns); moderate rescue-risk (lower than A's V2-adjacent and D's R2-adjacent traps); strong cost-sensitivity profile (regime gate naturally avoids HIGH-cost margin trades); strong data-readiness (existing v002 / Phase 4i datasets sufficient); enriched mechanism-check framework (negative-test component); Phase 3m precedent. **Candidate B avoidance pattern:** define regime as a top-level state machine (active / inactive); define regime classifier independently of any per-bar trade trigger; do not use V1's 8-bar setup as a baseline reference; do not use 5m diagnostic findings (Q1–Q7) as regime indicators; predeclare regime classifier before any data is touched. **Phase 4n conditional secondary recommendation:** remain paused if operator prefers not to commit to any candidate. **Phase 4n did NOT authorize Phase 4o.** **Phase 4o / any successor phase remains unauthorized.** **No V3 was created.** **No new strategy spec was created.** **No threshold grid was defined.** **No complete entry / exit rule set was defined.** **No V2 / V2-prime / V2-narrow / V2-relaxed / V2 hybrid spec was authored.** **No F1 / D1-A / R2 rescue spec was authored.** **No backtest was run.** **No implementation code was written.** **No source code changed.** **No tests changed.** **No scripts changed.** **No data acquired.** **No data modified.** **No manifests modified.** **Phase 4n was docs-only.** **Whole-repo quality gates remain clean** (verified during Phase 4n): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; **V2 HARD REJECT (Phase 4l, structural CFP-1 critical, terminal for V2 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule; Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT; Phase 4m 18-requirement fresh-hypothesis validity gate — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4o / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** No diagnostics run. No Q1–Q7 run. No backtests run. No mark-price 30m / 4h acquired. No aggTrades acquired. No spot data acquired. No cross-venue data acquired. No funding-rate re-acquired. No v002 dataset / manifest modification. No Phase 3q v001-of-5m manifest modification. No Phase 4i manifest modification. No v003 dataset created. No `scripts/phase3q_5m_acquisition.py` or `scripts/phase3s_5m_diagnostics.py` or `scripts/phase4i_v2_acquisition.py` or `scripts/phase4l_v2_backtest.py` execution. No private endpoints / user stream / WebSocket / authenticated REST consulted in code. No secrets stored or requested. **Recommended state remains paused outside the conditional Phase 4o spec memo.** **No next phase authorized.**
+
 Current phase:
 
 ```text
-Phase 4m merged into main (Post-V2 Strategy Research Consolidation Memo, docs-only).
-Phase 4m is a retrospective consolidation of the project's complete strategy-research arc: H0 framework anchor; R3 baseline-of-record; R1a / R1b-narrow retained non-leading; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; 5m diagnostic thread operationally complete and closed; V2 HARD REJECT — structural CFP-1 critical, terminal for V2 first-spec.
-Phase 4m documents four orthogonal rejection modes: cost-fragility (R2); catastrophic-floor (F1); mechanism / framing mismatch (D1-A); design-stage incompatibility (V2).
-Phase 4m records the central V2 lesson: V2 produced zero trades; raw candidates existed before the stop-distance filter; all raw candidates were rejected by the V1-inherited 0.60–1.80 × ATR stop-distance filter; the V2 20/40-bar Donchian setup naturally produced structural stops around 3–5 × ATR; setup window, structural stop, target model, and position sizing must be co-designed; this does NOT authorize V2 stop-filter widening, V2 rerun, or V2 rescue.
-Phase 4m compiled 15 reusable insights.
-Phase 4m made forbidden-rescue observations explicit:
-- V2 with widened stop-distance forbidden;
-- V2 N1 change forbidden;
-- V2 stop-filter removal forbidden;
-- V2-prime / V2-narrow / V2-relaxed / V2 hybrid forbidden;
-- F1 with extra filters / F1-prime forbidden;
-- D1-A with extra filters / D1-A-prime / D1-B / V1-D1 hybrid / F1-D1 hybrid forbidden;
-- R2 with cheaper costs forbidden;
-- immediate backtest based on Phase 4l observed root cause forbidden;
-- Phase 4g / Phase 4j / Phase 4k methodology amendment based on Phase 4l result forbidden.
-Phase 4m defines an 18-requirement fresh-hypothesis validity gate.
-Phase 4m identifies candidate future research spaces but does NOT authorize them:
-- structural-R trend continuation (allowed if defined from first principles, not as V2 with widened stops);
-- regime-first breakout continuation (possible if regime is primary design choice; Phase 3m precedent);
-- funding-context trend filter (possible if funding is context, not directional trigger; structurally distinct from D1-A);
-- structural pullback continuation (possible if cost model and stop geometry designed together; structurally distinct from R2);
-- mean-reversion de-prioritized;
-- market-making / HFT rejected;
-- ML-first black-box forecasting rejected;
-- paper / shadow / live forbidden.
-Phase 4m recommendation: Option A (remain paused) primary; Option B (docs-only fresh-hypothesis discovery memo) conditional secondary only if operator explicitly chooses to continue research.
-Phase 4n / any successor phase is NOT authorized by this merge.
-No new strategy spec was created.
+Phase 4n merged into main (Fresh-Hypothesis Discovery Memo, docs-only).
+Phase 4n evaluated four Phase 4m candidate future research spaces against the Phase 4m 18-requirement fresh-hypothesis validity gate:
+- Candidate A: Structural-R trend continuation;
+- Candidate B: Regime-first breakout continuation;
+- Candidate C: Funding-context trend filter;
+- Candidate D: Structural pullback continuation.
+Phase 4n used a qualitative 10-dimension scoring matrix:
+- new-theory strength;
+- rescue-risk;
+- co-design clarity;
+- data feasibility;
+- mechanism-check clarity;
+- cost-risk plausibility;
+- expected sample-size feasibility;
+- compatibility with project constraints;
+- research value;
+- recommended / not recommended.
+Phase 4n identified per-candidate rescue-risk traps:
+- A: V2 but with a wider stop filter;
+- B: R1a / R1b-narrow but with another bolt-on regime filter;
+- C: D1-A but with extra filters / D1-A-prime;
+- D: R2 but with lower assumed costs.
+Phase 4n primary recommendation: Phase 4o — Regime-First Breakout Hypothesis Spec Memo (Candidate B, docs-only).
+Selection basis: strongest theoretical novelty (regime-as-primary categorically distinct from R1a / R1b-narrow / V2 bolt-on patterns); moderate rescue-risk; strong cost-sensitivity profile; strong data-readiness with existing v002 / Phase 4i datasets; enriched mechanism-check framework with negative-test component; Phase 3m precedent.
+Phase 4n conditional secondary: remain paused.
+Phase 4n did NOT authorize Phase 4o.
+Phase 4o / any successor phase remains unauthorized.
 No V3 was created.
-No V2 rescue was created.
+No new strategy spec was created.
+No threshold grid was defined.
+No complete entry / exit rule set was defined.
+No V2 / V2-prime / V2-narrow / V2-relaxed / V2 hybrid spec was authored.
+No F1 / D1-A / R2 rescue spec was authored.
 No backtest was run.
 No implementation code was written.
 No source code changed.
@@ -168,13 +173,11 @@ No scripts changed.
 No data acquired.
 No data modified.
 No manifests modified.
-V2 remains pre-research only: not implemented; not backtested (in any framework-promoting sense); not validated; not live-ready; not a rescue of R3 / R2 / F1 / D1-A.
-V2 first-spec is terminal.
 Whole-repo quality gates remain clean: ruff check . passed; pytest 785 passed; mypy strict 0 issues across 82 source files.
 No retained verdicts were revised.
 No project locks changed.
 Phase 4 (canonical) remains unauthorized.
-Phase 4n / any successor phase remains unauthorized.
+Phase 4o / any successor phase remains unauthorized.
 Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
 All four Phase 3u §8.5 pre-coding governance blockers remain RESOLVED at governance level (GAP-20260424-032 by Phase 3v; GAP-20260424-030 / 031 / 033 by Phase 3w).
 Four governance label schemes binding prospectively: stop_trigger_domain | break_even_rule | ema_slope_method | stagnation_window_role.
@@ -183,18 +186,20 @@ Phase 4j §11 metrics OI-subset partial-eligibility rule is binding from the Pha
 Phase 4k V2 backtest-plan methodology is binding from the Phase 4k merge forward; immutable absent a separately authorized governance amendment.
 Phase 4l Verdict C HARD REJECT is terminal for V2 first-spec.
 Phase 4m consolidation memo is the project's retrospective summary of the strategy-research arc; it does not change any locked artefact.
-Recommended state: paused.
+Phase 4m 18-requirement fresh-hypothesis validity gate is binding for any future ex-ante hypothesis.
+Phase 4n recommendation: Phase 4o on Candidate B Regime-First Breakout primary; remain paused conditional secondary.
+Recommended state: paused outside conditional Phase 4o spec memo.
 No next phase authorized.
 ```
 
 Most recent merge:
 
 ```text
-main HEAD:                          d1fbf877e6cdc9739505c8b9d338fc37fab64c67
-Merge title:                        Merge Phase 4m (post-V2 strategy research consolidation, docs-only) into main
-Phase 4m memo commit:               bb8111e58b107c82ceaf6cf7ec1c384211c1560e
-Phase 4m closeout commit:           1059eb60e3580f8fa894a7985bdf5764d3be974a
-Phase 4m merge commit:              d1fbf877e6cdc9739505c8b9d338fc37fab64c67
+main HEAD:                          d85bad22fc21f2c9e7e31809fe2e790a29a3260c
+Merge title:                        Merge Phase 4n (fresh-hypothesis discovery memo, docs-only) into main
+Phase 4n memo commit:               b53d1bbeba03aef1b2ba181eac5ae9f8b3c7a8a0
+Phase 4n closeout commit:           96765c40dabfcde72c57431232d191446277d957
+Phase 4n merge commit:              d85bad22fc21f2c9e7e31809fe2e790a29a3260c
 ```
 
 ## Strategy Research Arc Outcomes
