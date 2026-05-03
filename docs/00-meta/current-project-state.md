@@ -131,45 +131,87 @@ Phase 4n is the **Fresh-Hypothesis Discovery Memo** (docs-only) (operator select
 
 Phase 4o is the **Regime-First Breakout Hypothesis Spec Memo** (docs-only) (operator selected the Phase 4n §"Operator decision menu" Option A primary recommendation: Phase 4o — Regime-First Breakout Hypothesis Spec Memo on Phase 4n Candidate B, docs-only). **Phase 4o defines G1 — Regime-First Breakout Continuation as a new ex-ante research candidate.** **Phase 4o is hypothesis-spec only, not strategy-spec.** **G1's central claim:** breakout continuation may be viable on BTCUSDT perpetual futures only when the market is already in a predeclared favorable regime determined by a top-level state machine on prior-completed data; outside `regime_active`, the strategy is completely inactive and produces no candidate signals; inside `regime_active`, entry / stop / target / sizing are co-designed from first principles for that regime's volatility / trend / cost profile. **G1 is conceptually distinct from:** R1a / R1b-narrow because those are per-bar bolt-on filters, while G1 is regime-first state-machine gating; V2 because V2 used an 8-feature per-bar AND chain, while G1 separates regime detection from inside-regime entry evaluation; F1 / D1-A / R2 because G1 is trend-continuation breakout, not mean-reversion / contrarian / pullback-retest. **Phase 4o adopts the name G1 — Regime-First Breakout Continuation.** **Forbidden alternative names:** V3, V2-prime, R3-prime, R1c, R1a-extension, R1b-extension, or any name implying direct rescue. **Phase 4o records six binding regime-first principles:** (1) first decide whether the market is in a favorable regime; (2) only inside the active regime can a breakout setup be considered; (3) outside the active regime, no candidate signals are produced; (4) classifier uses prior-completed data only; (5) classifier must not depend on whether a breakout signal is present; (6) classifier must not be tuned to rescue prior failures. **Phase 4o records the conceptual 4-state regime state machine:** `regime_inactive`; `regime_candidate`; `regime_active`; `regime_cooldown` / `regime_suspended`. All transitions use prior-completed bars only; no lookahead; no entry signals are computed outside `regime_active`. **Phase 4o records allowed classifier dimensions:** HTF trend direction / slope; volatility expansion / compression; trend persistence / directional efficiency; funding context as risk-context only, not directional trigger; optional OI context only if Phase 4j §11 OI-subset governance is preserved. **Phase 4o records forbidden classifier inputs:** 5m Q1–Q7 diagnostic findings as regime indicators; V2 Phase 4l observed stop-distance failure numbers; future bars; optional metrics ratio columns; mark-price 30m / 4h unless separately authorized; aggTrades unless separately authorized; spot / cross-venue data; private / authenticated / WebSocket / user-stream data; discretionary / manual regime labels. **Phase 4o records that inside-regime breakout geometry must be co-designed:** setup window, structural stop, target, time-stop, and position sizing. **Phase 4o explicitly forbids inheriting by default:** V1 8-bar setup; V2 20/40-bar Donchian setup; V1 0.60–1.80 × ATR stop-distance filter; V2 8-feature AND chain; R2 pullback-retest entry; F1 mean-reversion logic; D1-A funding-Z-score directional rule. **Phase 4o preserves:** 0.25% risk per trade; 2× leverage cap; one position max; §11.6 HIGH cost = 8 bps slippage per side; stop-trigger-domain governance from Phase 3v §8; Phase 4j §11 metrics OI-subset governance if metrics OI is used. **Phase 4o data-readiness assessment:** existing v002 / Phase 4i / v001-of-5m datasets appear sufficient for plausible G1 designs; Phase 4q data-requirements memo is not strictly required unless Phase 4p chooses unavailable data such as mark-price 30m / 4h, aggTrades, or 1m. **Phase 4o defines conceptual mechanism checks:** M1 regime-validity negative test; M2 regime-gating value-add over always-active baseline; M3 inside-regime co-design validity; M4 cross-symbol robustness. **Phase 4o defines a negative-test framework:** active vs. inactive comparison; always-active baseline; optional random-regime baseline. Inactive regime performing equally well or better fails the regime hypothesis; sample-size collapse fails the hypothesis. **Phase 4o defines conceptual pass/fail gates and 12 catastrophic-floor predicates adapted from Phase 4k.** **Phase 4o recommendation:** Option A — Phase 4p G1 Strategy Spec Memo (docs-only) primary; Option B — remain paused conditional secondary. **Phase 4o did NOT authorize Phase 4p.** **Phase 4p / any successor phase remains unauthorized.** **Phase 4o did NOT define:** final regime classifier formula; transition thresholds; signal timeframe / HTF timeframe; inside-regime breakout setup geometry; stop / target / sizing thresholds; threshold grid; exact data requirements; exact mechanism-check pass thresholds; exact pass / fail numerical bounds. **No V3 was created.** **No new runnable strategy was created.** **No full strategy spec was created.** **No threshold grid was defined.** **No complete entry / exit rule set was defined.** **No V2 / V2-prime / V2-narrow / V2-relaxed / V2 hybrid spec was authored.** **No F1 / D1-A / R2 rescue spec was authored.** **No backtest was run.** **No implementation code was written.** **No source code changed.** **No tests changed.** **No scripts changed.** **No data acquired.** **No data modified.** **No manifests modified.** **Phase 4o was docs-only.** **Whole-repo quality gates remain clean** (verified during Phase 4o): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; **V2 HARD REJECT (Phase 4l, structural CFP-1 critical, terminal for V2 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule; Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT; Phase 4m 18-requirement fresh-hypothesis validity gate; Phase 4n Candidate B avoidance pattern — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4p / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** No diagnostics run. No Q1–Q7 run. No backtests run. No mark-price 30m / 4h acquired. No aggTrades acquired. No spot data acquired. No cross-venue data acquired. No funding-rate re-acquired. No v002 dataset / manifest modification. No Phase 3q v001-of-5m manifest modification. No Phase 4i manifest modification. No v003 dataset created. No `scripts/phase3q_5m_acquisition.py` or `scripts/phase3s_5m_diagnostics.py` or `scripts/phase4i_v2_acquisition.py` or `scripts/phase4l_v2_backtest.py` execution. No private endpoints / user stream / WebSocket / authenticated REST consulted in code. No secrets stored or requested. **Recommended state remains paused outside the conditional Phase 4p spec memo.** **No next phase authorized.**
 
+Phase 4p is the **G1 Strategy Spec Memo** (docs-only) (operator selected the Phase 4o §"Operator decision menu" Option A primary recommendation: Phase 4p — G1 Strategy Spec Memo, docs-only). **Phase 4p translates the Phase 4o G1 — Regime-First Breakout Continuation hypothesis-spec layer into a complete ex-ante strategy specification with exact thresholds across all dimensions before any G1 backtest code, data acquisition, or execution exists.** Phase 4p locks the G1 first-spec content: (1) timeframes — 4h regime classifier primary timeframe, 1h regime-persistence support timeframe, 30m signal timeframe, entry at next 30m bar's open after confirmed setup close; (2) composite regime classifier on prior-completed bars only — 4h EMA(20)/(50) discrete-comparison trend state, 12-bar 4h directional efficiency, 30m ATR(20) percentile rank computed over the prior 480 30m bars, 30m relative-volume score vs. the prior 480-bar 30m volume median, v002 funding-rate percentile computed over the trailing 90 funding events; (3) 4-state regime state machine — `regime_inactive`, `regime_candidate`, `regime_active`, `regime_cooldown` — with `K_confirm` ∈ {2, 3} 4h bars (axis 5 of threshold grid) and `C_cooldown` = 4 4h bars (fixed); no entries outside `regime_active`; position lifecycle independent of regime state after entry (Option A); (4) inside-regime breakout setup evaluated only in `regime_active` with direction matching active regime — 30m Donchian-style breakout, `N_breakout` = 12, `B_atr` = 0.10; prior high/low excludes current bar; no V2 8-feature AND chain; no R2 pullback-retest; no F1 mean-reversion; no D1-A funding-Z-score directional rule; no 5m features; (5) structural stop with G1-specific bounds — `N_stop` = 12, `S_buffer` = 0.10; stop-distance bounds [0.50, 2.20] × ATR(20) derived from active-regime structure (NOT V1 / V2 inheritance; NOT V2 stop-distance rescue); out-of-band setups rejected at entry; no stop widening; (6) target — fixed-R `N_R` = 2.0 (single fixed value; not an active Phase 4p threshold-grid axis); (7) time-stop — `T_stop` = 16 completed 30m bars (= 8h; single fixed value; not an active Phase 4p threshold-grid axis); no break-even; no trailing stop; same-bar stop / take-profit ambiguity = stop-first conservative; stop-precedence stop > take-profit > time-stop; (8) position sizing preserved verbatim from §1.7.3 — 0.25% risk per trade, 2× leverage cap, one position max, BTCUSDT primary, ETHUSDT comparison only (ETH cannot rescue BTC); (9) cost model — §11.6 = 8 bps HIGH per side preserved verbatim; LOW = 1 bp / MEDIUM = 4 bps / HIGH = 8 bps cost cells; taker fee = 4 bps per side; no maker rebates; no live fee assumption; funding cost included in P&L; (10) **threshold grid: exactly 32 variants (= 2^5) over exactly five binary axes only** — Axis 1 `E_min` ∈ {0.30, 0.40}; Axis 2 ATR band ∈ {[20, 80], [30, 70]}; Axis 3 `V_liq_min` ∈ {0.80, 1.00}; Axis 4 funding band ∈ {[15, 85], [25, 75]}; Axis 5 `K_confirm` ∈ {2, 3} 4h bars; deterministic lexicographic variant ordering; no grid extension without separate operator authorization and predeclaration before data is touched; **`N_R` ∈ {2.0, 2.5} and `T_stop` ∈ {12, 16} are NOT active Phase 4p axes and are preserved only as future G1-extension possibilities requiring separate authorization and predeclaration before data is touched**; (11) mechanism-check thresholds — M1 (regime-validity negative test): G1 active-population mean_R minus G1 inactive-population mean_R ≥ +0.10R AND bootstrap_CI_lower(B = 10 000) > 0; M2 (regime-gating value-add vs. always-active baseline): G1 mean_R minus always-active-baseline mean_R ≥ +0.05R on BTC OOS HIGH AND bootstrap_CI_lower(B = 10 000) > 0; M3 (inside-regime co-design validity): BTC OOS HIGH mean_R > 0 AND trade_count ≥ 30; M4 (cross-symbol robustness): ETH OOS HIGH mean_R differential non-negative AND directional consistency with BTC; ETH cannot rescue BTC; promotion-bar M1 PASS AND M2 PASS AND M3 PASS AND M4 PASS AND §11.6 HIGH cost-survival AND no CFP triggered; (12) twelve catastrophic-floor predicates (CFP-1 .. CFP-12) defined exactly by Phase 4p; any single CFP triggered = HARD REJECT (Verdict C-equivalent), terminal for G1 first-spec; (13) validation windows reused verbatim from Phase 4k — train 2022-01-01 00:00:00 UTC .. 2023-06-30 23:30:00 UTC; validation 2023-07-01 00:00:00 UTC .. 2024-06-30 23:30:00 UTC; OOS holdout 2024-07-01 00:00:00 UTC .. 2026-03-31 23:30:00 UTC (primary G1 evidence cell); no window modification post-hoc; no data shuffling; no leakage; same 32 variants evaluated independently per symbol; no cross-symbol optimization; (14) governance labels — `stop_trigger_domain` research = `trade_price_backtest`, future runtime = `mark_price_runtime`, future mark-price validation = `mark_price_backtest_candidate`; `break_even_rule = disabled`; `ema_slope_method = discrete_comparison`; `stagnation_window_role = metric_only`; `mixed_or_unknown` invalid / fail-closed for all four schemes; (15) data-requirements decision — **no Phase 4q data-requirements memo required before any future backtest-plan memo**; existing data sufficient (v002 BTCUSDT/ETHUSDT 15m, v002 BTCUSDT/ETHUSDT 1h-derived, Phase 4i `binance_usdm_btcusdt_30m__v001` / `binance_usdm_ethusdt_30m__v001` / `binance_usdm_btcusdt_4h__v001` / `binance_usdm_ethusdt_4h__v001`, v002 BTCUSDT/ETHUSDT funding); no new acquisition; no manifest modification; **G1 first spec does NOT use Phase 4i metrics OI subset** (Phase 4j §11 metrics OI-subset partial-eligibility governance preserved verbatim but unused by G1 first spec); (16) G1 forbidden inputs — mark-price 30m / 4h, mark-price 5m, mark-price 15m, aggTrades, spot data, cross-venue data, Phase 4i metrics OI subset, optional metrics ratio columns, v003, modified Phase 4i / v002 / v001-of-5m manifests, authenticated REST / private endpoints / public endpoints in code / user stream / WebSocket / listenKey lifecycle, 5m Q1–Q7 diagnostic outputs as strategy features or regime indicators, V2 Phase 4l observed stop-distance failure numbers as design inputs. **Phase 4p included a docs-only consistency correction commit (`0572c1c1ab1282b69df04f02b97b97fec6edd877`) clarifying that `N_R` = 2.0 and `T_stop` = 16 are fixed (not active Phase 4p threshold-grid axes) and that the 32-variant grid is over exactly five binary axes only.** **Phase 4p recommendation:** Option A — Phase 4q G1 Backtest-Plan Memo (docs-only) primary; Option B — remain paused conditional secondary. **Phase 4p did NOT authorize Phase 4q.** **Phase 4q / any successor phase remains unauthorized.** **G1 remains pre-research only: not implemented; not backtested; not validated; not live-ready; not a rescue of R3 / R2 / F1 / D1-A / V2.** **No new runnable strategy was created.** **No V3 was created.** **No V2 / V2-prime / V2-narrow / V2-relaxed / V2 hybrid spec was authored.** **No F1 / D1-A / R2 rescue spec was authored.** **No G1 backtest was run.** **No G1 implementation code was written.** **No source code changed.** **No tests changed.** **No scripts changed.** **No data acquired.** **No data modified.** **No manifests modified.** **Phase 4p was docs-only.** **Whole-repo quality gates remain clean** (verified during Phase 4p): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; **V2 HARD REJECT (Phase 4l, structural CFP-1 critical, terminal for V2 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule (preserved; unused by G1 first spec); Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT; Phase 4m 18-requirement fresh-hypothesis validity gate; Phase 4n Candidate B avoidance pattern; Phase 4o G1 hypothesis-spec layer — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4q / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** No diagnostics run. No Q1–Q7 run. No backtests run. No mark-price 30m / 4h acquired. No aggTrades acquired. No spot data acquired. No cross-venue data acquired. No funding-rate re-acquired. No v002 dataset / manifest modification. No Phase 3q v001-of-5m manifest modification. No Phase 4i manifest modification. No v003 dataset created. No `scripts/phase3q_5m_acquisition.py` or `scripts/phase3s_5m_diagnostics.py` or `scripts/phase4i_v2_acquisition.py` or `scripts/phase4l_v2_backtest.py` execution. No private endpoints / user stream / WebSocket / authenticated REST consulted in code. No secrets stored or requested. **Recommended state remains paused outside the conditional Phase 4q backtest-plan memo.** **No next phase authorized.**
+
 Current phase:
 
 ```text
-Phase 4o merged into main (Regime-First Breakout Hypothesis Spec Memo, docs-only).
-Phase 4o defines G1 — Regime-First Breakout Continuation as a new ex-ante research candidate.
-Phase 4o is hypothesis-spec only, not strategy-spec.
-G1 central claim: breakout continuation may be viable only inside a predeclared favorable regime determined by a top-level state machine on prior-completed data; outside regime_active the strategy is completely inactive.
-G1 is conceptually distinct from R1a / R1b-narrow (per-bar bolt-on filters), V2 (per-bar AND chain), and F1 / D1-A / R2 (different families).
-Forbidden alternative names: V3, V2-prime, R3-prime, R1c, R1a-extension, R1b-extension, or any name implying direct rescue.
-Six binding regime-first principles:
-1. first decide whether the market is in a favorable regime;
-2. only inside the active regime can a breakout setup be considered;
-3. outside the active regime, no candidate signals are produced;
-4. classifier uses prior-completed data only;
-5. classifier must not depend on whether a breakout signal is present;
-6. classifier must not be tuned to rescue prior failures.
-4-state regime state machine: regime_inactive; regime_candidate; regime_active; regime_cooldown / regime_suspended.
-Allowed classifier dimensions: HTF trend direction / slope; volatility expansion / compression; trend persistence / directional efficiency; funding context as risk-context only; optional OI context only if Phase 4j §11 preserved.
-Forbidden classifier inputs: 5m Q1-Q7 findings; V2 Phase 4l forensic numbers; future bars; optional metrics ratio columns; mark-price 30m/4h unless separately authorized; aggTrades unless separately authorized; spot/cross-venue; private/authenticated; discretionary/manual.
-Inside-regime co-design: setup window, structural stop, target, time-stop, position sizing must be co-designed.
-Phase 4o forbids inheriting by default: V1 8-bar setup; V2 20/40-bar Donchian; V1 0.60-1.80 × ATR stop-distance filter; V2 8-feature AND chain; R2 pullback-retest entry; F1 mean-reversion logic; D1-A funding-Z-score directional rule.
-Phase 4o preserves: 0.25% risk per trade; 2× leverage cap; one position max; §11.6 HIGH cost = 8 bps slippage per side; Phase 3v §8 stop-trigger-domain; Phase 4j §11 metrics OI-subset governance if metrics OI is used.
-Data-readiness assessment: existing v002 / Phase 4i / v001-of-5m datasets appear sufficient for plausible G1 designs; Phase 4q data-requirements memo not strictly required unless Phase 4p chooses unavailable data.
-Mechanism-check framework: M1 regime-validity negative test; M2 regime-gating value-add over always-active baseline; M3 inside-regime co-design validity; M4 cross-symbol robustness (numeric thresholds deferred to Phase 4p).
-Negative-test framework: active-vs-inactive comparison; always-active baseline comparison; optional random-regime baseline; inactive equally favorable fails the hypothesis; sample-size collapse fails the hypothesis.
-12 catastrophic-floor predicates adapted from Phase 4k.
-Phase 4o recommendation: Option A Phase 4p — G1 Strategy Spec Memo (docs-only) primary; Option B remain paused conditional secondary.
-Phase 4o did NOT authorize Phase 4p.
-Phase 4p / any successor phase remains unauthorized.
-Phase 4o did NOT define: final regime classifier formula; transition thresholds; signal/HTF timeframes; inside-regime breakout setup geometry; stop/target/sizing thresholds; threshold grid; exact data requirements; exact mechanism-check pass thresholds; exact pass/fail numerical bounds.
+Phase 4p merged into main (G1 Strategy Spec Memo, docs-only).
+Phase 4p defines G1 — Regime-First Breakout Continuation as a complete ex-ante strategy specification with exact thresholds across all dimensions.
+Phase 4p is strategy-spec only.
+G1 first-spec timeframes: 4h regime classifier primary; 1h regime-persistence support; 30m signal; entry at next 30m bar's open after confirmed setup close.
+G1 composite regime classifier (prior-completed bars only; independent of breakout signal):
+- 4h EMA(20)/(50) discrete-comparison trend state;
+- 12-bar 4h directional efficiency;
+- 30m ATR(20) percentile rank computed over the prior 480 30m bars;
+- 30m relative-volume score vs the prior 480-bar 30m volume median;
+- v002 funding-rate percentile computed over the trailing 90 funding events.
+G1 4-state regime state machine: regime_inactive; regime_candidate; regime_active; regime_cooldown.
+K_confirm in {2, 3} 4h bars (axis 5 of threshold grid). C_cooldown = 4 4h bars (fixed).
+No entries outside regime_active. Position lifecycle independent of regime state after entry (Option A).
+G1 inside-regime breakout setup (evaluated only in regime_active; direction must match active regime):
+- 30m Donchian-style breakout;
+- N_breakout = 12;
+- B_atr = 0.10;
+- prior high/low excludes current bar.
+No V2 8-feature AND chain. No R2 pullback-retest. No F1 mean-reversion. No D1-A funding-Z-score directional rule. No 5m features.
+G1 structural stop:
+- N_stop = 12;
+- S_buffer = 0.10;
+- stop-distance bounds [0.50, 2.20] × ATR(20).
+Bounds are G1-specific (NOT V1 / V2 inheritance; NOT V2 stop-distance rescue). Out-of-band setups rejected at entry. No stop widening.
+G1 target / time-stop:
+- N_R = 2.0 fixed (single value; NOT an active Phase 4p threshold-grid axis);
+- T_stop = 16 completed 30m bars fixed (= 8h; single value; NOT an active Phase 4p threshold-grid axis);
+- no break-even;
+- no trailing stop;
+- same-bar ambiguity = stop-first conservative;
+- stop-precedence stop > take-profit > time-stop.
+G1 position sizing / exposure (preserved verbatim from §1.7.3):
+- 0.25% risk per trade;
+- 2× leverage cap;
+- one position max;
+- BTCUSDT primary;
+- ETHUSDT comparison only (ETH cannot rescue BTC).
+G1 cost model:
+- §11.6 = 8 bps HIGH per side preserved verbatim;
+- LOW = 1 bp / MEDIUM = 4 bps / HIGH = 8 bps cells;
+- taker fee = 4 bps per side;
+- no maker rebates;
+- no live fee assumption;
+- funding cost included in P&L.
+G1 threshold grid: exactly 32 variants (= 2^5) over exactly five binary axes only:
+1. E_min in {0.30, 0.40};
+2. ATR band in {[20, 80], [30, 70]};
+3. V_liq_min in {0.80, 1.00};
+4. funding band in {[15, 85], [25, 75]};
+5. K_confirm in {2, 3} 4h bars.
+N_R in {2.0, 2.5} and T_stop in {12, 16} are NOT active Phase 4p axes; they are preserved only as future G1-extension possibilities requiring separate authorization and predeclaration before data is touched. (Phase 4p docs-only consistency correction commit 0572c1c.)
+Deterministic lexicographic variant ordering. No grid extension without separate operator authorization and predeclaration before data is touched.
+G1 mechanism-check thresholds:
+- M1 (regime-validity negative test): G1 active-population mean_R minus G1 inactive-population mean_R >= +0.10R AND bootstrap 95% CI lower bound > 0.
+- M2 (regime-gating value-add vs always-active baseline): G1 mean_R minus always-active-baseline mean_R >= +0.05R on BTC OOS HIGH AND bootstrap 95% CI lower bound > 0.
+- M3 (inside-regime co-design validity): BTC OOS HIGH mean_R > 0 AND trade_count >= 30.
+- M4 (cross-symbol robustness): ETH OOS HIGH mean_R differential non-negative AND directional consistency with BTC; ETH cannot rescue BTC.
+Promotion-bar: M1 PASS AND M2 PASS AND M3 PASS AND M4 PASS AND §11.6 HIGH cost-survival AND no CFP triggered.
+G1 catastrophic-floor predicates (CFP-1..CFP-12) defined exactly by Phase 4p; any single CFP triggered = HARD REJECT (Verdict C-equivalent), terminal for G1 first-spec.
+G1 validation windows reused verbatim from Phase 4k:
+- train: 2022-01-01 00:00:00 UTC .. 2023-06-30 23:30:00 UTC (~18 months);
+- validation: 2023-07-01 00:00:00 UTC .. 2024-06-30 23:30:00 UTC (~12 months);
+- OOS holdout: 2024-07-01 00:00:00 UTC .. 2026-03-31 23:30:00 UTC (~21 months; primary G1 evidence cell).
+G1 governance labels: stop_trigger_domain research = trade_price_backtest, future runtime = mark_price_runtime, future mark-price validation = mark_price_backtest_candidate; break_even_rule = disabled; ema_slope_method = discrete_comparison; stagnation_window_role = metric_only; mixed_or_unknown invalid / fail-closed for all four schemes.
+G1 data-requirements decision: no Phase 4q data-requirements memo required before any future backtest-plan memo. Existing data sufficient: v002 BTCUSDT/ETHUSDT 15m; v002 BTCUSDT/ETHUSDT 1h-derived; Phase 4i BTCUSDT/ETHUSDT 30m; Phase 4i BTCUSDT/ETHUSDT 4h; v002 BTCUSDT/ETHUSDT funding. No new acquisition. No manifest modification. G1 first spec does NOT use Phase 4i metrics OI subset (Phase 4j §11 governance preserved verbatim but unused by G1 first spec).
+G1 forbidden inputs: mark-price 30m / 4h; mark-price 5m; mark-price 15m; aggTrades; spot data; cross-venue data; Phase 4i metrics OI subset; optional metrics ratio columns; v003; modified Phase 4i / v002 / v001-of-5m manifests; authenticated REST / private endpoints / public endpoints in code / user stream / WebSocket / listenKey lifecycle; 5m Q1–Q7 diagnostic outputs as strategy features or regime indicators; V2 Phase 4l observed stop-distance failure numbers as design inputs.
+Phase 4p recommendation: Option A — Phase 4q G1 Backtest-Plan Memo (docs-only) primary; Option B — remain paused conditional secondary.
+Phase 4p did NOT authorize Phase 4q.
+Phase 4q / any successor phase remains unauthorized.
+G1 remains pre-research only: not implemented; not backtested; not validated; not live-ready; not a rescue of R3 / R2 / F1 / D1-A / V2.
 No V3 was created.
 No new runnable strategy was created.
-No full strategy spec was created.
-No threshold grid was defined.
-No complete entry / exit rule set was defined.
 No V2 / V2-prime / V2-narrow / V2-relaxed / V2 hybrid spec was authored.
 No F1 / D1-A / R2 rescue spec was authored.
-No backtest was run.
-No implementation code was written.
+No G1 backtest was run.
+No G1 implementation code was written.
 No source code changed.
 No tests changed.
 No scripts changed.
@@ -180,30 +222,32 @@ Whole-repo quality gates remain clean: ruff check . passed; pytest 785 passed; m
 No retained verdicts were revised.
 No project locks changed.
 Phase 4 (canonical) remains unauthorized.
-Phase 4p / any successor phase remains unauthorized.
+Phase 4q / any successor phase remains unauthorized.
 Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
 All four Phase 3u §8.5 pre-coding governance blockers remain RESOLVED at governance level (GAP-20260424-032 by Phase 3v; GAP-20260424-030 / 031 / 033 by Phase 3w).
 Four governance label schemes binding prospectively: stop_trigger_domain | break_even_rule | ema_slope_method | stagnation_window_role.
 mixed_or_unknown is invalid and fails closed for all four schemes.
-Phase 4j §11 metrics OI-subset partial-eligibility rule is binding from the Phase 4j merge forward; immutable absent a separately authorized governance amendment.
+Phase 4j §11 metrics OI-subset partial-eligibility rule is binding from the Phase 4j merge forward; immutable absent a separately authorized governance amendment; preserved but unused by G1 first spec.
 Phase 4k V2 backtest-plan methodology is binding from the Phase 4k merge forward; immutable absent a separately authorized governance amendment.
 Phase 4l Verdict C HARD REJECT is terminal for V2 first-spec.
 Phase 4m consolidation memo is the project's retrospective summary of the strategy-research arc; it does not change any locked artefact.
 Phase 4m 18-requirement fresh-hypothesis validity gate is binding for any future ex-ante hypothesis.
 Phase 4n recommended Phase 4o on Candidate B Regime-First Breakout as primary; conditional secondary remain paused.
-Phase 4o predeclares G1 — Regime-First Breakout Continuation as the project's first regime-first hypothesis candidate.
-Recommended state: paused outside conditional Phase 4p spec memo.
+Phase 4o predeclared G1 — Regime-First Breakout Continuation as the project's first regime-first hypothesis candidate.
+Phase 4p locks G1 first-spec content (timeframes, regime classifier, regime state machine, inside-regime breakout setup, stop / target / sizing model, threshold grid over five binary axes, mechanism-check thresholds, catastrophic-floor predicates, validation windows, governance labels, data-requirements decision).
+Recommended state: paused outside conditional Phase 4q backtest-plan memo.
 No next phase authorized.
 ```
 
 Most recent merge:
 
 ```text
-main HEAD:                          a60ec81242d2ab5b88d9bd0a0b9e57f8dceb4778
-Merge title:                        Merge Phase 4o (G1 regime-first breakout hypothesis-spec memo, docs-only) into main
-Phase 4o memo commit:               5dd9d971c5e7a4c904de1be6f7d91b15bad5211e
-Phase 4o closeout commit:           17bd410b193dadfac3e534945377c11a12c9edb7
-Phase 4o merge commit:              a60ec81242d2ab5b88d9bd0a0b9e57f8dceb4778
+main HEAD:                                      ddfaf0f579d1c2ed99da0abc6480ee79496b6240
+Merge title:                                    Merge Phase 4p (G1 strategy-spec memo, docs-only) into main
+Phase 4p memo commit:                           50d40da2ef434c7c21c5d0e9d4270d6b4304e0c7
+Phase 4p closeout commit:                       20b577be2a291fd0ad3c0beb42e627e112f78fdd
+Phase 4p consistency-correction commit:         0572c1c1ab1282b69df04f02b97b97fec6edd877
+Phase 4p merge commit:                          ddfaf0f579d1c2ed99da0abc6480ee79496b6240
 ```
 
 ## Strategy Research Arc Outcomes
