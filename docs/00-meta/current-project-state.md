@@ -159,7 +159,118 @@ Phase 4ab is the **Alt-Symbol Data-Requirements and Feasibility Memo** (docs-onl
 
 Phase 4ac is the **Alt-Symbol Public Data Acquisition and Integrity Validation** phase (docs-and-data, standalone-script mode). Phase 4ac translated the Phase 4ab data-requirements / feasibility plan into actual public unauthenticated bulk-archive acquisition. Phase 4ac added `scripts/phase4ac_alt_symbol_acquisition.py` (standalone orchestrator; public `data.binance.vision` bulk archives only; SHA256-verified; no credentials; no `.env`; no authenticated REST; no private endpoints; no public-endpoint code calls; no WebSocket; no user stream; no listenKey; no exchange-write; no MCP / Graphify / `.mcp.json`) and acquired 35 dataset families × 52 monthly archives = 1 820 monthly archives total over 2022-01..2026-04 UTC for the core symbol set BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT (10 (symbol, family, interval) tuples skipped because committed Phase 2 / Phase 3q / Phase 4i `__v001` manifests already cover them; deferred secondary watchlist BNBUSDT / DOGEUSDT / LINKUSDT / AVAXUSDT NOT acquired; metrics / OI NOT acquired; aggTrades / tick / order-book NOT acquired). Phase 4ac wrote 35 committed manifests under `data/manifests/`. Strict integrity gate per Phase 3p §4.7 / Phase 3r §8 / Phase 4h §17 precedent: **9 PASS / 26 FAIL.** PASS subset: BTC 1h klines; ETH 1h klines; ADA 15m / 30m / 1h / 4h klines; SOL / XRP / ADA funding rate history. FAIL subset: BTC / ETH mark-price 30m / 1h / 4h (known upstream gaps at 2022-07-31 / 2022-10-02 / 2023-02-24); SOL / XRP klines all four intervals (two early-2022 archive gaps at 2022-02-26 and 2022-04-01); SOL / XRP / ADA mark-price all four intervals (upstream gaps at 2022-10-02 / 2023-02-24 / 2023-11-10). **No patching, no forward-fill, no interpolation, no imputation, no silent omission.** All gap windows recorded verbatim in affected manifests. **Phase 4ac did NOT** run any backtest; run any diagnostic; rerun Q1–Q7; create a strategy candidate; create a hypothesis-spec memo, strategy-spec memo, or backtest-plan memo; modify `src/prometheus/`, tests, or any existing script; modify any existing manifest; create v003; create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid; revise any retained verdict; change any project lock; amend any specialist governance file (beyond the narrow `current-project-state.md` update); adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as binding governance; or adopt Phase 4ac results as binding governance. **Phase 4ac preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. **Phase 4ac results are data / integrity evidence only and are NOT adopted as binding governance.** Phase 4ac adds `scripts/phase4ac_alt_symbol_acquisition.py`; 35 manifest JSON files under `data/manifests/`; `docs/00-meta/implementation-reports/2026-05-04_phase-4ac_alt-symbol-public-data-acquisition.md`; `docs/00-meta/implementation-reports/2026-05-04_phase-4ac_closeout.md`. **Phase 4ac recommendation:** primary — remain paused; Option A conditional secondary — future docs-only Phase 4ad gap-governance / scope-revision memo (per-bar exclusion rules for SOL/XRP early-2022 trade-price gaps and cross-symbol mark-price gaps; analogous to Phase 4j §11 metrics OI-subset rule); Option B conditional secondary — future docs-only Phase 4ad-B PASS-subset substrate-feasibility analysis memo restricted to the 9 research-eligible families. **Phase 4ad / Phase 5 / any successor phase remains unauthorized. Phase 4 canonical remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ac has now been merged to main.** Phase 4ac merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ac_merge-closeout.md`. Phase 4ac remains docs-and-data acquisition / integrity validation only; acquired public unauthenticated `data.binance.vision` bulk archives only for the core symbol set BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT (deferred secondary watchlist BNBUSDT / DOGEUSDT / LINKUSDT / AVAXUSDT NOT acquired); 35 dataset families × 52 monthly archives = 1 820 monthly archives total, all SHA256-verified with zero mismatches; 35 manifests created (9 `research_eligible: true`; 26 `research_eligible: false`); invalid windows recorded verbatim; no patching / forward-fill / interpolation / imputation / synthesis / replacement; did NOT run backtests or diagnostics, rerun Q1–Q7, create a strategy candidate, create a hypothesis-spec memo / strategy-spec memo / backtest-plan memo, rescue prior strategies, revise retained verdicts, change project locks, or adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as governance. **Phase 4ac results remain data / integrity evidence only and are NOT binding governance.** **No successor phase has started.** **No Phase 4ad / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / live path has been started.** Recommended state remains paused pending separate operator authorization.
 
+Phase 4ad is the **Alt-Symbol Gap-Governance and Scope-Revision Memo** (docs-only). Phase 4ad resolved how future alt-symbol substrate-feasibility work may treat Phase 4ac gap / invalid-window findings before any substrate-feasibility analysis, strategy discovery, backtest, diagnostics, or strategy work is allowed. Phase 4ad addressed: (i) BTC / ETH / SOL / XRP / ADA mark-price kline upstream invalid windows (Phase 3r §8 precedent); (ii) SOL / XRP early-2022 trade-price kline gaps at 2022-02-25..2022-03-01 and 2022-03-31..2022-04-03; (iii) PASS-only subset limitations for the 9 Phase 4ac research-eligible datasets; (iv) recommended scope for any future Phase 4ae substrate-feasibility analysis memo. **Phase 4ad is text-only.** Phase 4ad defined three Phase 4ad-scope future-use rules (applying prospectively to future Phase 4ae-equivalent substrate-feasibility analysis only): **Rule A — Mark-Price Invalid-Window Exclusion Rule** (per-window exclusion test for any bar / trade / candidate event / diagnostic window / stop-domain window / analysis window intersecting a known mark-price upstream gap; conclusions labeled "conditional on valid mark-price coverage"; analogous to Phase 3r §8 precedent); **Rule B — SOL/XRP Early-2022 Kline Gap Scope Rule** with three policy options: B1 common post-gap start at 2022-04-03 UTC (recommended default for cross-symbol fairness), B2 full-history with invalid-window exclusion (allowed for descriptive analysis with reported exclusions), B3 PASS-only subset (most-conservative fallback); **Rule C — PASS-Only Subset Rule** for conservative fallback restricted to the 9 Phase 4ac PASS datasets. **Phase 4ad did NOT** acquire data, modify data, create or modify manifests, run backtests, run diagnostics, rerun Q1–Q7, run substrate-feasibility calculations, create a strategy candidate, create a hypothesis-spec memo / strategy-spec memo / backtest-plan memo, modify `src/prometheus/`, tests, or scripts, create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid, revise any retained verdict, change any project lock, amend any specialist governance file (beyond the narrow `current-project-state.md` update), adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as broad binding governance, broaden Phase 4ac results beyond data / integrity evidence, or authorize Phase 4ae. **Phase 4ad does NOT modify Phase 4ac manifests, does NOT flip any `research_eligible` flag, does NOT revise any retained verdict, does NOT change any project lock, and does NOT broaden Phase 4ac results into binding cross-project governance. Phase 4ad Rules A / B / C are narrowly-scoped future-use rules for prospective analysis-time use of Phase 4ac data only.** **Phase 4ad preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4ad adds `docs/00-meta/implementation-reports/2026-05-04_phase-4ad_alt-symbol-gap-governance-scope-revision.md` and `docs/00-meta/implementation-reports/2026-05-04_phase-4ad_closeout.md`. **Phase 4ad recommendation:** Option B primary — merge Phase 4ad into main, then remain paused unless the operator separately authorizes a Phase 4ae substrate-feasibility analysis memo; Option A conditional secondary — remain paused without merging Phase 4ad. NOT recommended: data re-acquisition (premature; bounded gaps are well-handled by Rules A / B); direct strategy discovery (substrate evidence still being established). FORBIDDEN: old-strategy alt-symbol rerun; backtest / diagnostics / Q1–Q7 rerun at this boundary; paper / shadow / live / exchange-write. **Phase 4 canonical remains unauthorized. Phase 4ae / Phase 5 / any successor phase remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ad has now been merged to main.** Phase 4ad merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ad_merge-closeout.md`. Phase 4ad remains docs-only; Phase 4ad resolved future-use governance / scope treatment for Phase 4ac gap findings; defined three Phase 4ad-scope future-use rules (Rule A — Mark-Price Invalid-Window Exclusion Rule; Rule B — SOL/XRP Early-2022 Kline Gap Scope Rule with B1 / B2 / B3 policy options; Rule C — PASS-Only Subset Rule); Rule B Policy B1 common post-gap start at `2022-04-03 00:00 UTC` is the recommended default for future cross-symbol substrate-feasibility analysis; did NOT acquire data, modify data, create or modify manifests, run backtests or diagnostics, rerun Q1–Q7, run substrate-feasibility calculations, create a strategy candidate, create a hypothesis-spec memo / strategy-spec memo / backtest-plan memo, rescue prior strategies, revise retained verdicts, change project locks, adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as broad binding governance, modify Phase 4ac manifests, or flip any `research_eligible` flag. **Phase 4ad future-use rules apply prospectively to future Phase 4ae-equivalent substrate-feasibility analysis only.** **No successor phase has started.** **No Phase 4ae / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
+
 Current phase:
+
+```text
+Phase 4ad merged into main (Alt-Symbol Gap-Governance and Scope-Revision Memo, docs-only).
+Phase 4ad was docs-only.
+Phase 4ad resolved how future alt-symbol substrate-feasibility work may treat Phase 4ac gap / invalid-window findings before any substrate-feasibility analysis, strategy discovery, backtest, diagnostics, or strategy work is allowed.
+Phase 4ad addressed:
+- BTC / ETH / SOL / XRP / ADA mark-price kline upstream invalid windows (Phase 3r §8 precedent);
+- SOL / XRP early-2022 trade-price kline gaps at 2022-02-25..2022-03-01 and 2022-03-31..2022-04-03;
+- PASS-only subset limitations for the 9 Phase 4ac research-eligible datasets;
+- recommended scope for any future Phase 4ae substrate-feasibility analysis memo.
+Phase 4ad defined three Phase 4ad-scope future-use rules:
+- Rule A — Mark-Price Invalid-Window Exclusion Rule:
+  - per-window exclusion test for any bar / trade / candidate event / diagnostic window / stop-domain window / analysis window intersecting a known mark-price upstream gap;
+  - exclusion counts must be reported by symbol / interval / data family / side / candidate / event type / invalid-window ID;
+  - no patching / forward-fill / interpolation / imputation / synthesis / replacement;
+  - conclusions labeled "conditional on valid mark-price coverage" verbatim;
+  - analogous to Phase 3r §8 precedent.
+- Rule B — SOL/XRP Early-2022 Kline Gap Scope Rule (three policies):
+  - Policy B1 — common post-gap start at 2022-04-03 00:00 UTC for cross-symbol fairness (recommended default);
+  - Policy B2 — full-history with invalid-window exclusion (allowed only with explicit exclusion counting / reporting);
+  - Policy B3 — PASS-only subset (most-conservative fallback);
+  - any future analysis must select exactly one policy before analysis begins.
+- Rule C — PASS-Only Subset Rule:
+  - conservative fallback restricted to the 9 Phase 4ac PASS datasets;
+  - PASS subset:
+    - binance_usdm_btcusdt_1h__v001;
+    - binance_usdm_ethusdt_1h__v001;
+    - binance_usdm_adausdt_15m__v001;
+    - binance_usdm_adausdt_30m__v001;
+    - binance_usdm_adausdt_1h__v001;
+    - binance_usdm_adausdt_4h__v001;
+    - binance_usdm_solusdt_funding__v001;
+    - binance_usdm_xrpusdt_funding__v001;
+    - binance_usdm_adausdt_funding__v001.
+Phase 4ad rules apply prospectively to future Phase 4ae-equivalent substrate-feasibility analysis only.
+Phase 4ad did NOT modify Phase 4ac manifests.
+Phase 4ad did NOT flip any Phase 4ac research_eligible flag.
+Phase 4ad did NOT revise any retained verdict.
+Phase 4ad did NOT change any project lock.
+Phase 4ad did NOT broaden Phase 4ac results into binding cross-project governance.
+Phase 4ad did NOT:
+- acquire data;
+- download data;
+- call data.binance.vision;
+- call Binance APIs;
+- call any authenticated REST endpoint;
+- call any private endpoint;
+- call any public endpoint from code;
+- consult user stream / WebSocket / listenKey lifecycle;
+- use credentials or .env;
+- enable network I/O;
+- modify any data;
+- create any new manifest;
+- modify any existing manifest;
+- create v003 or any other dataset version;
+- run any backtest;
+- run any diagnostic;
+- rerun Q1–Q7;
+- run substrate-feasibility calculations (no cost-to-volatility, ATR, expansion-event, trend-regime, wick, funding, volume, common-overlap, event-count, gap-tabulation, or cross-symbol comparison computed);
+- create a strategy candidate;
+- create a hypothesis-spec memo;
+- create a strategy-spec memo;
+- create a backtest-plan memo;
+- modify src/prometheus/, tests, or scripts;
+- create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid;
+- amend any specialist governance file (beyond the narrow current-project-state update);
+- adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as binding governance;
+- authorize Phase 4ae / Phase 5 / Phase 4 canonical / any successor phase;
+- authorize paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials.
+Phase 4ad preserved every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread CLOSED operationally;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 project-level locks (0.25% risk; 2× leverage; one position max; mark-price stops);
+- Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w governance.
+Phase 4z recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4ad.
+Phase 4aa admissibility framework remains recommendation only and was NOT adopted as binding governance by Phase 4ad.
+Phase 4ab recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4ad.
+Phase 4ac results remain data / integrity evidence only and were NOT broadened beyond data / integrity evidence by Phase 4ad — except that Phase 4ad explicitly defines Rules A / B / C as future-use scope rules for prospective analysis-time use of Phase 4ac data only.
+Phase 4ad added:
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ad_alt-symbol-gap-governance-scope-revision.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ad_closeout.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ad_merge-closeout.md (at merge).
+Phase 4ad recommendation:
+- Option B primary: merge Phase 4ad into main, then remain paused unless the operator separately authorizes a Phase 4ae substrate-feasibility analysis memo;
+- Option A conditional secondary: remain paused without merging Phase 4ad;
+- for any future Phase 4ae cross-symbol substrate-feasibility analysis, use Rule B Policy B1 common post-gap start as the default;
+- use Rule A for any mark-price-dependent analysis.
+NOT recommended: data re-acquisition (premature; bounded gaps handled by Rules A / B); direct strategy discovery (substrate evidence still being established).
+FORBIDDEN: old-strategy alt-symbol rerun; backtest / diagnostics / Q1–Q7 rerun at this boundary; paper / shadow / live / exchange-write.
+No retained verdicts were revised.
+No project locks changed.
+No new strategy / code / data / manifests / live path was started.
+Phase 4 (canonical) remains unauthorized.
+Phase 4ae / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Phase 4ac context (preserved for historical reference):
 
 ```text
 Phase 4ac merged into main (Alt-Symbol Public Data Acquisition and Integrity Validation, docs-and-data, standalone-script mode).
@@ -1759,9 +1870,9 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-Merge title:                        data(phase-4ac): merge alt-symbol public data acquisition
-Phase 4ac commit:                   e3018a9c085deab04432f3df039933bc487d340b
-Phase 4ac merge commit:             <recorded after the merge commit>
+Merge title:                        docs(phase-4ad): merge alt-symbol gap governance scope memo
+Phase 4ad commit:                   7b4a0d9f949692cefe36cbd757ef8414166d6071
+Phase 4ad merge commit:             <recorded after the merge commit>
 main HEAD:                          <recorded after the merge commit>
 ```
 
