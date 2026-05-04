@@ -155,7 +155,123 @@ Phase 4z is the **Post-Rejection Research-Process Redesign Memo** (docs-only) (o
 
 Phase 4aa is the **Alt-Symbol Market-Selection and Strategy-Admissibility Memo** (docs-only research-direction memo). Phase 4aa evaluates whether future strategy research should remain restricted to BTCUSDT / ETHUSDT (the project's substrate from Phase 2 onward) or expand to liquid large-cap Binance USDⓈ-M perpetual alt symbols. **Phase 4aa is text-only.** Phase 4aa considers a candidate symbol universe of BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT as the primary comparison set with BNBUSDT / DOGEUSDT / LINKUSDT / AVAXUSDT as a secondary watchlist; recommends keeping the market type fixed at Binance USDⓈ-M perpetuals (no spot / COIN-M / options / cross-venue expansion in the same step) for clean attribution; defines a pre-backtest symbol-admissibility framework with eight gates (A listing/continuity; B public-data availability; C cost-to-volatility; D opportunity-rate; E liquidity/execution-risk; F wick/stop-pathology; G idiosyncratic-risk; H governance-label compatibility); translates the six-failure topology (R2 / F1 / D1-A / V2 / G1 / C1) into negative constraints any future alt-symbol candidate must respect; and explicitly forbids retroactive rescue (re-evaluating R3 / R2 / F1 / D1-A / V2 / G1 / C1 on alt symbols is forbidden as retrospective rescue). **Phase 4aa makes NO quantitative claim** about any symbol's liquidity, volatility, opportunity rate, spread, slippage, wick fraction, funding instability, or cost survival; all such claims would require future data acquisition (NOT authorized by Phase 4aa). **Phase 4aa did NOT** acquire data; download data; modify data; create or modify manifests; run any backtest; run any diagnostic; create a strategy candidate; create a fresh-hypothesis discovery memo; create a strategy-spec memo; create a backtest-plan memo; modify `src/prometheus/`, tests, or scripts; create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid; revise any retained verdict; change any project lock; amend any governance file; adopt any Phase 4z recommendation as binding governance. **Phase 4aa preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. **Phase 4z recommendations remain recommendations only and are NOT adopted as binding governance by Phase 4aa.** Phase 4aa adds `docs/00-meta/implementation-reports/2026-05-04_phase-4aa_alt-symbol-market-selection-admissibility.md` and `docs/00-meta/implementation-reports/2026-05-04_phase-4aa_closeout.md`. **Phase 4aa recommendation:** Option A primary — remain paused; Option B conditional secondary — future docs-only alt-symbol data-requirements / feasibility memo (only if separately authorized; would translate Section 6 admissibility framework into concrete future-feasibility requirements for the Section 4 candidate symbol universe; not started by Phase 4aa). NOT recommended: Option C direct public data acquisition (premature); Option D direct ex-ante strategy-family discovery memo (premature); Option E old-strategy improvement / rescue (forbidden); Option F market-type expansion (premature). FORBIDDEN: Option G paper / shadow / live / exchange-write (no validated strategy exists; phase-gate requirements not met). **Phase 4 canonical remains unauthorized.** **Phase 4ab / Phase 5 / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **No new strategy / code / data / manifests / live path was started by Phase 4aa.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4aa has now been merged to main.** Phase 4aa merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4aa_merge-closeout.md`. Phase 4aa remains docs-only; Phase 4aa did NOT acquire data, run backtests or diagnostics, create a strategy candidate, rescue prior strategies, revise retained verdicts, change project locks, adopt Phase 4z recommendations as governance, or make its symbol-admissibility framework binding governance. **No successor phase has started.** **No Phase 4ab / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
 
+Phase 4ab is the **Alt-Symbol Data-Requirements and Feasibility Memo** (docs-only research-planning memo). Phase 4ab translates the completed Phase 4aa alt-symbol market-selection / admissibility memo into a concrete docs-only data-requirements and feasibility plan for possible future alt-symbol research on Binance USDⓈ-M perpetuals. **Phase 4ab is text-only.** Phase 4ab recommends a future possible core acquisition-planning set of BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT (with BNBUSDT / DOGEUSDT / LINKUSDT / AVAXUSDT as deferred secondary watchlist); recommends future data-family requirements (A standard trade-price klines REQUIRED at 15m / 30m / 1h / 4h; B funding history REQUIRED; C mark-price klines CONDITIONAL REQUIRED if mark-price stop-domain or stop-trigger-domain diagnostics are needed; D metrics / open-interest OPTIONAL CONDITIONAL under Phase 4j §11 governance; E aggTrades / tick / order-book DEFERRED / NOT RECOMMENDED NOW; F exchange metadata REQUIRED WHERE AVAILABLE); recommends date range 2022-01-01 through latest fully completed month with explicit listing-coverage and common-overlap policies; defines manifest-field requirements and naming convention continuing existing repository pattern; defines strict integrity gates per Phase 3p §4.7 / Phase 4h §17 precedent (no patching / forward-fill / interpolation / imputation; PASS = `research_eligible: true`; PARTIAL PASS only with separately governed memo per Phase 4j §11 pattern; FAIL = `research_eligible: false`; Unknown = fail closed); describes feasibility checks the data would enable across cost-to-volatility / opportunity-rate / wick / stop-pathology / liquidity / execution-risk / idiosyncratic-risk / cross-symbol comparability *without running them*; and explicitly forbids retroactive rescue (re-evaluating R3 / R2 / F1 / D1-A / V2 / G1 / C1 on alt symbols is forbidden as retrospective rescue). **Phase 4ab did NOT** acquire data; download data; call APIs or endpoints; consult `data.binance.vision`, Binance APIs, authenticated REST, private endpoints, public endpoints in code, user stream, WebSocket, listenKey, or any external data source; modify any manifest; create any new manifest; run any backtest; run any diagnostic; rerun Q1–Q7; create a strategy candidate; create a hypothesis-spec memo; create a strategy-spec memo; create a backtest-plan memo; modify `src/prometheus/`, tests, or scripts; create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid; revise any retained verdict; change any project lock; amend any specialist governance file (beyond the narrow current-project-state update); adopt any Phase 4z recommendation as binding governance; adopt the Phase 4aa admissibility framework as binding governance; adopt any Phase 4ab recommendation as binding governance. **Phase 4ab preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4ab adds `docs/00-meta/implementation-reports/2026-05-04_phase-4ab_alt-symbol-data-requirements-feasibility.md` and `docs/00-meta/implementation-reports/2026-05-04_phase-4ab_closeout.md`. **Phase 4ab recommendation:** Option B primary — after operator review, merge Phase 4ab into main, then remain paused unless the operator separately authorizes a docs-and-data Phase 4ac public alt-symbol acquisition and integrity-validation phase; conditional secondary Option A — remain paused without merging Phase 4ab. NOT recommended: Option E direct strategy discovery (premature); Option F direct old-strategy alt-symbol rerun (forbidden); Option G market-type expansion (premature). FORBIDDEN: Option H paper / shadow / live / exchange-write (phase-gate requirements not met). **Phase 4 canonical remains unauthorized.** **Phase 4ac / Phase 5 / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **No new strategy / code / data / manifests / live path was started by Phase 4ab.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ab has now been merged to main.** Phase 4ab merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ab_merge-closeout.md`. Phase 4ab remains docs-only; Phase 4ab translated the Phase 4aa alt-symbol substrate question into concrete data-requirements and feasibility planning; recommended a future possible core acquisition-planning set of BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT; recommended future data-family requirements (trade-price klines required; funding history required; mark-price klines conditional required; metrics / OI optional conditional; aggTrades / tick / order-book deferred; exchange metadata where available required); did NOT acquire data, download data, call APIs or endpoints, create or modify manifests, run backtests or diagnostics, create a strategy candidate, rescue prior strategies, revise retained verdicts, change project locks, or adopt Phase 4z recommendations / Phase 4aa admissibility framework as binding governance; Phase 4ab recommendations remain recommendations only. **No successor phase has started.** **No Phase 4ac / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
+
 Current phase:
+
+```text
+Phase 4ab merged into main (Alt-Symbol Data-Requirements and Feasibility Memo, docs-only).
+Phase 4ab was docs-only.
+Phase 4ab translated the completed Phase 4aa alt-symbol market-selection / admissibility memo into a concrete docs-only data-requirements and feasibility plan for possible future alt-symbol research on Binance USDⓈ-M perpetuals.
+Phase 4ab recommended future possible core acquisition-planning set:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- XRPUSDT
+- ADAUSDT
+Phase 4ab kept the optional secondary watchlist deferred:
+- BNBUSDT
+- DOGEUSDT
+- LINKUSDT
+- AVAXUSDT
+Phase 4ab recommended future data-family requirements / optionality:
+1. Standard trade-price klines REQUIRED at 15m / 30m / 1h / 4h.
+2. Funding-rate history REQUIRED.
+3. Mark-price klines CONDITIONAL REQUIRED.
+4. Metrics / open-interest OPTIONAL / CONDITIONAL under Phase 4j §11.
+5. AggTrades / tick / order-book DEFERRED / NOT RECOMMENDED NOW.
+6. Exchange metadata snapshots REQUIRED WHERE AVAILABLE.
+Phase 4ab recommended a possible future acquisition date range:
+- 2022-01-01 through the latest fully completed month available at acquisition time;
+- with explicit listing-date constraints;
+- common-overlap policy;
+- full-available-history policy;
+- no fabricated pre-listing data.
+Phase 4ab defined manifest field requirements and dataset naming convention continuing existing repository pattern.
+Phase 4ab defined strict integrity gates per Phase 3p §4.7 / Phase 4h §17 precedent:
+- no patching / forward-fill / interpolation / imputation;
+- PASS = research_eligible: true;
+- PARTIAL PASS only with separately governed memo per Phase 4j §11 pattern;
+- FAIL = research_eligible: false;
+- Unknown = fail closed.
+Phase 4ab described feasibility checks the data would enable across:
+- cost-to-volatility;
+- opportunity-rate;
+- wick / stop-pathology;
+- liquidity / execution-risk;
+- idiosyncratic-risk;
+- cross-symbol comparability;
+without running them.
+Phase 4ab explicitly forbids retroactive rescue (re-evaluating R3 / R2 / F1 / D1-A / V2 / G1 / C1 on alt symbols is forbidden as retrospective rescue).
+Phase 4ab did NOT:
+- acquire data;
+- download data;
+- call data.binance.vision;
+- call Binance APIs;
+- call any authenticated REST endpoint;
+- call any private endpoint;
+- call any public endpoint from code;
+- consult user stream / WebSocket / listenKey lifecycle;
+- use credentials or .env;
+- enable network I/O;
+- modify any data;
+- create any new manifest;
+- modify any existing manifest;
+- create v003 or any other dataset version;
+- run any backtest;
+- run any diagnostic;
+- rerun Q1-Q7;
+- create a strategy candidate;
+- create a hypothesis-spec memo;
+- create a strategy-spec memo;
+- create a backtest-plan memo;
+- modify src/prometheus/, tests, or scripts;
+- create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid;
+- revise any retained verdict;
+- change any project lock;
+- amend any specialist governance file (beyond the narrow current-project-state update);
+- adopt any Phase 4z recommendation as binding governance;
+- adopt the Phase 4aa admissibility framework as binding governance;
+- adopt any Phase 4ab recommendation as binding governance;
+- authorize Phase 4ac / Phase 5 / Phase 4 canonical / any successor phase;
+- authorize paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials.
+Phase 4ab preserved every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread CLOSED operationally;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 project-level locks (0.25% risk; 2× leverage; one position max; mark-price stops);
+- Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w governance.
+Phase 4z recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4ab.
+Phase 4aa admissibility framework remains recommendation only and was NOT adopted as binding governance by Phase 4ab.
+Phase 4ab recommendations remain recommendations only and were NOT adopted as binding governance.
+Phase 4ab added:
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ab_alt-symbol-data-requirements-feasibility.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ab_closeout.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ab_merge-closeout.md (at merge).
+Phase 4ab recommendation:
+- Option B primary: after operator review, merge Phase 4ab into main, then remain paused unless the operator separately authorizes a docs-and-data Phase 4ac public alt-symbol acquisition and integrity-validation phase;
+- Option A conditional secondary: remain paused without merging Phase 4ab.
+NOT recommended: Option E direct strategy discovery (premature); Option F direct old-strategy alt-symbol rerun (forbidden); Option G market-type expansion (premature).
+FORBIDDEN: Option H paper / shadow / live / exchange-write (no validated strategy exists; phase-gate requirements not met).
+No retained verdicts were revised.
+No project locks changed.
+No new strategy / code / data / manifests / live path was started.
+Phase 4 (canonical) remains unauthorized.
+Phase 4ac / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Phase 4aa context (preserved for historical reference):
 
 ```text
 Phase 4aa merged into main (Alt-Symbol Market-Selection and Strategy-Admissibility Memo, docs-only).
@@ -1524,9 +1640,9 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-Merge title:                        docs(phase-4aa): merge alt-symbol market-selection memo
-Phase 4aa commit:                   b8adb9e59471c7584081349f0c4df5eb235d3c64
-Phase 4aa merge commit:             <recorded after the merge commit>
+Merge title:                        docs(phase-4ab): merge alt-symbol data requirements memo
+Phase 4ab commit:                   524e4e7323df2e36b05be48423524f42af4d1e5c
+Phase 4ab merge commit:             <recorded after the merge commit>
 main HEAD:                          <recorded after the merge commit>
 ```
 
