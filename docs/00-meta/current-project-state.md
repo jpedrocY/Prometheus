@@ -151,7 +151,96 @@ Phase 4x is the **C1 Backtest Execution** (docs-and-code; standalone research sc
 
 Phase 4y is the **Post-C1 Strategy Research Consolidation Memo** (docs-only) (operator selected the Phase 4x §"Operator decision menu" Option B conditional secondary alternative — docs-only post-C1 strategy research consolidation memo, only if separately authorized; operator has so chosen). **Phase 4y is the project's third post-rejection consolidation memo** (after Phase 4m for V2 and Phase 4s for G1) and the fifth overall (after Phase 3e for F1 and Phase 3k for D1-A). Phase 4y consolidated the Phase 4x C1 backtest outcome (**Verdict C — C1 framework HARD REJECT**; binding driver CFP-2 — BTC OOS HIGH train-best mean_R = -0.3633 ≤ 0; co-binding drivers CFP-3 — profit_factor = 0.4413 < 0.50 AND max_drawdown_R = 54.55 > 10R; CFP-6 — DSR = -20.8173 ≤ 0) into the project's strategy-research record. **C1 first-spec is terminally HARD REJECTED as retained research evidence only.** Phase 4y adds the **sixth distinct rejection topology failure mode**: **fires-and-loses / contraction anti-validation**. C1 is categorically distinct from V2 / G1: V2 (Phase 4l) failed by design-stage incompatibility / stop-distance filter resulting in zero trades; G1 (Phase 4r) failed by regime-gate-meets-setup intersection sparseness resulting in zero active-regime qualifying trades; **C1 fired many trades, passed opportunity-rate floors, and lost** (149 BTC OOS HIGH trades for the train-best variant; transition rate 3.33 per 480 bars; 100% of variants produced ≥ 30 trades; CFP-1 and CFP-9 explicitly did NOT trigger). **C1 result recap:** train-best variant id=21 (label `B=0.10|C=0.45|N=12|S=0.10|T=2.0`); BTC OOS HIGH trade_count=149; mean_R=-0.3633; total_R=-54.1258; max_dd_R=54.55; profit_factor=0.4413; sharpe=-0.3721; **all 32 BTC OOS HIGH variants loss-making**; loss-making at all OOS cost cells (LOW=-0.1701; MEDIUM=-0.2529; HIGH=-0.3633); **cost is NOT the binding driver**. **ETHUSDT comparison:** same train-best variant 21; ETH OOS HIGH trade_count=109; mean_R=-0.2140; PF=0.6252; sharpe=-0.2148; **all 32 ETH OOS HIGH variants loss-making**; **ETH cannot rescue BTC**. **M1 FAIL** (C1_mean_R − non_contraction_mean_R = -0.2440R; bootstrap 95% CI [-0.4101, -0.0810] strictly negative). **M2 FAIL** (M2.a C1_mean_R − always_active_same_geometry_mean_R = -0.2201R; CI [-0.3859, -0.0556] strictly negative; M2.b C1_mean_R − delayed_breakout_mean_R = -0.2930R). **M3 FAIL** (BTC OOS HIGH mean_R<0; CFP-2/CFP-3 trigger; opportunity-rate floors PASS). **M4 FAIL** (ETH differential=-0.1589; directional consistency YES; ETH cannot rescue BTC). **M5 DIAGNOSTIC_ONLY** (skipped per Phase 4w optional handling; no verdict effect). **PBO/DSR/CSCV:** PBO_train_validation=0.375; PBO_train_oos=0.219; PBO_cscv=0.094; **all PBO values below 0.50 — PBO does NOT trigger CFP-6**; DSR=-20.8173 ≤ 0 — **DSR triggers CFP-6**. **Opportunity-rate:** BTC OOS total_30m_bars=30,672; total candidate transitions=213; transition_rate_per_480_bars=3.33; train-best executed OOS HIGH trades=149; 32/32 variants produce ≥30 BTC OOS HIGH trades; CFP-1 NOT triggered; CFP-9 NOT triggered; **the failure is not opportunity-rate collapse**. Phase 4y preserves the full retained-verdict ledger (H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; **C1 HARD REJECT — terminal for C1 first-spec**) and every project lock (§11.6 = 8 bps HIGH per side; §1.7.3 project-level locks; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w governance). Phase 4y compiled **twelve reusable insights**: opportunity-rate viability is necessary but not sufficient; negative baselines are mandatory; a local precondition can avoid G1 sparsity while still being anti-predictive; sample viability and edge viability are distinct; "not zero trades" is not success; HIGH-cost survival cannot rescue negative gross structure; every future hypothesis must explain why its primary condition should outperform an unconditioned baseline; every future hypothesis must define the closest non-hypothesis baseline before data touch; baseline differentials may be more important than raw mean_R; DSR/PBO/CSCV can show "not overfit" while still confirming "no edge"; first-spec hard rejections should not be mined for second-spec thresholds; remain-paused gains more weight after multiple independent failure modes. **Phase 4y explicitly forbids C1 rescue:** no C1-prime / C1-extension / C1-narrow / C1 hybrid; no C1 threshold tuning from Phase 4x; no different N_comp / C_width / B_width / S_buffer / T_mult chosen from Phase 4x outputs; no volume / funding / HTF / ATR stop-distance gate added post hoc; no mark-price / aggTrades / spot / cross-venue / order-book rescue; no using Phase 4x forensic results as tuning input; no C1 rerun; no C1 implementation; no Phase 4v amendment; no Phase 4w methodology amendment. **Phase 4y reaffirms forbidden cross-strategy rescue:** no V2-prime / V2-narrow / V2-relaxed / V2 hybrid; no G1-prime / G1-narrow / G1-extension / G1 hybrid; no R2 cheaper-cost rescue; no F1 profitable-subset rescue; no D1-A extra-filter / D1-A-prime / D1-B / V1-D1 / F1-D1 hybrid; no 5m strategy from Q1-Q7; no immediate ML-first black-box forecasting; no immediate market-making / HFT; no paper / shadow / live; no Phase 4 canonical; no data acquisition as next step. **Phase 4y remaining valid project directions:** Option A primary — remain paused; Option B conditional secondary — docs-only post-rejection research-process redesign / hypothesis-discovery process redesign memo (only if separately authorized); Option C conditional tertiary — docs-only documentation-refresh memo (only if separately authorized); Option D not recommended — docs-only strategy-agnostic implementation-readiness scoping memo (only if separately authorized). **Phase 4y did NOT authorize Phase 4z.** **Phase 4z / successor phase remains unauthorized.** **Phase 4y did NOT** create a new strategy; create a fresh-hypothesis discovery memo; create a strategy-spec memo; create a backtest-plan memo; run any backtest; rerun Phase 4x; modify `scripts/phase4x_c1_backtest.py`; write code; acquire data; modify data; modify manifests. Phase 4y adds `docs/00-meta/implementation-reports/2026-04-30_phase-4y_post-c1-strategy-research-consolidation.md` and `docs/00-meta/implementation-reports/2026-04-30_phase-4y_closeout.md`. **Whole-repo quality gates remain clean** (verified during Phase 4y): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** **Phase 4 canonical remains unauthorized.** **Phase 4z / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused.** **No next phase authorized.**
 
+Phase 4z is the **Post-Rejection Research-Process Redesign Memo** (docs-only) (operator selected the Phase 4y §"Operator decision menu" Option B conditional secondary alternative — docs-only post-rejection research-process redesign / hypothesis-discovery process redesign memo, only if separately authorized; operator has so chosen). **Phase 4z is the project's first post-rejection research-process redesign memo**, authored after the cumulative six-failure-mode rejection ledger (R2 cost-fragility; F1 catastrophic-floor; D1-A mechanism / framework mismatch; V2 design-stage incompatibility; G1 regime-gate-meets-setup intersection sparseness; C1 fires-and-loses / contraction anti-validation). **Phase 4z is text-only.** Phase 4z's central observation is that the project's strategy-research process is **procedurally sound** (predeclaration discipline, branch isolation, no governance leakage, forbidden-input enforcement, cost realism, variant-grid / DSR / PBO / CSCV discipline, negative-baseline framework at C1, opportunity-rate floors at C1, consolidation-memo discipline) but **substantively under-constrained at the discovery and admissibility layer** — the Phase 4m 18-requirement validity gate and Phase 4t 10-dimension scoring matrix correctly filter for "is this a hidden rescue?" and "is this operationally implementable?" but did not adequately filter for design-family adjacency (V2 / G1 / C1 all sit in the shared "mechanical condition + breakout" family signature) or for predeclared baseline-superiority from theoretical content. **Phase 4z proposes recommendations only**, not adopted governance: a 32-item proposed admissibility framework (Phase 4m's 18 requirements verbatim plus 9 proposed additions: A5 design-family declaration; A7 regime-gate co-design; A9 causal mechanism; A10 baseline-differential prediction from theory; A12 edge-rate prediction from theory separate from opportunity-rate; A13 expected-failure-mode prediction; A15 sample-size viability; A31 closest-prior-failure comparison; A32 remain-paused-comparison); a design-family-distance matrix (F-1 mechanical-condition-+-breakout / F-2 pullback-mean-reversion / F-3 funding-derivatives / F-4 microstructure); an explicit M0 theoretical-admissibility gate upstream of strategy-spec; an explicit edge-rate viability gate distinct from the opportunity-rate viability gate (the central C1 lesson); a 23-section future discovery memo template; future strategy-spec / backtest-plan / execution-report template additions; five-rule no-rescue enforcement language; process gates before any new strategy candidate, backtest, or implementation-readiness work. **Phase 4z does NOT amend** the Phase 4m 18-requirement validity gate, Phase 4t 10-dimension scoring matrix, Phase 4u opportunity-rate principle, Phase 4w negative-baseline / PBO / DSR / CSCV methodology, Phase 4j §11 metrics OI-subset partial-eligibility rule, Phase 4k V2 backtest-plan methodology, Phase 3v §8 stop-trigger-domain governance, Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance, Phase 3r §8 mark-price gap governance, §11.6 = 8 bps HIGH per side, or §1.7.3 project-level locks. **Adoption of any Phase 4z recommendation remains a separate future operator decision.** Phase 4z preserves every retained verdict and project lock verbatim (H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal). Phase 4z adds `docs/00-meta/implementation-reports/2026-04-30_phase-4z_post-rejection-research-process-redesign.md`, `docs/00-meta/implementation-reports/2026-04-30_phase-4z_closeout.md`, and (at merge) `docs/00-meta/implementation-reports/2026-04-30_phase-4z_merge-closeout.md`. **Phase 4z did NOT** create a new strategy candidate; create a fresh-hypothesis discovery memo; create a strategy-spec memo; create a backtest-plan memo; run any backtest; rerun Phase 4x; modify `scripts/phase4x_c1_backtest.py` or any other existing script; modify `src/prometheus/`, tests, or scripts; acquire data; modify data; modify manifests; create v003; revise any retained verdict; change any project lock; amend any governance file; authorize Phase 5 / Phase 4aa / any successor phase; authorize paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Whole-repo quality gates remain clean** (verified during Phase 4z): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **Phase 4z recommendation:** Option A primary — remain paused; Option B conditional secondary — docs-only documentation-refresh / governance-template update memo (only if separately authorized; not started by Phase 4z). **Phase 4 canonical remains unauthorized.** **Phase 5 / Phase 4aa / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4z merged into main (Post-Rejection Research-Process Redesign Memo, docs-only).
+Phase 4z was docs-only.
+Phase 4z is the project's first post-rejection research-process redesign memo, authored after the cumulative six-failure-mode rejection ledger (R2 / F1 / D1-A / V2 / G1 / C1).
+Phase 4z is the Phase 4y Option B conditional secondary alternative (operator separately authorized).
+Phase 4z observed that the project's strategy-research process is procedurally sound (predeclaration discipline, branch isolation, no governance leakage, forbidden-input enforcement, cost realism, variant-grid / DSR / PBO / CSCV discipline, negative-baseline framework at C1, opportunity-rate floors at C1, consolidation-memo discipline) but substantively under-constrained at the discovery and admissibility layer:
+- the Phase 4m 18-requirement validity gate and Phase 4t 10-dimension scoring matrix correctly filter for "is this a hidden rescue?" and "is this operationally implementable?";
+- but they did not adequately filter for design-family adjacency (V2 / G1 / C1 all sit in the shared "mechanical condition + breakout" family signature);
+- nor for predeclared baseline-superiority from theoretical content.
+Phase 4z proposed recommendations only, not adopted governance:
+- 32-item proposed admissibility framework (Phase 4m's 18 requirements verbatim plus 9 proposed additions A5 / A7 / A9 / A10 / A12 / A13 / A15 / A31 / A32);
+- design-family-distance matrix (F-1 mechanical-condition-+-breakout / F-2 pullback-mean-reversion / F-3 funding-derivatives / F-4 microstructure);
+- explicit M0 theoretical-admissibility gate upstream of strategy-spec;
+- explicit edge-rate viability gate distinct from the opportunity-rate viability gate (the central C1 lesson);
+- 23-section future discovery memo template;
+- future strategy-spec / backtest-plan / execution-report template additions;
+- five-rule no-rescue enforcement language;
+- process gates before any new strategy candidate, backtest, or implementation-readiness work.
+Phase 4z did NOT amend:
+- the Phase 4m 18-requirement validity gate;
+- the Phase 4t 10-dimension scoring matrix;
+- the Phase 4u opportunity-rate principle;
+- the Phase 4w negative-baseline / PBO / DSR / CSCV methodology;
+- the Phase 4j §11 metrics OI-subset partial-eligibility rule;
+- the Phase 4k V2 backtest-plan methodology;
+- Phase 3v §8 stop-trigger-domain governance;
+- Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance;
+- Phase 3r §8 mark-price gap governance;
+- §11.6 = 8 bps HIGH per side;
+- §1.7.3 project-level locks.
+Adoption of any Phase 4z recommendation remains a separate future operator decision.
+Phase 4z preserved every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread CLOSED operationally;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 project-level locks (0.25% risk; 2× leverage; one position max; mark-price stops);
+- Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w governance.
+Phase 4z added:
+- docs/00-meta/implementation-reports/2026-04-30_phase-4z_post-rejection-research-process-redesign.md;
+- docs/00-meta/implementation-reports/2026-04-30_phase-4z_closeout.md;
+- docs/00-meta/implementation-reports/2026-04-30_phase-4z_merge-closeout.md (at merge).
+Phase 4z did NOT:
+- create a new strategy candidate;
+- create a fresh-hypothesis discovery memo;
+- create a strategy-spec memo;
+- create a backtest-plan memo;
+- run any backtest;
+- rerun Phase 4x;
+- modify scripts/phase4x_c1_backtest.py;
+- modify any other existing script;
+- modify src/prometheus/, tests, or scripts;
+- acquire data;
+- modify data;
+- modify manifests;
+- create v003;
+- revise any retained verdict;
+- change any project lock;
+- amend any governance file;
+- authorize Phase 5 / Phase 4aa / any successor phase;
+- authorize paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials.
+Whole-repo quality gates remain clean:
+- ruff check . passed;
+- pytest 785 passed;
+- mypy strict 0 issues across 82 source files.
+Phase 4z recommendation:
+- Option A primary: remain paused;
+- Option B conditional secondary: docs-only documentation-refresh / governance-template update memo (only if separately authorized; not started by Phase 4z).
+No retained verdicts were revised.
+No project locks changed.
+No new strategy / code / data / manifests / live path was started.
+Phase 4 (canonical) remains unauthorized.
+Phase 5 / Phase 4aa / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Phase 4y context (preserved for historical reference):
 
 ```text
 Phase 4y merged into main (Post-C1 Strategy Research Consolidation Memo, docs-only).
@@ -1348,11 +1437,11 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-main HEAD:                          69579c15f4ddc15cf79edbf22a67daa84a43f765
-Merge title:                        Merge Phase 4y (post-C1 strategy research consolidation memo, docs-only) into main
-Phase 4y memo commit:               e0c4c73
-Phase 4y closeout commit:           46c7fe310250fdd4e70334da3b43a8be07dd3ccb
-Phase 4y merge commit:              69579c15f4ddc15cf79edbf22a67daa84a43f765
+Merge title:                        docs(phase-4z): merge post-rejection research-process redesign
+Phase 4z report commit:             cb426b127c8fce41e00f9c0684f4d4d7269b82d8
+Phase 4z closeout commit:           9968f346e00641a02817fc475491e27d6e5efe2e
+Phase 4z merge commit:              <recorded after the merge commit>
+main HEAD:                          <recorded after the merge commit>
 ```
 
 ## Strategy Research Arc Outcomes
