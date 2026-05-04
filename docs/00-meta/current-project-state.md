@@ -149,7 +149,129 @@ Phase 4w is the **C1 Backtest-Plan Memo** (docs-only) (operator selected the Pha
 
 Phase 4x is the **C1 Backtest Execution** (docs-and-code; standalone research script) (operator selected the Phase 4w §"Operator decision menu" Option A primary recommendation: Phase 4x — C1 Backtest Execution, docs-and-code, standalone research script). **Phase 4x implemented `scripts/phase4x_c1_backtest.py` exactly under the Phase 4w methodology and ran the predeclared C1 — Volatility-Contraction Expansion Breakout backtest** on BTCUSDT primary / ETHUSDT comparison across LOW / MEDIUM / HIGH cost cells over the train (2022-01-01..2023-06-30 UTC) / validation (2023-07-01..2024-06-30 UTC) / OOS holdout (2024-07-01..2026-03-31 UTC) windows; evaluated 32 variants (= 2^5) over five binary axes (`B_width` ∈ {0.05, 0.10}; `C_width` ∈ {0.45, 0.60}; `N_comp` ∈ {8, 12}; `S_buffer` ∈ {0.10, 0.20}; `T_mult` ∈ {1.5, 2.0}); computed M1 / M2 / M3 / M4 / M5 with bootstrap (B = 10 000; pinned RNG seed 202604300); computed deflated Sharpe with N = 32, PBO (train→validation rank-based; train→OOS rank-based; CSCV S = 16 with C(16, 8) = 12 870 combinations); evaluated 12 catastrophic-floor predicates (CFP-1..CFP-12); declared Verdict A / B / C / D. Phase 4x added `scripts/phase4x_c1_backtest.py` (standalone research script; pure pyarrow + numpy + stdlib + matplotlib optional; no `prometheus.runtime/execution/persistence` imports; no exchange adapters; no `requests/httpx/aiohttp/websockets/urllib`; no `.env`; no credentials; no Binance API; no network I/O), `docs/00-meta/implementation-reports/2026-04-30_phase-4x_c1-backtest-execution.md`, and `docs/00-meta/implementation-reports/2026-04-30_phase-4x_closeout.md`. Local research outputs under `data/research/phase4x/` are gitignored / not committed. **Final Verdict: C — C1 framework HARD REJECT.** **Binding catastrophic-floor driver: CFP-2 (BTC OOS HIGH train-best mean_R = -0.3633 ≤ 0).** **Co-binding / independent drivers: CFP-3 (profit_factor = 0.4413 < 0.50; max_drawdown_R = 54.55 > 10R); CFP-6 (DSR = -20.8173 ≤ 0).** CFPs that did NOT trigger: CFP-1 (149 trades on BTC OOS HIGH; 0/32 variants below 30); CFP-4; CFP-5; CFP-7; CFP-8; **CFP-9 NOT triggered (transition_rate_per_480 = 3.33; 100% of variants produce ≥ 30 trades)**; CFP-10/11/12 (forbidden-input access counters all 0). **BTCUSDT primary result:** train-best variant id=21 (`B=0.10|C=0.45|N=12|S=0.10|T=2.0`); BTC OOS HIGH `trade_count = 149`, `mean_R = -0.3633`, `total_R = -54.1258`, `max_dd_R = 54.55`, `profit_factor = 0.4413`, `sharpe = -0.3721`. **All 32 BTC OOS HIGH variants are loss-making.** Loss-making at all OOS cost cells (LOW mean_R = -0.1701; MEDIUM mean_R = -0.2529; HIGH mean_R = -0.3633). **Cost is NOT the binding driver; C1 is structurally loss-making even before HIGH cost amplification.** **ETHUSDT comparison result:** same train-best variant 21; ETH OOS HIGH `trade_count = 109`, `mean_R = -0.2140`, `profit_factor = 0.6252`, `sharpe = -0.2148`. **All 32 ETH OOS HIGH variants are loss-making.** **ETH cannot rescue BTC.** **M1 FAIL** (C1_mean_R − non_contraction_mean_R = -0.2440R; bootstrap 95% CI = [-0.4101, -0.0810] strictly negative). **M2 FAIL** (M2.a C1_mean_R − always_active_same_geometry_mean_R = -0.2201R; bootstrap 95% CI = [-0.3859, -0.0556] strictly negative; M2.b C1_mean_R − delayed_breakout_mean_R = -0.2930R). **M3 FAIL** (BTC OOS HIGH mean_R < 0; CFP-2 / CFP-3 trigger; opportunity-rate floors PASS). **M4 FAIL** (ETH differential = -0.1589; directional consistency YES; ETH cannot rescue BTC). **M5 DIAGNOSTIC_ONLY** (skipped per Phase 4w optional handling; no verdict effect). **PBO / DSR / CSCV:** PBO_train_validation = 0.375; PBO_train_oos = 0.219; PBO_cscv = 0.094; **all PBO values below 0.50 — PBO does NOT trigger CFP-6**; DSR = -20.8173 ≤ 0 — **DSR triggers CFP-6**. **Opportunity-rate results:** BTC OOS total_30m_bars = 30 672; oos_total_transitions = 213; transition_rate_per_480_bars = 3.33; train-best OOS HIGH executed trades = 149; 32/32 variants produce ≥30 BTC OOS HIGH trades. **CFP-1 NOT triggered.** **CFP-9 NOT triggered.** **Phase 4x categorical failure mode:** C1 is **NOT a zero-trade failure like V2 or G1**; C1 fires plenty of trades and loses; contraction-tied transitions are empirically anti-validated; C1 transition trades underperform non-contraction baseline (-0.244R), always-active-same-geometry baseline (-0.220R), and delayed-breakout baseline (-0.293R). C1's new rejection mode is **"fires-and-loses" / contraction anti-validation**. **C1 first-spec is terminally HARD REJECTED as retained research evidence only.** **No C1 rescue authorized:** no C1-prime / C1-narrow / C1-extension / C1 hybrid; no C1 with relaxed thresholds; no Phase 4v / Phase 4w amendment based on Phase 4x forensic numbers; no immediate C1 rerun. **Phase 4x local outputs:** `data/research/phase4x/run_metadata.json`; `data/research/phase4x/tables/` with 33 tables (32 Phase 4w-required + forbidden_work_confirmation.csv); `data/research/phase4x/plots/` empty (matplotlib unavailable in venv); plot absence does NOT cause Verdict D because all binding tables are complete and absence is documented (per Phase 4w explicit rule). **Forbidden-input audit (all 0 by construction):** `metrics_oi_access_count = 0`; `optional_ratio_column_access_count = 0`; `mark_price_access_count = 0`; `aggtrades_access_count = 0`; `spot_access_count = 0`; `cross_venue_access_count = 0`; `network_io_attempts = 0`; `credential_reads = 0`; `env_file_reads = 0`; `data_raw_writes = 0`; `data_normalized_writes = 0`; `data_manifest_modifications = 0`; `v003_creations = 0`; `src_prometheus_modifications = 0`; `test_modifications = 0`; `existing_script_modifications = 0`. **Phase 4x did NOT** modify `src/prometheus/`; modify any test; modify any existing script (`scripts/phase3q_5m_acquisition.py`, `scripts/phase3s_5m_diagnostics.py`, `scripts/phase4i_v2_acquisition.py`, `scripts/phase4l_v2_backtest.py`, `scripts/phase4r_g1_backtest.py` all unchanged); modify `data/raw/` / `data/normalized/` / `data/manifests/`; acquire data; download data; create new manifests; create v003; implement C1 in runtime; create paper/shadow/live runtime; imply live-readiness; or authorize Phase 4y. **Whole-repo quality gates remain clean** (verified during Phase 4x): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** R3 baseline-of-record; H0 framework anchor; R1a / R1b-narrow / R2 / F1 / D1-A / V2 / G1 / **C1** retained research evidence only; R2 FAILED — §11.6 cost-sensitivity blocks; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL — other; V2 HARD REJECT (Phase 4l, terminal); G1 HARD REJECT (Phase 4r — Verdict C; CFP-1 critical binding; CFP-9 independent; terminal for G1 first-spec); **C1 HARD REJECT (Phase 4x — Verdict C; CFP-2 binding; CFP-3 / CFP-6 co-binding; terminal for C1 first-spec)**; §11.6 = 8 bps HIGH per side; §1.7.3 project-level locks (including mark-price stops); v002 verdict provenance; Phase 3q mark-price 5m manifests `research_eligible: false`; Phase 3r §8 mark-price gap governance; Phase 3v §8 stop-trigger-domain governance; Phase 3w §6 / §7 / §8 break-even / EMA slope / stagnation governance; Phase 4a public API and runtime behavior; Phase 4e reconciliation-model design memo; Phase 4f V2 hypothesis predeclaration; Phase 4g V2 strategy spec; Phase 4h V2 data-requirements / feasibility memo; Phase 4i V2 acquisition + integrity report; Phase 4i metrics manifests `research_eligible: false`; Phase 4j §11 metrics OI-subset partial-eligibility rule (preserved; unused by C1); Phase 4k V2 backtest-plan methodology; Phase 4l V2 backtest execution Verdict C HARD REJECT; Phase 4m 18-requirement fresh-hypothesis validity gate; Phase 4n Candidate B avoidance pattern; Phase 4o G1 hypothesis-spec layer; Phase 4p G1 strategy-spec memo; Phase 4q G1 backtest-plan methodology; Phase 4r G1 backtest execution Verdict C HARD REJECT; Phase 4s post-G1 strategy research consolidation memo; Phase 4t post-G1 fresh-hypothesis discovery memo; Phase 4u C1 hypothesis-spec layer; Phase 4v C1 strategy-spec memo; Phase 4w C1 backtest-plan methodology — all preserved verbatim. **Phase 4 canonical remains unauthorized.** **Phase 4y / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Phase 4x recommendation:** Option A — remain paused (primary); Option B — Phase 4y Post-C1 Strategy Research Consolidation Memo (docs-only) (conditional secondary). **Phase 4x did NOT authorize Phase 4y.** **Recommended state: remain paused.** **No next phase authorized.**
 
+Phase 4y is the **Post-C1 Strategy Research Consolidation Memo** (docs-only) (operator selected the Phase 4x §"Operator decision menu" Option B conditional secondary alternative — docs-only post-C1 strategy research consolidation memo, only if separately authorized; operator has so chosen). **Phase 4y is the project's third post-rejection consolidation memo** (after Phase 4m for V2 and Phase 4s for G1) and the fifth overall (after Phase 3e for F1 and Phase 3k for D1-A). Phase 4y consolidated the Phase 4x C1 backtest outcome (**Verdict C — C1 framework HARD REJECT**; binding driver CFP-2 — BTC OOS HIGH train-best mean_R = -0.3633 ≤ 0; co-binding drivers CFP-3 — profit_factor = 0.4413 < 0.50 AND max_drawdown_R = 54.55 > 10R; CFP-6 — DSR = -20.8173 ≤ 0) into the project's strategy-research record. **C1 first-spec is terminally HARD REJECTED as retained research evidence only.** Phase 4y adds the **sixth distinct rejection topology failure mode**: **fires-and-loses / contraction anti-validation**. C1 is categorically distinct from V2 / G1: V2 (Phase 4l) failed by design-stage incompatibility / stop-distance filter resulting in zero trades; G1 (Phase 4r) failed by regime-gate-meets-setup intersection sparseness resulting in zero active-regime qualifying trades; **C1 fired many trades, passed opportunity-rate floors, and lost** (149 BTC OOS HIGH trades for the train-best variant; transition rate 3.33 per 480 bars; 100% of variants produced ≥ 30 trades; CFP-1 and CFP-9 explicitly did NOT trigger). **C1 result recap:** train-best variant id=21 (label `B=0.10|C=0.45|N=12|S=0.10|T=2.0`); BTC OOS HIGH trade_count=149; mean_R=-0.3633; total_R=-54.1258; max_dd_R=54.55; profit_factor=0.4413; sharpe=-0.3721; **all 32 BTC OOS HIGH variants loss-making**; loss-making at all OOS cost cells (LOW=-0.1701; MEDIUM=-0.2529; HIGH=-0.3633); **cost is NOT the binding driver**. **ETHUSDT comparison:** same train-best variant 21; ETH OOS HIGH trade_count=109; mean_R=-0.2140; PF=0.6252; sharpe=-0.2148; **all 32 ETH OOS HIGH variants loss-making**; **ETH cannot rescue BTC**. **M1 FAIL** (C1_mean_R − non_contraction_mean_R = -0.2440R; bootstrap 95% CI [-0.4101, -0.0810] strictly negative). **M2 FAIL** (M2.a C1_mean_R − always_active_same_geometry_mean_R = -0.2201R; CI [-0.3859, -0.0556] strictly negative; M2.b C1_mean_R − delayed_breakout_mean_R = -0.2930R). **M3 FAIL** (BTC OOS HIGH mean_R<0; CFP-2/CFP-3 trigger; opportunity-rate floors PASS). **M4 FAIL** (ETH differential=-0.1589; directional consistency YES; ETH cannot rescue BTC). **M5 DIAGNOSTIC_ONLY** (skipped per Phase 4w optional handling; no verdict effect). **PBO/DSR/CSCV:** PBO_train_validation=0.375; PBO_train_oos=0.219; PBO_cscv=0.094; **all PBO values below 0.50 — PBO does NOT trigger CFP-6**; DSR=-20.8173 ≤ 0 — **DSR triggers CFP-6**. **Opportunity-rate:** BTC OOS total_30m_bars=30,672; total candidate transitions=213; transition_rate_per_480_bars=3.33; train-best executed OOS HIGH trades=149; 32/32 variants produce ≥30 BTC OOS HIGH trades; CFP-1 NOT triggered; CFP-9 NOT triggered; **the failure is not opportunity-rate collapse**. Phase 4y preserves the full retained-verdict ledger (H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; **C1 HARD REJECT — terminal for C1 first-spec**) and every project lock (§11.6 = 8 bps HIGH per side; §1.7.3 project-level locks; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w governance). Phase 4y compiled **twelve reusable insights**: opportunity-rate viability is necessary but not sufficient; negative baselines are mandatory; a local precondition can avoid G1 sparsity while still being anti-predictive; sample viability and edge viability are distinct; "not zero trades" is not success; HIGH-cost survival cannot rescue negative gross structure; every future hypothesis must explain why its primary condition should outperform an unconditioned baseline; every future hypothesis must define the closest non-hypothesis baseline before data touch; baseline differentials may be more important than raw mean_R; DSR/PBO/CSCV can show "not overfit" while still confirming "no edge"; first-spec hard rejections should not be mined for second-spec thresholds; remain-paused gains more weight after multiple independent failure modes. **Phase 4y explicitly forbids C1 rescue:** no C1-prime / C1-extension / C1-narrow / C1 hybrid; no C1 threshold tuning from Phase 4x; no different N_comp / C_width / B_width / S_buffer / T_mult chosen from Phase 4x outputs; no volume / funding / HTF / ATR stop-distance gate added post hoc; no mark-price / aggTrades / spot / cross-venue / order-book rescue; no using Phase 4x forensic results as tuning input; no C1 rerun; no C1 implementation; no Phase 4v amendment; no Phase 4w methodology amendment. **Phase 4y reaffirms forbidden cross-strategy rescue:** no V2-prime / V2-narrow / V2-relaxed / V2 hybrid; no G1-prime / G1-narrow / G1-extension / G1 hybrid; no R2 cheaper-cost rescue; no F1 profitable-subset rescue; no D1-A extra-filter / D1-A-prime / D1-B / V1-D1 / F1-D1 hybrid; no 5m strategy from Q1-Q7; no immediate ML-first black-box forecasting; no immediate market-making / HFT; no paper / shadow / live; no Phase 4 canonical; no data acquisition as next step. **Phase 4y remaining valid project directions:** Option A primary — remain paused; Option B conditional secondary — docs-only post-rejection research-process redesign / hypothesis-discovery process redesign memo (only if separately authorized); Option C conditional tertiary — docs-only documentation-refresh memo (only if separately authorized); Option D not recommended — docs-only strategy-agnostic implementation-readiness scoping memo (only if separately authorized). **Phase 4y did NOT authorize Phase 4z.** **Phase 4z / successor phase remains unauthorized.** **Phase 4y did NOT** create a new strategy; create a fresh-hypothesis discovery memo; create a strategy-spec memo; create a backtest-plan memo; run any backtest; rerun Phase 4x; modify `scripts/phase4x_c1_backtest.py`; write code; acquire data; modify data; modify manifests. Phase 4y adds `docs/00-meta/implementation-reports/2026-04-30_phase-4y_post-c1-strategy-research-consolidation.md` and `docs/00-meta/implementation-reports/2026-04-30_phase-4y_closeout.md`. **Whole-repo quality gates remain clean** (verified during Phase 4y): `ruff check .` passed (`All checks passed!`); pytest passed (`785 passed`; no regressions); mypy strict passed (`Success: no issues found in 82 source files`). **No retained verdicts were revised.** **No project locks changed.** **Phase 4 canonical remains unauthorized.** **Phase 4z / any successor phase remains unauthorized.** **Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4y merged into main (Post-C1 Strategy Research Consolidation Memo, docs-only).
+Phase 4y was docs-only.
+Phase 4y is the project's third post-rejection consolidation memo (after Phase 4m for V2 and Phase 4s for G1) and the fifth overall (after Phase 3e for F1 and Phase 3k for D1-A).
+Phase 4y consolidated the Phase 4x C1 backtest outcome (Verdict C HARD REJECT; binding driver CFP-2; co-binding CFP-3 / CFP-6) into the project's strategy-research record.
+C1 first-spec is terminally HARD REJECTED as retained research evidence only.
+Phase 4y added the sixth distinct rejection topology failure mode:
+- fires-and-loses / contraction anti-validation.
+C1 categorical comparison vs V2 / G1:
+- V2 (Phase 4l): zero-trade non-evidence-generating failure (stop-distance / setup-geometry incompatibility);
+- G1 (Phase 4r): zero-trade non-evidence-generating failure (regime-gate / entry-rule sparse intersection);
+- C1 (Phase 4x): evidence-generating negative result; fired 149 BTC OOS HIGH trades; passed opportunity-rate floors; failed expectancy.
+C1 cannot be rescued by appealing to "avoid zero trades" because it already avoided zero trades.
+C1 result recap (preserved verbatim from Phase 4x):
+- train-best variant id = 21 (label B=0.10|C=0.45|N=12|S=0.10|T=2.0);
+- BTC OOS HIGH trade_count = 149; mean_R = -0.3633; total_R = -54.1258; max_dd_R = 54.55; PF = 0.4413; sharpe = -0.3721;
+- all 32 BTC OOS HIGH variants loss-making;
+- loss-making at all OOS cost cells: LOW = -0.1701; MEDIUM = -0.2529; HIGH = -0.3633;
+- cost is NOT the binding driver;
+- ETH OOS HIGH trade_count = 109; mean_R = -0.2140; PF = 0.6252; sharpe = -0.2148;
+- all 32 ETH OOS HIGH variants loss-making;
+- ETH cannot rescue BTC.
+M1 FAIL: C1_mean_R - non_contraction_mean_R = -0.2440R; bootstrap 95% CI [-0.4101, -0.0810] strictly negative.
+M2 FAIL: M2.a diff = -0.2201R; CI = [-0.3859, -0.0556] strictly negative; M2.b diff = -0.2930R.
+M3 FAIL: BTC OOS HIGH mean_R < 0; CFP-2/CFP-3 trigger; opportunity-rate floors PASS.
+M4 FAIL: ETH differential = -0.1589; directional consistency YES; ETH cannot rescue BTC.
+M5 DIAGNOSTIC_ONLY: skipped per Phase 4w optional handling; no verdict effect.
+PBO / DSR / CSCV: PBO_train_validation = 0.375; PBO_train_oos = 0.219; PBO_cscv = 0.094 (all below 0.50; PBO does NOT trigger CFP-6); DSR = -20.8173 ≤ 0 (CFP-6 triggers via DSR).
+Opportunity-rate: BTC OOS total_30m_bars = 30,672; total candidate transitions = 213; transition_rate_per_480_bars = 3.33; train-best executed OOS HIGH trades = 149; 32/32 variants produce ≥30 trades; CFP-1 / CFP-9 NOT triggered.
+Phase 4y compiled twelve reusable insights:
+1. opportunity-rate viability is necessary but not sufficient;
+2. negative baselines are mandatory;
+3. a local precondition can avoid G1 sparsity while still being anti-predictive;
+4. sample viability and edge viability are distinct;
+5. "not zero trades" is not success;
+6. HIGH-cost survival cannot rescue negative gross structure;
+7. every future hypothesis must explain why its primary condition should outperform an unconditioned baseline;
+8. every future hypothesis must define the closest non-hypothesis baseline before data touch;
+9. baseline differentials may be more important than raw mean_R;
+10. DSR / PBO / CSCV can show "not overfit" while still confirming "no edge";
+11. first-spec hard rejections should not be mined for second-spec thresholds;
+12. remain-paused gains more weight after multiple independent failure modes.
+Phase 4y explicitly forbids C1 rescue:
+- no C1-prime / C1-extension / C1-narrow / C1 hybrid;
+- no C1 threshold tuning from Phase 4x;
+- no different N_comp / C_width / B_width / S_buffer / T_mult chosen from Phase 4x outputs;
+- no volume / funding / HTF / ATR stop-distance gate added post hoc;
+- no mark-price / aggTrades / spot / cross-venue / order-book rescue;
+- no using Phase 4x forensic results as tuning input;
+- no C1 rerun;
+- no C1 implementation;
+- no Phase 4v amendment;
+- no Phase 4w methodology amendment.
+Phase 4y reaffirms forbidden cross-strategy rescue:
+- no V2-prime / V2-narrow / V2-relaxed / V2 hybrid;
+- no G1-prime / G1-narrow / G1-extension / G1 hybrid;
+- no R2 cheaper-cost rescue;
+- no F1 profitable-subset rescue;
+- no D1-A extra-filter / D1-A-prime / D1-B / V1-D1 / F1-D1 hybrid;
+- no 5m strategy from Q1-Q7;
+- no immediate ML-first black-box forecasting;
+- no immediate market-making / HFT;
+- no paper / shadow / live;
+- no Phase 4 canonical;
+- no data acquisition as next step.
+Phase 4y remaining valid project directions:
+- Option A primary: remain paused;
+- Option B conditional secondary: docs-only post-rejection research-process redesign / hypothesis-discovery process redesign memo (only if separately authorized);
+- Option C conditional tertiary: docs-only documentation-refresh memo (only if separately authorized);
+- Option D not recommended: docs-only strategy-agnostic implementation-readiness scoping memo (only if separately authorized).
+Phase 4y did NOT authorize Phase 4z.
+Phase 4z / successor phase remains unauthorized.
+Phase 4y did NOT:
+- create a new strategy;
+- create a fresh-hypothesis discovery memo;
+- create a strategy-spec memo;
+- create a backtest-plan memo;
+- run any backtest;
+- rerun Phase 4x;
+- modify scripts/phase4x_c1_backtest.py;
+- write code;
+- modify source code;
+- modify tests;
+- modify existing scripts;
+- acquire data;
+- modify data;
+- modify manifests.
+Phase 4y added:
+- docs/00-meta/implementation-reports/2026-04-30_phase-4y_post-c1-strategy-research-consolidation.md;
+- docs/00-meta/implementation-reports/2026-04-30_phase-4y_closeout.md.
+Whole-repo quality gates remain clean:
+- ruff check . passed;
+- pytest 785 passed;
+- mypy strict 0 issues across 82 source files.
+Phase 4y preserved every retained verdict and project lock:
+- H0 remains FRAMEWORK ANCHOR;
+- R3 remains BASELINE-OF-RECORD;
+- R1a remains RETAINED — NON-LEADING;
+- R1b-narrow remains RETAINED — NON-LEADING;
+- R2 remains FAILED — §11.6;
+- F1 remains HARD REJECT;
+- D1-A remains MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread remains CLOSED operationally;
+- V2 remains HARD REJECT — terminal for V2 first-spec;
+- G1 remains HARD REJECT — terminal for G1 first-spec;
+- C1 remains HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 project-level locks;
+- Phase 3r, Phase 3v, Phase 3w, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, and Phase 4w governance.
+No retained verdicts were revised.
+No project locks changed.
+Phase 4 (canonical) remains unauthorized.
+Phase 4z / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Phase 4x context (preserved for historical reference):
 
 ```text
 Phase 4x merged into main (C1 Backtest Execution; Verdict C HARD REJECT).
@@ -1226,11 +1348,11 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-main HEAD:                          e28e34a2878d9a6b602e0f2e26eafdf787cfbb59
-Merge title:                        Merge Phase 4x (C1 backtest execution; Verdict C HARD REJECT) into main
-Phase 4x memo+code commit:          33d34f1
-Phase 4x closeout commit:           f37798be54b6cde8a708b4d54e8e23a74f03ee8f
-Phase 4x merge commit:              e28e34a2878d9a6b602e0f2e26eafdf787cfbb59
+main HEAD:                          69579c15f4ddc15cf79edbf22a67daa84a43f765
+Merge title:                        Merge Phase 4y (post-C1 strategy research consolidation memo, docs-only) into main
+Phase 4y memo commit:               e0c4c73
+Phase 4y closeout commit:           46c7fe310250fdd4e70334da3b43a8be07dd3ccb
+Phase 4y merge commit:              69579c15f4ddc15cf79edbf22a67daa84a43f765
 ```
 
 ## Strategy Research Arc Outcomes
