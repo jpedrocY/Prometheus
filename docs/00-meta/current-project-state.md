@@ -163,7 +163,122 @@ Phase 4ad is the **Alt-Symbol Gap-Governance and Scope-Revision Memo** (docs-onl
 
 Phase 4ae is the **Alt-Symbol Substrate-Feasibility Analysis Memo** (analysis-and-docs only). Phase 4ae implemented `scripts/phase4ae_alt_symbol_substrate_feasibility.py` (standalone analysis script; reads existing local Parquet only; no network I/O; no API calls; no `prometheus.runtime/execution/persistence` imports; ruff clean) and computed descriptive substrate-feasibility metrics for the Phase 4ac core symbol set BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT at intervals 15m / 30m / 1h / 4h, under Phase 4ad Rule B1 (common post-gap start at 2022-04-03 00:00 UTC). The analysis covered 20 (symbol, interval) cells with 0 omitted and 0 missing bars in span; SOL/XRP cells used Phase 4ad Rule B1 governance scope without flipping any `research_eligible` flag; mark-price (Phase 4ad Rule A) was deferred per brief recommendation; metrics / OI and aggTrades / tick / order-book remained out of scope. **Phase 4ae main substrate-feasibility findings (descriptive only):** cost-cushion ranking is consistent across all four intervals — **SOL > ADA > XRP > ETH > BTC** (most cushion to least; round-trip 16 bps over median ATR(20) ranges 0.060–0.511 across cells); BTC is the most cleanly trending substrate (≈ 50–52% above EMA(50) and 50–52% EMA(50) > EMA(200) at every interval); SOL has the widest funding distribution (abs p95 ≈ 4.5 bps; ≈ 2.5× wider than BTC's 1.6 bps; SOL funding flips sign more often); BTC's median kline-notional turnover dwarfs the alts by 1–2 orders of magnitude with ADA the thinnest by this proxy (≈ 0.025× BTC); wick-fraction differences across symbols are small at the median; absolute-return-expansion frequency is roughly uniform across symbols. **Phase 4ae did NOT** acquire data, modify data, create or modify manifests, run any backtest, run any strategy diagnostic, rerun Q1–Q7, compute strategy PnL or entry/exit returns, optimize parameters, select thresholds for a future strategy, create a strategy candidate / hypothesis-spec memo / strategy-spec memo / backtest-plan memo, modify `src/prometheus/`, tests, or any existing script, create v003, flip any `research_eligible` flag, modify Phase 4ac manifests, broaden Phase 4ac results into binding cross-project governance, broaden Phase 4ad Rules beyond their prospective analysis-time scope, revise any retained verdict, change any project lock, amend any specialist governance file (beyond the narrow `current-project-state.md` update), adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as binding governance, or authorize Phase 4af. **Phase 4ae preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4ae adds `scripts/phase4ae_alt_symbol_substrate_feasibility.py`, `docs/00-meta/implementation-reports/2026-05-04_phase-4ae_alt-symbol-substrate-feasibility-analysis.md`, and `docs/00-meta/implementation-reports/2026-05-04_phase-4ae_closeout.md`; local analysis outputs under gitignored `data/research/phase4ae/` are NOT committed. **Phase 4ae recommendation:** Option A primary — remain paused (the Phase 4ae descriptive metrics are recorded; no strategy candidate is implied; any further forward motion is operator-driven); Option C conditional secondary — future narrower follow-up feasibility memo (only if separately authorized; NOT recommended over remain-paused). NOT recommended: Option B fresh-hypothesis discovery memo immediately (premature; substrate evidence does not by itself justify a candidate; the project's six-failure topology advises against substrate-driven candidate selection). FORBIDDEN: old-strategy alt-symbol rerun; direct strategy-spec memo on alt symbols; backtest / paper / shadow / live; mark-price feasibility memo without Phase 4ad Rule A predeclaration. **Phase 4 canonical remains unauthorized. Phase 4af / Phase 5 / any successor phase remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ae has now been merged to main.** Phase 4ae merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ae_merge-closeout.md`. Phase 4ae remains analysis-and-docs only; computed descriptive substrate-feasibility metrics for BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT at intervals 15m / 30m / 1h / 4h under Phase 4ad Rule B1 common post-gap scope (2022-04-03 00:00 UTC through 2026-04-30 23:59:59 UTC); 20 (symbol, interval) cells with 0 omitted datasets and 0 missing bars in span; mark-price datasets NOT used (Phase 4ad Rule A deferred); metrics / OI NOT used; aggTrades / tick / order-book NOT used. **Phase 4ae descriptive findings:** cost-cushion ranking SOL > ADA > XRP > ETH > BTC; BTC tightest cost cushion but cleanest trend / deepest notional proxy / most stable funding; SOL best cost cushion but widest funding distribution and more frequent funding sign flips; ADA clean coverage and good cost cushion but lower notional proxy and weaker HTF trend dominance; XRP and ETH intermediate; no single symbol dominated all dimensions. **Phase 4ae did NOT** acquire data, modify data, create or modify manifests, run backtests or strategy diagnostics, rerun Q1–Q7, compute strategy PnL or entry/exit returns, optimize parameters, select thresholds for a strategy, create a strategy candidate / hypothesis-spec memo / strategy-spec memo / backtest-plan memo, rescue prior strategies, revise retained verdicts, change project locks, adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as governance, broaden Phase 4ac results into binding cross-project governance, or broaden Phase 4ad Rules A / B / C beyond prospective analysis-time scope. **Phase 4ae primary recommendation: remain paused.** **No successor phase has started.** **No Phase 4af / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
 
+Phase 4af is the **Alt-Symbol Regime-Continuity and Directional-Persistence Feasibility Memo** (analysis-and-docs only). Phase 4af implemented `scripts/phase4af_alt_symbol_regime_persistence.py` (standalone analysis script; reads existing local Parquet only; no network I/O; no API calls; no `prometheus.runtime/execution/persistence` imports; ruff clean; py compile clean) and computed descriptive regime-continuity and directional-persistence metrics for the Phase 4ac core symbol set BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT at intervals 15m / 30m / 1h / 4h, under Phase 4ad Rule B1 (common post-gap start at 2022-04-03 00:00 UTC; end 2026-04-30 23:59:59 UTC). Phase 4af processed 20 (symbol, interval) cells with 0 omitted datasets and 0 missing bars in span. Phase 4af used existing committed manifests and existing local normalized data; did not acquire data, did not modify data, did not create or modify any manifest, did not flip any `research_eligible` flag, did not modify Phase 4ac manifests, did not use mark-price datasets (Phase 4ad Rule A deferred), did not use metrics / OI, did not use aggTrades / tick / order-book, and did not use funding history. **Phase 4af main descriptive findings:** trend-state self-transition probabilities are uniformly very high but **uniform across symbols** (`P(UP self)` 0.919–0.940; `P(DOWN self)` 0.923–0.940 across all 20 cells) — no differentiating cross-symbol edge; EMA-slope self-transition probabilities are uniformly high (0.94–0.96, both directions) — no differentiating edge; **post-expansion same-direction follow-through is at or below 0.50 across all 80 (symbol, interval, N ∈ {1, 2, 4, 8}) cells** — no same-direction substrate bias on any cell; bar-level `frac_sign_repeats_next_1` is consistently slightly below 0.50 and lag-1 return autocorrelation is near zero on every cell — no directional-persistence advantage; volatility-regime self-transition probabilities are uniformly high (0.91–0.94) but high-vol regime overlap is roughly state-agnostic in direction; cost-adjusted absolute-movement frequencies (>16 bps over 4 bars) range 0.58 (BTC 15m) to 0.95 (SOL 4h) and reproduce the Phase 4ae cost-cushion ranking SOL > ADA > XRP > ETH > BTC at coarser intervals, **but UP-state and DOWN-state conditional fractions are within ±2 percentage points of unconditional** — trend conditioning provides no cost-adjusted directional advantage. **Phase 4af did NOT** acquire data, modify data, create or modify manifests, run any backtest, run any strategy diagnostic, rerun Q1–Q7, compute strategy PnL or entry/exit returns, optimize parameters, select thresholds for a future strategy, create a strategy candidate / hypothesis-spec memo / strategy-spec memo / backtest-plan memo, modify `src/prometheus/`, tests, or any existing script, create v003, broaden Phase 4ac results into binding cross-project governance, broaden Phase 4ad Rules beyond prospective analysis-time scope, broaden Phase 4ae findings beyond descriptive substrate-feasibility evidence, revise any retained verdict, change any project lock, amend any specialist governance file (beyond the narrow `current-project-state.md` update), adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as binding governance, or authorize Phase 4ag. **Phase 4af preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4af adds `scripts/phase4af_alt_symbol_regime_persistence.py`, `docs/00-meta/implementation-reports/2026-05-04_phase-4af_alt-symbol-regime-continuity-persistence.md`, and `docs/00-meta/implementation-reports/2026-05-04_phase-4af_closeout.md`; local analysis outputs under gitignored `data/research/phase4af/` are NOT committed. **Phase 4af recommendation:** Option A primary — remain paused (post-expansion same-direction follow-through ≤ 0.50 universally; bar-level sign persistence near zero universally; trend-state and slope self-transition probabilities high but uniform across symbols; volatility regime persistent but state-agnostic; cost-adjusted absolute movement frequent but direction-free; substrate persistence per se does not constitute a mechanism); Option B conditional secondary — future narrower follow-up feasibility memo (only if separately authorized; framed as descriptive feasibility, not strategy discovery; not started by Phase 4af). **Phase 4af explicitly does NOT recommend a fresh-hypothesis discovery memo at this time.** NOT recommended: Option C fresh-hypothesis discovery memo immediately; Option D mark-price stop-domain feasibility under Phase 4ad Rule A immediately. FORBIDDEN: paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4ag / Phase 5 / any successor phase remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4af is the Alt-Symbol Regime-Continuity and Directional-Persistence Feasibility Memo (analysis-and-docs only).
+Phase 4af is on branch phase-4af/alt-symbol-regime-continuity-persistence (not yet merged into main).
+Phase 4af implemented scripts/phase4af_alt_symbol_regime_persistence.py (standalone analysis script; reads existing local Parquet only; no network I/O; no API calls; no prometheus.runtime/execution/persistence imports; ruff clean; py compile clean).
+Phase 4af computed descriptive regime-continuity and directional-persistence metrics under Phase 4ad Rule B1 (common post-gap start at 2022-04-03 00:00 UTC).
+Phase 4af core symbol set:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- XRPUSDT
+- ADAUSDT
+Phase 4af intervals analyzed:
+- 15m
+- 30m
+- 1h
+- 4h
+Phase 4af analysis window:
+- 2022-04-03 00:00 UTC through 2026-04-30 23:59:59 UTC
+Phase 4af computed:
+- 20 symbol × interval cells;
+- 0 omitted datasets;
+- 0 missing bars in span.
+Phase 4af did NOT use mark-price datasets (Phase 4ad Rule A deferred per brief recommendation).
+Phase 4af did NOT use metrics / OI.
+Phase 4af did NOT use aggTrades / tick / order-book data.
+Phase 4af did NOT use funding history.
+Phase 4af descriptive findings (regime-continuity / persistence evidence only):
+- trend-state self-transition probabilities are uniformly very high but uniform across symbols (P(UP self) range 0.919–0.940; P(DOWN self) range 0.923–0.940 across all 20 cells); no differentiating cross-symbol trend-continuity edge;
+- EMA-slope self-transition probabilities are uniformly very high (range 0.94–0.96, both directions); no differentiating edge;
+- post-expansion same-direction follow-through is at or below 0.50 across all 80 (symbol, interval, N ∈ {1, 2, 4, 8}) cells; no same-direction substrate bias on any cell;
+- bar-level frac_sign_repeats_next_1 is consistently slightly below 0.50 and lag-1 return autocorrelation is near zero on every cell; no directional-persistence advantage;
+- volatility-regime self-transition probabilities are uniformly high (0.91–0.94); high-vol regime overlap is roughly state-agnostic in direction;
+- cost-adjusted absolute-movement frequencies (>16 bps over 4 bars) range 0.58 (BTC 15m) to 0.95 (SOL 4h) and reproduce the Phase 4ae cost-cushion ranking SOL > ADA > XRP > ETH > BTC at coarser intervals;
+- but UP-state and DOWN-state conditional fractions are within ±2 percentage points of unconditional; trend conditioning provides no cost-adjusted directional advantage.
+Phase 4af did NOT:
+- acquire data;
+- download data;
+- call data.binance.vision;
+- call Binance APIs;
+- call any authenticated REST endpoint;
+- call any private endpoint;
+- call any public endpoint from code;
+- consult user stream / WebSocket / listenKey lifecycle;
+- use credentials or .env;
+- enable network I/O;
+- modify any raw or normalized data;
+- create any new manifest;
+- modify any existing manifest;
+- create v003 or any other dataset version;
+- flip any Phase 4ac research_eligible flag;
+- modify Phase 4ac manifests;
+- run any backtest;
+- run any strategy diagnostic;
+- rerun Q1–Q7;
+- compute strategy PnL;
+- compute entry / exit strategy returns;
+- optimize parameters;
+- select thresholds for a future strategy;
+- create a strategy candidate;
+- create a hypothesis-spec memo;
+- create a strategy-spec memo;
+- create a backtest-plan memo;
+- modify src/prometheus/, tests, or existing scripts;
+- create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid;
+- amend any specialist governance file (beyond the narrow current-project-state update);
+- adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as binding governance;
+- broaden Phase 4ac results into binding cross-project governance;
+- broaden Phase 4ad Rules A / B / C beyond their prospective analysis-time scope;
+- broaden Phase 4ae findings beyond descriptive substrate-feasibility evidence;
+- authorize Phase 4ag / Phase 5 / Phase 4 canonical / any successor phase;
+- authorize paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials.
+Phase 4af preserved every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread CLOSED operationally;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 project-level locks (0.25% risk; 2× leverage; one position max; mark-price stops);
+- Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w governance.
+Phase 4z recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4af.
+Phase 4aa admissibility framework remains recommendation only and was NOT adopted as binding governance by Phase 4af.
+Phase 4ab recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4af.
+Phase 4ac results remain data / integrity evidence only and were NOT broadened beyond data / integrity evidence by Phase 4af.
+Phase 4ad Rules A / B / C remain prospective future-use scope rules only; Phase 4af used Rule B1 verbatim as default cross-symbol scope; Rule A was NOT invoked (mark-price deferred); Rule C-style PASS-only cells included alongside Rule B1-governed cells. No flag flipped. No manifest modified. Rules NOT broadened beyond prospective scope.
+Phase 4ae findings remain descriptive substrate-feasibility evidence only and were NOT converted into strategy selection by Phase 4af.
+Phase 4af added:
+- scripts/phase4af_alt_symbol_regime_persistence.py;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4af_alt-symbol-regime-continuity-persistence.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4af_closeout.md.
+Local Phase 4af analysis outputs under data/research/phase4af/ are gitignored and were NOT committed.
+Phase 4af recommendation:
+- Option A primary: remain paused (post-expansion same-direction follow-through ≤ 0.50 universally; bar-level sign persistence near zero universally; trend-state / slope / vol-regime self-transition probabilities high but uniform; trend conditioning provides no cost-adjusted directional advantage; substrate persistence per se is not a mechanism);
+- Option B conditional secondary: future narrower follow-up feasibility memo (only if separately authorized; framed as descriptive feasibility, not strategy discovery; not started by Phase 4af).
+NOT recommended: Option C fresh-hypothesis discovery memo immediately; Option D mark-price stop-domain feasibility under Phase 4ad Rule A immediately.
+FORBIDDEN: paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials.
+No retained verdicts were revised.
+No project locks changed.
+No new strategy / code / data / manifests / live path was started.
+Phase 4 (canonical) remains unauthorized.
+Phase 4ag / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Phase 4ae context (preserved for historical reference):
 
 ```text
 Phase 4ae merged into main (Alt-Symbol Substrate-Feasibility Analysis Memo, analysis-and-docs only).
