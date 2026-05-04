@@ -161,7 +161,122 @@ Phase 4ac is the **Alt-Symbol Public Data Acquisition and Integrity Validation**
 
 Phase 4ad is the **Alt-Symbol Gap-Governance and Scope-Revision Memo** (docs-only). Phase 4ad resolved how future alt-symbol substrate-feasibility work may treat Phase 4ac gap / invalid-window findings before any substrate-feasibility analysis, strategy discovery, backtest, diagnostics, or strategy work is allowed. Phase 4ad addressed: (i) BTC / ETH / SOL / XRP / ADA mark-price kline upstream invalid windows (Phase 3r §8 precedent); (ii) SOL / XRP early-2022 trade-price kline gaps at 2022-02-25..2022-03-01 and 2022-03-31..2022-04-03; (iii) PASS-only subset limitations for the 9 Phase 4ac research-eligible datasets; (iv) recommended scope for any future Phase 4ae substrate-feasibility analysis memo. **Phase 4ad is text-only.** Phase 4ad defined three Phase 4ad-scope future-use rules (applying prospectively to future Phase 4ae-equivalent substrate-feasibility analysis only): **Rule A — Mark-Price Invalid-Window Exclusion Rule** (per-window exclusion test for any bar / trade / candidate event / diagnostic window / stop-domain window / analysis window intersecting a known mark-price upstream gap; conclusions labeled "conditional on valid mark-price coverage"; analogous to Phase 3r §8 precedent); **Rule B — SOL/XRP Early-2022 Kline Gap Scope Rule** with three policy options: B1 common post-gap start at 2022-04-03 UTC (recommended default for cross-symbol fairness), B2 full-history with invalid-window exclusion (allowed for descriptive analysis with reported exclusions), B3 PASS-only subset (most-conservative fallback); **Rule C — PASS-Only Subset Rule** for conservative fallback restricted to the 9 Phase 4ac PASS datasets. **Phase 4ad did NOT** acquire data, modify data, create or modify manifests, run backtests, run diagnostics, rerun Q1–Q7, run substrate-feasibility calculations, create a strategy candidate, create a hypothesis-spec memo / strategy-spec memo / backtest-plan memo, modify `src/prometheus/`, tests, or scripts, create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid, revise any retained verdict, change any project lock, amend any specialist governance file (beyond the narrow `current-project-state.md` update), adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as broad binding governance, broaden Phase 4ac results beyond data / integrity evidence, or authorize Phase 4ae. **Phase 4ad does NOT modify Phase 4ac manifests, does NOT flip any `research_eligible` flag, does NOT revise any retained verdict, does NOT change any project lock, and does NOT broaden Phase 4ac results into binding cross-project governance. Phase 4ad Rules A / B / C are narrowly-scoped future-use rules for prospective analysis-time use of Phase 4ac data only.** **Phase 4ad preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4ad adds `docs/00-meta/implementation-reports/2026-05-04_phase-4ad_alt-symbol-gap-governance-scope-revision.md` and `docs/00-meta/implementation-reports/2026-05-04_phase-4ad_closeout.md`. **Phase 4ad recommendation:** Option B primary — merge Phase 4ad into main, then remain paused unless the operator separately authorizes a Phase 4ae substrate-feasibility analysis memo; Option A conditional secondary — remain paused without merging Phase 4ad. NOT recommended: data re-acquisition (premature; bounded gaps are well-handled by Rules A / B); direct strategy discovery (substrate evidence still being established). FORBIDDEN: old-strategy alt-symbol rerun; backtest / diagnostics / Q1–Q7 rerun at this boundary; paper / shadow / live / exchange-write. **Phase 4 canonical remains unauthorized. Phase 4ae / Phase 5 / any successor phase remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ad has now been merged to main.** Phase 4ad merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ad_merge-closeout.md`. Phase 4ad remains docs-only; Phase 4ad resolved future-use governance / scope treatment for Phase 4ac gap findings; defined three Phase 4ad-scope future-use rules (Rule A — Mark-Price Invalid-Window Exclusion Rule; Rule B — SOL/XRP Early-2022 Kline Gap Scope Rule with B1 / B2 / B3 policy options; Rule C — PASS-Only Subset Rule); Rule B Policy B1 common post-gap start at `2022-04-03 00:00 UTC` is the recommended default for future cross-symbol substrate-feasibility analysis; did NOT acquire data, modify data, create or modify manifests, run backtests or diagnostics, rerun Q1–Q7, run substrate-feasibility calculations, create a strategy candidate, create a hypothesis-spec memo / strategy-spec memo / backtest-plan memo, rescue prior strategies, revise retained verdicts, change project locks, adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as broad binding governance, modify Phase 4ac manifests, or flip any `research_eligible` flag. **Phase 4ad future-use rules apply prospectively to future Phase 4ae-equivalent substrate-feasibility analysis only.** **No successor phase has started.** **No Phase 4ae / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
 
+Phase 4ae is the **Alt-Symbol Substrate-Feasibility Analysis Memo** (analysis-and-docs only). Phase 4ae implemented `scripts/phase4ae_alt_symbol_substrate_feasibility.py` (standalone analysis script; reads existing local Parquet only; no network I/O; no API calls; no `prometheus.runtime/execution/persistence` imports; ruff clean) and computed descriptive substrate-feasibility metrics for the Phase 4ac core symbol set BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT at intervals 15m / 30m / 1h / 4h, under Phase 4ad Rule B1 (common post-gap start at 2022-04-03 00:00 UTC). The analysis covered 20 (symbol, interval) cells with 0 omitted and 0 missing bars in span; SOL/XRP cells used Phase 4ad Rule B1 governance scope without flipping any `research_eligible` flag; mark-price (Phase 4ad Rule A) was deferred per brief recommendation; metrics / OI and aggTrades / tick / order-book remained out of scope. **Phase 4ae main substrate-feasibility findings (descriptive only):** cost-cushion ranking is consistent across all four intervals — **SOL > ADA > XRP > ETH > BTC** (most cushion to least; round-trip 16 bps over median ATR(20) ranges 0.060–0.511 across cells); BTC is the most cleanly trending substrate (≈ 50–52% above EMA(50) and 50–52% EMA(50) > EMA(200) at every interval); SOL has the widest funding distribution (abs p95 ≈ 4.5 bps; ≈ 2.5× wider than BTC's 1.6 bps; SOL funding flips sign more often); BTC's median kline-notional turnover dwarfs the alts by 1–2 orders of magnitude with ADA the thinnest by this proxy (≈ 0.025× BTC); wick-fraction differences across symbols are small at the median; absolute-return-expansion frequency is roughly uniform across symbols. **Phase 4ae did NOT** acquire data, modify data, create or modify manifests, run any backtest, run any strategy diagnostic, rerun Q1–Q7, compute strategy PnL or entry/exit returns, optimize parameters, select thresholds for a future strategy, create a strategy candidate / hypothesis-spec memo / strategy-spec memo / backtest-plan memo, modify `src/prometheus/`, tests, or any existing script, create v003, flip any `research_eligible` flag, modify Phase 4ac manifests, broaden Phase 4ac results into binding cross-project governance, broaden Phase 4ad Rules beyond their prospective analysis-time scope, revise any retained verdict, change any project lock, amend any specialist governance file (beyond the narrow `current-project-state.md` update), adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as binding governance, or authorize Phase 4af. **Phase 4ae preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4ae adds `scripts/phase4ae_alt_symbol_substrate_feasibility.py`, `docs/00-meta/implementation-reports/2026-05-04_phase-4ae_alt-symbol-substrate-feasibility-analysis.md`, and `docs/00-meta/implementation-reports/2026-05-04_phase-4ae_closeout.md`; local analysis outputs under gitignored `data/research/phase4ae/` are NOT committed. **Phase 4ae recommendation:** Option A primary — remain paused (the Phase 4ae descriptive metrics are recorded; no strategy candidate is implied; any further forward motion is operator-driven); Option C conditional secondary — future narrower follow-up feasibility memo (only if separately authorized; NOT recommended over remain-paused). NOT recommended: Option B fresh-hypothesis discovery memo immediately (premature; substrate evidence does not by itself justify a candidate; the project's six-failure topology advises against substrate-driven candidate selection). FORBIDDEN: old-strategy alt-symbol rerun; direct strategy-spec memo on alt symbols; backtest / paper / shadow / live; mark-price feasibility memo without Phase 4ad Rule A predeclaration. **Phase 4 canonical remains unauthorized. Phase 4af / Phase 5 / any successor phase remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ae has now been merged to main.** Phase 4ae merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ae_merge-closeout.md`. Phase 4ae remains analysis-and-docs only; computed descriptive substrate-feasibility metrics for BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT at intervals 15m / 30m / 1h / 4h under Phase 4ad Rule B1 common post-gap scope (2022-04-03 00:00 UTC through 2026-04-30 23:59:59 UTC); 20 (symbol, interval) cells with 0 omitted datasets and 0 missing bars in span; mark-price datasets NOT used (Phase 4ad Rule A deferred); metrics / OI NOT used; aggTrades / tick / order-book NOT used. **Phase 4ae descriptive findings:** cost-cushion ranking SOL > ADA > XRP > ETH > BTC; BTC tightest cost cushion but cleanest trend / deepest notional proxy / most stable funding; SOL best cost cushion but widest funding distribution and more frequent funding sign flips; ADA clean coverage and good cost cushion but lower notional proxy and weaker HTF trend dominance; XRP and ETH intermediate; no single symbol dominated all dimensions. **Phase 4ae did NOT** acquire data, modify data, create or modify manifests, run backtests or strategy diagnostics, rerun Q1–Q7, compute strategy PnL or entry/exit returns, optimize parameters, select thresholds for a strategy, create a strategy candidate / hypothesis-spec memo / strategy-spec memo / backtest-plan memo, rescue prior strategies, revise retained verdicts, change project locks, adopt Phase 4z / Phase 4aa / Phase 4ab recommendations as governance, broaden Phase 4ac results into binding cross-project governance, or broaden Phase 4ad Rules A / B / C beyond prospective analysis-time scope. **Phase 4ae primary recommendation: remain paused.** **No successor phase has started.** **No Phase 4af / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
+
 Current phase:
+
+```text
+Phase 4ae merged into main (Alt-Symbol Substrate-Feasibility Analysis Memo, analysis-and-docs only).
+Phase 4ae was analysis-and-docs only.
+Phase 4ae implemented scripts/phase4ae_alt_symbol_substrate_feasibility.py (standalone analysis script; reads existing local Parquet only; no network I/O; no API calls; no prometheus.runtime/execution/persistence imports; ruff clean; py compile clean).
+Phase 4ae computed descriptive substrate-feasibility metrics under Phase 4ad Rule B1 (common post-gap start at 2022-04-03 00:00 UTC).
+Phase 4ae core symbol set:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- XRPUSDT
+- ADAUSDT
+Phase 4ae intervals analyzed:
+- 15m
+- 30m
+- 1h
+- 4h
+Phase 4ae analysis window:
+- 2022-04-03 00:00 UTC through 2026-04-30 23:59:59 UTC
+Phase 4ae computed:
+- 20 symbol × interval cells;
+- 0 omitted datasets;
+- 0 missing bars in span.
+Phase 4ae did NOT use mark-price datasets (Phase 4ad Rule A deferred per brief recommendation).
+Phase 4ae did NOT use metrics / OI.
+Phase 4ae did NOT use aggTrades / tick / order-book data.
+Phase 4ae descriptive findings (substrate-feasibility evidence only):
+- cost-cushion ranking is consistent across all four intervals: SOL > ADA > XRP > ETH > BTC (most cushion to least; round-trip 16 bps over median ATR(20) ranges 0.060–0.511 across cells);
+- BTC has the tightest cost cushion at every interval but is the most cleanly trending substrate (≈ 50–52% above EMA(50) and EMA(50) > EMA(200) at every interval);
+- BTC has the deepest kline-notional proxy (≈ 1–2 orders of magnitude greater than alts) and the most stable funding profile (abs p95 = 1.578 bps);
+- SOL has the strongest cost cushion but the widest funding distribution (abs p95 = 4.507 bps; ≈ 2.5× wider than BTC) and more frequent funding sign flips (66% positive vs BTC's 86% positive);
+- ADA has clean kline coverage (PASS at all four intervals) and good cost cushion but lower kline-notional proxy (≈ 0.025× BTC) and weaker HTF trend dominance (4h: 41% above EMA(50); 34% EMA(50) > EMA(200));
+- XRP and ETH are intermediate across most dimensions;
+- no single symbol dominates on every dimension;
+- wick-fraction differences across symbols are small at the median;
+- absolute-return-expansion frequency is roughly uniform across symbols.
+Phase 4ae did NOT:
+- acquire data;
+- download data;
+- call data.binance.vision;
+- call Binance APIs;
+- call any authenticated REST endpoint;
+- call any private endpoint;
+- call any public endpoint from code;
+- consult user stream / WebSocket / listenKey lifecycle;
+- use credentials or .env;
+- enable network I/O;
+- modify any raw or normalized data;
+- create any new manifest;
+- modify any existing manifest;
+- create v003 or any other dataset version;
+- flip any Phase 4ac research_eligible flag;
+- modify Phase 4ac manifests;
+- run any backtest;
+- run any strategy diagnostic;
+- rerun Q1–Q7;
+- compute strategy PnL;
+- compute entry / exit strategy returns;
+- optimize parameters;
+- select thresholds for a future strategy;
+- create a strategy candidate;
+- create a hypothesis-spec memo;
+- create a strategy-spec memo;
+- create a backtest-plan memo;
+- modify src/prometheus/, tests, or existing scripts;
+- create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid;
+- amend any specialist governance file (beyond the narrow current-project-state update);
+- adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as binding governance;
+- broaden Phase 4ac results into binding cross-project governance;
+- broaden Phase 4ad Rules A / B / C beyond their prospective analysis-time scope;
+- authorize Phase 4af / Phase 5 / Phase 4 canonical / any successor phase;
+- authorize paper / shadow / live / exchange-write / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials.
+Phase 4ae preserved every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread CLOSED operationally;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 project-level locks (0.25% risk; 2× leverage; one position max; mark-price stops);
+- Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w governance.
+Phase 4z recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4ae.
+Phase 4aa admissibility framework remains recommendation only and was NOT adopted as binding governance by Phase 4ae.
+Phase 4ab recommendations remain recommendations only and were NOT adopted as binding governance by Phase 4ae.
+Phase 4ac results remain data / integrity evidence only and were NOT broadened beyond data / integrity evidence by Phase 4ae.
+Phase 4ad Rules A / B / C remain prospective future-use scope rules only; Phase 4ae used Rule B1 verbatim as default cross-symbol scope; Rule A was NOT invoked (mark-price deferred); Rule C-style PASS-only cells included alongside Rule B1-governed cells. No flag flipped. No manifest modified. Rules NOT broadened beyond prospective scope.
+Phase 4ae added:
+- scripts/phase4ae_alt_symbol_substrate_feasibility.py;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ae_alt-symbol-substrate-feasibility-analysis.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ae_closeout.md;
+- docs/00-meta/implementation-reports/2026-05-04_phase-4ae_merge-closeout.md (at merge).
+Local Phase 4ae analysis outputs under data/research/phase4ae/ are gitignored and were NOT committed.
+Phase 4ae recommendation:
+- Option A primary: remain paused (the Phase 4ae descriptive metrics are recorded; no strategy candidate is implied; any further forward motion is operator-driven);
+- Option C conditional secondary: future narrower follow-up feasibility memo (only if separately authorized; NOT recommended over remain-paused).
+NOT recommended: Option B fresh-hypothesis discovery memo immediately (premature; substrate evidence does not by itself justify a candidate; the project's six-failure topology advises against substrate-driven candidate selection).
+FORBIDDEN: old-strategy alt-symbol rerun; direct strategy-spec memo on alt symbols; backtest / paper / shadow / live; mark-price feasibility memo without Phase 4ad Rule A predeclaration.
+No retained verdicts were revised.
+No project locks changed.
+No new strategy / code / data / manifests / live path was started.
+Phase 4 (canonical) remains unauthorized.
+Phase 4af / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Phase 4ad context (preserved for historical reference):
 
 ```text
 Phase 4ad merged into main (Alt-Symbol Gap-Governance and Scope-Revision Memo, docs-only).
@@ -1870,9 +1985,9 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-Merge title:                        docs(phase-4ad): merge alt-symbol gap governance scope memo
-Phase 4ad commit:                   7b4a0d9f949692cefe36cbd757ef8414166d6071
-Phase 4ad merge commit:             <recorded after the merge commit>
+Merge title:                        research(phase-4ae): merge alt-symbol substrate-feasibility analysis
+Phase 4ae commit:                   3a8bf4acdbd1d26fc520dfb649cb34f4be38c8a2
+Phase 4ae merge commit:             <recorded after the merge commit>
 main HEAD:                          <recorded after the merge commit>
 ```
 
