@@ -181,7 +181,159 @@ Phase 4am is the **Exit Architecture Backtest-Logic Audit** (narrow audit-only s
 
 Phase 4an is the **Historical Trade-Population Exit-Path Inventory Memo** (docs-only static inventory). **Phase 4an is text-only.** Phase 4an performed a static repository inspection (no script execution; no backtest; no MFE/MAE computation; no data acquisition; no data, manifest, source, test, script, retained-verdict, or project-lock modification) of which historical Prometheus strategy/research populations have sufficient artefacts to support possible future MFE/MAE, realized-R, exit-path, stop-path, take-profit, and winner/loser path forensic analysis. Populations inventoried: H0, R3, R1a, R1b-narrow, R2, F1, D1-A, V2, G1, C1, and the 5m research thread (closed historical context only). **Headline result.** V1-arc populations (H0, R3, R1a, R1b-narrow, R2) have locally-present `trade_log_v1` ledgers (gitignored under `data/derived/backtests/`) with `mfe_r` / `mae_r` already populated from 15m bar excursion via `src/prometheus/strategy/v1_breakout/management.py::TradeManagement._update_excursions`, plus all entry / exit prices, timestamps, fees, slippage, funding, gross / net PnL, realized R, initial stop, and exit-reason fields — classified `RECONSTRUCTABLE_WITH_EXISTING_ARTIFACTS`. F1 (Phase 3d-B2) and D1-A (Phase 3j) have `trade_log_v1` ledgers with the same schema and all realized-R / cost / timing fields populated, BUT `mfe_r` and `mae_r` are uniformly `0.0` because the F1 and D1-A strategy modules contain no excursion-tracking code (engine line 1139–1140 returns `0.0` defaults when `mgmt is None`); MFE/MAE on F1 / D1-A is therefore `RECONSTRUCTABLE_ONLY_WITH_RERUN` (alternative offline-15m-join route via existing v002 BTCUSDT / ETHUSDT 15m bars over each trade's `entry_fill_time_ms` → `exit_fill_time_ms` window is feasible but not authorized). V2 (Phase 4l), G1 (Phase 4r), C1 (Phase 4x) standalone scripts emit aggregate variant-level CSVs only under `data/research/phase4l/` / `phase4r/` / `phase4x/`; no per-trade ledgers are persisted. V2 in-memory tracks `mfe_R` (using 30m bar high/low at `phase4l_v2_backtest.py:1224–1226`) but does not persist it per-trade and does not track MAE; G1 and C1 do not track MFE or MAE in memory at all. Per-trade forensics on V2 / G1 / C1 is `RECONSTRUCTABLE_ONLY_WITH_RERUN` and is governance-bounded by Phase 4z / Phase 4m / Phase 4s / Phase 4y forbidden-rescue lists (no V2-prime / G1-prime / C1-prime / V2-narrow / V2-relaxed / G1-narrow / G1-extension / C1-narrow / C1-extension / cross-strategy hybrid / classifier relaxation / threshold tuning from Phase 4l / Phase 4r / Phase 4x forensic numbers). The 5m research thread is `CLOSED_CONTEXT_ONLY` per Phase 3t and is NOT reopened by Phase 4an. **Forbidden rescue-risk profile**: H0 / R3 MEDIUM (framework-anchor and baseline-of-record reframings); R1a / R1b-narrow HIGH (per-bar bolt-on filter rescue); R2 / F1 / D1-A / V2 / G1 / C1 / 5m thread CRITICAL (each carries a population-specific forbidden-rescue list, including no §11.6 relaxation, no R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime, no D1-B / V1-D1 / F1-D1 / any cross-strategy hybrid, no Phase 3s Q6 D1-A finding as rule input, no reopening of the 5m strategy thread, no Q1–Q7 outputs as rule-input candidates). **Cost-cell coverage**: V1-arc / F1 / D1-A populations have per-cost-cell variants on disk (LOW / MEDIUM / HIGH) plus trade-price stop-domain variants where applicable; V2 / G1 / C1 cost-cell evaluation exists at variant aggregate level only. **Lower-timeframe sufficiency**: 15m / 30m / 1h / 4h is sufficient for first-pass forensics on V1-arc and (via offline reconstruction or rerun) on F1 / D1-A; 5m would be optional only if intra-15m / intra-30m sequencing ambiguity is exposed in a specific forensic question (Phase 4al §14 hierarchy); 1m would only escalate if 5m exceeds the Phase 4al §14.C >10% / >20% ambiguity bands; aggTrades / tick remains final escalation. **Mark-price path** reconstruction is BLOCKED under §1.7.3 stop-trigger-domain governance and Phase 3v §8; mark-price stop-domain forensics (Phase 3s Q6 D1-A finding) requires Phase 3r §8 mark-price-gap exclusion governance and is NOT authorized by Phase 4an. **Open questions** preserved: OQ-A whether offline 15m-join MFE / MAE recovery on F1 / D1-A retains useful resolution; OQ-B whether V2 / G1 / C1 rerun-based per-trade forensics can satisfy M0 post-null cooldown rule; OQ-C whether cross-population realized-R comparisons require a Phase 4am §11.A.10-driven methodology-harmonization spec first; OQ-D minimum-sufficient predeclared-methodology template; OQ-E forensic-measurement vs reopened-thread boundary for 5m. None answered by Phase 4an. **Allowed future forensic uses (only if separately authorized)**: descriptive MFE / MAE / time-to-event / target-before-stop / realized-R / cost-in-R distributions on V1-arc populations under predeclared methodology with explicit no-rescue and no-tuning disclaim; future docs-only methodology-harmonization memo (resolves OQ-C / OQ-D before any computation; does NOT itself authorize computation); future full exit-path forensic plan only after harmonization, restricted to V1-arc, with Phase 4al §13 boundaries. **Forbidden future uses**: any R3-prime / R1a-prime / R1b-narrow-prime / R2-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid; any conversion of forensic numbers into parameter-selection inputs; any verdict revision; any project-lock revision; any M0-governance amendment derived from forensic findings; any framework-anchor revision; any baseline-of-record revision; any framework promotion of a retained-evidence population; any conversion of MFE / MAE / time-to-event findings into a strategy candidate without first satisfying the Phase 4m 18-requirement fresh-hypothesis validity gate AND the Phase 4ak twelve-clause M0 gate AND the Phase 4al §9 refined no-rescue rule; any reopening of the 5m research thread; any acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h data without separately authorized data-requirements memo; any paper / shadow / live / exchange-write / production-key creation / MCP / Graphify / `.mcp.json` / credential work. **Phase 4an preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; round-trip = 16 bps slippage; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; M0 (Phase 4ak) twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule; Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved as documentation for future methodology-harmonization scoping. Phase 4an adds `docs/00-meta/implementation-reports/2026-05-06_phase-4an_historical-trade-population-exit-path-inventory.md`. Phase 4an modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the new memo file. **Phase 4an recommendation:** primary — remain paused; conditional secondary — narrower future docs-only methodology / artefact harmonization memo (acceptable if separately authorized; resolves OQ-C / OQ-D before any computation; NOT authorized by Phase 4an); conditional tertiary — future full exit-path forensic plan per Phase 4al §13 only after harmonization (acceptable if separately authorized; restricted to V1-arc; NOT authorized by Phase 4an); not recommended — starting forensic work without harmonization, treating Phase 4an artefact-availability findings as authorization to analyze, using forbidden-rescue-risk classifications as a population-ranking scheme; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection; M0-governance amendment from forensic findings; reopening 5m thread; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4ao / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick-data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4ao is the **Exit-Path Methodology / Artefact Harmonization Memo** (docs-only methodology / artefact harmonization). **Phase 4ao is text-only.** Phase 4ao defines how any future exit-path forensic phase would have to be specified before computation, derived from the Phase 4an inventory baseline (V1-arc `RECONSTRUCTABLE_WITH_EXISTING_ARTIFACTS`; F1 / D1-A `RECONSTRUCTABLE_ONLY_WITH_RERUN` for MFE/MAE; V2 / G1 / C1 `RECONSTRUCTABLE_ONLY_WITH_RERUN`; 5m thread `CLOSED_CONTEXT_ONLY`). Phase 4ao did NOT compute MFE / MAE, did NOT compute realized-R distributions, did NOT perform exit-path forensics, did NOT run any backtest or strategy / data-acquisition script, did NOT acquire data, did NOT modify data / manifests / scripts / source / tests / strategy parameters / thresholds / project locks / retained verdicts / M0 governance, and did NOT authorize any successor phase. **Headline harmonization conclusions.** (1) **Population scope for any future first-pass forensic phase** is V1-arc only, with R3 included as baseline-of-record for descriptive context and explicitly NOT as an optimization target (no R3-prime / R3 next-spec / R3 baseline-of-record revision); F1 / D1-A may be admissible later via a strict offline-15m-join Route B reconstruction under separate authorization (Route B preferred over Route A controlled-rerun on rescue-risk grounds because it does not modify or re-execute strategy code); V2 / G1 / C1 rerun-based per-trade forensics is conservatively classified as governance-risk-unresolved under the M0 post-null cooldown rule and is not recommended for first-pass forensics. (2) **MFE / MAE definition harmonization** is required to be 15m-bar-extreme-based for V1-arc and F1 / D1-A; V2 in-memory `mfe_R` is 30m-based and not persisted; G1 / C1 do not track MFE/MAE; 5m may be referenced as a measurement layer only when an ambiguity threshold is exposed (Phase 4al §14 hierarchy); 1m and tick / aggTrades remain final escalation and unauthorized. (3) **Realized-R / cost-field harmonization** must distinguish along seven axes (engine path; fee assumption — V1-arc/F1/D1-A 5 bps/side vs V2/G1/C1 4 bps/side; slippage cell — HIGH = 8 bps/side preserved verbatim per §11.6; funding handling — V2 right-inclusive, G1 strictly between, C1 excluded per Phase 4w; cost-cell label; stop-trigger-domain label; per-trade vs aggregate). The Phase 4am §11.A.10 V2 cost-application DOCUMENTATION_LIMITATION is preserved as methodology context. §11.6 is preserved verbatim; future fee / slippage / funding decomposition is descriptive only and must not change the locked project-level cost reference or revise historical results. (4) **Stop-trigger-domain governance (Phase 3v §8)** is binding: `trade_price_backtest`, `mark_price_runtime`, `mark_price_backtest_candidate` remain valid; `mixed_or_unknown` fails closed; mark-price path forensics for live-readiness remains BLOCKED under §1.7.3. (5) **5m boundary (Phase 3t closure)** is binding: existing 5m data may be referenced as a forensic measurement layer only under the conservative §13.3 criterion (predeclared bar-resolution-ambiguity question; no new 5m strategy or rule; no Q1–Q7 conversion to rule input; documented in predeclared methodology; separately authorized successor phase); Q1–Q7 outputs are not rule-input candidates; the 5m strategy thread is NOT reopened. (6) **Minimum predeclared-methodology template** for any future forensic computation phase is specified in §14 with 18 required headings (population(s) included; population(s) excluded; reason for inclusion; artefact source; field definitions; cost assumptions; stop-trigger-domain label; timeframe / data-resolution label; MFE/MAE definition; bar-ambiguity handling; lower-timeframe escalation rule; forbidden interpretations; allowed interpretations; no-rescue statement; verdict / lock preservation statement; outputs to produce; stop conditions; merge / closeout requirements). **Open question status**: OQ-A (offline 15m-join MFE/MAE recovery sufficiency) remains unresolved until a separately authorized computation phase; OQ-B (V2/G1/C1 rerun under M0) conservatively interpreted as governance-risk-unresolved; OQ-C (cross-population realized-R harmonization need) answered YES with seven-axis disclaim required; OQ-D (predeclared methodology template) specified per §14; OQ-E (5m forensic-measurement vs reopened-thread boundary) conservative criterion specified per §13.3. **Phase 4ao preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps per side preserved verbatim; round-trip = 16 bps slippage; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; M0 (Phase 4ak) twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule; Phase 4al §13 / §14 boundary preservation; Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved; Phase 4an inventory result preserved. Phase 4ao adds `docs/00-meta/implementation-reports/2026-05-06_phase-4ao_exit-path-methodology-artefact-harmonization.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4ao_closeout.md`. Phase 4ao modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4ao recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4ao) — future docs-only V1-arc-only exit-path forensic plan with R3 inclusion as baseline-of-record for descriptive context only (no R3 optimization / R3-prime / R3 rescue / baseline-of-record revision); conditional tertiary (NOT authorized) — future docs-only OQ-B resolution memo addressing V2/G1/C1 rerun admissibility under the M0 post-null cooldown rule; conditional quaternary (NOT authorized) — future docs-only F1 / D1-A Route B reconstruction methodology memo; not recommended — starting forensic computation without §14 predeclared methodology, treating Phase 4ao allowed-uses lists as authorization, using forbidden-rescue-risk classifications as a population-ranking scheme, combining secondary / tertiary / quaternary into a single successor; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection; M0 amendment from Phase 4ao reasoning; reopening the 5m thread; acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h data without separately authorized data-requirements memo; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4ap / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4ao drafted (Exit-Path Methodology / Artefact Harmonization Memo,
+docs-only methodology work).
+Phase 4ao is text-only.
+Phase 4ao defines how any future exit-path forensic phase would have to
+be specified before computation, derived from the Phase 4an inventory
+baseline. Phase 4ao does NOT compute, does NOT execute, does NOT
+acquire data, does NOT modify any artefact other than docs.
+Phase 4ao did NOT:
+- compute MFE / MAE / realized-R / time-to-event / target-before-stop /
+  stop-before-target / cost-in-R / fee-in-R / slippage-in-R /
+  funding-in-R distributions;
+- perform exit-path forensics;
+- run any backtest;
+- execute any historical strategy or research script;
+- run an offline 15m-join MFE/MAE reconstruction;
+- acquire any data (no 5m / 1m / aggTrades / tick / mark-price 30m / 4h);
+- modify any data file, manifest, source, test, or script;
+- modify any retained verdict;
+- modify any project lock;
+- modify any M0 governance text;
+- amend Phase 3t 5m closure;
+- amend Phase 3v §8 stop-trigger-domain governance;
+- amend Phase 3r §8 mark-price gap governance;
+- propose, name, or pre-design a new strategy or exit system;
+- rescue any rejected or retained-evidence candidate;
+- authorize any successor phase;
+- touch credentials / MCP / Graphify / `.mcp.json` / exchange-write.
+Phase 4ao defined six headline harmonization rules:
+1. Population scope = V1-arc only for any future first-pass forensics;
+   R3 may be included as baseline-of-record for descriptive context and
+   explicitly NOT as optimization target;
+   F1 / D1-A may later use Route B offline 15m-join (preferred over
+   Route A controlled-rerun on rescue-risk grounds);
+   V2 / G1 / C1 rerun-based per-trade forensics deferred as
+   governance-risk-unresolved under M0 post-null cooldown.
+2. MFE / MAE definition = 15m bar-extreme for V1-arc and F1 / D1-A;
+   V2 30m bar-extreme in-memory only; G1 / C1 not tracked;
+   5m measurement-layer escalation only when ambiguity threshold
+   exposed; 1m / aggTrades / tick remain unauthorized.
+3. Realized-R / cost-field harmonization across seven axes:
+   - engine path (V1-arc/F1/D1-A backtest engine vs V2/G1/C1
+     standalone-script);
+   - fee assumption (V1-arc/F1/D1-A 5 bps/side vs V2/G1/C1
+     4 bps/side; both research-convention; §11.6 LOCK is 8 bps
+     slippage/side);
+   - slippage cell (HIGH = 8 bps/side preserved verbatim per §11.6);
+   - funding handling (V2 right-inclusive, G1 strictly between,
+     C1 excluded per Phase 4w);
+   - cost-cell label;
+   - stop-trigger-domain label (Phase 3v §8);
+   - per-trade vs aggregate.
+4. Stop-trigger-domain (Phase 3v §8) preserved:
+   trade_price_backtest | mark_price_runtime |
+   mark_price_backtest_candidate; mixed_or_unknown fails closed;
+   mark-price path forensics BLOCKED for live-readiness.
+5. 5m boundary (Phase 3t closure) preserved:
+   measurement-layer use only under conservative §13.3 criterion;
+   forbidden — 5m strategy, Q1–Q7 rule extraction, lower-timeframe
+   rescue, new 5m diagnostic thread without separate authorization.
+6. Minimum predeclared-methodology template (§14) — 18 required
+   headings any successor computation phase must include before
+   computation begins.
+Open question status after Phase 4ao:
+- OQ-A: unresolved until authorized computation; Route B preferred
+  if ever authorized.
+- OQ-B: conservatively classified governance-risk-unresolved;
+  defer to future OQ-B-resolution memo (NOT authorized by Phase 4ao).
+- OQ-C: answered YES with seven-axis disclaim required.
+- OQ-D: specified per §14 (18 required headings).
+- OQ-E: conservative criterion specified per §13.3.
+Phase 4ao preserves every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side preserved; round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null cooldown +
+  cooled-down families list + memo template;
+- Phase 4al refined no-rescue rule;
+- Phase 4al §13 boundary specification;
+- Phase 4al §14 data-resolution hierarchy;
+- Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved;
+- Phase 4an inventory result preserved.
+Phase 4ao primary recommendation:
+- remain paused.
+Phase 4ao conditional secondary recommendation (NOT authorized by
+Phase 4ao):
+- future docs-only V1-arc-only exit-path forensic plan;
+- R3 included as baseline-of-record for descriptive context only;
+- explicitly NO R3 optimization, R3-prime, R3 rescue, or
+  baseline-of-record revision;
+- methodology must satisfy §14 template verbatim.
+Phase 4ao conditional tertiary recommendation (NOT authorized by
+Phase 4ao):
+- future docs-only OQ-B resolution memo addressing V2 / G1 / C1
+  rerun admissibility under M0 post-null cooldown rule.
+Phase 4ao conditional quaternary recommendation (NOT authorized by
+Phase 4ao):
+- future docs-only F1 / D1-A Route B reconstruction methodology memo
+  (offline 15m-join; standalone-script boundary; predeclared outputs).
+Phase 4ao NOT recommended:
+- starting forensic computation without §14 predeclared methodology;
+- treating Phase 4ao allowed-uses lists as authorization to compute;
+- using forbidden-rescue-risk classifications as a population-ranking
+  scheme;
+- combining secondary / tertiary / quaternary into a single successor.
+Phase 4ao FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime / R1b-narrow-prime /
+  R2-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow /
+  V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1
+  hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 /
+  F1-D1 / any cross-strategy hybrid);
+- M0 amendment derived from Phase 4ao reasoning;
+- reopening the 5m research thread;
+- acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h
+  data without separately authorized data-requirements memo;
+- paper / shadow / live-readiness / deployment / exchange-write /
+  production-key creation / authenticated APIs / private endpoints /
+  public-endpoint calls in code / user stream / WebSocket / MCP /
+  Graphify / .mcp.json / credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4ap / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys,
+authenticated APIs, private endpoints, public-endpoint calls in
+code, user stream, WebSocket, MCP, Graphify, .mcp.json,
+credentials, exchange-write, and 5m / 1m / aggTrades / tick /
+mark-price 30m / 4h data acquisition all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule remain
+binding prospective governance for any future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4an) is preserved by the Phase 4an narrative paragraph above.
+
+Earlier Phase 4an "Current phase:" block (preserved here for continuity; Phase 4an is no longer the current phase):
 
 ```text
 Phase 4an drafted (Historical Trade-Population Exit-Path Inventory Memo,
