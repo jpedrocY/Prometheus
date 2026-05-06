@@ -177,7 +177,146 @@ Phase 4ak is the **M0 Governance Adoption Phase** (docs-only). **Phase 4ak is te
 
 Phase 4al is the **Exit Architecture / Trade-Management M0 Admissibility Memo** (docs-only). **Phase 4al is text-only.** Phase 4al is the project's first M0-driven admissibility decision after the Phase 4ak adoption boundary. Phase 4al evaluated the candidate research lane "exit architecture / trade management / payoff-distribution shaping based on predeclared post-entry path behavior" against the binding twelve-clause M0 gate and post-null cooldown rule. **Verdict: M0 STATUS = CONDITIONAL / PARTIAL — admissible as a future descriptive forensic / backtest-logic-audit research lane, with strict boundaries; NOT admissible as a strategy lane, a parameter-optimization lane, a verdict-revision lane, or a paper / shadow / live-readiness lane.** The lane satisfies M0.1, M0.2, M0.5, M0.8, M0.9, M0.10, M0.11, and M0.12 on its theoretical face, and satisfies M0.3, M0.4, M0.6, and M0.7 only under explicit disclaim and predeclaration discipline (§9 / §10 / §11 / §13 of the Phase 4al main memo). The cumulative status is therefore CONDITIONAL / PARTIAL rather than unconditional PASS. Phase 4al **refines** the no-rescue rule (§9) by distinguishing **forbidden** activities (tune / optimize TP / SL / break-even / trailing / partial-exit / time-stop parameters on any rejected or retained-evidence candidate's trade population; retrofit exit rules to improve historical realized R; convert descriptive observations into strategy candidates without a fresh ex-ante hypothesis; revise verdicts; imply paper / shadow / live-readiness / exchange-write authorization) from **allowed** activities (predeclared exit-path forensic audit design; MFE / MAE / time-to-MFE / time-to-stop distributions; target-before-stop sequencing as descriptive frequency; realized-R-after-costs accounting; fee-in-R / slippage-in-R / funding-in-R decomposition; intrabar-ambiguity audit; backtest-logic audit) — both subject to §9.C predeclaration discipline. Phase 4al **defines** winner-anatomy boundaries (§10): allowed (path-behavior summaries; MFE / MAE / time-to-event distributions; target-before-stop sequencing; realized-R / cost-in-R decomposition; exit-sequencing ambiguity audit) versus forbidden (parameter selection after observing outcomes; conversion of observed historical rescue patterns into a new strategy without fresh ex-ante specification; verdict revision; paper / shadow / live-readiness implication; outcome-selected mining; selection-on-outcome reporting). Phase 4al **defines** backtest-logic audit admissibility scope (§11): in-scope subjects (fee handling; slippage handling; funding handling; stop / TP sequencing; mark-price stop domain; partial-exit / break-even / trailing / time-exit logic; realized-R-after-costs accounting; intrabar ambiguity); out-of-scope (modifying scripts; modifying locks; revising verdicts; optimizing parameters; running new backtests; touching credentials / MCP / exchange-write paths). Phase 4al **records** a future exit-path data-resolution recommendation (§14) for any future Phase 4am or later separately authorized analysis: 15m / 30m / 1h / 4h = signal / event context (already acquired); **5m = recommended first path-resolution layer for exit forensics**; 1m = escalation layer only if 5m ambiguity is too high; aggTrades / tick = final escalation. Operator guidance: do not jump directly to 1m data; treat 5m as the recommended first lower-timeframe path-resolution layer; treat 1m as escalation only if 5m leaves too much stop / TP sequencing ambiguity; **5m must be framed strictly as a forensic measurement layer, not as a reopened 5m strategy thread, entry timeframe, signal timeframe, or strategy lane**; the old 5m strategy thread remains operationally CLOSED per Phase 3t and is **not** reopened by Phase 4al. Phase 4al §14.C records an **ambiguity-rate concept** (descriptive heuristic; not gates) for any future analysis: < 2% trades ambiguous → 5m probably enough; 2%–10% → 5m usable with conservative (stop-first) assumptions; > 10% → consider 1m escalation; > 20% → 5m likely too coarse. Phase 4al §14.D records resolution coverage by question: MFE / MAE magnitude probably resolvable at 5m for first-pass; exact stop-before-target sequencing may still be ambiguous at 5m; mark-price stops require both trade-price candles (TP / favorable path) and mark-price candles (stop-trigger path), with Phase 3r §8 governance applying verbatim and mark-price stop-domain forensic work remaining **blocked** until separately authorized under §7.E of M0 and Phase 4ad Rule A predeclaration. **Phase 4al does NOT acquire 5m / 1m / aggTrades / tick data; does NOT authorize 5m / 1m / aggTrades / tick acquisition; does NOT reopen the 5m strategy thread.** Phase 4al **defines** the maximum allowable future Phase 4am scope (§13): "Exit-Path Forensic Analysis and Backtest-Logic Audit" — analysis-and-docs only, standalone-script mode, no `prometheus.runtime/execution/persistence` imports, no exchange adapters, no network I/O, no credentials, no Binance API; allowed scope = §9.B / §10.A / §11.A activities subject to predeclaration; forbidden scope = §9.A / §10.B / §11.B activities; required predeclaration content (12 items including audit scope, forensic scope, populations, descriptive variables, cost cells, sample-size floors, CRIT-A1..CRIT-B3 falsification criteria, forbidden-activity boundaries restated, mark-price scope, non-authorization clause); required reporting content (9 items including audit findings, forensic findings, cost-in-R reporting, M0.7 / M0.3 disclaims, explicit non-authorization, no-verdict-revision and no-rescue statements). **Phase 4al did NOT authorize Phase 4am.** **Phase 4am / Phase 5 / Phase 4 canonical / any successor phase remains unauthorized.** Phase 4al did NOT: acquire data; download data; call APIs / endpoints; consult `data.binance.vision`; modify raw / normalized data; create or modify any manifest; create v003 or any other dataset version; flip any `research_eligible` flag; run any analysis; run any backtest; run any backtest-logic audit; run any forensic analysis; run any strategy diagnostic; rerun Q1–Q7; compute MFE / MAE / time-to-MFE / time-to-stop / target-before-stop / realized-R-after-costs distributions; compute strategy PnL or entry / exit returns; create a cumulative equity curve or trade ledger; optimize parameters; select thresholds or symbols for a strategy; create a new strategy candidate; name a strategy candidate; create a fresh-hypothesis discovery memo; create a hypothesis-spec memo; create a strategy-spec memo; create a backtest-plan memo; modify `src/prometheus/`, tests, or any existing script; modify any backtest script (Phase 4l, Phase 4r, Phase 4x, or other); create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid; propose old-strategy alt-symbol reruns; propose multi-position portfolio trading; revise any retained verdict; change any project lock; relax §11.6, §1.7.3, Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, or Phase 4w; adopt the full Phase 4z 32-item framework as binding governance; adopt the Phase 4z M0–M7 redesign wholesale; adopt the Phase 4aa admissibility framework as binding governance; adopt the Phase 4ab recommendations as binding governance; broaden Phase 4ac / 4ad / 4ae / 4af / 4ag / 4ah / 4ai / 4aj findings beyond their prior scopes; broaden the Phase 4ak adoption beyond §5–§8 of the durable M0 document; reopen any cooled-down family; touch MCP / Graphify / `.mcp.json` / credentials; authorize paper / shadow / live-readiness / deployment / exchange-write / production keys / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket; or authorize 5m / 1m / aggTrades / tick-data acquisition. **Phase 4al preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; 5m thread OPERATIONALLY CLOSED per Phase 3t; §11.6 = 8 bps HIGH per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. M0 §5 / §6 / §7 / §8 of `docs/00-meta/m0-mechanism-admissibility-gate.md` (Phase 4ak adoption) preserved. Phase 4al adds `docs/00-meta/implementation-reports/2026-05-06_phase-4al_exit-architecture-trade-management-m0-admissibility.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4al_closeout.md`. Phase 4al modifies only `docs/00-meta/current-project-state.md` (this paragraph addition) beyond the two new memo files. **Phase 4al recommendation:** Option A primary — remain paused; Option B — merge to main, then stop (procedurally equivalent to Option A); Option D conditional secondary — narrower future Phase 4am restricted to the §11.A backtest-logic audit (yields documentation value unconditionally); Option C conditional tertiary — full §13 Phase 4am with audit and forensic scope. Option E NOT recommended (fresh-hypothesis discovery from exit-architecture observations); Options F / G / H FORBIDDEN (parameter tuning on rejected populations; verdict revision; paper / shadow / live-readiness / exchange-write). **Phase 4 canonical remains unauthorized. Phase 4am / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick-data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4am is the **Exit Architecture Backtest-Logic Audit** (narrow audit-only successor; Phase 4al §11.A scope; Option D). **Phase 4am is docs-only inspection of the existing Phase 4l / V2, Phase 4r / G1, and Phase 4x / C1 backtest scripts and reports against the eleven §11.A audit subjects.** Phase 4am did **not** create a helper script, did **not** modify any backtest script, did **not** modify any source / test / data / manifest, did **not** rerun any backtest, did **not** compute any forensic distribution (MFE / MAE / time-to-event), did **not** acquire any data, did **not** revise any verdict, and did **not** authorize any successor. **Aggregate audit result: DOCUMENTATION_LIMITATION.** Per-§11.A summary: §11.A.1 fee handling — PASS in all three scripts; §11.A.2 slippage handling — PASS in all three scripts (per-side cells {LOW=1, MEDIUM=4, HIGH=8} bps confirmed); §11.A.3 funding handling — V2 (Phase 4l) inclusion + sign convention PASS but right-boundary inclusivity is `(entry_ms, exit_ms]` (DEFECT_NON_MATERIAL: F-1; affects only events at exact boundary timestamps and is bounded in R impact); G1 (Phase 4r) PASS (strictly between, per Phase 4q spec); C1 (Phase 4x) PASS by exclusion (Phase 4w spec excludes funding from C1 first-spec); §11.A.4 stop / TP sequencing — PASS in all three scripts (stop > TP > time-stop precedence; same-bar stop-first conservative tie-break); §11.A.5 stop-trigger-domain governance — PASS behavioural in all three (all use kline `low`/`high` for stop-hit; trade-price domain), DOCUMENTATION_LIMITATION (F-3) on V2 / G1 missing the four governance-label fields (`stop_trigger_domain`, `break_even_rule`, `ema_slope_method`, `stagnation_window_role`) in `run_metadata.json`, while C1 records all four; §11.A.6 partial-exit logic — PASS (absent in all three; matches spec); §11.A.7 break-even logic — PASS behavioural (no break-even code in any script; matches `break_even_rule = disabled` for V2 / G1 / C1 first-specs), DOCUMENTATION_LIMITATION on V2 / G1 label recording (F-3); §11.A.8 trailing-exit logic — PASS (absent in all three); §11.A.9 time-exit logic — PASS in all three scripts (next-bar-open exit; close-of-current at end-of-data; precedence respected); §11.A.10 realized-R-after-costs accounting — G1 / C1 PASS (matches Phase 4q / 4w executed-price-shifting formula verbatim; R denominator uses pre-cost stop distance), V2 PASS_WITH_LIMITATION (F-2: V2 uses a flat-`entry_price` round-trip approximation `cost_R = round_trip_frac × entry_price / initial_R` rather than the executed-price formula; per-trade error bound ≤ 2×N_R×per_side_bps/10000 = 0.0048R at HIGH N_R=2.0; Phase 4k did not specify the executed-price formula explicitly so this is more accurately classified as DOCUMENTATION_LIMITATION than implementation defect); §11.A.11 intrabar ambiguity — same-bar stop / TP tie-break PASS in all three (stop wins), entry-bar exit handling DEFECT_NON_MATERIAL (F-4: V2 guards with `if i > entry_idx:` and cannot exit on the entry bar; G1 / C1 lack the guard and can exit on the entry bar; plan memos do not specify the behaviour, both conventions are defensible). **Materiality.** All four findings (F-1 V2 funding boundary; F-2 V2 cost approximation; F-3 V2 / G1 missing label artefacts; F-4 entry-bar exit handling) are **non-material to all three reported verdicts**: V2 / G1 zero-trade outcomes are unaffected by exit handling or boundary handling; C1's 149-trade `mean_R = -0.36` BTC OOS HIGH is too dominant to be flipped by any of the bounded effects. **No verdict requires review on the basis of audit findings.** **Phase 4am preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; 5m thread OPERATIONALLY CLOSED per Phase 3t; §11.6 = 8 bps HIGH per side; round-trip = 16 bps slippage; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; M0 (Phase 4ak) twelve-clause gate + post-null cooldown + cooled-down families + memo template. Phase 4am adds `docs/00-meta/implementation-reports/2026-05-06_phase-4am_exit-architecture-backtest-logic-audit.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4am_closeout.md`. Phase 4am modifies only `docs/00-meta/current-project-state.md` (this paragraph addition) beyond the two new memo files. **Phase 4am recommendation:** primary — remain paused with documented non-material findings logged; conditional secondary — future docs-only methodology-harmonization memo (specify executed-price-shifting cost formula prospectively; specify entry-bar exit handling prospectively; specify funding-event boundary handling prospectively; add the four governance labels to V2 / G1 `run_metadata.json` for parity with C1) — NOT authorized by Phase 4am; conditional tertiary — full Phase 4al-Option-C exit-path forensic analysis — NOT recommended (audit foundation is clean enough that forensic analysis is acceptable but not preferred over remain-paused) and NOT authorized by Phase 4am; forbidden — verdict revision; lock revision; parameter optimization; rescue of any historical candidate; paper / shadow / live-readiness / deployment / exchange-write. **Phase 4 canonical remains unauthorized. Phase 4an / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick-data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4am drafted (Exit Architecture Backtest-Logic Audit, narrow audit-only successor; Phase 4al §11.A scope / Option D).
+Phase 4am is docs-only.
+Phase 4am audited:
+- scripts/phase4l_v2_backtest.py (V2; 2 449 lines);
+- scripts/phase4r_g1_backtest.py (G1; 2 997 lines);
+- scripts/phase4x_c1_backtest.py (C1; 3 338 lines);
+- against Phase 4k / Phase 4q / Phase 4w plan memos and Phase 3v / 3w
+  governance memos.
+Phase 4am did NOT:
+- create any helper script;
+- modify any backtest script;
+- modify any source / test / data / manifest / governance file
+  beyond this current-project-state.md addition;
+- rerun any backtest;
+- compute any forensic distribution (MFE / MAE / time-to-event);
+- acquire any data (no 5m / 1m / aggTrades / tick acquisition);
+- revise any verdict;
+- change any project lock;
+- authorize any successor phase.
+Aggregate audit result:
+- DOCUMENTATION_LIMITATION.
+- Material defects: zero.
+- Non-material defects: two (F-1 V2 funding right-boundary
+  inclusivity; F-4 entry-bar exit handling divergence between V2
+  and G1 / C1).
+- Documentation limitations: two (F-2 V2 cost-application formula
+  approximation; F-3 V2 / G1 missing four-governance-label artefact
+  fields).
+Per-§11.A summary:
+- §11.A.1  fee handling                  — PASS (all 3 scripts).
+- §11.A.2  slippage handling             — PASS (all 3 scripts;
+                                             per-side cells
+                                             {LOW=1, MED=4, HIGH=8}).
+- §11.A.3  funding handling              — V2 DEFECT_NON_MATERIAL
+                                             (right-boundary
+                                             inclusivity); G1 PASS;
+                                             C1 PASS (excluded per
+                                             Phase 4w spec).
+- §11.A.4  stop / TP sequencing          — PASS (all 3 scripts).
+- §11.A.5  stop-trigger-domain           — PASS behaviour (all 3 use
+                                             kline trade-price domain);
+                                             V2 / G1 DOCUMENTATION_LIMITATION
+                                             on label recording;
+                                             C1 records all four labels.
+- §11.A.6  partial-exit logic            — PASS (absent in all 3).
+- §11.A.7  break-even logic              — PASS behaviour;
+                                             V2 / G1 DOCUMENTATION_LIMITATION
+                                             on label recording.
+- §11.A.8  trailing-exit logic           — PASS (absent in all 3).
+- §11.A.9  time-exit logic               — PASS (all 3 scripts).
+- §11.A.10 realized-R-after-costs        — G1 / C1 PASS (executed-price
+                                             formula matches Phase 4q / 4w);
+                                             V2 PASS_WITH_LIMITATION
+                                             (flat-`entry_price`
+                                             approximation; bounded
+                                             error <= 2*N_R*per_side_bps
+                                             / 10000 per trade; not a
+                                             defect against Phase 4k
+                                             which did not specify the
+                                             formula).
+- §11.A.11 intrabar ambiguity (tie-break) — PASS (all 3 scripts;
+                                              stop-first conservative).
+- §11.A.11 entry-bar exit handling       — DEFECT_NON_MATERIAL
+                                             (V2 guards with
+                                             `if i > entry_idx:`,
+                                             cannot exit on entry bar;
+                                             G1 / C1 lack the guard
+                                             and can; plan memos do
+                                             not specify behaviour).
+Materiality of all four findings:
+- F-1: bounded by per-event funding rate (typically <= 1 bp) times
+  small fraction of trades with exact-boundary timestamps; non-material
+  to V2's zero-trade Verdict C HARD REJECT.
+- F-2: bounded by 2*N_R*per_side_bps/10000 per trade (~0.48% of R at
+  HIGH N_R=2.0); partially cancelling at population level; non-material
+  to V2's zero-trade Verdict C HARD REJECT.
+- F-3: artefact-recording gap only; behaviour matches spec; non-material
+  to any verdict.
+- F-4: entry-bar exit handling divergence; non-material to V2 / G1
+  zero-trade outcomes and to C1's mean_R = -0.36 (149 trades).
+No verdict requires review on the basis of audit findings.
+No future governance decision is required before any verdict could
+even be considered for review.
+Phase 4am preserves every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side; round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null cooldown +
+  cooled-down families list + memo template.
+Phase 4am primary recommendation:
+- remain paused with documented non-material findings logged.
+Phase 4am conditional secondary recommendation (NOT authorized by
+Phase 4am):
+- future docs-only methodology-harmonization memo: specify
+  executed-price-shifting cost formula prospectively; specify
+  entry-bar exit handling prospectively; specify funding-event
+  boundary handling prospectively; add the four governance labels
+  to V2 / G1 `run_metadata.json` for parity with C1.
+Phase 4am conditional tertiary (NOT recommended; NOT authorized):
+- full Phase 4al-Option-C exit-path forensic analysis (audit
+  foundation is clean enough that forensic analysis is acceptable
+  but not preferred over remain-paused).
+Phase 4am FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- rescue of any historical candidate;
+- paper / shadow / live-readiness / deployment / exchange-write.
+Phase 4 (canonical) remains unauthorized.
+Phase 4an / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys,
+authenticated APIs, private endpoints, public-endpoint calls in
+code, user stream, WebSocket, MCP, Graphify, .mcp.json,
+credentials, exchange-write, and 5m / 1m / aggTrades / tick-data
+acquisition all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule remain
+binding prospective governance for any future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4al) is preserved by the Phase 4al narrative paragraph above.
+
+Earlier Phase 4al "Current phase:" block (preserved here for continuity; Phase 4al is no longer the current phase):
 
 ```text
 Phase 4al drafted (Exit Architecture / Trade-Management M0 Admissibility Memo, docs-only).
