@@ -2,117 +2,130 @@
 
 Prometheus is a **production-oriented, safety-first, operator-supervised trading system** for **Binance USDⓈ-M futures**.
 
-The v1 project is intentionally **rules-based**, **not self-learning**, and designed to be built in **phases with review gates**, runnable checkpoints, and explicit human approval before any move toward real exchange-write capability.
+The v1 project is intentionally **rules-based**, **not self-learning**, and built in **phases with review gates**, runnable checkpoints, and explicit human approval before any move toward real exchange-write capability.
 
 ## Current status
 
-**Project state:** post-Phase 2p consolidation.
+**Project state:** post-Phase 4ak (M0 governance adoption merged to `main`).
 
 What that means right now:
 
-- **H0** remains the formal validation anchor.
-- **R3** is the formal **baseline-of-record** for future family work.
-- **R1a** is preserved as **research evidence only** and retained for future hypothesis planning, not as the current default path.
-- The project is **intentionally paused** on new strategy execution until a future phase is explicitly authorized.
-- **Paper/shadow planning, Phase 4 runtime work, and any live-readiness path remain deferred.**
-- The current pytest baseline is **417 passing tests**.
+- The project is **intentionally paused**. No new strategy candidate, fresh-hypothesis discovery, market research, backtest, paper / shadow, live-readiness, deployment, exchange-write, production-key, MCP, Graphify, `.mcp.json`, or credential work is authorized.
+- Six terminal strategy rejections are on the project record (see "Strategy research arc outcomes" below).
+- **R3** remains the **baseline-of-record**; **H0** remains the framework anchor; **R1a** and **R1b-narrow** remain retained research evidence (non-leading).
+- The **M0 mechanism-admissibility gate** is now **binding prospective governance** for any future research lane (durable artifact: [docs/00-meta/m0-mechanism-admissibility-gate.md](docs/00-meta/m0-mechanism-admissibility-gate.md)).
+- The **Phase 4a–4c local safe runtime foundation** is implemented and behind quality gates, but is strategy-agnostic and not authorized to place orders.
+- Pytest baseline: **785 passing tests**; full-repo `ruff check .` clean; `mypy --strict` clean across 82 source files.
 
-## What Prometheus is trying to become
+## Strategy research arc outcomes
 
-Prometheus is not meant to be a one-shot backtest script.
+The project has produced the V1/R-series baseline arc plus F1, D1-A, V2, G1, and C1 strategy-family investigations, followed by the alt-symbol substrate arc; none produced a newly validated deployable strategy.
 
-The target is a staged trading system with:
+| Strategy | Family signature                          | Verdict                                            |
+| -------- | ----------------------------------------- | -------------------------------------------------- |
+| H0       | V1 breakout framework anchor              | FRAMEWORK ANCHOR (preserved)                       |
+| R3       | Fixed-R take-profit + unconditional time-stop | BASELINE-OF-RECORD                              |
+| R1a      | Volatility-percentile setup predicate     | Retained research evidence — non-leading           |
+| R1b-narrow | Bias-strength magnitude threshold       | Retained research evidence — non-leading           |
+| R2       | V1 pullback-retest variant                | FAILED — §11.6 cost-sensitivity blocks             |
+| F1       | Mean-reversion after overextension        | HARD REJECT (Phase 3d-B2 catastrophic-floor)       |
+| D1-A     | Funding-aware contrarian directional rule | MECHANISM PASS / FRAMEWORK FAIL — other (Phase 3j) |
+| V2       | Participation-confirmed breakout          | HARD REJECT (Phase 4l — design-stage; zero trades) |
+| G1       | Regime-first breakout continuation        | HARD REJECT (Phase 4r — gate × setup sparseness)   |
+| C1       | Volatility-contraction expansion breakout | HARD REJECT (Phase 4x — fires-and-loses)           |
 
-- research-quality historical data handling,
-- reproducible backtesting and validation,
-- strict risk and governance controls,
-- safe runtime-state handling and reconciliation,
-- dry-run and paper/shadow stages before any live exposure,
-- operator supervision throughout v1.
+The 5m diagnostic thread (Phases 3o → 3p → 3q → 3r → 3s → 3t) is operationally closed.
 
-## Current research conclusion
+The alt-symbol substrate arc (Phases 4aa → 4ai) on BTCUSDT / ETHUSDT / SOLUSDT / XRPUSDT / ADAUSDT produced descriptive cost-cushion / regime-continuity / cross-sectional ranking evidence, with the Phase 4ai cross-sectional ranking feasibility lane returning `NOT_SUPPORTED`. No strategy was promoted from substrate work.
 
-The project has tested the breakout family in multiple structured phases.
+After Phase 4y (post-C1 consolidation) and Phase 4z (post-rejection research-process redesign), the project pivoted to docs-only governance work: Phase 4ag mechanism-source triage; Phase 4ah / 4ai cross-sectional feasibility; Phase 4aj M0 governance reconciliation; Phase 4ak M0 governance adoption.
 
-The key conclusion at the end of Phase 2p is:
+## What the project has not done yet
 
-- **R3** is the strongest result so far and is the version future work should start from.
-- **R1a** taught the project something useful about conditional edge, especially on ETH, but it did **not** become the new universal default.
-- The project has **not** demonstrated live readiness or strong enough absolute edge to justify moving toward deployment yet.
+Prometheus has **not** started:
 
-## Locked baseline-of-record
-
-The current baseline-of-record is **R3**, which keeps the original entry side mostly intact while replacing the old staged exit machinery with a simpler exit philosophy:
-
-- `exit_kind = FIXED_R_TIME_STOP`
-- `exit_r_target = 2.0`
-- `exit_time_stop_bars = 8`
-- same-bar priority: `STOP > TAKE_PROFIT > TIME_STOP`
-- initial protective stop is never moved intra-trade
-
-This is the version future research should treat as the reference candidate unless later evidence clearly replaces it.
-
-## What the project has **not** done yet
-
-Prometheus is still in a research / pre-runtime stage.
-
-The repo has **not** started:
-
-- Phase 4 runtime/state/persistence implementation,
-- paper/shadow operation,
+- paper / shadow operation,
 - tiny-live preparation,
 - scaled-live preparation,
-- production Binance key creation,
-- live exchange-write capability.
+- production Binance trade-capable key creation,
+- live exchange-write capability,
+- authenticated REST / private endpoints / user stream / WebSocket / listenKey integration in code,
+- MCP / Graphify / `.mcp.json` / credentials work.
+
+Phase 4 canonical (paper / shadow / live-readiness gates) remains unauthorized. The Phase 4a–4c runtime foundation that is implemented is local-only, fake-exchange, exchange-write-free, and strategy-agnostic per the Phase 3x scoping memo and Phase 4a authorization brief.
+
+## Project locks (preserved verbatim across every phase)
+
+- **§11.6** HIGH cost = 8 bps per side (round-trip = 16 bps).
+- **§1.7.3** project-level locks: 0.25% risk per trade; 2× leverage cap; one position max; mark-price stops where applicable.
+- Phase 3r §8 mark-price gap governance.
+- Phase 3v §8 stop-trigger-domain governance.
+- Phase 3w §6 / §7 / §8 break-even / EMA-slope / stagnation governance.
+- Phase 4j §11 metrics OI-subset partial-eligibility rule.
+- Phase 4k V2 backtest-plan methodology.
+- Phase 4p G1 strategy-spec discipline; Phase 4q G1 backtest-plan methodology.
+- Phase 4v C1 strategy-spec discipline; Phase 4w C1 backtest-plan methodology.
+- **M0 mechanism-admissibility gate** and **post-null cooldown rule** (binding prospective; adopted Phase 4ak).
 
 ## Safety principles
 
 Prometheus is deliberately conservative.
 
-Important assumptions that still hold:
-
-- no production trade-capable Binance keys should exist yet,
-- credentials alone must never enable trading,
-- dry-run and paper/shadow must come before tiny live,
-- unknown state must fail closed,
-- restart must begin in `SAFE_MODE`,
-- operator approval is required across major phase boundaries.
+- No production trade-capable Binance keys exist or are authorized.
+- Credentials alone must never enable trading; live exchange-write capability requires explicit environment / config / phase-gate approval.
+- Dry-run, fake-adapter, and paper / shadow stages must come before any tiny-live operation.
+- Unknown state must fail closed; restart must begin in `SAFE_MODE`.
+- Operator approval is required across major phase boundaries.
+- Every future research lane must clear the **M0 admissibility gate** before discovery, hypothesis spec, strategy spec, or backtest work.
 
 ## Repository layout
 
 ```text
 Prometheus/
-├─ docs/                     # canonical project memory and specifications
-├─ src/                      # implementation code
-├─ tests/                    # unit/integration validation
-├─ scripts/                  # phase runners and research helpers
-├─ data/                     # local research/runtime artifacts (git-ignored where appropriate)
+├─ docs/                     # canonical project memory, specifications, governance, implementation reports
+├─ src/prometheus/           # Phase 4a–4c local safe runtime foundation (state, persistence, events, governance,
+│                            #   risk sizing/exposure/stop-validation, fake_adapter, operator, cli)
+├─ tests/                    # 785 passing pytest tests
+├─ scripts/                  # standalone phase research scripts (no runtime imports; no network I/O)
+├─ data/                     # local research/runtime artifacts (most paths git-ignored)
 └─ README.md                 # this file
 ```
 
-For the full documentation map, read:
-
-- `docs/README.md`
+For the full documentation map, read [docs/README.md](docs/README.md).
 
 ## Most important documents
 
 Start here if you want to understand the repo quickly:
 
-- `docs/00-meta/current-project-state.md`
-- `docs/00-meta/ai-coding-handoff.md`
-- `docs/09-operations/first-run-setup-checklist.md`
-- `docs/12-roadmap/phase-gates.md`
-- `docs/12-roadmap/technical-debt-register.md`
-- `docs/03-strategy-research/v1-breakout-strategy-spec.md`
-- `docs/05-backtesting-validation/v1-breakout-validation-checklist.md`
+- [docs/00-meta/current-project-state.md](docs/00-meta/current-project-state.md) — high-level project memory checkpoint
+- [docs/00-meta/m0-mechanism-admissibility-gate.md](docs/00-meta/m0-mechanism-admissibility-gate.md) — binding prospective governance for any future research lane
+- [docs/00-meta/ai-coding-handoff.md](docs/00-meta/ai-coding-handoff.md)
+- [docs/09-operations/first-run-setup-checklist.md](docs/09-operations/first-run-setup-checklist.md)
+- [docs/12-roadmap/phase-gates.md](docs/12-roadmap/phase-gates.md)
+- [docs/12-roadmap/technical-debt-register.md](docs/12-roadmap/technical-debt-register.md)
+- [docs/03-strategy-research/v1-breakout-strategy-spec.md](docs/03-strategy-research/v1-breakout-strategy-spec.md)
+- [docs/05-backtesting-validation/v1-breakout-validation-checklist.md](docs/05-backtesting-validation/v1-breakout-validation-checklist.md)
 
-For the research state that led to the current consolidation:
+Representative recent implementation reports (full set under `docs/00-meta/implementation-reports/`):
 
-- `docs/00-meta/implementation-reports/2026-04-26_phase-2l_R3_variant-comparison.md`
-- `docs/00-meta/implementation-reports/2026-04-27_phase-2m_R1a_on_R3_variant-comparison.md`
-- `docs/00-meta/implementation-reports/2026-04-27_phase-2n_strategy-review-memo.md`
-- `docs/00-meta/implementation-reports/2026-04-27_phase-2o_asymmetry-review-memo.md`
-- `docs/00-meta/implementation-reports/2026-04-27_phase-2p_consolidation-memo.md`
+- Phase 2p consolidation memo (R3 baseline-of-record locked)
+- Phase 2w consolidation (R2 FAILED — §11.6)
+- Phase 3d-B2 (F1 HARD REJECT)
+- Phase 3j (D1-A MECHANISM PASS / FRAMEWORK FAIL)
+- Phase 3t (5m diagnostic thread closure)
+- Phase 4a (local safe runtime foundation)
+- Phase 4l (V2 backtest execution — Verdict C HARD REJECT)
+- Phase 4m (post-V2 strategy-research consolidation; 18-requirement validity gate)
+- Phase 4r (G1 backtest execution — Verdict C HARD REJECT)
+- Phase 4s (post-G1 consolidation)
+- Phase 4t (post-G1 fresh-hypothesis discovery)
+- Phase 4x (C1 backtest execution — Verdict C HARD REJECT)
+- Phase 4y (post-C1 consolidation)
+- Phase 4z (post-rejection research-process redesign)
+- Phase 4ag (research-program pivot / mechanism-source triage)
+- Phase 4ai (cross-sectional trend feasibility — `NOT_SUPPORTED`)
+- Phase 4aj (M0 governance reconciliation)
+- Phase 4ak (M0 governance adoption)
 
 ## Local development
 
@@ -129,17 +142,17 @@ uv run ruff format --check .
 uv run mypy
 ```
 
-Do not treat successful local tests as authorization for live trading. They only confirm the current research/code state.
+Do not treat successful local tests as authorization for live trading. They confirm the current research / runtime-foundation code state only.
 
 ## Working method
 
-The project has been developed with a dual-review workflow:
+The project is developed with a dual-review workflow:
 
 - **Claude Code** performs repo work inside the local checkout.
 - **ChatGPT** reviews plans, reports, checkpoint outputs, errors, and phase-gate decisions.
 - The **operator** is the approval authority.
 
-That workflow is intentional and should be preserved for future phases.
+That workflow is intentional and is preserved for future phases.
 
 ## Phase model
 
@@ -150,27 +163,28 @@ High-level phase sequence:
 ```text
 PHASE 0 — Documentation and implementation planning
 PHASE 1 — Local development foundation
-PHASE 2 — Historical data and validation foundation
-PHASE 3 — Backtesting and strategy conformance
-PHASE 4 — Risk, state, and persistence runtime
-PHASE 5 — Dashboard, observability, and alerts
-PHASE 6 — Dry-run exchange simulation
-PHASE 7 — Paper/shadow operation
-PHASE 8 — Tiny live
-PHASE 9 — Scaled live
+PHASE 2 — Historical data, validation foundation, and V1 strategy research arc
+PHASE 3 — F1 / D1-A research arcs and 5m diagnostic thread
+PHASE 4 — Local safe runtime foundation, V2 / G1 / C1 research arcs, alt-symbol substrate arc, governance adoption
+PHASE 5 — Dashboard, observability, and alerts (not started; not authorized)
+PHASE 6 — Dry-run exchange simulation (not started; not authorized)
+PHASE 7 — Paper / shadow operation (not authorized)
+PHASE 8 — Tiny live (not authorized)
+PHASE 9 — Scaled live (not authorized)
 ```
 
-Research sub-phases and review phases may exist inside or around those boundaries, but promotion is always evidence-based and never automatic.
+Phases 4a–4c (runtime foundation) are merged but strategy-agnostic; Phase 4 canonical (the live-readiness gate) is **not** authorized. Research sub-phases live inside Phase 4 (e.g., 4f → 4l for V2; 4n → 4r for G1; 4u → 4x for C1; 4aa → 4ai for alt-symbol substrate).
 
 ## Current recommendation
 
 If you are reopening this repo later, the correct default assumption is:
 
-- start from **R3 as the baseline-of-record**,
-- treat **R1a as preserved research evidence**,
-- do **not** restart execution momentum automatically,
-- do **not** start readiness planning automatically,
-- use the most recent implementation reports to decide whether a new docs-only planning phase is justified.
+- start from **R3 as the baseline-of-record**;
+- treat **R1a / R1b-narrow** as preserved research evidence (non-leading);
+- do **not** restart strategy execution momentum automatically;
+- do **not** start readiness or live-path planning automatically;
+- any future research lane must clear the **M0 admissibility gate** ([docs/00-meta/m0-mechanism-admissibility-gate.md](docs/00-meta/m0-mechanism-admissibility-gate.md)) before discovery / spec / backtest;
+- read the most recent implementation reports under `docs/00-meta/implementation-reports/` to decide whether a new docs-only phase is justified.
 
 ## License / usage
 

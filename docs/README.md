@@ -17,8 +17,15 @@ Markdown is intentionally the primary format because it is:
 
 Later, selected material may be converted into more polished human-readable reports or LaTeX/PDF outputs. Those polished outputs are not the source of truth; these Markdown files are.
 
+## Top-level governance documents (under `00-meta/`)
+- `00-meta/current-project-state.md` — high-level project memory checkpoint (kept in sync with the latest merge)
+- `00-meta/m0-mechanism-admissibility-gate.md` — **binding prospective governance** for any future research lane (adopted by Phase 4ak)
+- `00-meta/ai-coding-handoff.md` — implementation handoff for AI-assisted coding
+- `00-meta/implementation-ambiguity-log.md` — implementation ambiguity / spec-gap log
+- `00-meta/implementation-reports/` — chronological per-phase implementation, closeout, and merge-closeout reports
+
 ## Folder Guide
-- `00-meta/` project mission, scope, assumptions, decision logic
+- `00-meta/` project mission, scope, assumptions, decision logic, governance documents, implementation reports
 - `01-foundations/` conceptual foundations and system framing
 - `02-market-structure/` market-specific mechanics, especially futures
 - `03-strategy-research/` strategy families and formalization work
