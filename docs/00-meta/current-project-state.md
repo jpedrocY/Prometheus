@@ -175,52 +175,158 @@ Phase 4aj is the **M0 Governance Reconciliation Memo** (docs-only). Phase 4aj re
 
 Phase 4ak is the **M0 Governance Adoption Phase** (docs-only). **Phase 4ak is text-only.** Phase 4ak adopted the **revised twelve-clause M0 mechanism-admissibility gate** (proposed by Phase 4aj §8) as **binding prospective governance** for any future Prometheus research phase whose purpose falls within the applicability scope defined in the durable governance document. Phase 4ak adopted the **post-null cooldown rule** (proposed by Phase 4aj §9) as **binding prospective governance**. The durable governance document is `docs/00-meta/m0-mechanism-admissibility-gate.md` and contains: (i) the twelve binding M0 clauses (M0.1 mechanism source; M0.2 non-price-only or structurally distinct source requirement; M0.3 baseline-superiority theory versus H0 and R3 with predicted Δ_R derivation and commitment; M0.4 rejection-topology distance covering R2 / F1 / D1-A / V2 / G1 / C1 with closest-prior-failure trap structurally distinguished; M0.5 cost-realism plausibility under §11.6 = 8 bps per side; M0.6 opportunity-rate plausibility derived from theoretical content not from prior forensic numbers; M0.7 edge-rate plausibility separate from opportunity-rate with the explicit recognition that opportunity-rate viability ≠ edge-rate viability; M0.8 data availability and integrity feasibility classifying datasets as PASS / governed-partial / blocked; M0.9 governance compatibility with all binding locks and prior governance; M0.10 forbidden-rescue and anti-reduction check with named closest rescue trap and structural argument; M0.11 pre-backtest falsification criteria predeclared at the M0 stage; M0.12 post-null cooldown check and explicit non-authorization clause); (ii) the binding post-null cooldown rule that prohibits descriptor / parameter / threshold / symbol-universe / interval / forward-horizon / filter / composite-weight / rebalance-frequency tweaks of any feasibility family that returned `NOT_SUPPORTED`, unless a future docs-only M0 memo first identifies a materially new mechanism source independent of the failed descriptor family from external theory or external evidence (the cooldown applies to the family, not only to the specific candidate); (iii) the current cooled-down families list as of the Phase 4ak adoption boundary — price-only single-symbol directional continuation `DEPLETED / NOT_RECOMMENDED`; cross-sectional trend / relative-strength symbol-selection under Phase 4ai descriptors `COOLED_DOWN_AFTER_NOT_SUPPORTED`; derivatives-context directional lane `CONDITIONAL_ONLY / HIGH_D1-A_RESCUE_RISK`; microstructure / order-flow / liquidity-timing lane `NOT_RECOMMENDED_NOW`; mark-price stop-domain / execution-realism lane `NOT_RECOMMENDED_NOW`; (iv) the required future M0 memo template (15 sections); (v) the explicit adoption limits — the full Phase 4z 32-item proposed admissibility framework is NOT adopted, the Phase 4z M0–M7 mechanism-check redesign is NOT adopted wholesale, the Phase 4z proposed discovery-memo / strategy-spec / backtest-plan / execution-report template additions are NOT adopted, the Phase 4aa admissibility framework is NOT adopted, and the Phase 4ab recommendations are NOT adopted as binding governance. **Phase 4ak did NOT** acquire data; download data; call APIs / endpoints; consult `data.binance.vision` / Binance APIs / authenticated REST / private endpoints / public endpoints in code / user stream / WebSocket / listenKey; modify any raw or normalized data; create or modify any manifest; create v003 or any other dataset version; flip any Phase 4ac `research_eligible` flag; run any analysis; create or run any analysis script; rerun Phase 4ac / Phase 4ae / Phase 4af / Phase 4ag / Phase 4ah / Phase 4ai / Phase 4aj; run any backtest; run any strategy diagnostic; rerun Q1–Q7; compute strategy PnL or entry / exit returns; create a cumulative equity curve or trade ledger; optimize parameters; select thresholds or symbols for a strategy; create a new strategy candidate; name a strategy candidate; create a fresh-hypothesis discovery memo; create a hypothesis-spec memo; create a strategy-spec memo; create a backtest-plan memo; modify `src/prometheus/`, tests, or any existing script; create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid; propose old-strategy alt-symbol reruns; propose multi-position portfolio trading; silently reduce cross-sectional ranking into V2 / G1 / C1-style single-symbol breakout continuation; revise any retained verdict; change any project lock; adopt the full Phase 4z 32-item framework as binding governance; adopt the Phase 4z M0–M7 mechanism-check redesign wholesale; adopt the Phase 4aa admissibility framework as binding governance; adopt Phase 4ab recommendations as binding governance; broaden Phase 4ac / 4ad / 4ae / 4af / 4ag / 4ah / 4ai findings beyond their prior scopes; broaden Phase 4aj recommendations beyond the specific revised M0 and post-null cooldown rule now adopted; perform a broad documentation refresh; modify `docs/12-roadmap/phase-gates.md`; modify `docs/12-roadmap/technical-debt-register.md`; modify `docs/00-meta/ai-coding-handoff.md`; modify `docs/00-meta/implementation-ambiguity-log.md`; modify any specialist governance file beyond the narrow `current-project-state.md` Phase 4ak paragraph addition; commit gitignored / transient files such as `.claude/scheduled_tasks.lock` / `data/research/` / `data/raw/` / `data/normalized/`; touch MCP / Graphify / `.mcp.json` / credentials; or authorize Phase 4al / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / production keys / authenticated APIs / private endpoints / user stream / WebSocket / exchange-write. **Phase 4ak preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps HIGH per side; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. Phase 4z recommendations remain recommendations only **except the specific upstream twelve-clause M0 fragment now adopted by Phase 4ak**. Phase 4aa admissibility framework remains recommendation only. Phase 4ab recommendations remain recommendations only. Phase 4ac results remain data / integrity evidence only. Phase 4ad Rules A / B / C remain prospective analysis-time scope rules only. Phase 4ae findings remain descriptive substrate-feasibility evidence only. Phase 4af findings remain descriptive regime-continuity / directional-persistence evidence only. Phase 4ag recommendations remain recommendations only **except the specific upstream M0 gate now adopted as revised by Phase 4aj and adopted by Phase 4ak**. Phase 4ah recommendations remain recommendations only. Phase 4ai findings remain descriptive cross-sectional feasibility evidence only. Phase 4aj recommendations remain recommendations only **except the revised twelve-clause M0 gate and the post-null cooldown rule now adopted by Phase 4ak**. **The Phase 4m 18-requirement fresh-hypothesis validity gate and the Phase 4t 10-dimension candidate scoring matrix are unchanged; M0 sits upstream of both and complements (does not replace) them.** Phase 4ak adds `docs/00-meta/m0-mechanism-admissibility-gate.md`, `docs/00-meta/implementation-reports/2026-05-04_phase-4ak_m0-governance-adoption.md`, and `docs/00-meta/implementation-reports/2026-05-04_phase-4ak_closeout.md`. **Phase 4ak recommendation:** merge Phase 4ak into main, then remain paused. M0 and the post-null cooldown rule are now binding prospective governance, but no new market research, fresh-hypothesis discovery, strategy work, or successor phase is authorized. **Phase 4 canonical remains unauthorized. Phase 4al / Phase 5 / any successor phase remains unauthorized. Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, and exchange-write all remain unauthorized.** **Phase 4ak primary recommendation: merge Phase 4ak into main, then remain paused.** **No successor phase has started.** **No Phase 4al / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path was started by Phase 4ak.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.** **Phase 4ak has now been merged to main.** Phase 4ak merge closeout recorded at `docs/00-meta/implementation-reports/2026-05-04_phase-4ak_merge-closeout.md`. Phase 4ak remains docs-only; adopted the revised twelve-clause M0 mechanism-admissibility gate as binding prospective governance; adopted the post-null cooldown rule as binding prospective governance; the durable governance document is `docs/00-meta/m0-mechanism-admissibility-gate.md`; M0 and cooldown apply prospectively only; M0 does NOT revise historical verdicts; M0 does NOT change project locks; M0 does NOT authorize strategy work, backtests, paper / shadow, live-readiness, deployment, exchange-write, or successor phases; did NOT adopt the full Phase 4z 32-item framework; did NOT adopt Phase 4z M0–M7 wholesale; did NOT acquire data; did NOT modify data; did NOT create or modify manifests; did NOT run analysis; did NOT run backtests or strategy diagnostics; did NOT rerun Q1–Q7; did NOT compute strategy PnL or entry/exit strategy returns; did NOT optimize parameters or select thresholds for a strategy; did NOT create a strategy; did NOT create a fresh-hypothesis discovery memo; did NOT rescue prior strategies; did NOT revise verdicts; did NOT change locks. Primary recommendation: merge Phase 4ak into main, then remain paused. **No successor phase has started.** **No Phase 4al / Phase 5 / Phase 4 canonical has started.** **No new strategy / code / data / manifests / live path has been started.** Recommended state remains paused pending separate operator authorization.
 
+Phase 4al is the **Exit Architecture / Trade-Management M0 Admissibility Memo** (docs-only). **Phase 4al is text-only.** Phase 4al is the project's first M0-driven admissibility decision after the Phase 4ak adoption boundary. Phase 4al evaluated the candidate research lane "exit architecture / trade management / payoff-distribution shaping based on predeclared post-entry path behavior" against the binding twelve-clause M0 gate and post-null cooldown rule. **Verdict: M0 STATUS = CONDITIONAL / PARTIAL — admissible as a future descriptive forensic / backtest-logic-audit research lane, with strict boundaries; NOT admissible as a strategy lane, a parameter-optimization lane, a verdict-revision lane, or a paper / shadow / live-readiness lane.** The lane satisfies M0.1, M0.2, M0.5, M0.8, M0.9, M0.10, M0.11, and M0.12 on its theoretical face, and satisfies M0.3, M0.4, M0.6, and M0.7 only under explicit disclaim and predeclaration discipline (§9 / §10 / §11 / §13 of the Phase 4al main memo). The cumulative status is therefore CONDITIONAL / PARTIAL rather than unconditional PASS. Phase 4al **refines** the no-rescue rule (§9) by distinguishing **forbidden** activities (tune / optimize TP / SL / break-even / trailing / partial-exit / time-stop parameters on any rejected or retained-evidence candidate's trade population; retrofit exit rules to improve historical realized R; convert descriptive observations into strategy candidates without a fresh ex-ante hypothesis; revise verdicts; imply paper / shadow / live-readiness / exchange-write authorization) from **allowed** activities (predeclared exit-path forensic audit design; MFE / MAE / time-to-MFE / time-to-stop distributions; target-before-stop sequencing as descriptive frequency; realized-R-after-costs accounting; fee-in-R / slippage-in-R / funding-in-R decomposition; intrabar-ambiguity audit; backtest-logic audit) — both subject to §9.C predeclaration discipline. Phase 4al **defines** winner-anatomy boundaries (§10): allowed (path-behavior summaries; MFE / MAE / time-to-event distributions; target-before-stop sequencing; realized-R / cost-in-R decomposition; exit-sequencing ambiguity audit) versus forbidden (parameter selection after observing outcomes; conversion of observed historical rescue patterns into a new strategy without fresh ex-ante specification; verdict revision; paper / shadow / live-readiness implication; outcome-selected mining; selection-on-outcome reporting). Phase 4al **defines** backtest-logic audit admissibility scope (§11): in-scope subjects (fee handling; slippage handling; funding handling; stop / TP sequencing; mark-price stop domain; partial-exit / break-even / trailing / time-exit logic; realized-R-after-costs accounting; intrabar ambiguity); out-of-scope (modifying scripts; modifying locks; revising verdicts; optimizing parameters; running new backtests; touching credentials / MCP / exchange-write paths). Phase 4al **records** a future exit-path data-resolution recommendation (§14) for any future Phase 4am or later separately authorized analysis: 15m / 30m / 1h / 4h = signal / event context (already acquired); **5m = recommended first path-resolution layer for exit forensics**; 1m = escalation layer only if 5m ambiguity is too high; aggTrades / tick = final escalation. Operator guidance: do not jump directly to 1m data; treat 5m as the recommended first lower-timeframe path-resolution layer; treat 1m as escalation only if 5m leaves too much stop / TP sequencing ambiguity; **5m must be framed strictly as a forensic measurement layer, not as a reopened 5m strategy thread, entry timeframe, signal timeframe, or strategy lane**; the old 5m strategy thread remains operationally CLOSED per Phase 3t and is **not** reopened by Phase 4al. Phase 4al §14.C records an **ambiguity-rate concept** (descriptive heuristic; not gates) for any future analysis: < 2% trades ambiguous → 5m probably enough; 2%–10% → 5m usable with conservative (stop-first) assumptions; > 10% → consider 1m escalation; > 20% → 5m likely too coarse. Phase 4al §14.D records resolution coverage by question: MFE / MAE magnitude probably resolvable at 5m for first-pass; exact stop-before-target sequencing may still be ambiguous at 5m; mark-price stops require both trade-price candles (TP / favorable path) and mark-price candles (stop-trigger path), with Phase 3r §8 governance applying verbatim and mark-price stop-domain forensic work remaining **blocked** until separately authorized under §7.E of M0 and Phase 4ad Rule A predeclaration. **Phase 4al does NOT acquire 5m / 1m / aggTrades / tick data; does NOT authorize 5m / 1m / aggTrades / tick acquisition; does NOT reopen the 5m strategy thread.** Phase 4al **defines** the maximum allowable future Phase 4am scope (§13): "Exit-Path Forensic Analysis and Backtest-Logic Audit" — analysis-and-docs only, standalone-script mode, no `prometheus.runtime/execution/persistence` imports, no exchange adapters, no network I/O, no credentials, no Binance API; allowed scope = §9.B / §10.A / §11.A activities subject to predeclaration; forbidden scope = §9.A / §10.B / §11.B activities; required predeclaration content (12 items including audit scope, forensic scope, populations, descriptive variables, cost cells, sample-size floors, CRIT-A1..CRIT-B3 falsification criteria, forbidden-activity boundaries restated, mark-price scope, non-authorization clause); required reporting content (9 items including audit findings, forensic findings, cost-in-R reporting, M0.7 / M0.3 disclaims, explicit non-authorization, no-verdict-revision and no-rescue statements). **Phase 4al did NOT authorize Phase 4am.** **Phase 4am / Phase 5 / Phase 4 canonical / any successor phase remains unauthorized.** Phase 4al did NOT: acquire data; download data; call APIs / endpoints; consult `data.binance.vision`; modify raw / normalized data; create or modify any manifest; create v003 or any other dataset version; flip any `research_eligible` flag; run any analysis; run any backtest; run any backtest-logic audit; run any forensic analysis; run any strategy diagnostic; rerun Q1–Q7; compute MFE / MAE / time-to-MFE / time-to-stop / target-before-stop / realized-R-after-costs distributions; compute strategy PnL or entry / exit returns; create a cumulative equity curve or trade ledger; optimize parameters; select thresholds or symbols for a strategy; create a new strategy candidate; name a strategy candidate; create a fresh-hypothesis discovery memo; create a hypothesis-spec memo; create a strategy-spec memo; create a backtest-plan memo; modify `src/prometheus/`, tests, or any existing script; modify any backtest script (Phase 4l, Phase 4r, Phase 4x, or other); create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any cross-strategy hybrid; propose old-strategy alt-symbol reruns; propose multi-position portfolio trading; revise any retained verdict; change any project lock; relax §11.6, §1.7.3, Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, or Phase 4w; adopt the full Phase 4z 32-item framework as binding governance; adopt the Phase 4z M0–M7 redesign wholesale; adopt the Phase 4aa admissibility framework as binding governance; adopt the Phase 4ab recommendations as binding governance; broaden Phase 4ac / 4ad / 4ae / 4af / 4ag / 4ah / 4ai / 4aj findings beyond their prior scopes; broaden the Phase 4ak adoption beyond §5–§8 of the durable M0 document; reopen any cooled-down family; touch MCP / Graphify / `.mcp.json` / credentials; authorize paper / shadow / live-readiness / deployment / exchange-write / production keys / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket; or authorize 5m / 1m / aggTrades / tick-data acquisition. **Phase 4al preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; 5m thread OPERATIONALLY CLOSED per Phase 3t; §11.6 = 8 bps HIGH per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w. M0 §5 / §6 / §7 / §8 of `docs/00-meta/m0-mechanism-admissibility-gate.md` (Phase 4ak adoption) preserved. Phase 4al adds `docs/00-meta/implementation-reports/2026-05-06_phase-4al_exit-architecture-trade-management-m0-admissibility.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4al_closeout.md`. Phase 4al modifies only `docs/00-meta/current-project-state.md` (this paragraph addition) beyond the two new memo files. **Phase 4al recommendation:** Option A primary — remain paused; Option B — merge to main, then stop (procedurally equivalent to Option A); Option D conditional secondary — narrower future Phase 4am restricted to the §11.A backtest-logic audit (yields documentation value unconditionally); Option C conditional tertiary — full §13 Phase 4am with audit and forensic scope. Option E NOT recommended (fresh-hypothesis discovery from exit-architecture observations); Options F / G / H FORBIDDEN (parameter tuning on rejected populations; verdict revision; paper / shadow / live-readiness / exchange-write). **Phase 4 canonical remains unauthorized. Phase 4am / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick-data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
 
 ```text
-Phase 4ak merged into main (M0 Governance Adoption Phase, docs-only).
-Phase 4ak was docs-only.
-Phase 4ak adopted as binding prospective governance:
-- the revised twelve-clause M0 mechanism-admissibility gate (Phase 4aj §8);
-- the post-null cooldown rule (Phase 4aj §9).
-Durable governance artifact:
-- docs/00-meta/m0-mechanism-admissibility-gate.md.
-Phase 4ak did NOT adopt:
-- the full Phase 4z 32-item proposed admissibility framework;
-- the Phase 4z proposed M0–M7 mechanism-check redesign wholesale;
-- the Phase 4z proposed discovery-memo / strategy-spec / backtest-plan / execution-report template additions;
-- the Phase 4aa admissibility framework;
-- the Phase 4ab recommendations.
-Phase 4ak did NOT change:
-- the Phase 4m 18-requirement fresh-hypothesis validity gate;
-- the Phase 4t 10-dimension candidate scoring matrix;
-- §11.6 HIGH cost = 8 bps per side;
-- §1.7.3 0.25% / 2× / one-position / mark-price stops;
-- Phase 3r §8 / Phase 3v §8 / Phase 3w §6 / §7 / §8 / Phase 4j §11 / Phase 4k / Phase 4p / Phase 4q / Phase 4v / Phase 4w;
-- any retained verdict (H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; 5m thread CLOSED operationally).
-Phase 4ak did NOT:
+Phase 4al drafted (Exit Architecture / Trade-Management M0 Admissibility Memo, docs-only).
+Phase 4al is text-only.
+Phase 4al evaluated the candidate research lane:
+- "exit architecture / trade management / payoff-distribution shaping based on
+   predeclared post-entry path behavior"
+against the Phase 4ak-adopted twelve-clause M0 gate and post-null cooldown rule.
+Phase 4al verdict:
+- M0 STATUS = CONDITIONAL / PARTIAL.
+- Admissible as a future descriptive forensic / backtest-logic-audit research lane,
+  with strict boundaries (§9, §10, §11, §13 of the Phase 4al main memo).
+- NOT admissible as a strategy lane, a parameter-optimization lane,
+  a verdict-revision lane, or a paper / shadow / live-readiness lane.
+M0 clause-by-clause assessment summary:
+- M0.1 PASS;
+- M0.2 PASS, conditional on §9;
+- M0.3 CONDITIONAL (no baseline-superiority claim; explicit disclaim required);
+- M0.4 CONDITIONAL (closest trap C1; admissible only under §9);
+- M0.5 PASS, conditional on cost-in-R reporting;
+- M0.6 PASS (audit) / CONDITIONAL (forensic; predeclared sample-size floor);
+- M0.7 N/A with mandatory disclaim (no edge-rate claim);
+- M0.8 PASS / GOVERNED PARTIAL / POTENTIALLY BLOCKING per scope;
+- M0.9 PASS;
+- M0.10 PASS, conditional on §9 / §10 / §13;
+- M0.11 PASS, conditional on CRIT-A1..CRIT-B3 restatement;
+- M0.12 PASS (lane not cooled down; non-authorization honored).
+Refined no-rescue rule (Phase 4al §9):
+- forbidden: tune / optimize TP / SL / break-even / trailing / partial-exit /
+  time-stop parameters on any rejected or retained-evidence candidate's trade
+  population; retrofit exit rules to improve historical realized R;
+  convert descriptive observations into strategy candidates without fresh
+  ex-ante hypothesis; revise verdicts; imply paper / shadow / live / exchange-
+  write authorization;
+- allowed (subject to predeclaration discipline §9.C, only if a future Phase 4am
+  is separately authorized): predeclared exit-path forensic audit design;
+  MFE / MAE / time-to-MFE / time-to-stop distributions; target-before-stop
+  sequencing as descriptive frequency; realized-R-after-costs accounting;
+  fee-in-R / slippage-in-R / funding-in-R decomposition; intrabar-ambiguity
+  audit; backtest-logic audit.
+Future exit-path data-resolution hierarchy (Phase 4al §14):
+- 15m / 30m / 1h / 4h = signal / event context (already acquired);
+- 5m = recommended first path-resolution layer for exit forensics;
+- 1m = escalation layer only if 5m ambiguity is too high;
+- aggTrades / tick = final escalation.
+- Do NOT jump directly to 1m data.
+- Treat 5m as the recommended first lower-timeframe path-resolution layer.
+- Treat 1m as escalation only if 5m leaves too much stop / TP sequencing
+  ambiguity.
+- 5m must be framed strictly as a forensic measurement layer.
+- The old 5m strategy thread remains operationally CLOSED per Phase 3t and is
+  NOT reopened by Phase 4al.
+- Phase 4al does NOT acquire 5m / 1m / aggTrades / tick data.
+- Phase 4al does NOT authorize 5m / 1m / aggTrades / tick acquisition.
+Future Phase 4am boundary (Phase 4al §13), if ever separately authorized:
+- name: "Phase 4am — Exit-Path Forensic Analysis and Backtest-Logic Audit";
+- type: analysis-and-docs only; standalone-script mode;
+- pure pyarrow + numpy + stdlib (matplotlib optional);
+- no prometheus.runtime/execution/persistence imports;
+- no exchange adapters; no network I/O; no credentials; no Binance API;
+- allowed scope: §9.B forensic activities + §10.A winner-anatomy descriptive
+  activities + §11.A backtest-logic audit subjects, all subject to predeclaration;
+- forbidden scope: §9.A / §10.B / §11.B activities; modifying any backtest
+  script; modifying any project lock; modifying any historical verdict;
+  acquiring data; creating or modifying manifests; creating new strategy
+  candidates; authorizing Phase 4an or any successor;
+- required predeclaration content (12 items) and reporting content (9 items)
+  enumerated in Phase 4al §13.E and §13.F.
+Phase 4al did NOT:
 - acquire data; download data; call APIs / endpoints; consult data.binance.vision;
 - modify raw or normalized data; create or modify any manifest; create v003;
-- run any backtest; run any strategy diagnostic; rerun Q1–Q7;
-- compute strategy PnL or entry/exit returns; create an equity curve or trade ledger;
+- run any analysis; run any backtest; run any backtest-logic audit;
+- run any forensic analysis; run any strategy diagnostic; rerun Q1–Q7;
+- compute MFE / MAE / time-to-MFE / time-to-stop / target-before-stop /
+  realized-R-after-costs distributions;
+- compute strategy PnL or entry / exit returns;
+- create a cumulative equity curve or trade ledger;
 - optimize parameters; select thresholds or symbols for a strategy;
-- create a strategy candidate; name a strategy candidate;
-- create a fresh-hypothesis discovery memo; hypothesis-spec memo; strategy-spec memo; backtest-plan memo;
+- create a new strategy candidate; name a strategy candidate;
+- create a fresh-hypothesis discovery memo; hypothesis-spec memo;
+  strategy-spec memo; backtest-plan memo;
 - modify src/prometheus/, tests, scripts, data, manifests;
-- modify docs/12-roadmap/phase-gates.md, docs/12-roadmap/technical-debt-register.md, docs/00-meta/ai-coding-handoff.md, or docs/00-meta/implementation-ambiguity-log.md;
-- rescue any prior strategy; create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any hybrid;
+- modify any backtest script (Phase 4l / 4r / 4x or other);
+- modify docs/00-meta/m0-mechanism-admissibility-gate.md;
+- modify docs/12-roadmap/phase-gates.md, docs/12-roadmap/technical-debt-register.md,
+  docs/00-meta/ai-coding-handoff.md, or docs/00-meta/implementation-ambiguity-log.md;
+- rescue any prior strategy; create R3-prime / R2-prime / F1-prime / D1-A-prime /
+  V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any hybrid;
 - propose old-strategy alt-symbol reruns; propose multi-position portfolio trading;
-- silently reduce cross-sectional ranking into V2 / G1 / C1-style breakout under a ranking wrapper;
-- authorize Phase 4al / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials / exchange-write.
-Phase 4ak primary recommendation:
-- merge Phase 4ak into main, then remain paused (now executed via merge commit 2c626bc).
+- silently reduce exit-architecture descriptions into V2 / G1 / C1-style
+  breakout / continuation strategies;
+- adopt the Phase 4z 32-item framework as binding governance;
+- adopt the Phase 4z M0–M7 mechanism-check redesign wholesale;
+- adopt the Phase 4aa admissibility framework as binding governance;
+- adopt the Phase 4ab recommendations as binding governance;
+- reopen any cooled-down family;
+- authorize Phase 4am / Phase 5 / Phase 4 canonical / paper / shadow /
+  live-readiness / deployment / production keys / authenticated APIs /
+  private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json /
+  credentials / exchange-write;
+- authorize 5m / 1m / aggTrades / tick-data acquisition.
+Phase 4al preserves every retained verdict and project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 HIGH cost = 8 bps per side; round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null cooldown +
+  cooled-down families list + memo template.
+Phase 4al primary recommendation:
+- Option A / Option B — remain paused unless the operator separately authorizes
+  a bounded successor.
+Phase 4al conditional secondary recommendation:
+- Option D — narrower future Phase 4am restricted to the §11.A backtest-logic
+  audit (most conservative active option).
+Phase 4al conditional tertiary recommendation:
+- Option C — full §13 Phase 4am with audit and forensic scope (acceptable but
+  heavier and more demanding of predeclaration discipline).
+Phase 4al NOT recommended:
+- Option E — fresh-hypothesis discovery from exit-architecture observations.
+Phase 4al FORBIDDEN options:
+- Option F — parameter tuning on rejected / retained-evidence trade populations;
+- Option G — verdict revision without separately authorized verdict-revision phase;
+- Option H — paper / shadow / live-readiness / deployment / exchange-write /
+  production keys / authenticated APIs / private endpoints / public-endpoint
+  calls in code / user stream / WebSocket / MCP / Graphify / .mcp.json /
+  credentials.
 Phase 4 (canonical) remains unauthorized.
-Phase 4al / Phase 5 / any successor phase remains unauthorized.
-Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
-M0 mechanism-admissibility gate and post-null cooldown rule are binding prospective governance for any future research lane.
+Phase 4am / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs,
+private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json,
+credentials, exchange-write, and 5m / 1m / aggTrades / tick-data acquisition
+all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule remain binding
+prospective governance for any future research lane.
 Recommended state: remain paused.
 No next phase authorized.
 ```
+
+Earlier "Current phase:" content (Phase 4ak) is preserved by the Phase 4ak narrative paragraph above.
 
 Earlier "Current phase:" content (Phase 4af) is preserved by the Phase 4af narrative paragraph above and by the predecessor "Phase 4ae context (preserved for historical reference):" block below.
 
