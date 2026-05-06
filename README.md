@@ -19,7 +19,7 @@ What that means right now:
 
 ## Strategy research arc outcomes
 
-The project has produced three complete strategy-research arcs and one alt-symbol substrate arc, all of which terminated without producing a validated strategy.
+The project has produced the V1/R-series baseline arc plus F1, D1-A, V2, G1, and C1 strategy-family investigations, followed by the alt-symbol substrate arc; none produced a newly validated deployable strategy.
 
 | Strategy | Family signature                          | Verdict                                            |
 | -------- | ----------------------------------------- | -------------------------------------------------- |
