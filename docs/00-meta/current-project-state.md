@@ -178,6 +178,55 @@ Phase 4ak is the **M0 Governance Adoption Phase** (docs-only). **Phase 4ak is te
 Current phase:
 
 ```text
+Phase 4ak merged into main (M0 Governance Adoption Phase, docs-only).
+Phase 4ak was docs-only.
+Phase 4ak adopted as binding prospective governance:
+- the revised twelve-clause M0 mechanism-admissibility gate (Phase 4aj §8);
+- the post-null cooldown rule (Phase 4aj §9).
+Durable governance artifact:
+- docs/00-meta/m0-mechanism-admissibility-gate.md.
+Phase 4ak did NOT adopt:
+- the full Phase 4z 32-item proposed admissibility framework;
+- the Phase 4z proposed M0–M7 mechanism-check redesign wholesale;
+- the Phase 4z proposed discovery-memo / strategy-spec / backtest-plan / execution-report template additions;
+- the Phase 4aa admissibility framework;
+- the Phase 4ab recommendations.
+Phase 4ak did NOT change:
+- the Phase 4m 18-requirement fresh-hypothesis validity gate;
+- the Phase 4t 10-dimension candidate scoring matrix;
+- §11.6 HIGH cost = 8 bps per side;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8 / Phase 3v §8 / Phase 3w §6 / §7 / §8 / Phase 4j §11 / Phase 4k / Phase 4p / Phase 4q / Phase 4v / Phase 4w;
+- any retained verdict (H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; 5m thread CLOSED operationally).
+Phase 4ak did NOT:
+- acquire data; download data; call APIs / endpoints; consult data.binance.vision;
+- modify raw or normalized data; create or modify any manifest; create v003;
+- run any backtest; run any strategy diagnostic; rerun Q1–Q7;
+- compute strategy PnL or entry/exit returns; create an equity curve or trade ledger;
+- optimize parameters; select thresholds or symbols for a strategy;
+- create a strategy candidate; name a strategy candidate;
+- create a fresh-hypothesis discovery memo; hypothesis-spec memo; strategy-spec memo; backtest-plan memo;
+- modify src/prometheus/, tests, scripts, data, manifests;
+- modify docs/12-roadmap/phase-gates.md, docs/12-roadmap/technical-debt-register.md, docs/00-meta/ai-coding-handoff.md, or docs/00-meta/implementation-ambiguity-log.md;
+- rescue any prior strategy; create R3-prime / R2-prime / F1-prime / D1-A-prime / V2-prime / G1-prime / C1-prime / V1-D1 / F1-D1 / any hybrid;
+- propose old-strategy alt-symbol reruns; propose multi-position portfolio trading;
+- silently reduce cross-sectional ranking into V2 / G1 / C1-style breakout under a ranking wrapper;
+- authorize Phase 4al / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / production keys / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / .mcp.json / credentials / exchange-write.
+Phase 4ak primary recommendation:
+- merge Phase 4ak into main, then remain paused (now executed via merge commit 2c626bc).
+Phase 4 (canonical) remains unauthorized.
+Phase 4al / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json, credentials, and exchange-write all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule are binding prospective governance for any future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4af) is preserved by the Phase 4af narrative paragraph above and by the predecessor "Phase 4ae context (preserved for historical reference):" block below.
+
+Phase 4af summary (preserved here for continuity; Phase 4af is no longer the current phase):
+
+```text
 Phase 4af merged into main (Alt-Symbol Regime-Continuity and Directional-Persistence Feasibility Memo, analysis-and-docs only).
 Phase 4af was analysis-and-docs only.
 Phase 4af implemented scripts/phase4af_alt_symbol_regime_persistence.py (standalone analysis script; reads existing local Parquet only; no network I/O; no API calls; no prometheus.runtime/execution/persistence imports; ruff clean; py compile clean).
@@ -2110,10 +2159,10 @@ No next phase authorized.
 Most recent merge:
 
 ```text
-Merge title:                        research(phase-4af): merge alt-symbol regime-persistence analysis
-Phase 4af commit:                   ed1d62fd12a84c2a588a62159936ea716f54829c
-Phase 4af merge commit:             <recorded after the merge commit>
-main HEAD:                          <recorded after the merge commit>
+Merge title:                        docs(phase-4ak): merge M0 governance adoption
+Phase 4ak commit:                   065e1b098b2c8accd16cbc8b1a4a2f04c8540437
+Phase 4ak merge commit:             2c626bc0a280eb72a49b73dfb15ac889c35b508c
+main HEAD:                          2c626bc0a280eb72a49b73dfb15ac889c35b508c
 ```
 
 ## Strategy Research Arc Outcomes
