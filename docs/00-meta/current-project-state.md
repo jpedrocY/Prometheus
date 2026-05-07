@@ -197,7 +197,258 @@ Phase 4au is the **Binance Microstructure Capture Design Specification Memo** (d
 
 Phase 4av is the **Public-Only Microstructure Capture Implementation Plan** (docs-only implementation-planning memo). **Phase 4av is text-only.** Phase 4av translates the Phase 4au Binance Microstructure Capture Design Specification into a precise, file-by-file future implementation plan covering: a proposed future file / module layout under a hypothetical `src/prometheus/research/microstructure/` namespace (config; allowlist; public_rest; public_ws; raw_writer; manifest; schema; invalid_window; collectors for aggtrade / bookticker / depthdiff / depth_snapshot / forceorder_proxy / oi_funding; normalizer; replay/lob; replay/deterministic; eligibility_gate; healthcheck; dashboard_hook), a `scripts/microstructure_*` CLI surface, a paired `tests/research/microstructure/` test tree, with per-module purpose / allowed imports / forbidden imports / public API / inputs / outputs / failure modes / tests / governance notes — **none created**; a future CLI design covering eleven planned subcommands (`capture aggtrades`; `capture bookticker`; `capture depthdiff`; `capture forceorder`; `poll oi-funding`; `snapshot depth`; `normalize`; `replay lob`; `validate-schema`; `eligibility-gate`; `health-report`) with required / optional / forbidden flags, dry-run behaviour, output paths, stop conditions, and logging expectations; a future configuration design covering twelve sections (endpoint allowlist; endpoint denylist; symbol allowlist; dataset family config; storage root; capture cadence; WebSocket reconnect; REST rate-limit budgets; invalid-window thresholds; eligibility-gate thresholds; replay settings; health-check settings) and explicit forbidden config fields (no API keys; no `.env` reads; no MCP / Graphify / `.mcp.json`); a future storage and `.gitignore` plan recommending a `data/microstructure/` `.gitignore` line for any future implementation phase **but not modifying `.gitignore` in Phase 4av and not creating any directory**; a future manifest implementation plan translating Phase 4au §13 into ten implementation steps (manifest schema; append-only updates; SHA256 pairing; per-file event counts; invalid windows; `research_eligible: false` default; `eligibility_gate_status: pending` default; `code_commit_sha`; `capture_config_hash`; `endpoint_docs_reference`); a future schema implementation plan with explicit implementation order (aggTrades first; bookTicker second; depthDiff + depthSnapshot third; forceOrder proxy fourth; OI / funding metrics fifth; markPrice only if separately authorised; replay LOB derived schema after depthDiff); a future invalid-window implementation plan with all seventeen Phase 4au triggers enumerated as future error-class / enum entries with detection point / severity / downstream eligibility action / required evidence / tests; a future research eligibility gate implementation plan translating the ten Phase 4au §22 checks into implementation steps with the explicit binding rule that **no `research_eligible` flag is flipped by Phase 4av and the eligibility gate is not implemented**; a future deterministic replay implementation plan (raw → normalized; normalized → derived; LOB replay; replay_config_hash; byte-identical output requirement; replay logs; replay failure behaviour; no ad-hoc raw reads); a future local-order-book reconstruction implementation plan (snapshot fetcher; diff buffer; first-event bracketing; `U` / `u` / `pu` continuity; apply-diff engine; top-N extractor; stale-book detector; impossible-spread detector; resync handler; invalid-window writer); a conservative future collector implementation order (1 config + allowlist / denylist; 2 manifest + raw writer + checksum; 3 aggTrades historical / archive planning only or public REST/WS collector if separately authorised; 4 schema validation; 5 eligibility gate skeleton; 6 bookTicker collector; 7 depthDiff + REST depth snapshot; 8 deterministic LOB replay; 9 forceOrder proxy collector; 10 OI / funding REST polling; 11 health-check reporter; 12 local dashboard hook) with rationale for **aggTrades-first** (historically available; smaller than depth; directly relevant to Lane B; avoids immediate LOB replay complexity); a future test matrix covering twenty test families (config validation; allowlist / denylist; no-secret / no-`.env`; raw writer atomic; checksum; manifest append; schema validation; invalid-window enum; aggTrade sequence; bookTicker spread sanity; depthDiff `U/u/pu` gap; REST snapshot bracketing; LOB replay golden; forceOrder proxy label; OI / funding retention label; eligibility gate; CLI dry-run; import boundaries; no endpoint call; no network by default); a future failure-mode matrix covering twenty failure modes with future behaviour / fail-open-or-closed / invalid-window action / manifest action / test requirement (network timeout; HTTP 429; HTTP 418; WebSocket disconnect; stale stream; queue backpressure; partial file write; corrupt checksum; schema mismatch; sequence gap; snapshot mismatch; impossible spread; clock skew; disk full; permission error; malformed JSON; unexpected field; missing field; symbol mismatch; proxy incompleteness); a future validation-command list (ruff; mypy strict on new modules; targeted pytest with no-network mode; compileall; import-boundary check; `git diff --check`); twelve future implementation stop conditions (any private endpoint in allowlist; any credential path; any user-stream / listenKey path; any order endpoint path; any source imports `prometheus.runtime` / `execution` / `persistence`; any actual endpoint call in non-mocked tests; any data directory created before `.gitignore` and authorisation; any manifest flips `research_eligible` outside the gate; any silently filled invalid window; any markPrice stop-domain bypass of Phase 3r §8 / 3v §8; any old-strategy rescue interpretation; any strategy or ML logic); a future implementation branch strategy splitting future implementation into separately-authorised phases (Phase 4aw scaffold-only; Phase 4ax aggTrades-only; Phase 4ay manifest / eligibility; Phase 4az depth / LOB replay; Phase 4ba forceOrder / OI context); a security / credential implementation plan (no `.env` reads; no API-key arguments; no secret config fields; no signed-request helpers; no private-endpoint strings; no user stream; no listenKey; no order endpoints; no leverage / margin endpoints; no MCP / Graphify / `.mcp.json`); a runtime-separation implementation plan (no imports from `prometheus.runtime` / `execution` / `persistence`; no runtime database writes; no safety-state mutation; no order-router contact; capture is research infrastructure only); a symbol / scope implementation plan (BTCUSDT primary; ETHUSDT comparison; no alt-symbol mining; Phase 4ac core symbols only if separately authorised; no old-strategy alt-symbol rerun; symbol-specific future study must be mechanism-first); and explicit M0 / no-rescue implications (implementation planning is infrastructure planning only; no edge claim; no cooled-down family reopened; no R3 / R2 / V1-arc rescue; no D1-A funding-trigger reuse; no G1 / V2 / C1 hidden wrapper; no strategy until data quality and mechanism feasibility are established). Phase 4av does NOT acquire data, does NOT call any Binance endpoint, does NOT open any WebSocket, does NOT download any archive file, does NOT modify endpoint code, does NOT implement data capture, does NOT implement REST polling, does NOT implement WebSocket workers, does NOT implement order-book reconstruction, does NOT implement replay, does NOT implement any feature, does NOT create schemas as code, does NOT create manifests, does NOT create dataset directories, does NOT modify `.gitignore`, does NOT run any backtest or historical strategy script, does NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py` or any other prior research script, does NOT run any simulation, does NOT compute predictive statistics, does NOT modify data / manifests / existing trade logs / source under `src/prometheus/` / tests / scripts / governance docs / retained verdicts / project locks / strategy specs / thresholds, does NOT commit any local `data/research/` output, does NOT create a strategy candidate, does NOT design entries or exits, does NOT create an ML model, does NOT amend M0 governance, does NOT reopen the 5m research thread, and does NOT authorize any successor phase (Phase 4aw / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / WebSocket implementation / MCP / Graphify / `.mcp.json` / credentials / 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book capture). **Phase 4av preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am §11.A audit findings; Phase 4an inventory result; Phase 4ao harmonization result; Phase 4ap forensic plan; Phase 4aq computation result preserved as descriptive evidence only; Phase 4ar interpretation result preserved as descriptive interpretation only; Phase 4as mechanism-map result preserved as docs-only reset evidence only; Phase 4at availability / capture-feasibility result preserved as docs-only feasibility evidence only; Phase 4au capture-design result preserved as docs-only design evidence only. Phase 4av adds `docs/00-meta/implementation-reports/2026-05-07_phase-4av_public-only-microstructure-capture-implementation-plan.md` and `docs/00-meta/implementation-reports/2026-05-07_phase-4av_closeout.md`. Phase 4av modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4av recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4av) — future docs-and-code **Phase 4aw — Public-Only Microstructure Capture Scaffold Implementation** (limited scope only: scaffold (`__init__.py`, `config.py`, `allowlist.py`, `invalid_window.py`, `manifest.py` with no live writes, `raw_writer.py` with no live writes), test scaffolding, import-boundary tests, and a `.gitignore` line for `data/microstructure/`; no live endpoint calls; no archive downloads; no WebSockets; no data acquisition; no actual manifest creation; no actual raw file writes; NOT authorized by Phase 4av); not recommended — immediate implementation; immediate endpoint calls; immediate WebSocket connections; immediate archive downloads; immediate capture; immediate order-book reconstruction; immediate replay; immediate feature implementation; immediate ML or strategy work; old-strategy alt-symbol rerun; R3 / R2 / V1-arc rescue; reopening the 5m research thread; paper / live work; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection; M0 amendment derived from Phase 4av reasoning; reopening the 5m research thread; data acquisition; endpoint calls; WebSocket connections; capture implementation; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket implementation / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4aw / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4aw is the **Public-Only Microstructure Capture Scaffold Implementation** (code-and-docs scaffold-only implementation phase). **Phase 4aw is the project's first implementation phase since Phase 4ak (M0 governance adoption) and the first code phase since Phase 4aq (V1-arc forensic computation).** Phase 4aw adds an inert public-only microstructure research scaffold under `src/prometheus/research/microstructure/` realising the Phase 4av implementation plan at scaffold-only scope. Phase 4aw adds six new source modules (`__init__.py`, `config.py`, `allowlist.py`, `invalid_window.py`, `manifest.py`, `raw_writer.py`); seven new test files under `tests/research/microstructure/` (`test_config.py`, `test_allowlist.py`, `test_invalid_window.py`, `test_manifest.py`, `test_raw_writer.py`, `test_import_boundaries.py`, plus package `__init__.py`s under `tests/research/` and `tests/research/microstructure/`); a single `.gitignore` line `data/microstructure/`; the Phase 4aw memo and closeout under `docs/00-meta/implementation-reports/`; and a narrow Phase 4aw narrative paragraph + "Current phase:" block update in `docs/00-meta/current-project-state.md`. Phase 4aw realises the Phase 4av Phase 4aw scope (scaffold; config validation; endpoint allowlist / denylist; seventeen-trigger invalid-window enum; manifest data model with `research_eligible: false` default and no public flip helper; atomic raw-writer primitive with paired SHA256; import-boundary tests; `.gitignore` line) and **does NOT** realise any Phase 4av collector / REST / WebSocket / archive-download / capture / order-book reconstruction / deterministic replay / normalizer / eligibility-gate / healthcheck / dashboard-hook / CLI / live-write / data-acquisition scope. Scaffold modules in plain English: (1) `config.py` defines a frozen `MicrostructureConfig` dataclass with `endpoint_allowlist`, `endpoint_denylist`, `symbol_allowlist`, `storage_root`, `dataset_family_config`, `invalid_window_thresholds`, `eligibility_gate_thresholds`, plus `DatasetFamilyConfig`, `InvalidWindowThresholds`, `EligibilityGateThresholds`, and a pure `validate_config(config, *, explicit_extra_symbols=None)` function with a `ConfigValidationError`; the default symbol allowlist is `("BTCUSDT", "ETHUSDT")` only; alt symbols require explicit caller admission; (2) `allowlist.py` defines immutable `ALLOWLIST_PATTERNS` and `DENYLIST_TOKENS` tuples plus pure `is_endpoint_allowed`, `is_endpoint_denied`, `assert_endpoint_allowed`, and `EndpointNotAllowedError`; denylist dominates allowlist (so `@forceOrder` WS pattern is admitted but `/fapi/v1/forceOrders` user-scope authenticated REST is denied); (3) `invalid_window.py` defines `InvalidWindowReason` (StrEnum, exactly seventeen values: `MISSING_SEQUENCE`, `OUT_OF_ORDER_EVENT`, `DUPLICATE_EVENT`, `GAP_AFTER_RECONNECT`, `SNAPSHOT_MISMATCH`, `CLOCK_SKEW`, `SYMBOL_MISMATCH`, `STALE_STREAM`, `STALE_BOOK`, `IMPOSSIBLE_SPREAD`, `NEGATIVE_SIZE`, `ZERO_OR_INVALID_PRICE`, `ARCHIVE_CHECKSUM_MISMATCH`, `REST_RETENTION_GAP`, `FORCE_ORDER_PROXY_INCOMPLETENESS`, `FAILED_ATOMIC_WRITE`, `PARTIAL_FILE_RECOVERY_EVENT`), `InvalidWindowSeverity` (`INFO`, `WARN`, `ERROR`), `DownstreamEligibilityAction` (`FLAG`, `EXCLUDE`, `PROXY_ONLY`), and a frozen `InvalidWindow` dataclass with `start_time_ms`, `end_time_ms`, `family`, `symbol`, `reason`, `severity`, `downstream_eligibility_action`, `evidence` and round-trip `to_dict` / `from_dict`; (4) `manifest.py` defines `MicrostructureManifest` (mutable dataclass; `research_eligible` defaults `False`; `eligibility_gate_status` defaults `EligibilityGateStatus.PENDING`), `FileEntry` (frozen dataclass; required 64-character SHA256 hex), `EligibilityGateStatus` (`PENDING`, `PASS`, `FAIL`), and `ManifestImmutableError`, with append-only `append_file` / `append_invalid_window`, round-trip `to_dict` / `from_dict`, and caller-controlled `save(path)` / `load(path)` (refuses to overwrite); the manifest's `flip_research_eligible` method always raises — Phase 4aw provides no path to flip `research_eligible` to `True`; only the future eligibility gate (separately authorized) may do so; (5) `raw_writer.py` defines `RawWriter`, `RawWriterFileSummary`, `RawWriterError`, `RawWriterPathError`, `RawWriterAlreadyExistsError`; the writer accepts a caller-provided `target_path`, refuses paths that resolve under `data/microstructure/` (regardless of separator), refuses to overwrite existing finals, refuses if a stale `.tmp` companion exists, refuses if the path is a directory or non-`Path`, requires integer `event_time_ms` on every record, finalises by flushing + optional fsync (suppressed where unavailable) + computing SHA256 over `.tmp` bytes + atomically renaming `.tmp` → final + writing `<final>.sha256`; tests use pytest `tmp_path` only; (6) `__init__.py` is a pure package marker re-exporting the public scaffold surface as `__all__`. Tests in plain English: 114 tests pass; `test_config.py` covers valid config / default thresholds / empty / duplicate / unknown / denylisted allowlist rejections / denylist block accepts denylist tokens / credential-shaped storage_root rejected / unknown symbol without explicit extras / unknown symbol admitted via explicit extras / lowercase symbol rejected / invalid layer + capture_mode rejected / threshold negative rejected / out-of-range fraction rejected / credential-shaped family rejected; `test_allowlist.py` covers non-empty allowlist and denylist / 21 parametrised public endpoint admissions / 23 parametrised denied references / `@forceOrder` vs `/fapi/v1/forceOrders` denylist dominance / empty + non-string fail-closed / case-insensitive matching; `test_invalid_window.py` covers exactly 17 reasons / minimum severity + action sets / valid window / end < start rejected / empty family + symbol + evidence rejected / round-trip / string enum values / invalid reason on round-trip / frozen-dataclass immutability; `test_manifest.py` covers `research_eligible: False` default / `eligibility_gate_status: PENDING` default / `flip_research_eligible` always raises / `append_file` updates counters / `append_invalid_window` appends / invalid SHA256 rejected / round-trip / save + load via pytest `tmp_path` / refuses to overwrite / serialised payload defaults / empty required field rejected; `test_raw_writer.py` covers append + close atomic / tmp file removed / no overwrite / stale tmp blocks construction / record must have `event_time_ms` / `event_time_ms` must be int / record must be dict / double close rejected / append after close rejected / directory path rejected / non-`Path` rejected / 3 parametrised forbidden-project-data-path cases / SHA256 matches finalized bytes; `test_import_boundaries.py` scans every scaffold module for forbidden imports (`prometheus.runtime`, `prometheus.execution`, `prometheus.persistence`, `requests`, `httpx`, `aiohttp`, `websockets`, `binance`, `dotenv`, `python_dotenv`, `os.environ`, `getenv`) and forbidden token strings (after stripping docstrings/comments) including `api_key`, `secret`, `signature`, `listenKey`, `userDataStream`, `/fapi/v1/order`, `/fapi/v2/account`, `/fapi/v2/positionRisk`, `/fapi/v1/leverage`, `/fapi/v1/marginType`, `/fapi/v1/forceOrders`, `.env`, `Graphify`, `MCP`, `.mcp.json`. Validation in plain English: `python -m compileall src/prometheus/research/microstructure` passed; `python -m compileall tests/research/microstructure` passed; `ruff check src/prometheus/research/microstructure tests/research/microstructure` passed; `ruff check .` (whole repo) passed; `pytest tests/research/microstructure` returned 114 passed; `pytest` (whole repo) returned 897 passed and 2 failed where the 2 failures (`tests/simulation/test_backtest_real_2026_03.py::test_real_2026_03_btcusdt` and `::test_real_2026_03_ethusdt` failing with `KeyError: 'trade_count'` in the unrelated `src/prometheus/research/data/storage.py:232`) were verified to be pre-existing on `main` directly via `git checkout main && pytest tests/simulation/test_backtest_real_2026_03.py` — Phase 4aw introduces zero new test regressions; `mypy src/prometheus/research/microstructure` returned `Success: no issues found in 6 source files`; `mypy` (whole repo) returned `Success: no issues found in 88 source files` (was 82 on main; the 6 new microstructure modules now also pass mypy strict); `git diff --check` clean; `git status` shows only the expected scaffold files and the new `.gitignore` change; `data/microstructure/` directory was confirmed not to exist before, during, or after Phase 4aw. Phase 4aw did NOT acquire data; did NOT call any Binance endpoint; did NOT open any WebSocket; did NOT download any archive file; did NOT modify endpoint code; did NOT implement data capture; did NOT implement REST polling; did NOT implement WebSocket workers; did NOT implement public REST client logic; did NOT implement public WebSocket client logic; did NOT implement order-book reconstruction; did NOT implement deterministic replay; did NOT implement normalizers; did NOT implement eligibility-gate execution; did NOT implement feature computation; did NOT create real dataset manifests under project paths; did NOT create the `data/microstructure/` directory; did NOT write raw files under project data paths; did NOT run any backtest; did NOT run any historical strategy script; did NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py` or any other prior research script; did NOT run any simulation; did NOT compute predictive statistics; did NOT modify any existing data, manifest, trade log, strategy spec, threshold, governance doc, retained verdict, project lock, or prior research report (beyond the new Phase 4aw memo and closeout files and the narrow `current-project-state.md` update); did NOT modify `src/prometheus/` outside the new microstructure package; did NOT modify any existing test outside the new tests/research/microstructure/ tree; did NOT modify any existing script under `scripts/`; did NOT modify any existing manifest under `data/manifests/`; did NOT modify `pyproject.toml`; did NOT modify `README.md`; did NOT create a strategy candidate; did NOT design entries or exits; did NOT create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid; did NOT create an ML model; did NOT amend M0 governance; did NOT reopen the 5m research thread; did NOT authorize any successor phase (Phase 4ax / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / live WebSocket implementation / MCP / Graphify / `.mcp.json` / credentials / 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book capture). **Phase 4aw preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am §11.A audit findings; Phase 4an inventory result; Phase 4ao harmonization result; Phase 4ap forensic plan; Phase 4aq computation result preserved as descriptive evidence only; Phase 4ar interpretation result preserved as descriptive interpretation only; Phase 4as mechanism-map result preserved as docs-only reset evidence only; Phase 4at availability / capture-feasibility result preserved as docs-only feasibility evidence only; Phase 4au capture-design result preserved as docs-only design evidence only; Phase 4av implementation-plan result preserved as docs-only planning evidence only. Phase 4aw adds `src/prometheus/research/microstructure/__init__.py`, `src/prometheus/research/microstructure/config.py`, `src/prometheus/research/microstructure/allowlist.py`, `src/prometheus/research/microstructure/invalid_window.py`, `src/prometheus/research/microstructure/manifest.py`, `src/prometheus/research/microstructure/raw_writer.py`, `tests/research/__init__.py`, `tests/research/microstructure/__init__.py`, `tests/research/microstructure/test_config.py`, `tests/research/microstructure/test_allowlist.py`, `tests/research/microstructure/test_invalid_window.py`, `tests/research/microstructure/test_manifest.py`, `tests/research/microstructure/test_raw_writer.py`, `tests/research/microstructure/test_import_boundaries.py`, `docs/00-meta/implementation-reports/2026-05-07_phase-4aw_public-only-microstructure-capture-scaffold-implementation.md`, and `docs/00-meta/implementation-reports/2026-05-07_phase-4aw_closeout.md`. Phase 4aw modifies `.gitignore` (one new line: `data/microstructure/`) and `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the new files. **Phase 4aw recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4aw) — future docs-and-code Phase 4ax aggTrades-only collector skeleton phase, separately authorized. NOT recommended: implementing collectors; REST or WS clients; capture; archive downloads; eligibility-gate execution; features; ML; any cooled-down-family rescue; reopening the 5m research thread; paper / live work. FORBIDDEN: verdict revision; lock revision; parameter optimization; strategy resurrection (R3-prime / R1a-prime / R1b-narrow-prime / R2-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid); M0 amendment derived from Phase 4aw reasoning; reopening the 5m research thread; data acquisition; endpoint calls; live capture; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / live WebSocket implementation / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4ax / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4aw drafted (Public-Only Microstructure Capture
+Scaffold Implementation, code-and-docs scaffold-only
+implementation phase).
+Phase 4aw is the project's first implementation phase
+since Phase 4ak (M0 governance adoption) and the first
+code phase since Phase 4aq (V1-arc forensic computation).
+Phase 4aw realises the Phase 4av implementation plan at
+scaffold-only scope.
+Phase 4aw added:
+- src/prometheus/research/microstructure/__init__.py
+- src/prometheus/research/microstructure/config.py
+- src/prometheus/research/microstructure/allowlist.py
+- src/prometheus/research/microstructure/invalid_window.py
+- src/prometheus/research/microstructure/manifest.py
+- src/prometheus/research/microstructure/raw_writer.py
+- tests/research/__init__.py
+- tests/research/microstructure/__init__.py
+- tests/research/microstructure/test_config.py
+- tests/research/microstructure/test_allowlist.py
+- tests/research/microstructure/test_invalid_window.py
+- tests/research/microstructure/test_manifest.py
+- tests/research/microstructure/test_raw_writer.py
+- tests/research/microstructure/test_import_boundaries.py
+- docs/00-meta/implementation-reports/
+    2026-05-07_phase-4aw_public-only-
+    microstructure-capture-scaffold-
+    implementation.md
+- docs/00-meta/implementation-reports/
+    2026-05-07_phase-4aw_closeout.md
+Phase 4aw modified narrowly:
+- .gitignore (one new line: data/microstructure/)
+- docs/00-meta/current-project-state.md (this Phase 4aw
+  narrative paragraph + Current phase block update)
+Phase 4aw did NOT:
+- acquire data;
+- call any Binance endpoint;
+- open any WebSocket;
+- download any archive file;
+- modify endpoint code;
+- implement data capture;
+- implement REST polling;
+- implement WebSocket workers;
+- implement public REST client logic;
+- implement public WebSocket client logic;
+- implement order-book reconstruction;
+- implement deterministic replay;
+- implement normalizers;
+- implement eligibility-gate execution;
+- implement feature computation;
+- create real dataset manifests under project paths;
+- create the data/microstructure/ directory;
+- write raw files under project data paths;
+- run any backtest;
+- run any historical strategy script;
+- rerun scripts/phase4aq_v1_arc_exit_path_forensics.py
+  or any other prior research script;
+- run any simulation;
+- compute predictive statistics;
+- modify any existing data, manifest, trade log,
+  strategy spec, threshold, governance doc, retained
+  verdict, project lock, or prior research report
+  (beyond the new Phase 4aw memo and closeout files
+  and the narrow current-project-state.md update);
+- modify src/prometheus/ outside the new microstructure
+  package;
+- modify any existing test outside the new
+  tests/research/microstructure/ tree;
+- modify any existing script under scripts/;
+- modify any existing manifest under data/manifests/;
+- modify pyproject.toml;
+- modify README.md;
+- create a strategy candidate;
+- design entries or exits;
+- create R3-prime / R2-prime / R1a-prime /
+  R1b-narrow-prime / H0-prime / F1-prime / D1-A-prime /
+  D1-B / V2-prime / V2-narrow / V2-relaxed / V2 hybrid /
+  G1-prime / G1-narrow / G1-extension / G1 hybrid /
+  C1-prime / C1-narrow / C1-extension / C1 hybrid /
+  V1-D1 / F1-D1 / any cross-strategy hybrid;
+- create an ML model;
+- amend M0 governance;
+- reopen the 5m research thread;
+- authorize Phase 4ax, Phase 5, Phase 4 canonical,
+  paper, shadow, live-readiness, deployment,
+  exchange-write, production-key creation,
+  authenticated APIs, private endpoints, user stream,
+  live WebSocket implementation, MCP, Graphify,
+  .mcp.json, credentials, 5m, 1m, aggTrades, tick,
+  mark-price 30m / 4h, or order-book capture.
+Phase 4aw scaffold module summary (in plain English):
+- config.py defines a frozen MicrostructureConfig
+  dataclass with endpoint_allowlist, endpoint_denylist,
+  symbol_allowlist, storage_root, dataset_family_config,
+  invalid_window_thresholds,
+  eligibility_gate_thresholds, plus DatasetFamilyConfig,
+  InvalidWindowThresholds, EligibilityGateThresholds,
+  and a pure validate_config function with a
+  ConfigValidationError; default symbol allowlist is
+  ("BTCUSDT", "ETHUSDT") only; alt symbols require
+  explicit caller admission.
+- allowlist.py defines immutable ALLOWLIST_PATTERNS and
+  DENYLIST_TOKENS plus pure is_endpoint_allowed,
+  is_endpoint_denied, assert_endpoint_allowed, and
+  EndpointNotAllowedError; denylist dominates allowlist
+  so @forceOrder WS pattern is admitted but
+  /fapi/v1/forceOrders authenticated REST is denied.
+- invalid_window.py defines InvalidWindowReason
+  (StrEnum, exactly seventeen values),
+  InvalidWindowSeverity (INFO, WARN, ERROR),
+  DownstreamEligibilityAction (FLAG, EXCLUDE,
+  PROXY_ONLY), and a frozen InvalidWindow dataclass
+  with start_time_ms, end_time_ms, family, symbol,
+  reason, severity, downstream_eligibility_action,
+  evidence and round-trip to_dict / from_dict.
+- manifest.py defines MicrostructureManifest
+  (research_eligible defaults False;
+  eligibility_gate_status defaults PENDING), FileEntry
+  (frozen), EligibilityGateStatus (PENDING, PASS, FAIL),
+  ManifestImmutableError, append-only append_file /
+  append_invalid_window, round-trip to_dict /
+  from_dict, and caller-controlled save / load that
+  refuse to overwrite; flip_research_eligible always
+  raises; only the future eligibility gate (separately
+  authorized) may flip the flag.
+- raw_writer.py defines RawWriter,
+  RawWriterFileSummary, RawWriterError,
+  RawWriterPathError, RawWriterAlreadyExistsError;
+  the writer refuses paths under data/microstructure/,
+  refuses to overwrite, refuses stale .tmp companions,
+  refuses directories, refuses non-Path; finalises by
+  flush + optional fsync + SHA256 over .tmp + atomic
+  rename + paired .sha256 file; tests use pytest
+  tmp_path only.
+- __init__.py is a pure package marker re-exporting the
+  public scaffold surface as __all__.
+Phase 4aw test summary (in plain English):
+- 114 tests pass.
+- Whole-repo ruff: All checks passed!
+- Whole-repo pytest: 897 passed, 2 failed; both 2
+  failures pre-exist on main (verified by git checkout
+  main && pytest); zero new regressions from Phase 4aw.
+- Whole-repo mypy strict: Success on 88 source files
+  (was 82; 6 new microstructure modules now also pass).
+- python -m compileall on src and tests both pass.
+- git diff --check clean.
+- data/microstructure/ confirmed not to exist before,
+  during, or after Phase 4aw.
+Phase 4aw preserves every retained verdict and project
+lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 = 8 bps per side preserved verbatim; round-trip
+  = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v;
+  Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null
+  cooldown + cooled-down families list + memo template;
+- Phase 4al refined no-rescue rule + §13 boundary +
+  §14 hierarchy;
+- Phase 4am §11.A audit findings (F-1/F-2/F-3/F-4)
+  preserved;
+- Phase 4an inventory result preserved;
+- Phase 4ao harmonization result preserved;
+- Phase 4ap forensic plan preserved;
+- Phase 4aq computation result preserved as descriptive
+  evidence only;
+- Phase 4ar interpretation result preserved as
+  descriptive interpretation only;
+- Phase 4as mechanism-map result preserved as docs-only
+  reset evidence only;
+- Phase 4at availability / capture-feasibility result
+  preserved as docs-only feasibility evidence only;
+- Phase 4au capture-design result preserved as
+  docs-only design evidence only;
+- Phase 4av implementation-plan result preserved as
+  docs-only planning evidence only.
+Phase 4aw primary recommendation:
+- remain paused.
+Phase 4aw conditional secondary recommendation
+(NOT authorized):
+- Phase 4ax — Public-Only Microstructure Capture
+  aggTrades-only collector skeleton phase
+  (docs-and-code; separately authorized;
+  NOT authorized by Phase 4aw).
+Phase 4aw NOT recommended:
+- implementing collectors;
+- REST or WS clients;
+- capture;
+- archive downloads;
+- eligibility-gate execution;
+- features;
+- ML;
+- any cooled-down-family rescue;
+- reopening the 5m research thread;
+- paper / live work.
+Phase 4aw FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime /
+  R1b-narrow-prime / R2-prime / H0-prime / F1-prime /
+  D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed
+  / V2 hybrid / G1-prime / G1-narrow / G1-extension /
+  G1 hybrid / C1-prime / C1-narrow / C1-extension /
+  C1 hybrid / V1-D1 / F1-D1 / any cross-strategy
+  hybrid);
+- M0 amendment derived from Phase 4aw reasoning;
+- reopening the 5m research thread;
+- acquisition of 5m / 1m / aggTrades / tick / mark-price
+  30m / 4h / order-book data without separately
+  authorized data-requirements memo;
+- paper / shadow / live-readiness / deployment /
+  exchange-write / production-key creation /
+  authenticated APIs / private endpoints /
+  public-endpoint calls in code / user stream /
+  live WebSocket implementation / MCP / Graphify /
+  .mcp.json / credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4ax / Phase 5 / any successor phase remains
+unauthorized.
+Paper/shadow, live-readiness, deployment, production
+keys, authenticated APIs, private endpoints,
+public-endpoint calls in code, user stream, WebSocket
+implementation, MCP, Graphify, .mcp.json, credentials,
+exchange-write, and 5m / 1m / aggTrades / tick /
+mark-price 30m / 4h / order-book data acquisition all
+remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown
+rule remain binding prospective governance for any
+future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4av) is preserved by the Phase 4av narrative paragraph above.
+
+Earlier Phase 4av "Current phase:" block (preserved here for continuity; Phase 4av is no longer the current phase):
 
 ```text
 Phase 4av drafted (Public-Only Microstructure Capture
