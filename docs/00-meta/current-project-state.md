@@ -189,7 +189,214 @@ Phase 4aq is the **V1-Arc Exit-Path Forensic Computation** (docs-and-code; stand
 
 Phase 4ar is the **V1-Arc Exit-Path Forensic Interpretation Memo** (docs-only). **Phase 4ar is text-only.** Phase 4ar consolidates the already-merged Phase 4aq descriptive forensic evidence into plain-English research and governance interpretation. Phase 4ar performs **no computation**, does NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py`, does NOT run any historical strategy script, does NOT run a backtest, does NOT acquire data, does NOT modify data / manifests / existing trade logs / source under `src/prometheus/` / tests / governance docs / verdicts / locks / strategy specs / thresholds / existing scripts, does NOT modify `.gitignore`, does NOT commit any `data/research/phase4aq/` output, does NOT design exits, does NOT optimize R3, does NOT create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime or any V1-arc successor candidate, does NOT propose strategy changes, does NOT amend M0 governance, does NOT reopen the 5m research thread, and does NOT authorize Phase 4as / Phase 5 / Phase 4 canonical / any successor phase. **Phase 4ar central interpretation:** Phase 4aq produced a complete descriptive forensic snapshot of V1-arc populations (H0, R3, R1a, R1b-narrow, R2) on 15m trade-price-backtest artefacts; the snapshot documents that V1-arc trades had favorable excursion (non-trivial MFE_R distributions) but did not, on average, translate that favorable excursion into positive realized net_R on the primary R-window default cell on either BTCUSDT or ETHUSDT, and documents structural limits of 15m descriptive forensics (intrabar event ordering is `NOT_AUDITABLE_FROM_EXISTING_FIELDS`; favorable-before-stop is a labelled proxy). **What this means:** Phase 4aq evidence is descriptive research evidence about how V1-arc trades unfolded under the locked methodology, nothing more. It does not prove a recoverable edge; it does not prove R3 can be improved by exit redesign; it does not prove R2's failure was cost-only; it does not prove R1a or R1b-narrow should be promoted; it does not prove H0 should be revised; it does not prove that 5m / 1m / aggTrades / tick / mark-price 30m / 4h data acquisition is justified; it does not authorize any successor phase. **Per-population interpretation:** H0 remains FRAMEWORK ANCHOR (no H0-prime / framework-anchor revision); R3 remains BASELINE-OF-RECORD (no R3 optimization / R3-prime / R3 rescue / baseline-of-record revision; no conversion of R3 forensic numbers into entry rules / exit rules / parameters / thresholds / new candidates); R1a remains RETAINED — NON-LEADING (no R1a-prime / promotion); R1b-narrow remains RETAINED — NON-LEADING (no R1b-narrow-prime / promotion; small primary-cell sample size requires extra caution); R2 remains FAILED — §11.6 (no R2 rescue / R2-prime / §11.6 relaxation; cost-cell descriptive variation does not change the locked cost reference). **Per-evidence-theme interpretation:** MFE_R / MAE_R distributions are descriptive trade-path observations; threshold-touch rates are descriptive frequencies and **not** TP recommendations (Phase 4ap §9 F1 and F3 forbidden); giveback-from-MFE is descriptive (no clamping; negative values preserved as edge-case context); favorable-before-stop is a labelled proxy (does not assert sequencing); adverse-before-favorable is `NOT_AUDITABLE_FROM_EXISTING_FIELDS` (structural schema limit; not authorization for lower-timeframe escalation); cost / fee / funding / estimated-slippage are descriptive only with the identity not asserted (§11.6 preserved verbatim); bar-resolution ambiguity falls in Phase 4al §14.C `2-10%` (BTC) and `10-20%` (ETH) bands as documented limitation; R-window vs sensitivity / validation variant separation is preserved as binding interpretation discipline. **Exit-architecture interpretation boundary:** Phase 4aq supports the descriptive statement that exit architecture has now been audited for V1-arc at 15m resolution; Phase 4aq does NOT support exit design / TP-SL selection / optimal-winner-management inference / trailing-stop or break-even / partial-exit / time-stop justification / rescue of failed entries; bad exit architecture can destroy a usable signal but Phase 4aq did not prove a usable signal exists. **Lower-timeframe interpretation boundary:** bar-resolution ambiguity is documented as a structural limitation; this does NOT authorize 5m / 1m / aggTrades / tick / mark-price data acquisition; this does NOT reopen the 5m research thread (Phase 3t closure preserved); any future lower-timeframe measurement-layer discussion would require separate operator authorization and must satisfy Phase 4al §14 and Phase 4ao §13.3. **Governance interpretation:** Phase 4aq is descriptive evidence only; M0 admissibility / post-null cooldown / §11.6 / §1.7.3 / Phase 3r §8 / Phase 3v §8 / Phase 3w §6 / §7 / §8 / Phase 4j §11 / Phase 4k / Phase 4p / Phase 4q / Phase 4v / Phase 4w / Phase 4ak adoption / Phase 4al refined no-rescue + §13 / §14 / Phase 4am §11.A / Phase 4an / 4ao / 4ap / 4aq results all preserved. **Phase 4ar explicitly rejects** the following forbidden interpretations: "R3 would work with better exits"; "R3 should be optimized"; "R2 failed only because of costs"; "R1a / R1b-narrow should be promoted"; "+2R or +3R touch rates imply TP selection"; "5m / 1m is now required"; "V1-arc can be rescued"; "A new V1-arc exit system should be designed"; "Verdicts should be revised"; "Locks should be revised". **Phase 4ar allows**: descriptive understanding of V1-arc trade paths under locked methodology; documentation that favorable excursion existed but was not sufficient to overcome realized net_R behaviour; documentation of 15m sequencing limitations; governance-safe archival interpretation; meta-learning about research process (not strategy design). Phase 4ar adds `docs/00-meta/implementation-reports/2026-05-06_phase-4ar_v1-arc-exit-path-forensic-interpretation.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4ar_closeout.md`. Phase 4ar modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4ar recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4ar) — narrower docs-only archival synthesis memo reorganising Phase 4an / 4ao / 4ap / 4aq / 4ar narrative; conditional tertiary (NOT authorized) — future separately authorized governance memo only on a precise governance question; not recommended — computation by default; 5m / 1m escalation by default; exit design; strategy work; verdict / lock revision; M0 amendment; reopening the 5m research thread; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4as / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4as is the **Crypto Microstructure Research Reset and Mechanism Map** memo (docs-only research-program reset / mechanism-map memo). **Phase 4as is text-only.** Phase 4as resets the Prometheus research program toward Binance-native crypto microstructure and derivatives-flow mechanisms (spread, top-of-book and depth liquidity, order-book imbalance, depth imbalance by level, liquidity sweeps / book consumption, aggressive volume / taker buy-sell imbalance, trade burst / volume impulse, liquidation cascade proxies, funding-rate context, open-interest context, funding + OI interaction, funding + OI + aggressive-flow interaction, spread / depth / flow regime interaction) after Phase 4ar closed the V1 / exit-rescue arc as descriptive evidence only and after the cumulative six-candidate rejection topology (R2 / F1 / D1-A / V2 / G1 / C1) has not produced deployable edge under §11.6 cost realism. Phase 4as does NOT acquire data, does NOT call any Binance endpoint, does NOT modify endpoint code, does NOT implement data capture, does NOT implement any feature, does NOT run any backtest or historical strategy script, does NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py` or any other prior research script, does NOT run any simulation, does NOT compute predictive statistics, does NOT modify data / manifests / existing trade logs / source under `src/prometheus/` / tests / scripts / governance docs / retained verdicts / project locks / strategy specs / thresholds / `.gitignore`, does NOT commit any local `data/research/` output, does NOT create a strategy candidate, does NOT design entries or exits, does NOT optimize R3 or any prior population, does NOT create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime / V2-prime / G1-prime / C1-prime / D1-A-prime / D1-B / V1-D1 / F1-D1 / any cross-strategy hybrid, does NOT rescue any failed entry, does NOT amend M0 governance, does NOT reopen the 5m research thread, and does NOT authorize Phase 4at / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials / 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book capture. **Phase 4as central reset:** the V1 / exit-rescue chapter is closed as descriptive evidence only by Phase 4ar; Phase 4aq showed that favorable excursion existed but did not, on average, translate into positive realized `net_R` in the primary R-window default cells; the project's rule-based, lagging-OHLCV-indicator families (V1-arc, F1, D1-A, V2, G1, C1) have been rejected; Phase 4as therefore widens the *next* admissibility question away from "can we improve the previous geometry?" toward Binance-native microstructure and derivatives-flow mechanisms that the previous geometry never measured, while preserving every retained verdict, project lock, M0 admissibility constraint, post-null cooldown rule, cooled-down families list, Phase 4al refined no-rescue rule, Phase 4t 10-dimension scoring matrix, Phase 4m 18-requirement validity gate, Phase 3t 5m closure, §11.6, and §1.7.3. **Mechanism map (M-1..M-14, conceptual; not strategies; not authorized):** spread (M-1); top-of-book depth (M-2); order-book imbalance top-N (M-3); deeper-level depth imbalance (M-4); aggressive volume / taker imbalance (M-5); trade burst / volume impulse (M-6); liquidity sweep / book consumption (M-7); book recovery / replenishment after sweep (M-8); liquidation cascade proxies — bounded-visibility (M-9); funding-rate context — context only, not directional trigger (M-10); open-interest context — under Phase 4j §11 OI subset governance (M-11); funding + OI interaction (M-12); funding + OI + aggressive-flow interaction (M-13); spread / depth / flow regime interaction (M-14). Each mechanism entry records plain-English hypothesis, why-might-contain-edge, why-might-fail, required data, granularity, historical-vs-live feasibility, likely Binance data source, leakage risks, cost / slippage sensitivity, validation challenges, M0 admissibility concerns, and suitability for future feasibility study. **Binance data availability map (per official docs; no calls made):** aggTrade WS (`<symbol>@aggTrade`) plus REST `aggTrades` plus `data.binance.vision` archive; diff book depth WS (`<symbol>@depth@100/250/500ms`); partial book depth WS (`<symbol>@depth5/10/20@100ms`); book ticker WS (`<symbol>@bookTicker`); liquidation snapshot WS (`<symbol>@forceOrder`, bounded to largest-per-1000ms; REST `/fapi/v1/forceOrders` is user-scope authenticated, not market-wide history); funding-rate REST (`GET /fapi/v1/fundingRate`); open-interest REST (`GET /fapi/v1/openInterest`); historical OI statistics REST (`GET /futures/data/openInterestHist`, retains last 30 days only); mark-price endpoints under existing project mark-price-gap governance (Phase 3r §8). Top-of-book / depth / book-ticker historical reconstructions are generally not retained in Binance's public archive at full granularity for derivatives — would require live capture (NOT authorized). **Phase 4as candidate lane ranking (governance-safe, not strategy ranking):** Lane A — Binance microstructure data availability / capture feasibility (cleanest next move; docs-only); Lane B — aggressive-volume / order-flow imbalance feasibility (M-5 / M-6); Lane C — order-book imbalance / depth feasibility (M-3 / M-4); Lane D — liquidation proxy + flow / OI interaction (M-9 / M-12 / M-13); Lane E — ML / meta-labeling admissibility (later only). Each lane gated by separate operator authorization, M0 admissibility, and the post-null cooldown rule. **Phase 4as research-validity recommendations (not authorized as governance):** predeclared hypotheses; walk-forward / temporal validation; no random shuffling of time-series labels; chronological holdouts (Phase 4k / 4q / 4w precedent); negative controls; baseline models; feature-leakage checks; latency realism; execution-cost realism with §11.6 = 8 bps preserved verbatim; endpoint-retention awareness; sample-size / event-rate constraints; no post-hoc symbol / window mining; CSCV / DSR / PBO discipline for any future grid evaluation per Bailey & López de Prado / Bailey, Borwein, López de Prado, Zhu. **Phase 4as ML / AI placement (not authorized):** ML uses (meta-labeling, event classification, regime classification, probability-of-follow-through, feature ranking, anomaly detection, data-quality monitoring) and AI automation uses (literature triage, endpoint-doc summarisation, prompt generation, report consistency checks, scope-drift detection, experiment manifest generation, audit checklists) are described as future possibilities only. **No ML model is authorized by Phase 4as. No AI / LLM trading agent is authorized.** LLMs remain research infrastructure only, not execution agents. v1 remains rules-based per project-level locks. **Symbol / window discipline preserved:** symbol-specific microstructure hypotheses are admissible only mechanism-first and predeclared (no symbol-mining, no alt-symbol reruns of cooled-down candidates); window changes do not rescue cooled-down candidates. **Phase 4as preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am §11.A audit findings; Phase 4an inventory result; Phase 4ao harmonization result; Phase 4ap forensic plan; Phase 4aq computation result preserved as descriptive evidence only; Phase 4ar interpretation result preserved as descriptive interpretation only. Phase 4as adds `docs/00-meta/implementation-reports/2026-05-06_phase-4as_crypto-microstructure-research-reset-mechanism-map.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4as_closeout.md`. Phase 4as modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4as recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4as) — future docs-only **Phase 4at — Binance Microstructure Data Availability / Capture Feasibility Memo** (translates §9 of the Phase 4as memo into a precise availability map, identifies historical-vs-live boundaries, predeclares a capture design under M0-style admissibility, with no acquisition); not recommended — immediate strategy design, immediate ML model, immediate data capture, immediate endpoint implementation, old-strategy alt-symbol rerun, R3 / R2 / V1-arc rescue, 5m thread reopening; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection (R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid); M0 amendment derived from Phase 4as reasoning; reopening the 5m research thread; data acquisition; endpoint calls; live capture; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4at / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4as drafted (Crypto Microstructure Research Reset and
+Mechanism Map, docs-only research-program reset / mechanism-map
+memo).
+Phase 4as is text-only.
+Phase 4as resets the Prometheus research program toward
+Binance-native crypto microstructure and derivatives-flow
+mechanisms after the V1 / exit-rescue arc was closed by Phase 4ar
+as descriptive evidence only and after the cumulative six-candidate
+rejection topology (R2 / F1 / D1-A / V2 / G1 / C1) has not
+produced deployable edge under §11.6 cost realism.
+Phase 4as did NOT:
+- acquire data;
+- call any Binance endpoint;
+- modify endpoint code;
+- implement data capture;
+- implement any feature;
+- run any backtest;
+- run any historical strategy script;
+- rerun scripts/phase4aq_v1_arc_exit_path_forensics.py
+  or any other prior research script;
+- run any simulation;
+- compute predictive statistics;
+- modify any data, manifest, existing trade log, source under
+  src/prometheus/, test, script, governance doc, retained verdict,
+  project lock, strategy spec, threshold, or .gitignore;
+- commit any local data/research/ output;
+- create a strategy candidate;
+- design entries or exits;
+- optimize R3 or any prior population;
+- create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime /
+  H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime /
+  V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow /
+  G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension /
+  C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid;
+- rescue any failed entry;
+- amend M0 governance;
+- reopen the 5m research thread;
+- authorize Phase 4at, Phase 5, Phase 4 canonical, paper,
+  shadow, live-readiness, deployment, exchange-write,
+  production-key creation, authenticated APIs, private
+  endpoints, user stream, WebSocket, MCP, Graphify, .mcp.json,
+  credentials, 5m, 1m, aggTrades, tick, mark-price 30m / 4h, or
+  order-book capture.
+Phase 4as central reset (in plain English):
+- the V1 / exit-rescue chapter is closed as descriptive evidence
+  only by Phase 4ar;
+- Phase 4aq showed favorable excursion existed but did not, on
+  average, translate into positive realized net_R in the primary
+  R-window default cells;
+- the project's rule-based lagging-OHLCV-indicator families
+  (V1-arc, F1, D1-A, V2, G1, C1) have been rejected;
+- Phase 4as widens the next admissibility question from
+  "can we improve previous geometry?" toward Binance-native
+  microstructure and derivatives-flow mechanisms that the
+  previous geometry never measured;
+- this is a change of information set, not a guarantee of edge.
+Mechanism map (M-1..M-14, conceptual only):
+- M-1 spread; M-2 top-of-book depth; M-3 order-book imbalance
+  top-N; M-4 deeper-level depth imbalance; M-5 aggressive volume
+  / taker imbalance; M-6 trade burst / volume impulse;
+  M-7 liquidity sweep / book consumption; M-8 book recovery /
+  replenishment after sweep; M-9 liquidation cascade proxies
+  (bounded visibility); M-10 funding-rate context (context only,
+  not directional trigger); M-11 OI context (under Phase 4j §11);
+  M-12 funding + OI interaction; M-13 funding + OI + aggressive-
+  flow interaction; M-14 spread / depth / flow regime
+  interaction.
+- No mechanism is authorized for implementation, data capture,
+  or strategy work.
+Binance data availability map (per official docs; no calls made):
+- aggTrade WS + REST + data.binance.vision archive available;
+- diff and partial book depth WS available; full historical
+  reconstruction would require live capture;
+- book ticker WS available; not retained historically at full
+  granularity in the public archive;
+- forceOrder WS bounded to largest-per-1000ms; REST forceOrders
+  is user-scope authenticated and not appropriate for market-
+  wide research;
+- funding-rate REST history available;
+- openInterestHist retains last 30 days only;
+- mark-price endpoints subject to existing Phase 3r §8 mark-
+  price gap governance.
+Candidate lane ranking (governance-safe):
+- Lane A — Binance microstructure data availability / capture
+  feasibility (cleanest next move; docs-only).
+- Lane B — aggressive-volume / order-flow imbalance feasibility
+  (M-5 / M-6).
+- Lane C — order-book imbalance / depth feasibility (M-3 / M-4).
+- Lane D — liquidation proxy + flow / OI interaction (M-9 /
+  M-12 / M-13).
+- Lane E — ML / meta-labeling admissibility (later only).
+- Each lane gated by separate operator authorization, M0
+  admissibility, and the post-null cooldown rule.
+Research validity (recommendations only; not authorized):
+- predeclared hypotheses;
+- walk-forward / temporal validation;
+- no random shuffling of time-series labels;
+- chronological holdouts (Phase 4k / 4q / 4w precedent);
+- negative controls; baseline models;
+- feature-leakage checks;
+- latency realism;
+- execution-cost realism with §11.6 = 8 bps preserved verbatim;
+- endpoint-retention awareness;
+- sample-size / event-rate constraints;
+- no post-hoc symbol / window mining;
+- CSCV / DSR / PBO discipline for any future grid evaluation.
+ML / AI placement (not authorized):
+- meta-labeling, event classification, regime classification,
+  probability-of-follow-through, feature ranking, anomaly
+  detection, data-quality monitoring described as future
+  possibilities only;
+- AI automation (literature triage, endpoint-doc summarisation,
+  prompt generation, report consistency checks, scope-drift
+  detection, experiment manifest generation, audit checklists)
+  described as research infrastructure only;
+- no ML model is authorized by Phase 4as;
+- no AI / LLM trading agent is authorized;
+- v1 remains rules-based per project-level locks.
+Symbol / window discipline preserved:
+- symbol-specific microstructure hypotheses are admissible only
+  mechanism-first and predeclared;
+- no symbol-mining, no alt-symbol reruns of cooled-down
+  candidates;
+- window changes do not rescue cooled-down candidates.
+Phase 4as preserves every retained verdict and project lock
+verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 = 8 bps per side preserved verbatim; round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null cooldown +
+  cooled-down families list + memo template;
+- Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy;
+- Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved;
+- Phase 4an inventory result preserved;
+- Phase 4ao harmonization result preserved;
+- Phase 4ap forensic plan preserved;
+- Phase 4aq computation result preserved as descriptive evidence
+  only;
+- Phase 4ar interpretation result preserved as descriptive
+  interpretation only.
+Phase 4as primary recommendation:
+- remain paused.
+Phase 4as conditional secondary recommendation (NOT authorized):
+- Phase 4at — Binance Microstructure Data Availability / Capture
+  Feasibility Memo (docs-only); translates §9 of the Phase 4as
+  memo into a precise availability map; identifies historical-vs-
+  live boundaries; predeclares a capture design under M0-style
+  admissibility; no acquisition; no successor authorization.
+Phase 4as NOT recommended:
+- immediate strategy design;
+- immediate ML model;
+- immediate data capture;
+- immediate endpoint implementation;
+- old-strategy alt-symbol rerun;
+- R3 / R2 / V1-arc rescue;
+- 5m thread reopening;
+- paper / live work.
+Phase 4as FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime / R1b-narrow-prime
+  / R2-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime
+  / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow /
+  G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension
+  / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid);
+- M0 amendment derived from Phase 4as reasoning;
+- reopening the 5m research thread;
+- acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h
+  / order-book data without separately authorized data-
+  requirements memo;
+- paper / shadow / live-readiness / deployment / exchange-write
+  / production-key creation / authenticated APIs / private
+  endpoints / public-endpoint calls in code / user stream /
+  WebSocket / MCP / Graphify / .mcp.json / credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4at / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys,
+authenticated APIs, private endpoints, public-endpoint calls in
+code, user stream, WebSocket, MCP, Graphify, .mcp.json,
+credentials, exchange-write, and 5m / 1m / aggTrades / tick /
+mark-price 30m / 4h / order-book data acquisition all remain
+unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule remain
+binding prospective governance for any future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4ar) is preserved by the Phase 4ar narrative paragraph above.
+
+Earlier Phase 4ar "Current phase:" block (preserved here for continuity; Phase 4ar is no longer the current phase):
 
 ```text
 Phase 4ar drafted (V1-Arc Exit-Path Forensic Interpretation Memo,
