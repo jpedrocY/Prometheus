@@ -82,6 +82,7 @@ CLAUDE.local.md
 private/
 data/secrets/
 data/runtime/
+data/microstructure/
 
 # SSH / keypairs
 id_rsa*
