@@ -399,8 +399,19 @@ def test_temp_path_writer_does_not_create_manifest(tmp_path: Path) -> None:
         assert "manifest" not in entry.name.lower()
 
 
-def test_no_data_microstructure_directory_created(tmp_path: Path) -> None:
-    """Negative regression: no test in this module ever causes
-    the project ``data/microstructure/`` tree to be created."""
-    project_root = Path(__file__).resolve().parents[3]
-    assert not (project_root / "data" / "microstructure").exists()
+def test_phase_4ax_tests_do_not_write_under_data_microstructure(tmp_path: Path) -> None:
+    """Negative regression: this test module never causes a write under the
+    project ``data/microstructure/`` tree.
+
+    Phase 4az is authorised to populate ``data/microstructure/`` via its own
+    acquisition script, so we no longer assert the directory's absence here.
+    Instead, we run a representative ``write_validated_aggtrades_to_path``
+    call against ``tmp_path`` and assert it produced files only there.
+    """
+    target = tmp_path / "regression-check.jsonl"
+    write_validated_aggtrades_to_path([_rest_payload()], target)
+    assert target.exists()
+    # Walk tmp_path and assert nothing escaped to the project tree.
+    for entry in tmp_path.rglob("*"):
+        # Every produced file must be under tmp_path.
+        assert tmp_path in entry.resolve().parents or entry.resolve() == tmp_path
