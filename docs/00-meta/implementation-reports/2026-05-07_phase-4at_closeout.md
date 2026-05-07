@@ -16,6 +16,38 @@
 - Phase 4at memo commit SHA:
   `b0ea38df2d533180c715482ee4be50bf4ed0770e`.
 
+## Pre-merge correction note
+
+Two narrow wording corrections were applied to the Phase 4at
+memo on the Phase 4at branch before merge, in a separate
+correction commit:
+
+- **Correction 1 — §6.2 raw trades / aggTrades granularity
+  wording:** the previous wording implied raw trades are a
+  "lower-resolution view than aggTrades". This was reworded to
+  state correctly that raw trades are a more granular trade-
+  level source while aggTrades are a compressed / taker-side
+  aggregation, and that aggTrades may still be preferred for
+  Lane B research (smaller, historically archived, taker-side
+  aligned) but raw trades are not lower-resolution.
+- **Correction 2 — §6.9 / §7 current open-interest time-series
+  wording:** the previous wording implied that a future current-
+  OI time-series would require WS live capture. This was
+  reworded to state correctly that current OI is a REST
+  snapshot endpoint and that any future time-series would
+  require forward REST polling, not WebSocket capture. The §7
+  classification matrix row for Current OI was updated to
+  `REST_RECENT_ONLY (snapshot; future time-series would require
+  forward REST polling)` without introducing a formal ninth
+  classification.
+
+No substantive availability conclusion changed. No data was
+acquired. No Binance endpoint was called. No code, script,
+source, test, data, manifest, governance, verdict, lock, or
+`.gitignore` was modified. No successor authorisation changed.
+The merge-closeout records the corresponding correction commit
+SHA.
+
 ## Purpose
 
 Phase 4at translates Phase 4as §9 into a precise Binance public

@@ -326,9 +326,13 @@ The matrix uses these per-family fields:
 - Symbol coverage: per-symbol.
 - Timestamp / sequence: `id`, trade `time`.
 - Update speed: REST query.
-- Major limitation: lower-resolution view than aggTrades; the
-  aggTrades file is generally preferred for microstructure
-  research because it preserves the maker-side flag.
+- Granularity note: raw trades are a more granular trade-level
+  source, while aggTrades are a compressed / taker-side
+  aggregation. For Prometheus microstructure research,
+  aggTrades may still be preferred for Lane B because they are
+  smaller, historically archived, and directly aligned with
+  taker-side aggregation, but raw trades are not lower-
+  resolution.
 - Phase 4as relevance: M-5 / M-6 fallback / cross-check.
 - Future-acquisition status: requires separate authorisation.
 
@@ -450,7 +454,9 @@ The matrix uses these per-family fields:
 - Source: REST `GET /fapi/v1/openInterest`
   ([Binance Open Platform — Open Interest](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest)).
 - Hist: FALSE (current snapshot only).
-- Live capture: required for forward time-series.
+- Live capture: forward REST polling required for any
+  time-series (this is a snapshot REST endpoint; there is no
+  WebSocket stream for current OI).
 - Retention: snapshot.
 - Symbol coverage: per-symbol.
 - Timestamp / sequence: snapshot time.
@@ -725,7 +731,7 @@ the eight predeclared classifications.
 | Index-price klines (§6.6) | HISTORICAL_ARCHIVE_AVAILABLE | Composite. |
 | Funding rate history (§6.7) | REST_HISTORY_AVAILABLE | Project precedent on disk. |
 | Funding-info (§6.8) | REST_RECENT_ONLY | Snapshot. |
-| Current OI (§6.9) | REST_RECENT_ONLY (snapshot) → WS_LIVE_CAPTURE_REQUIRED for time-series | Forward poll. |
+| Current OI (§6.9) | REST_RECENT_ONLY (snapshot; future time-series would require forward REST polling) | Forward REST poll; no WebSocket stream for current OI. |
 | OI historical statistics (§6.10) | REST_RECENT_ONLY (30 days) → WS_LIVE_CAPTURE_REQUIRED for forward extension + GOVERNANCE_BLOCKED_PENDING_SEPARATE_AUTHORIZATION (Phase 4j §11) | 30-day rolling. |
 | Top-trader long/short account (§6.11) | REST_RECENT_ONLY (30 days) → WS_LIVE_CAPTURE_REQUIRED for forward extension | Context only. |
 | Top-trader long/short position (§6.12) | REST_RECENT_ONLY (30 days) → WS_LIVE_CAPTURE_REQUIRED for forward extension | Context only. |
