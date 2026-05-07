@@ -411,7 +411,7 @@ evidence.
 | R2         | BTC    | 23| 0.478    | 0.130    | 0.043    |
 | R2         | ETH    | 19| 0.474    | 0.158    | 0.053    |
 | R3         | BTC    | 33| 0.273    | 0.121    | 0.030    |
-| R3         | ETH    | 33| (see CSV)|          |          |
+| R3         | ETH    | 33| 0.424    | 0.182    | 0.030    |
 
 Full table is in `excursion_threshold_touch_rates.csv`. These are
 descriptive frequencies. They are not parameter selections.
@@ -440,9 +440,11 @@ from lower-timeframe data not authorized by Phase 4ap.
 ### 9.7 Q10 favorable-before-stop fraction
 
 Population-level fraction of STOP-exit trades whose `mfe_r > 0`.
-Reported as a proxy frequency; see `exit_reason_breakdown.csv` for
-STOP-exit counts per cell and the per-trade favorable_excursion
-proxy values in the per-trade dataset.
+Population-level summaries are reported through the aggregate output
+artefacts; per-trade proxy values are computed internally by the
+Phase 4aq script but are not emitted as a separate named per-trade
+output file. See `exit_reason_breakdown.csv` for STOP-exit counts
+per cell.
 
 ### 9.8 Q11–Q12 cost decomposition (descriptive only)
 

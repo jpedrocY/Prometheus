@@ -460,4 +460,29 @@ Phase 4aq does not authorize a successor phase. The merge of
 Phase 4aq into main is itself a separate operator decision and is
 not performed by this prompt.
 
+## Pre-merge correction note
+
+Before merging Phase 4aq into main, two narrow report-wording
+corrections were applied to the Phase 4aq main memo
+(`2026-05-06_phase-4aq_v1-arc-exit-path-forensic-computation.md`):
+
+- The Q6 threshold-touch table R3 ETH row was completed from the
+  existing local Phase 4aq output CSV
+  (`data/research/phase4aq/excursion_threshold_touch_rates.csv`),
+  R-window default cost cell, default stop_domain_variant, default
+  fill_variant, ETHUSDT, R3 row. No new computation was performed;
+  the values were read directly from the file.
+- The Q10 favorable-before-stop wording was corrected to avoid
+  implying a separate per-trade output file exists. The corrected
+  wording states explicitly that per-trade proxy values are computed
+  internally by the Phase 4aq script and are not emitted as a separate
+  named per-trade output file.
+
+No computation result changed. No outputs were committed. No
+governance, verdict, lock, data, manifest, source, test, or strategy
+file changed. The corrections are wording-only and do not alter the
+Phase 4aq result, the Phase 4ap §17 stop-condition outcome, the
+Phase 4ap §9 forbidden-question status, the retained verdict ledger,
+or any project lock.
+
 ## End of Phase 4aq closeout
