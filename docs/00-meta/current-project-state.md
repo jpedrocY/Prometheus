@@ -207,7 +207,252 @@ Phase 4az is the **Public AggTrades Archive Acquisition (BTCUSDT, 2025-01-15 UTC
 
 Phase 4ba is the **AggTrades Dataset Eligibility-Gate Review Memo** (docs-only governance / eligibility-gate review memo). Phase 4ba defines exactly what must be true before any aggTrades raw dataset family can become `research_eligible=true` or otherwise usable for downstream research. **Phase 4ba is text-only.** Phase 4ba did NOT acquire data; did NOT normalize the Phase 4az dataset; did NOT decompress or parse the raw archive for analysis; did NOT compute features, descriptive trading statistics, or any transform of acquired aggTrades rows; did NOT create ML labels; did NOT train ML models; did NOT create a strategy candidate; did NOT run a backtest; did NOT flip `research_eligible` on any dataset; did NOT transition any dataset out of `eligibility_gate_status=pending`; did NOT acquire ETHUSDT; did NOT acquire additional BTCUSDT days; did NOT call any Binance endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT create `.mcp.json`; did NOT enable MCP or Graphify; did NOT modify `data/microstructure/`; did NOT modify any manifest; did NOT modify any historical script, source file, test, data file, manifest, strategy spec, validation checklist, or governance memo (beyond the narrow `current-project-state.md` update); did NOT authorize Phase 4bb, Phase 5, Phase 4 canonical, or any successor; did NOT authorize paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, listenKey lifecycle, or live WebSocket implementation. The Phase 4az dataset's eligibility flags are unchanged: `research_eligible` remains `false`; `eligibility_gate_status` remains `pending`; the Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` method (which always raises) was not bypassed. Phase 4ba added two new docs files under `docs/00-meta/implementation-reports/` (the 18-section memo and the closeout) and narrowly updated `docs/00-meta/current-project-state.md` (this paragraph addition + new "Current phase:" block; prior Phase 4az block preserved as historical context). Phase 4ba review summary (in plain English): the memo recommends a staged five-stage eligibility ladder (`acquired` Stage 0 → `inspected` Stage 1 → `gate-passed` Stage 2 → `normalized` Stage 3 → `feature-cleared` Stage 4) instead of a single boolean, with the asymmetry that `research_eligible` flips to `true` only at Stage 3 (on a normalized derived family), never on a raw family; the boolean `research_eligible` remains the single authoritative downstream gate. The Phase 4az dataset is currently at Stage 0. The memo enumerates 45 minimum eligibility-time gate checks across twelve categories — source (5 checks), checksum (3), manifest (5), schema (3), timestamps (4), aggregate-trade-id monotonicity (3), duplicates (2), row count (3), symbol / date (4), archive integrity (4), invalid windows (4), cross-cutting (5) — that any future code-level gate must enforce before transitioning a dataset from `pending` to `pass`. The memo restates the manifest field contract (mandatory non-empty strings; mandatory numerics; seven mandatory `governance_labels` keys; mandatory eligibility fields with `research_eligible=false` until Stage 3 is reached; six forbidden manifest-content rules including no `feature_computation: allowed` or `strategy_use: allowed` on raw families). The memo restates the seventeen-reason invalid-window taxonomy (Phase 4aw verbatim), the three-level severity model (`INFO` / `WARN` / `ERROR`), the three-level downstream-action model (`FLAG` / `EXCLUDE` / `PROXY_ONLY`), and a cooldown-and-demotion semantics primitive (Stage ≥ 2 datasets must be demotable on subsequent integrity-event discovery; demotion sets `eligibility_gate_status=fail` and `research_eligible=false` and is fail-closed not operator-approval-required). The memo defines the dataset-versioning policy: same-version reacquisition is allowed only when public bytes are unchanged and local-side corruption is the cause; new-version triggers (mandatory) include public-archive byte-content change, archive schema change, endpoint-family change, validator replacement, methodology change, governance-contract change, and post-demotion fresh acquisition; permanent-ineligibility triggers include `.CHECKSUM` permanently absent, archive expired and unobtainable, retroactive governance retirement, and dataset-family violation of a project lock that the gate cannot amend. The memo defines downstream-use permissions in three tiers: before normalization (Stage 2 + separately authorized normalization-phase memo); before feature computation (Stage 3 + separately authorized M0-cleared hypothesis-spec memo + Phase 4m 18-requirement validity gate + Phase 4t 10-dimension scoring matrix); before ML / strategy / backtest (Stage 4 + separately authorized strategy-spec memo + backtest-plan memo + separately authorized backtest-execution phase). The memo defines fail-closed rules across six categories: unknown (manifest field, enum value, `dataset_family` / `version`, `code_commit_sha`, `capture_config_hash`); mixed (`research_eligible=true` with `eligibility_gate_status=pending` or `fail`; per-file PASS does not yield manifest-level PASS; mixed-severity inconsistency); stale (`code_commit_sha` older than minimum-acceptable-age policy; deprecated `endpoint_docs_reference`; `start_time_ms` outside retention window without `retention_warning`); partial (truncated acquisition log; `.CHECKSUM` companion absent without recorded label; on-disk file missing; `invalid_windows` non-empty with no per-window evidence); ambiguous (two manifests for same `(family, version, symbol, file)` with different content; on-disk SHA matches manifest but disagrees with sidecar; `feature_computation: allowed` or `strategy_use: allowed` on raw family). The memo records six cross-cutting fail-closed rules including: the gate must never have a "skip" code path; the gate must never write outside `data/microstructure/` except its own gate-report log under `data/microstructure/gate-reports/`; the gate must never modify the raw `.zip`, `.sha256` sidecar, manifest, or acquisition log of an existing dataset; the gate must not contact any Binance endpoint, open any WebSocket, or use any credential at runtime; and the gate must never flip `research_eligible=true` for any raw family, ever. The memo enumerates seven recommended future phase options: Option A remain paused (primary recommendation); Option B future docs-only Phase 4bb data-quality interpretation memo (allowable; not authorized); Option C future docs-only Phase 4bb eligibility-gate execution-plan memo (allowable; not authorized); Option D future docs-and-code Phase 4bb eligibility-gate primitive implementation (allowable; not authorized); Option E future docs-only Phase 4bb extension to additional dataset families (allowable; not authorized); Option F acquire additional aggTrades data (NOT recommended now); Option G compute features / train ML / build strategy (FORBIDDEN). **Phase 4ba preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7 (kline strict integrity gate; aggTrades equivalent applied verbatim by Phase 4az and reaffirmed by Phase 4ba); Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au, 4av, 4aw, 4ax, 4ay, 4az results — all preserved verbatim. **Phase 4 canonical remains unauthorized. Phase 4bb / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and additional aggTrades / 5m / 1m / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4bb-A is the **AggTrades Structural Data-Quality Interpretation Memo** (docs-only data-quality interpretation memo). **Phase 4bb-A is text-only.** Phase 4bb-A inspected the single Phase 4az BTCUSDT 2025-01-15 aggTrades archive **for structural data quality only**, with no trading research, no descriptive trading statistics, no microstructure features, no normalization, no derived dataset, no flag flip, no successor authorization. It is the first activity in the Phase 4ba §16 Option B / Phase 4bb branch family. The structural QA executed all 21 allowed checks and confirmed the Phase 4az archive is structurally clean. Headline structural QA findings: all four Phase 4az artefacts exist on disk under the gitignored `data/microstructure/` tree; recomputed archive SHA256 = `f560c2e529e980c1660b612c79408f3dfd27aa48136fa10965db15f3e2852b3e`, matches manifest `files[0].sha256` and paired `.sha256` sidecar bit-for-bit; ZIP contains exactly one CSV member (`BTCUSDT-aggTrades-2025-01-15.csv`); row count = 1,681,098 (matches manifest exactly); `first_T = 1736899205109` (2025-01-15 00:00:05.109 UTC) and `last_T = 1736985599991` (2025-01-15 23:59:59.991 UTC) match manifest exactly; 1,681,098 in-day rows with 0 out-of-day rows; aggregate trade IDs strictly monotone non-decreasing with 0 duplicates and 0 out-of-order events; min `a` = 2,516,301,323 / max `a` = 2,517,982,420; **largest consecutive aggregate-ID gap = 1 (perfect contiguity)**; `m` value parity 840,378 true / 840,720 false / 0 unparsed (~50/50); per-row Phase 4ax `validate_aggtrade_payload` passes 1,681,098 / 1,681,098 rows; UTC-hour row-count coverage non-zero across all 24 hours (peaks at 13/14/15/20 UTC consistent with US-session windows, reported as structural shape only); zero new invalid windows discovered; manifest's `invalid_windows: []` is accurate. Phase 4bb-A added two new docs files under `docs/00-meta/implementation-reports/` (the 18-section memo and the closeout) and narrowly updated `docs/00-meta/current-project-state.md` (this paragraph addition + new "Current phase:" block; prior Phase 4ba block preserved as historical context). Phase 4bb-A did NOT acquire data; did NOT modify `data/microstructure/` (manifest mtime is the original Phase 4az `May 7 21:55`); did NOT normalize the dataset; did NOT decompress to disk (in-memory CSV iteration only); did NOT compute features, taker imbalance, sweep detection, aggressive-flow score, spread / depth proxies, slippage proxies, order-flow / execution-quality proxies, price returns, or any descriptive trading statistic; did NOT compute alpha, edge, predictiveness, signal quality, profitability, or opportunity rate; did NOT create JSONL / Parquet / DuckDB / feature tables / labels / derived datasets; did NOT train ML; did NOT create a strategy; did NOT run backtests; did NOT acquire ETHUSDT or additional BTCUSDT days; did NOT call any Binance endpoint, public endpoint, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT create `.env` or `.mcp.json`; did NOT enable MCP or Graphify; did NOT modify any manifest; did NOT flip `research_eligible` (remains `false`); did NOT transition `eligibility_gate_status` out of `pending`; did NOT modify any source file, test, script, README, pyproject, `.gitignore`, MCP file, or runtime configuration; did NOT commit any scratch script (inline shell + Python only); did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 4bb-B, Phase 4bb-C, Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, or production keys. **Phase 4bb-A §15 records thirteen application-time observations for any future Phase 4bb-B execution-plan memo or Phase 4bb-C primitive implementation:** header detection idempotence; header alias map preservation; bool coercion contract for `m`; SHA bit-fidelity (manifest + sidecar two-way agreement); `.CHECKSUM` companion governance; aggregate-trade-ID monotonicity and uniqueness (NOT `gap_max == 1` as a future-archive gate); UTC-day boundary discipline (half-open at next-day midnight); hour coverage as structural QA, not feature; `m` parity as report-only, not pass condition; validator round-trip 100% requirement; manifest immutability during gate-time (gate may only append to `data/microstructure/gate-reports/`); path-encoded symbol enforcement; post-acquisition invalid-window discovery handling (re-acquisition vs new version vs fail-closed). The thirteen items are recommendations to Phase 4bb-B / Phase 4bb-C planners; they are not new locks, not new governance, and not amendments to the Phase 4ba §10 forty-five-check enumeration. **Phase 4bb-A preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7 (kline strict integrity gate; aggTrades equivalent applied verbatim by Phase 4az and reaffirmed by Phase 4ba; structural QA confirmed by Phase 4bb-A); Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au, 4av, 4aw, 4ax, 4ay, 4az, 4ba results — all preserved verbatim. The Phase 4az dataset's `research_eligible=false` and `eligibility_gate_status=pending` are unchanged. **Phase 4 canonical remains unauthorized. Phase 4bb-B / Phase 4bb-C / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and additional aggTrades / 5m / 1m / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4bb-A drafted (AggTrades Structural Data-Quality
+Interpretation Memo, docs-only data-quality
+interpretation memo).
+Phase 4bb-A is text-only.
+Phase 4bb-A inspected the single Phase 4az BTCUSDT
+2025-01-15 aggTrades archive for structural data
+quality only, with no trading research, no descriptive
+trading statistics, no microstructure features, no
+normalization, no derived dataset, no flag flip, no
+successor authorization.
+Phase 4bb-A is the first activity in the Phase 4ba §16
+Option B / Phase 4bb branch family.
+Phase 4bb-A does NOT activate Phase 4bb-B (eligibility-
+gate execution-plan) or Phase 4bb-C (eligibility-gate
+primitive implementation).
+Phase 4bb-A added:
+- docs/00-meta/implementation-reports/
+    2026-05-07_phase-4bb-a_aggtrades-structural-
+    data-quality-interpretation.md
+- docs/00-meta/implementation-reports/
+    2026-05-07_phase-4bb-a_closeout.md
+Phase 4bb-A modified narrowly:
+- docs/00-meta/current-project-state.md (this Phase
+  4bb-A narrative paragraph + Current phase block
+  update; prior Phase 4ba block preserved as
+  historical context)
+.gitignore is unchanged.
+Phase 4bb-A did NOT:
+- acquire data;
+- modify data/microstructure/ (manifest mtime is the
+  original Phase 4az May 7 21:55);
+- normalize the dataset;
+- decompress to disk (in-memory CSV iteration only);
+- compute features, taker imbalance, sweep detection,
+  aggressive-flow score, spread / depth / liquidity
+  / slippage / order-flow / execution-quality proxies;
+- compute price returns;
+- compute alpha, edge, predictiveness, signal quality,
+  profitability, or opportunity rate;
+- produce descriptive trading statistics;
+- create JSONL, Parquet, DuckDB tables, feature
+  tables, labels, or derived datasets;
+- train ML models;
+- create a strategy candidate;
+- run a backtest;
+- acquire ETHUSDT or additional BTCUSDT days;
+- call any Binance endpoint;
+- call any public endpoint;
+- call any private endpoint;
+- open any WebSocket;
+- use any credential;
+- create .env;
+- create .mcp.json;
+- enable MCP or Graphify;
+- modify any manifest;
+- flip research_eligible (remains false);
+- transition eligibility_gate_status out of pending;
+- modify any source file, test, script, README,
+  pyproject, .gitignore, MCP file, or runtime
+  configuration;
+- commit any scratch script (inline shell + Python
+  only);
+- revise any retained verdict;
+- change any project lock;
+- amend M0;
+- authorize Phase 4bb-B, Phase 4bb-C, Phase 5, Phase
+  4 canonical, paper / shadow, live-readiness,
+  deployment, exchange-write, or production keys.
+Phase 4bb-A structural QA summary (in plain English,
+21 of 21 checks pass):
+- All four Phase 4az artefacts exist on disk under
+  the gitignored data/microstructure/ tree.
+- Recomputed archive SHA256 =
+  f560c2e529e980c1660b612c79408f3dfd27aa48136fa10965
+  db15f3e2852b3e, matches manifest files[0].sha256
+  and paired .sha256 sidecar bit-for-bit.
+- ZIP contains exactly one CSV member
+  (BTCUSDT-aggTrades-2025-01-15.csv).
+- Row count = 1,681,098 (matches manifest exactly).
+- first_T = 1736899205109 (2025-01-15 00:00:05.109 UTC).
+- last_T = 1736985599991 (2025-01-15 23:59:59.991 UTC).
+- 1,681,098 in-day rows; 0 out-of-day rows.
+- Aggregate trade IDs strictly monotone non-decreasing.
+- 0 duplicate aggregate trade IDs.
+- 0 out-of-order events.
+- min a = 2,516,301,323; max a = 2,517,982,420.
+- Largest consecutive aggregate-ID gap = 1 (perfect
+  contiguity).
+- m value parity: 840,378 true / 840,720 false / 0
+  unparsed (~50/50; structural shape only).
+- All 1,681,098 rows pass the Phase 4ax
+  validate_aggtrade_payload validator.
+- 0 new invalid windows discovered; manifest's
+  invalid_windows: [] is accurate.
+- UTC-hour row-count coverage non-zero across all 24
+  hours; peaks at 13 / 14 / 15 / 20 UTC reported as
+  structural shape only (consistent with US-session
+  windows; not interpreted as a feature).
+Phase 4bb-A §15 records thirteen application-time
+observations for any future Phase 4bb-B execution-plan
+memo or Phase 4bb-C primitive implementation:
+- header detection idempotence;
+- header alias map preservation;
+- bool coercion contract for m;
+- SHA bit-fidelity (manifest + sidecar two-way
+  agreement);
+- .CHECKSUM companion governance;
+- aggregate-trade-ID monotonicity and uniqueness (NOT
+  gap_max == 1 as a future-archive gate);
+- UTC-day boundary discipline (half-open at next-day
+  midnight);
+- hour coverage as structural QA, not feature;
+- m parity as report-only, not pass condition;
+- validator round-trip 100% requirement;
+- manifest immutability during gate-time;
+- path-encoded symbol enforcement;
+- post-acquisition invalid-window discovery handling.
+The thirteen items are recommendations to Phase 4bb-B
+/ Phase 4bb-C planners; they are not new locks, not
+new governance, and not amendments to the Phase 4ba
+§10 forty-five-check enumeration.
+The Phase 4az dataset's eligibility flags are
+unchanged:
+- research_eligible remains false;
+- eligibility_gate_status remains pending;
+- the Phase 4aw MicrostructureManifest.flip_research_
+  eligible(...) method (which always raises) was not
+  bypassed.
+Phase 4bb-A preserves every retained verdict and
+project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 = 8 bps per side preserved verbatim;
+  round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price
+  stops;
+- Phase 3p §4.7 strict integrity gate (aggTrades
+  equivalent applied verbatim by Phase 4az and
+  reaffirmed by Phase 4ba; structural QA confirmed
+  by Phase 4bb-A);
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11;
+- M0 (Phase 4ak) twelve-clause gate + post-null
+  cooldown + cooled-down families list + memo
+  template;
+- Phase 4al refined no-rescue rule + §13 boundary +
+  §14 hierarchy;
+- Phase 4am §11.A audit findings preserved;
+- Phase 4an inventory result preserved;
+- Phase 4ao harmonization result preserved;
+- Phase 4ap forensic plan preserved;
+- Phase 4aq computation result preserved as
+  descriptive evidence only;
+- Phase 4ar interpretation result preserved as
+  descriptive interpretation only;
+- Phase 4as mechanism-map result preserved as
+  docs-only reset evidence only;
+- Phase 4at availability / capture-feasibility
+  result preserved as docs-only feasibility evidence
+  only;
+- Phase 4au capture-design result preserved as
+  docs-only design evidence only;
+- Phase 4av implementation-plan result preserved as
+  docs-only planning evidence only;
+- Phase 4aw scaffold result preserved as scaffold-
+  only infrastructure evidence only;
+- Phase 4ax aggTrades skeleton result preserved as
+  collector-skeleton infrastructure evidence only;
+- Phase 4ay authorization-boundary result preserved
+  as docs-only acquisition-boundary evidence only;
+- Phase 4az acquisition result preserved as
+  data-acquisition infrastructure evidence only;
+- Phase 4ba eligibility-gate review result preserved
+  as docs-only governance evidence only.
+Phase 4bb-A primary recommendation:
+- remain paused.
+Phase 4bb-A conditional next recommendation
+(NOT authorized):
+- future docs-only Phase 4bb-B eligibility-gate
+  execution-plan memo (Phase 4ba memo §16 Option C;
+  grounded in Phase 4bb-A §15 implications),
+  separately authorized.
+Phase 4bb-A conditional later recommendation
+(NOT authorized):
+- future docs-and-code Phase 4bb-C eligibility-gate
+  primitive implementation (Phase 4ba memo §16 Option
+  D), separately authorized.
+Phase 4bb-A NOT recommended:
+- acquiring more data;
+- computing features;
+- training ML;
+- building a strategy.
+Phase 4bb-A FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime /
+  R1b-narrow-prime / R2-prime / H0-prime / F1-prime /
+  D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed
+  / V2 hybrid / G1-prime / G1-narrow / G1-extension /
+  G1 hybrid / C1-prime / C1-narrow / C1-extension /
+  C1 hybrid / V1-D1 / F1-D1 / any cross-strategy
+  hybrid);
+- M0 amendment derived from Phase 4bb-A reasoning;
+- reopening the 5m research thread;
+- flipping research_eligible to true without a
+  separately authorized eligibility-gate phase;
+- paper / shadow / live-readiness / deployment /
+  exchange-write / production-key creation /
+  authenticated APIs / private endpoints /
+  public-endpoint calls in code / user stream /
+  live WebSocket implementation / MCP / Graphify /
+  .mcp.json / credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4bb-B / Phase 4bb-C / Phase 5 / any successor
+phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production
+keys, authenticated APIs, private endpoints,
+public-endpoint calls in code, user stream, WebSocket
+implementation, MCP, Graphify, .mcp.json, credentials,
+exchange-write, and additional aggTrades / 5m / 1m /
+tick / mark-price 30m / 4h / order-book data
+acquisition all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown
+rule remain binding prospective governance for any
+future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4ba) is preserved by the Phase 4ba narrative paragraph above.
+
+Earlier Phase 4ba "Current phase:" block (preserved here for continuity; Phase 4ba is no longer the current phase):
 
 ```text
 Phase 4ba drafted (AggTrades Dataset Eligibility-Gate
