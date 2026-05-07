@@ -187,7 +187,239 @@ Phase 4ap is the **V1-Arc Exit-Path Forensic Plan** (docs-only forensic plan / p
 
 Phase 4aq is the **V1-Arc Exit-Path Forensic Computation** (docs-and-code; standalone research script). Phase 4aq executes the Phase 4ap V1-Arc Exit-Path Forensic Plan exactly as predeclared, with status `SUCCESSFUL_COMPUTATION`. Phase 4aq adds `scripts/phase4aq_v1_arc_exit_path_forensics.py` (standalone analysis script; reads existing local Parquet only via pyarrow; no `prometheus.runtime/execution/persistence` imports; no exchange adapters; no `requests/httpx/aiohttp/websockets/urllib`; no `.env`; no credentials; no Binance API; no network I/O; no historical strategy script execution; no data acquisition; no data modification; no manifest modification; no existing-trade-log modification; no `src/prometheus/` modification; no test modification; no existing-script modification; ruff clean; py-compile clean). Phase 4aq loaded **23 allowlisted V1-arc Phase-2 directories × 2 symbols = 46 (directory, symbol) artefact pairs** with the lexicographically-latest run subdirectory selected per directory and exactly one canonical ledger per `(directory, symbol)` (Parquet preferred; in every Phase 4aq pair Parquet was selected). Total trades loaded: **973** across populations (H0=154; R3=392; R1a=110; R1b-narrow=88; R2=229), all variants (default cost cell, LOW, HIGH; default stop-domain variant, TRADE_PRICE; default fill variant, limit-at-pullback; R-window, V-window), and both symbols (BTCUSDT, ETHUSDT). Schema validation: every loaded ledger contained the full Phase 4ap §11 required-field set; optional fields `quantity` and `notional_usdt` are present in every ledger; no fail-closed condition triggered. Phase 4ap §15 stop-trigger-domain inference: every loaded V1-arc historical artefact is tagged `stop_trigger_domain = trade_price_backtest`; `mixed_or_unknown` was never assigned; the inference is recorded in `data/research/phase4aq/schema_validation_report.csv`. Phase 4ap §13 timeframe rule preserved: 15m bar-extreme only; **no 5m, 1m, aggTrades, tick, mark-price 30m, mark-price 4h, mark-price 5m, or mark-price 15m data was used or referenced as input**. Phase 4ap §14 cost rule preserved: §11.6 = 8 bps slippage per side preserved verbatim; the descriptive `estimated_slippage_in_R` derived from `slippage_bucket` is descriptive only and the identity `cost_in_R == fee_in_R + estimated_slippage_in_R + funding_in_R` is **not asserted**; `cost_in_R`, `fee_in_R`, and `funding_in_R` are exact-from-fields. Phase 4ap §12 metrics computed: MFE_R, MAE_R, net_R, gross_R, cost_in_R (exact-from-fields), fee_in_R (exact-from-fields), funding_in_R (exact-from-fields), `estimated_slippage_in_R` (descriptive estimate; basis recorded), reached_+1R / +2R / +3R flags, mfe_capture_ratio (NA when MFE_R ≤ 0), giveback_from_mfe (descriptive; no clamping), `favorable_excursion_before_stop_proxy` (proxy only — labelled, not asserted as sequencing evidence), `adverse_before_favorable_flag = NOT_AUDITABLE_FROM_EXISTING_FIELDS` (Phase 4ap §12 explicitly forbids inferring sequence from final MFE / MAE alone), `bar_resolution_ambiguity_flag` (`bars_in_trade == 0` only). Phase 4ap §17 stop conditions: SC-1 through SC-11 all PASS. Phase 4ap §9 forbidden questions F1–F10: zero performed; recorded as `NOT_PERFORMED` in `forbidden_interpretation_checklist.md`. Phase 4aq output bundle (11 artefacts, all under `data/research/phase4aq/` and locally present per Phase 4ai / 4l / 4r / 4x convention; not committed): `loaded_artifacts_manifest.csv`, `schema_validation_report.csv`, `population_summary.csv`, `mfe_mae_distribution_by_population.csv`, `realized_r_by_population.csv`, `cost_in_r_by_population.csv`, `exit_reason_breakdown.csv`, `excursion_threshold_touch_rates.csv`, `ambiguity_report.csv`, `forbidden_interpretation_checklist.md`, `v1_arc_forensic_report.md`. Phase 4aq descriptive findings (R-window default cell, primary; full per-cell detail in CSV): all five included populations show negative `net_R_mean` on both symbols (between approximately −0.114R and −0.443R); MFE_R medians range approximately 0.366R–1.036R while MAE_R medians range approximately 0.514R–0.844R; `frac_reached_+1R` ranges approximately 0.18–0.57 across cells; `frac_reached_+3R` ranges approximately 0.00–0.08; bar-resolution ambiguity rates fall in the Phase 4al §14.C `2-10%` band on BTCUSDT and the `10-20%` band on ETHUSDT for the primary R-window default cell. **These are descriptive findings only.** They do not rank populations for promotion. They do not authorize parameter changes. They do not justify verdict revision. They do not justify lock revision. They do not justify §11.6 relaxation. They do not authorize R3 optimization, R3-prime, R3 rescue, baseline-of-record revision, R1a-prime, R1b-narrow-prime, R2 rescue, R2-prime, H0-prime, framework-anchor revision, V1-arc successor candidate creation, V1-arc hybridization with F1 / D1-A / V2 / G1 / C1, exit-rule design, take-profit-multiple selection, threshold optimization, or 5m / 1m / aggTrades / tick / mark-price acquisition. Phase 4aq did NOT: acquire data; download data; call APIs / endpoints; consult `data.binance.vision`; modify any raw, normalized, derived, or research data file; create or modify any manifest; create v003 or any other dataset version; flip any `research_eligible` flag; run any backtest; run any historical strategy script; run any diagnostic; rerun Q1–Q7; modify `src/prometheus/`, tests, or any existing script under `scripts/`; modify `.gitignore`; create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid; revise any retained verdict; change any project lock; amend any specialist governance file beyond the narrow `current-project-state.md` Phase 4aq paragraph addition; adopt any Phase 4z / Phase 4aa / Phase 4ab recommendation as binding governance; broaden Phase 4ac / 4ad / 4ae / 4af / 4ag / 4ah / 4ai / 4aj findings beyond their prior scopes; broaden Phase 4ak adoption beyond §5–§8 of the durable M0 document; reopen any cooled-down family or the 5m research thread; touch MCP / Graphify / `.mcp.json` / credentials; or authorize Phase 4ar / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / production keys / authenticated APIs / private endpoints / user stream / WebSocket / exchange-write. **Phase 4aq preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps per side preserved verbatim; round-trip = 16 bps slippage; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; M0 (Phase 4ak) twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved; Phase 4an inventory result preserved; Phase 4ao harmonization result preserved; Phase 4ap V1-arc forensic plan preserved. Phase 4aq adds `scripts/phase4aq_v1_arc_exit_path_forensics.py`, `docs/00-meta/implementation-reports/2026-05-06_phase-4aq_v1-arc-exit-path-forensic-computation.md`, and `docs/00-meta/implementation-reports/2026-05-06_phase-4aq_closeout.md`. Phase 4aq modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the new memo files and the new standalone script. **Phase 4aq recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4aq) — future narrower docs-only interpretation memo focused on a specific Phase 4aq descriptive finding; conditional tertiary (NOT authorized) — future Phase 4ar-class memo consolidating Phase 4aq forensic evidence into a higher-level narrative without authorizing strategy work; not recommended — designing exits from forensic numbers, promoting any retained-evidence population, authorizing 5m / 1m / aggTrades / tick / mark-price acquisition, reopening the 5m research thread; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection (R3-prime / R1a-prime / R1b-narrow-prime / R2-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid); M0 amendment derived from Phase 4aq reasoning; reopening the 5m research thread; acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h data without separately authorized data-requirements memo; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4ar / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4ar is the **V1-Arc Exit-Path Forensic Interpretation Memo** (docs-only). **Phase 4ar is text-only.** Phase 4ar consolidates the already-merged Phase 4aq descriptive forensic evidence into plain-English research and governance interpretation. Phase 4ar performs **no computation**, does NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py`, does NOT run any historical strategy script, does NOT run a backtest, does NOT acquire data, does NOT modify data / manifests / existing trade logs / source under `src/prometheus/` / tests / governance docs / verdicts / locks / strategy specs / thresholds / existing scripts, does NOT modify `.gitignore`, does NOT commit any `data/research/phase4aq/` output, does NOT design exits, does NOT optimize R3, does NOT create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime or any V1-arc successor candidate, does NOT propose strategy changes, does NOT amend M0 governance, does NOT reopen the 5m research thread, and does NOT authorize Phase 4as / Phase 5 / Phase 4 canonical / any successor phase. **Phase 4ar central interpretation:** Phase 4aq produced a complete descriptive forensic snapshot of V1-arc populations (H0, R3, R1a, R1b-narrow, R2) on 15m trade-price-backtest artefacts; the snapshot documents that V1-arc trades had favorable excursion (non-trivial MFE_R distributions) but did not, on average, translate that favorable excursion into positive realized net_R on the primary R-window default cell on either BTCUSDT or ETHUSDT, and documents structural limits of 15m descriptive forensics (intrabar event ordering is `NOT_AUDITABLE_FROM_EXISTING_FIELDS`; favorable-before-stop is a labelled proxy). **What this means:** Phase 4aq evidence is descriptive research evidence about how V1-arc trades unfolded under the locked methodology, nothing more. It does not prove a recoverable edge; it does not prove R3 can be improved by exit redesign; it does not prove R2's failure was cost-only; it does not prove R1a or R1b-narrow should be promoted; it does not prove H0 should be revised; it does not prove that 5m / 1m / aggTrades / tick / mark-price 30m / 4h data acquisition is justified; it does not authorize any successor phase. **Per-population interpretation:** H0 remains FRAMEWORK ANCHOR (no H0-prime / framework-anchor revision); R3 remains BASELINE-OF-RECORD (no R3 optimization / R3-prime / R3 rescue / baseline-of-record revision; no conversion of R3 forensic numbers into entry rules / exit rules / parameters / thresholds / new candidates); R1a remains RETAINED — NON-LEADING (no R1a-prime / promotion); R1b-narrow remains RETAINED — NON-LEADING (no R1b-narrow-prime / promotion; small primary-cell sample size requires extra caution); R2 remains FAILED — §11.6 (no R2 rescue / R2-prime / §11.6 relaxation; cost-cell descriptive variation does not change the locked cost reference). **Per-evidence-theme interpretation:** MFE_R / MAE_R distributions are descriptive trade-path observations; threshold-touch rates are descriptive frequencies and **not** TP recommendations (Phase 4ap §9 F1 and F3 forbidden); giveback-from-MFE is descriptive (no clamping; negative values preserved as edge-case context); favorable-before-stop is a labelled proxy (does not assert sequencing); adverse-before-favorable is `NOT_AUDITABLE_FROM_EXISTING_FIELDS` (structural schema limit; not authorization for lower-timeframe escalation); cost / fee / funding / estimated-slippage are descriptive only with the identity not asserted (§11.6 preserved verbatim); bar-resolution ambiguity falls in Phase 4al §14.C `2-10%` (BTC) and `10-20%` (ETH) bands as documented limitation; R-window vs sensitivity / validation variant separation is preserved as binding interpretation discipline. **Exit-architecture interpretation boundary:** Phase 4aq supports the descriptive statement that exit architecture has now been audited for V1-arc at 15m resolution; Phase 4aq does NOT support exit design / TP-SL selection / optimal-winner-management inference / trailing-stop or break-even / partial-exit / time-stop justification / rescue of failed entries; bad exit architecture can destroy a usable signal but Phase 4aq did not prove a usable signal exists. **Lower-timeframe interpretation boundary:** bar-resolution ambiguity is documented as a structural limitation; this does NOT authorize 5m / 1m / aggTrades / tick / mark-price data acquisition; this does NOT reopen the 5m research thread (Phase 3t closure preserved); any future lower-timeframe measurement-layer discussion would require separate operator authorization and must satisfy Phase 4al §14 and Phase 4ao §13.3. **Governance interpretation:** Phase 4aq is descriptive evidence only; M0 admissibility / post-null cooldown / §11.6 / §1.7.3 / Phase 3r §8 / Phase 3v §8 / Phase 3w §6 / §7 / §8 / Phase 4j §11 / Phase 4k / Phase 4p / Phase 4q / Phase 4v / Phase 4w / Phase 4ak adoption / Phase 4al refined no-rescue + §13 / §14 / Phase 4am §11.A / Phase 4an / 4ao / 4ap / 4aq results all preserved. **Phase 4ar explicitly rejects** the following forbidden interpretations: "R3 would work with better exits"; "R3 should be optimized"; "R2 failed only because of costs"; "R1a / R1b-narrow should be promoted"; "+2R or +3R touch rates imply TP selection"; "5m / 1m is now required"; "V1-arc can be rescued"; "A new V1-arc exit system should be designed"; "Verdicts should be revised"; "Locks should be revised". **Phase 4ar allows**: descriptive understanding of V1-arc trade paths under locked methodology; documentation that favorable excursion existed but was not sufficient to overcome realized net_R behaviour; documentation of 15m sequencing limitations; governance-safe archival interpretation; meta-learning about research process (not strategy design). Phase 4ar adds `docs/00-meta/implementation-reports/2026-05-06_phase-4ar_v1-arc-exit-path-forensic-interpretation.md` and `docs/00-meta/implementation-reports/2026-05-06_phase-4ar_closeout.md`. Phase 4ar modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4ar recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4ar) — narrower docs-only archival synthesis memo reorganising Phase 4an / 4ao / 4ap / 4aq / 4ar narrative; conditional tertiary (NOT authorized) — future separately authorized governance memo only on a precise governance question; not recommended — computation by default; 5m / 1m escalation by default; exit design; strategy work; verdict / lock revision; M0 amendment; reopening the 5m research thread; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4as / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4ar drafted (V1-Arc Exit-Path Forensic Interpretation Memo,
+docs-only).
+Phase 4ar is text-only.
+Phase 4ar consolidates the already-merged Phase 4aq descriptive
+forensic evidence into plain-English research and governance
+interpretation. Phase 4ar performs no computation, runs no script,
+runs no backtest, acquires no data, and modifies no code, tests,
+data, manifests, governance docs, verdicts, locks, strategy specs,
+thresholds, or `.gitignore`. Phase 4ar does not commit any
+data/research/phase4aq/ output.
+Phase 4ar did NOT:
+- compute MFE / MAE / realized-R / time-to-event / cost-decomposition
+  distributions or any forensic statistic;
+- rerun scripts/phase4aq_v1_arc_exit_path_forensics.py;
+- run any historical strategy script;
+- run any backtest;
+- acquire data (no 5m / 1m / aggTrades / tick / mark-price 30m / 4h);
+- modify any data file, manifest, source, test, or existing script;
+- modify any retained verdict;
+- modify any project lock;
+- modify any M0 governance text;
+- amend Phase 3t 5m closure;
+- amend Phase 3v §8 stop-trigger-domain governance;
+- design exits;
+- optimize R3;
+- create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime / H0-prime
+  / V2-prime / V2-narrow / V2-relaxed / V2 hybrid / G1-prime /
+  G1-narrow / G1-extension / G1 hybrid / C1-prime / C1-narrow /
+  C1-extension / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy
+  hybrid;
+- propose strategy changes;
+- rescue any rejected or retained-evidence candidate;
+- revise any retained verdict;
+- change any project lock;
+- reopen the 5m research thread;
+- authorize any successor phase;
+- touch credentials / MCP / Graphify / `.mcp.json` / exchange-write.
+Phase 4aq evidence baseline (preserved verbatim from merged Phase
+4aq main memo and merge-closeout):
+- SUCCESSFUL_COMPUTATION;
+- 46 allowlisted V1-arc artefact pairs;
+- 973 trades total;
+- schema validation 100% pass;
+- SC-1 through SC-11 all PASS;
+- F1–F10 forbidden questions all NOT_PERFORMED;
+- 11 local outputs under data/research/phase4aq/ (not committed;
+  reproducible from script + existing local V1-arc artefacts).
+What Phase 4aq showed (descriptive only):
+- V1-arc populations had negative mean net_R in primary R-window
+  default cells on both BTCUSDT and ETHUSDT (~ -0.114R to -0.443R);
+- favorable excursion existed (MFE_R medians ~ 0.366R - 1.036R);
+- favorable excursion did NOT translate into positive realized
+  net_R on the primary cell;
+- threshold-touch rates exist (frac_+1R ~ 0.18 - 0.57; frac_+3R ~
+  0.00 - 0.08) but are NOT TP recommendations;
+- cost / fee / funding / estimated-slippage are descriptive context
+  (identity not asserted; §11.6 preserved verbatim);
+- bar-resolution ambiguity is bounded but real at 15m (BTCUSDT
+  cells in `2-10%` Phase 4al §14.C band; ETHUSDT cells in `10-20%`
+  band);
+- existing fields cannot answer true event-order questions
+  (adverse_before_favorable_flag = NOT_AUDITABLE_FROM_EXISTING_FIELDS);
+- favorable-before-stop is labelled proxy only;
+- 15m is sufficient for descriptive V1-arc interpretation, but not
+  for intrabar sequencing certainty.
+What Phase 4aq did NOT show:
+- no proof of recoverable edge;
+- no proof that R3 can be improved;
+- no proof that R2 can be rescued;
+- no proof that R1a / R1b-narrow should become leading;
+- no proof that H0 should be revised;
+- no proof that any exit rule, TP, SL, trailing stop, break-even
+  rule, time stop, or partial-exit system should be adopted;
+- no proof that 5m or 1m escalation is justified;
+- no basis for verdict or lock revision.
+Per-population interpretation (verdicts and boundaries preserved):
+- H0 remains FRAMEWORK ANCHOR; no H0-prime; no framework-anchor
+  revision.
+- R3 remains BASELINE-OF-RECORD; no R3 optimization; no R3-prime;
+  no R3 rescue; no baseline-of-record revision; no conversion of
+  R3 forensic numbers into entry rules / exit rules / parameters
+  / thresholds / new candidates.
+- R1a remains RETAINED — NON-LEADING; no R1a-prime; no promotion.
+- R1b-narrow remains RETAINED — NON-LEADING; no R1b-narrow-prime;
+  no promotion; small primary-cell sample size requires extra
+  caution.
+- R2 remains FAILED — §11.6; no R2 rescue; no R2-prime; no §11.6
+  relaxation; cost-cell descriptive variation does not change the
+  locked cost reference.
+Per-evidence-theme interpretation:
+- MFE_R / MAE_R: descriptive trade-path observations.
+- Threshold-touch: descriptive frequencies, NOT TP recommendations
+  (Phase 4ap §9 F1 and F3 forbidden).
+- Giveback-from-MFE: descriptive (no clamping); negative values
+  preserved as descriptive edge-case context.
+- Favorable-before-stop: labelled proxy only; does not assert
+  sequencing.
+- Adverse-before-favorable: NOT_AUDITABLE_FROM_EXISTING_FIELDS;
+  structural schema limit; not authorization for lower-timeframe
+  escalation.
+- Cost / fee / funding / estimated-slippage: descriptive only;
+  identity not asserted; §11.6 preserved verbatim.
+- Bar-resolution ambiguity: documented limitation only.
+- R-window vs sensitivity / validation variant separation:
+  preserved as binding interpretation discipline.
+Exit-architecture interpretation boundary:
+- Phase 4aq supports the descriptive statement that exit
+  architecture has been audited for V1-arc at 15m resolution.
+- Phase 4aq does NOT support exit design, TP / SL selection,
+  optimal-winner-management inference, trailing-stop or
+  break-even / partial-exit / time-stop justification, or rescue
+  of failed entries.
+- Bad exit architecture can destroy a usable signal but Phase 4aq
+  did not prove a usable signal exists.
+Lower-timeframe interpretation boundary:
+- 15m bar-resolution ambiguity bands are descriptive limitation
+  only.
+- Phase 4ar does NOT authorize 5m / 1m / aggTrades / tick /
+  mark-price 30m / 4h / mark-price 5m / mark-price 15m data
+  acquisition.
+- Phase 4ar does NOT reopen the 5m research thread (Phase 3t
+  closure preserved).
+- Any future lower-timeframe measurement-layer discussion would
+  require separate operator authorization and must satisfy
+  Phase 4al §14 and Phase 4ao §13.3.
+Governance interpretation:
+- Phase 4aq is descriptive evidence only.
+- M0 governance remains binding prospectively only.
+- Post-null cooldown remains unchanged.
+- No cooled-down family is reopened.
+- §11.6 remains locked.
+- §1.7.3 remains locked.
+- Phase 3t 5m closure remains binding.
+- Phase 3v §8 stop-trigger-domain governance remains binding.
+- Retained verdict ledger remains unchanged.
+Forbidden interpretations explicitly rejected by Phase 4ar:
+- "R3 would work with better exits."
+- "R3 should be optimized."
+- "R2 failed only because of costs."
+- "R1a / R1b-narrow should be promoted."
+- "+2R or +3R touch rates imply TP selection."
+- "5m / 1m is now required."
+- "V1-arc can be rescued."
+- "A new V1-arc exit system should be designed."
+- "Verdicts should be revised."
+- "Locks should be revised."
+Allowed interpretations:
+- Phase 4aq improves descriptive understanding of V1-arc trade
+  paths.
+- Phase 4aq documents that favorable excursion existed but was not
+  sufficient to overcome realized net_R behaviour.
+- Phase 4aq documents 15m sequencing limitations.
+- Phase 4aq supports governance-safe archival interpretation.
+- Phase 4aq can inform future meta-learning about research
+  process, not strategy design, unless a future phase is
+  separately authorized and passes M0 / no-rescue gates.
+Phase 4ar preserves every retained verdict and project lock
+verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 = 8 bps per side preserved verbatim; round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null cooldown +
+  cooled-down families list + memo template;
+- Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy;
+- Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved;
+- Phase 4an inventory result preserved;
+- Phase 4ao harmonization result preserved;
+- Phase 4ap forensic plan preserved;
+- Phase 4aq computation result preserved as descriptive evidence
+  only.
+Phase 4ar primary recommendation:
+- remain paused.
+Phase 4ar conditional secondary recommendation (NOT authorized):
+- narrower docs-only archival synthesis memo reorganising the
+  combined Phase 4an / 4ao / 4ap / 4aq / 4ar narrative.
+Phase 4ar conditional tertiary recommendation (NOT authorized):
+- future separately authorized governance memo only on a precise
+  governance question.
+Phase 4ar NOT recommended:
+- computation by default;
+- 5m / 1m escalation by default;
+- exit-design or strategy work;
+- promoting any retained-evidence population;
+- treating Phase 4aq descriptive findings as strategy evidence.
+Phase 4ar FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime / R1b-narrow-prime /
+  R2-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime /
+  V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow /
+  G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension /
+  C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid);
+- M0 amendment derived from Phase 4ar reasoning;
+- reopening the 5m research thread;
+- acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h
+  data without separately authorized data-requirements memo;
+- paper / shadow / live-readiness / deployment / exchange-write /
+  production-key creation / authenticated APIs / private endpoints
+  / public-endpoint calls in code / user stream / WebSocket / MCP /
+  Graphify / `.mcp.json` / credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4as / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys,
+authenticated APIs, private endpoints, public-endpoint calls in
+code, user stream, WebSocket, MCP, Graphify, .mcp.json,
+credentials, exchange-write, and 5m / 1m / aggTrades / tick /
+mark-price 30m / 4h data acquisition all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule remain
+binding prospective governance for any future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4aq) is preserved by the Phase 4aq narrative paragraph above.
+
+Earlier Phase 4aq "Current phase:" block (preserved here for continuity; Phase 4aq is no longer the current phase):
 
 ```text
 Phase 4aq executed (V1-Arc Exit-Path Forensic Computation,
