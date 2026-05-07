@@ -1,11 +1,12 @@
-"""Static import-boundary and content scanner for the Phase 4aw scaffold.
+"""Static import-boundary and content scanner for the microstructure scaffold.
 
 Scans the source files of ``src/prometheus/research/microstructure/`` to
-verify the scaffold remains inert: no imports from runtime/execution/
+verify the scaffold (Phase 4aw) and the aggTrades collector skeleton
+(Phase 4ax) remain inert: no imports from runtime/execution/
 persistence; no Binance SDK imports; no signed-request helpers; no
 network clients used in this phase; no `.env` reads; no MCP / Graphify
 references; and no credential-shaped strings or private endpoint paths
-appear in source.
+appear in source code.
 
 This test runs entirely against repository source files. It does not
 invoke the modules under test, does not import them, and does not
@@ -53,6 +54,8 @@ FORBIDDEN_IMPORT_PATTERNS: tuple[tuple[str, str], ...] = (
     ("binance", r"^\s*(?:from|import)\s+binance\b"),
     ("dotenv", r"^\s*(?:from|import)\s+dotenv\b"),
     ("python-dotenv", r"^\s*(?:from|import)\s+python_dotenv\b"),
+    ("urllib.request", r"^\s*(?:from|import)\s+urllib\.request\b"),
+    ("socket", r"^\s*(?:from|import)\s+socket\b"),
     ("os.environ-secret", r"\bos\.environ\b"),
     ("getenv", r"\bgetenv\s*\("),
 )
