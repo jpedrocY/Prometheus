@@ -193,7 +193,220 @@ Phase 4as is the **Crypto Microstructure Research Reset and Mechanism Map** memo
 
 Phase 4at is the **Binance Microstructure Data Availability and Capture Feasibility Memo** (docs-only feasibility memo). **Phase 4at is text-only.** Phase 4at translates Phase 4as §9 into a precise Binance public market-data availability and capture-feasibility map covering aggTrades, raw trades, klines, mark-price klines, premium-index klines, index-price klines, funding-rate history, funding info, current open interest, OI historical statistics, top-trader / global long-short ratios, taker buy/sell volume ratio, liquidation / forceOrder snapshots, book ticker, partial / diff book depth, REST depth snapshot, mark-price stream, and index-price stream. Each data family is classified into one of eight predeclared categories (HISTORICAL_ARCHIVE_AVAILABLE; REST_HISTORY_AVAILABLE; REST_RECENT_ONLY; WS_LIVE_CAPTURE_REQUIRED; AUTHENTICATED_USER_SCOPE_NOT_ADMISSIBLE_FOR_MARKET_RESEARCH; PUBLIC_PROXY_ONLY; GOVERNANCE_BLOCKED_PENDING_SEPARATE_AUTHORIZATION; NOT_REQUIRED_FOR_CURRENT_MICROSTRUCTURE_RESET) with citations to official Binance Open Platform documentation and the public-data repository at `github.com/binance/binance-public-data`. Phase 4at does NOT acquire data, does NOT call any Binance endpoint, does NOT open any WebSocket, does NOT download any archive file, does NOT modify endpoint code, does NOT implement data capture, does NOT implement any feature, does NOT run any backtest or historical strategy script, does NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py` or any other prior research script, does NOT run any simulation, does NOT compute predictive statistics, does NOT modify data / manifests / existing trade logs / source under `src/prometheus/` / tests / scripts / governance docs / retained verdicts / project locks / strategy specs / thresholds / `.gitignore`, does NOT commit any local `data/research/` output, does NOT create a strategy candidate, does NOT design entries or exits, does NOT amend M0 governance, does NOT reopen the 5m research thread, and does NOT authorize any successor phase (Phase 4au / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials / 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book capture). **Phase 4at central availability summary:** a substantial subset of Binance USDⓈ-M Futures public market-data is already available historically (klines, mark-price klines, premium-index klines, index-price klines, aggTrades, raw trades, funding-rate history, current open interest); several derivatives-flow datasets retain only the latest 30 days (`openInterestHist`, `topLongShortAccountRatio`, `topLongShortPositionRatio`, `globalLongShortAccountRatio`, `takerlongshortRatio`) and require forward live capture for any extended history; top-of-book / partial-book / diff-book / book-ticker / liquidation-snapshot / mark-price / index-price streams are WebSocket-only and require live capture; liquidation visibility is bounded by design (`<symbol>@forceOrder` and `!forceOrder@arr` push only the largest one liquidation order within 1000 ms per symbol; the REST `forceOrders` endpoint is user-scope authenticated and not admissible for market-wide research); local order-book reconstruction from REST snapshot + diff-depth stream is technically possible per the official Binance procedure (`U`, `u`, `pu` sequence-number bookkeeping; resync on gap) but requires deterministic capture, sequence-number validation, gap detection, invalid-window marking, replay, and substantial storage discipline. **Capture-design requirements (design only; not implemented):** process isolation; public-only endpoint allowlist; no credentials; raw immutable logs; normalised derived tables; manifest versioning with `__v001` initial label and paired SHA256 verification; schema versioning with explicit `__vNNN` bump; event-time / transaction-time / ingestion-time separation; symbol allowlist (BTCUSDT primary, ETHUSDT comparison); rate-limit handling (500/5min/IP for funding; 1000/5min/IP for taker / long-short; per-endpoint request weight); reconnect / resync rules; gap detection and explicit `invalid_window` creation; deterministic replay; local storage layout; streaming-friendly compression; structured logs (no secrets); local health-check signal consumed by the operator dashboard; no exchange-write surface; no `prometheus.runtime/execution/persistence` coupling; no write to existing `data/raw/` / `data/normalized/` / `data/manifests/`. **Proposed future dataset family names (placeholder only; NOT created):** `microstructure_raw_aggtrades_v001`, `microstructure_raw_depthdiff_v001`, `microstructure_raw_bookticker_v001`, `microstructure_raw_forceorder_proxy_v001`, `microstructure_raw_markprice_v001`, `microstructure_metrics_oi_funding_v001`, `microstructure_replay_lob_v001`. **Data-quality predicates (recorded for any future capture phase; no implementation by Phase 4at):** missing sequence; out-of-order event; duplicate event; gap after reconnect; snapshot mismatch; clock skew; symbol mismatch; stale book; impossible spread; negative size; zero / invalid price; archive checksum mismatch; retention-window incompleteness; forceOrder proxy incompleteness — every gap produces an explicit `invalid_window` manifest entry; no silent forward-fill / interpolation / imputation / replacement (Phase 3p §4.7 / Phase 3r §8 / Phase 4j §11 precedent). **M0 admissibility implications:** mechanisms M-1..M-14 evaluated lane-by-lane against the Phase 4ak twelve-clause M0 gate, the Phase 4al refined no-rescue rule, the Phase 4t 10-dimension scoring matrix, the Phase 4m 18-requirement validity gate, and the Phase 4ak post-null cooldown rule; future feasibility study admissibility classified per mechanism (M-5 strong candidate for Lane B; M-3 / M-4 / M-7 / M-8 acceptable after full LOB reconstruction; M-9 acceptable as context / regime overlay only; M-10 / M-11 / M-12 / M-13 acceptable as context only; M-14 borderline due to G1 trap). **Phase 4at preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am §11.A audit findings; Phase 4an inventory result; Phase 4ao harmonization result; Phase 4ap forensic plan; Phase 4aq computation result preserved as descriptive evidence only; Phase 4ar interpretation result preserved as descriptive interpretation only; Phase 4as mechanism-map result preserved as docs-only reset evidence only. Phase 4at adds `docs/00-meta/implementation-reports/2026-05-07_phase-4at_binance-microstructure-data-availability-capture-feasibility.md` and `docs/00-meta/implementation-reports/2026-05-07_phase-4at_closeout.md`. Phase 4at modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4at recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4at) — future docs-only **Phase 4au — Binance Microstructure Capture Design Specification Memo** (translates Phase 4at §15 capture-design requirements into a precise design specification for a public-only capture without implementing it; NOT authorized by Phase 4at); not recommended — immediate data acquisition; immediate endpoint calls; immediate capture implementation; immediate order-book reconstruction; immediate ML model; immediate strategy or feature implementation; old-strategy alt-symbol rerun; R3 / R2 / V1-arc rescue; reopening the 5m research thread; paper / live work; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection; M0 amendment derived from Phase 4at reasoning; reopening the 5m research thread; data acquisition; endpoint calls; live capture; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4au / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4au is the **Binance Microstructure Capture Design Specification Memo** (docs-only design memo). **Phase 4au is text-only.** Phase 4au translates the Phase 4at availability map and §15 capture-design requirements into a precise, implementation-ready design specification for a future public-only Binance microstructure capture pipeline — without implementing anything. The memo specifies a nine-component capture architecture (capture supervisor; per-symbol stream workers; REST polling workers; raw event writer; normalizer; replay builder; manifest writer; health-check reporter; local operator dashboard hook) running entirely outside `prometheus.runtime` / `prometheus.execution` / `prometheus.persistence`; a thirteen-endpoint **public-only allowlist** (aggTrade family; bookTicker; partial book depth; diff book depth; REST depth snapshot; forceOrder proxy; markPrice family — governance-blocked under Phase 3r §8 / Phase 3v §8; indexPrice family; fundingRate REST; openInterest REST snapshot; openInterestHist REST; top/global long-short ratios REST; takerlongshortRatio REST) with per-endpoint purpose, capture mode, cadence, timestamp / sequence fields, output raw family, risk notes, and governance notes; an **explicit denylist** covering all private / authenticated endpoints, user stream, listenKey lifecycle, REST `/fapi/v1/forceOrders`, order placement, account, position, leverage / margin endpoints, MCP / Graphify / `.mcp.json` / credentials; **seven dataset family designs** (`microstructure_raw_aggtrades_v001`, `microstructure_raw_depthdiff_v001`, `microstructure_raw_bookticker_v001`, `microstructure_raw_forceorder_proxy_v001`, `microstructure_raw_markprice_v001`, `microstructure_metrics_oi_funding_v001`, `microstructure_replay_lob_v001`) with per-family purpose / source / layer / partition keys / file format / timestamp+sequence fields / schema_version / manifest requirement / `research_eligible: false` default / invalid-window behaviour / governance constraints — **none created**; a **storage layout specification** recommending a separate `data/microstructure/raw/` / `data/microstructure/normalized/` / `data/microstructure/derived/` / `data/microstructure/manifests/` namespace (no writes to existing `data/raw/` / `data/normalized/` / `data/manifests/` paths); a **file-format design** (raw JSONL.zst with paired SHA256, atomic write-then-rename; normalized Parquet zstd; derived Parquet; manifest JSON; no in-place mutation); a **manifest design** with all required fields (`dataset_family`, `version`, `symbol`, `source`, `endpoint`, `capture_mode`, `start_time_ms`, `end_time_ms`, `event_count`, `file_count`, paired SHA256 list, `schema_version`, `endpoint_docs_reference`, `capture_config_hash`, `code_commit_sha`, `invalid_windows`, `retention_warning`, `proxy_warning`, `governance_labels`, `research_eligible: false` default, `eligibility_gate_status: pending` default); per-family **schema design** (aggTrades, bookTicker, depthDiff, depthSnapshot, forceOrder proxy, markPrice, OI / funding metrics, reconstructed LOB state) with `event_time_ms` / `transaction_time_ms` / `ingestion_time_ms` / `local_monotonic_ns` separation; a **timestamp discipline** preserving UTC-ms canonicalisation, clock-skew detection, no mixing of event-time and ingestion-time in labels, and future latency realism; a **rate-limit / retry design** respecting documented limits (500/5min/IP for funding; 1000/5min/IP for taker / long-short; per-endpoint request weights; backoff on 429 / 418; no IP rotation; no API keys); a **WebSocket connection design** (one worker per (symbol, stream) pair; jittered exponential reconnect backoff; staleness detection beyond Binance's 3-min ping / 10-min pong; bounded in-memory event queue with FIFO backpressure; persistence-before-processing; no order placement surface); a **local order-book reconstruction design** (REST snapshot + diff-depth stream per the official Binance procedure with `U` / `u` / `pu` validation, first-event bracketing rule, gap detection, resync, invalid-window marking, deterministic replay, configurable snapshot interval, top-N retention policy, stale-book detection, impossible-spread checks); a **liquidation proxy design** (forceOrder largest-per-1000ms limitation; proxy-only label; no complete-tape claim; no authenticated `forceOrders` REST use; future correlation only with aggTrades / OI / price context; no standalone liquidation strategy); an **OI / funding capture design** (funding history via REST; current OI via forward REST polling; OI historical statistics recent-only; long-short ratios recent-only; takerlongshortRatio recent-only; Phase 4j §11 OI-subset governance; D1-A precedent — funding context only, never directional trigger); an **invalid-window taxonomy** with seventeen trigger reasons (missing sequence; out-of-order event; duplicate event; gap after reconnect; snapshot mismatch; clock skew; symbol mismatch; stale stream; stale book; impossible spread; negative size; zero / invalid price; archive checksum mismatch; REST retention-window incompleteness; forceOrder proxy incompleteness; failed atomic write; partial file recovery event) with required entry fields (`start_time_ms`, `end_time_ms`, `family`, `symbol`, `reason`, `evidence`, `severity`, `downstream_eligibility_action`); a **research eligibility gate design** with ten checks (raw files present; checksum pass; schema validation pass; timestamp sanity pass; sequence continuity pass; invalid-window threshold; retention completeness label; proxy limitation label; governance labels; final research_eligible decision) where the gate is the only path that may flip `research_eligible: true`; a **deterministic replay design** (raw → normalized; normalized → derived; LOB replay; replay config hash; reproducibility requirements; no ad-hoc reads; replay logs; replay failure handling); a **health-check / dashboard design** (per-stream last_event_time, ingestion_lag, reconnect_count, gap_count, invalid_window_count, disk_usage, file_write_lag, rate_limit_status, per_symbol_stream_status; local-only display; no remote alerting at this layer; no order panel; no kill-switch surface); a **security and credential boundary** (no API keys; no `.env` reads; no authenticated endpoints; no private endpoints; no order endpoints; no leverage / margin endpoints; no user stream; no listenKey; no MCP / Graphify / `.mcp.json`; no secrets in logs); a **runtime-separation rule** (no imports from `prometheus.runtime/execution/persistence`; no runtime database writes; no safety-state mutation; no order-router contact; capture is research infrastructure only); a **symbol / scope policy** (BTCUSDT primary; ETHUSDT comparison; Phase 4ac core symbols only if separately authorized; no alt-symbol rerun of old strategies; no symbol mining); qualitative **storage / hardware feasibility discussion** (aggTrades manageable historically; depth diff / bookTicker high volume; forceOrder low-volume but proxy-limited; OI / funding low-volume; compression and partitioning; retention policy; operator hardware likely feasible but numeric sizing deferred to a future memo if needed); **validation / anti-overfitting implications** preserved (chronological validation; no random shuffling; no symbol / window mining; latency realism; execution-cost realism with §11.6 = 8 bps preserved; negative controls; baseline comparisons; feature-leakage checks; no strategy until data quality and mechanism feasibility are established); and **M0 governance implications** preserved (capture is admissible as infrastructure, not strategy; data capture does not imply edge; no cooled-down family is reopened; no R3 / R2 / V1-arc rescue; no D1-A funding-trigger reuse; no G1-style regime filter without opportunity-rate controls; no C1 / V2-style breakout wrapper hidden under microstructure). Phase 4au does NOT acquire data, does NOT call any Binance endpoint, does NOT open any WebSocket, does NOT download any archive file, does NOT modify endpoint code, does NOT implement data capture, does NOT implement order-book reconstruction, does NOT implement replay, does NOT implement any feature, does NOT run any backtest or historical strategy script, does NOT rerun `scripts/phase4aq_v1_arc_exit_path_forensics.py` or any other prior research script, does NOT run any simulation, does NOT compute predictive statistics, does NOT modify data / manifests / existing trade logs / source under `src/prometheus/` / tests / scripts / governance docs / retained verdicts / project locks / strategy specs / thresholds / `.gitignore`, does NOT create any actual dataset directory, does NOT create any actual manifest, does NOT commit any local `data/research/` output, does NOT create a strategy candidate, does NOT design entries or exits, does NOT amend M0 governance, does NOT reopen the 5m research thread, and does NOT authorize any successor phase (Phase 4av / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / user stream / WebSocket implementation / MCP / Graphify / `.mcp.json` / credentials / 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book capture). **Phase 4au preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am §11.A audit findings; Phase 4an inventory result; Phase 4ao harmonization result; Phase 4ap forensic plan; Phase 4aq computation result preserved as descriptive evidence only; Phase 4ar interpretation result preserved as descriptive interpretation only; Phase 4as mechanism-map result preserved as docs-only reset evidence only; Phase 4at availability / capture-feasibility result preserved as docs-only feasibility evidence only. Phase 4au adds `docs/00-meta/implementation-reports/2026-05-07_phase-4au_binance-microstructure-capture-design-specification.md` and `docs/00-meta/implementation-reports/2026-05-07_phase-4au_closeout.md`. Phase 4au modifies only `docs/00-meta/current-project-state.md` (this paragraph addition and the "Current phase:" block update) beyond the two new memo files. **Phase 4au recommendation:** primary — remain paused; conditional secondary (NOT authorized by Phase 4au) — future docs-only **Phase 4av — Public-Only Microstructure Capture Implementation Plan** (translates the Phase 4au design specification into a precise file-by-file docs-only implementation plan — file list under hypothetical `scripts/microstructure_*` / `src/prometheus/research/microstructure/*`, module boundaries, CLI surface, test matrix, failure modes, validation gates, implementation order — without implementing capture; NOT authorized by Phase 4au); not recommended — immediate implementation; immediate endpoint calls; immediate WebSocket connections; immediate archive downloads; immediate capture; immediate order-book reconstruction; immediate replay; immediate feature implementation; immediate ML or strategy work; old-strategy alt-symbol rerun; R3 / R2 / V1-arc rescue; reopening the 5m research thread; paper / live work; forbidden — verdict revision; lock revision; parameter optimization; strategy resurrection; M0 amendment derived from Phase 4au reasoning; reopening the 5m research thread; data acquisition; endpoint calls; WebSocket connections; capture implementation; paper / shadow / live-readiness / deployment / exchange-write / production-key creation / authenticated APIs / private endpoints / public-endpoint calls in code / user stream / WebSocket implementation / MCP / Graphify / `.mcp.json` / credentials. **Phase 4 canonical remains unauthorized. Phase 4av / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and 5m / 1m / aggTrades / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4au drafted (Binance Microstructure Capture Design
+Specification Memo, docs-only design memo).
+Phase 4au is text-only.
+Phase 4au translates the Phase 4at availability map and §15
+capture-design requirements into a precise, implementation-ready
+design specification for a future public-only Binance
+microstructure capture pipeline — without implementing anything.
+Phase 4au did NOT:
+- acquire data;
+- call any Binance endpoint;
+- open any WebSocket;
+- download any archive file;
+- modify endpoint code;
+- implement data capture;
+- implement order-book reconstruction;
+- implement replay;
+- implement any feature;
+- run any backtest;
+- run any historical strategy script;
+- rerun scripts/phase4aq_v1_arc_exit_path_forensics.py
+  or any other prior research script;
+- run any simulation;
+- compute predictive statistics;
+- create any actual dataset directory under
+  data/microstructure/...;
+- create any actual manifest;
+- modify any data, manifest, existing trade log, source under
+  src/prometheus/, test, script, governance doc, retained verdict,
+  project lock, strategy spec, threshold, or .gitignore;
+- commit any local data/research/ output;
+- create a strategy candidate;
+- design entries or exits;
+- create R3-prime / R2-prime / R1a-prime / R1b-narrow-prime /
+  H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime / V2-narrow
+  / V2-relaxed / V2 hybrid / G1-prime / G1-narrow / G1-extension
+  / G1 hybrid / C1-prime / C1-narrow / C1-extension / C1 hybrid
+  / V1-D1 / F1-D1 / any cross-strategy hybrid;
+- amend M0 governance;
+- reopen the 5m research thread;
+- authorize Phase 4av, Phase 5, Phase 4 canonical, paper, shadow,
+  live-readiness, deployment, exchange-write, production-key
+  creation, authenticated APIs, private endpoints, user stream,
+  WebSocket implementation, MCP, Graphify, .mcp.json, credentials,
+  5m, 1m, aggTrades, tick, mark-price 30m / 4h, or order-book
+  capture.
+Phase 4au design summary (in plain English):
+- nine cooperating components (supervisor; per-symbol stream
+  workers; REST polling workers; raw event writer; normalizer;
+  replay builder; manifest writer; health-check reporter; local
+  operator dashboard hook);
+- public-only thirteen-endpoint allowlist;
+- explicit denylist for private / authenticated / user stream /
+  order placement / account / position / leverage / MCP /
+  Graphify / .mcp.json / credentials;
+- seven dataset family designs, none created;
+- separate data/microstructure/{raw,normalized,derived,manifests}
+  namespace recommended; no writes to existing data namespaces;
+- raw JSONL.zst + Parquet normalized + Parquet derived; paired
+  SHA256; atomic write-then-rename; no in-place mutation;
+- manifest design with paired SHA256, schema_version,
+  capture_config_hash, code_commit_sha, invalid_windows,
+  retention_warning, proxy_warning, governance_labels,
+  research_eligible: false default, eligibility_gate_status:
+  pending default;
+- per-family schema design (aggTrades, bookTicker, depthDiff,
+  depthSnapshot, forceOrder proxy, markPrice, OI / funding
+  metrics, reconstructed LOB state) with event-time / transaction-
+  time / ingestion-time / local-monotonic separation;
+- timestamp discipline (UTC ms; clock-skew detection; no mixing
+  of event-time and ingestion-time in labels; future latency
+  realism);
+- rate-limit / retry design (documented endpoint budgets;
+  IP-level limit handling; backoff on 429 / 418; retry limits;
+  no API keys);
+- WebSocket connection design (subscription model; reconnect
+  policy; heartbeat / stale-stream detection; bounded queue;
+  backpressure; persistence-before-processing; gap marking);
+- local order-book reconstruction per the official Binance
+  procedure (`U` / `u` / `pu` validation; resync on gap;
+  invalid-window marking; deterministic replay);
+- liquidation proxy design (forceOrder largest-per-1000ms only;
+  proxy-only label; no complete-tape claim; no authenticated
+  forceOrders REST);
+- OI / funding capture design (funding history via REST; current
+  OI via forward REST polling; OI historical statistics recent-
+  only; long-short ratios recent-only; takerlongshortRatio
+  recent-only; Phase 4j §11 OI-subset governance; D1-A funding
+  context only);
+- invalid-window taxonomy (seventeen trigger reasons) with required
+  entry fields;
+- ten-check eligibility gate (only path that may flip
+  research_eligible: true);
+- deterministic replay design (raw → normalized → derived; LOB
+  replay; replay config hash; reproducibility; no ad-hoc reads);
+- local-only health-check / dashboard (no order panel; no kill-
+  switch surface; no remote alerting at this layer);
+- security boundary (no API keys; no .env reads; no authenticated
+  endpoints; no private endpoints; no order endpoints; no
+  leverage / margin endpoints; no user stream; no listenKey;
+  no MCP / Graphify / .mcp.json; no secrets in logs);
+- runtime separation (no imports from prometheus.runtime /
+  execution / persistence; no runtime database writes; no
+  safety-state mutation; no order-router contact);
+- symbol / scope policy (BTCUSDT primary; ETHUSDT comparison;
+  Phase 4ac core symbols only if separately authorized; no
+  alt-symbol rerun of old strategies; no symbol mining);
+- qualitative storage / hardware feasibility (numeric sizing
+  deferred to a future memo if needed);
+- validation / anti-overfitting implications preserved
+  (chronological validation; no random shuffling; no symbol /
+  window mining; latency realism; execution-cost realism;
+  negative controls; baseline comparisons; feature-leakage
+  checks; no strategy until data quality and mechanism
+  feasibility are established);
+- M0 governance implications preserved (capture is admissible
+  as infrastructure, not strategy; data capture does not imply
+  edge; no cooled-down family reopened; no R3 / R2 / V1-arc
+  rescue; no D1-A funding-trigger reuse; no G1 / V2 / C1 rescue
+  under microstructure label).
+Phase 4au preserves every retained verdict and project lock
+verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 = 8 bps per side preserved verbatim; round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price stops;
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w;
+- M0 (Phase 4ak) twelve-clause gate + post-null cooldown +
+  cooled-down families list + memo template;
+- Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy;
+- Phase 4am §11.A audit findings (F-1 / F-2 / F-3 / F-4) preserved;
+- Phase 4an inventory result preserved;
+- Phase 4ao harmonization result preserved;
+- Phase 4ap forensic plan preserved;
+- Phase 4aq computation result preserved as descriptive evidence
+  only;
+- Phase 4ar interpretation result preserved as descriptive
+  interpretation only;
+- Phase 4as mechanism-map result preserved as docs-only reset
+  evidence only;
+- Phase 4at availability / capture-feasibility result preserved
+  as docs-only feasibility evidence only.
+Phase 4au primary recommendation:
+- remain paused.
+Phase 4au conditional secondary recommendation (NOT authorized):
+- Phase 4av — Public-Only Microstructure Capture Implementation
+  Plan (docs-only); translates the Phase 4au design specification
+  into a precise file-by-file implementation plan covering file
+  list, module boundaries, CLI surface, tests, failure modes,
+  validation gates, and implementation order — without
+  implementing capture; no acquisition; no successor authorization.
+Phase 4au NOT recommended:
+- immediate implementation;
+- immediate endpoint calls;
+- immediate WebSocket connections;
+- immediate archive downloads;
+- immediate capture;
+- immediate order-book reconstruction;
+- immediate replay;
+- immediate feature implementation;
+- immediate ML or strategy work;
+- old-strategy alt-symbol rerun;
+- R3 / R2 / V1-arc rescue;
+- reopening the 5m research thread;
+- paper / live work.
+Phase 4au FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime / R1b-narrow-prime
+  / R2-prime / H0-prime / F1-prime / D1-A-prime / D1-B / V2-prime
+  / V2-narrow / V2-relaxed / V2 hybrid / G1-prime / G1-narrow /
+  G1-extension / G1 hybrid / C1-prime / C1-narrow / C1-extension
+  / C1 hybrid / V1-D1 / F1-D1 / any cross-strategy hybrid);
+- M0 amendment derived from Phase 4au reasoning;
+- reopening the 5m research thread;
+- acquisition of 5m / 1m / aggTrades / tick / mark-price 30m / 4h
+  / order-book data without separately authorized data-
+  requirements memo;
+- paper / shadow / live-readiness / deployment / exchange-write
+  / production-key creation / authenticated APIs / private
+  endpoints / public-endpoint calls in code / user stream /
+  WebSocket implementation / MCP / Graphify / .mcp.json /
+  credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4av / Phase 5 / any successor phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production keys,
+authenticated APIs, private endpoints, public-endpoint calls in
+code, user stream, WebSocket implementation, MCP, Graphify,
+.mcp.json, credentials, exchange-write, and 5m / 1m / aggTrades
+/ tick / mark-price 30m / 4h / order-book data acquisition all
+remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown rule remain
+binding prospective governance for any future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4at) is preserved by the Phase 4at narrative paragraph above.
+
+Earlier Phase 4at "Current phase:" block (preserved here for continuity; Phase 4at is no longer the current phase):
 
 ```text
 Phase 4at drafted (Binance Microstructure Data Availability and
