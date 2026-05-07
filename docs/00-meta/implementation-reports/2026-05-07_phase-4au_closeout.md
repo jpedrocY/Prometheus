@@ -204,7 +204,7 @@ recent-only (aggTrades is the more granular alternative);
 **Phase 4j §11 OI subset governance** binding; **D1-A
 precedent — funding context only, never directional trigger**.
 
-### Invalid-window taxonomy (sixteen trigger reasons)
+### Invalid-window taxonomy (seventeen trigger reasons)
 
 `missing_sequence`, `out_of_order_event`, `duplicate_event`,
 `gap_after_reconnect`, `snapshot_mismatch`, `clock_skew`,
@@ -499,7 +499,7 @@ denylist, seven proposed dataset family designs, a four-layer
 storage model with a recommended separate
 `data/microstructure/...` namespace, a per-family schema
 design, a manifest design with all required fields, an
-invalid-window taxonomy with sixteen trigger reasons, an
+invalid-window taxonomy with seventeen trigger reasons, an
 eligibility-gate design with ten checks, deterministic-replay
 rules, a health-check / operator-dashboard design,
 security / credential boundaries, runtime-separation rules,

@@ -2023,7 +2023,7 @@ components, a thirteen-endpoint allowlist, an explicit denylist,
 seven proposed dataset family designs, a four-layer storage
 model with a recommended separate `data/microstructure/...`
 namespace, a per-family schema design, a manifest design with
-all required fields, an invalid-window taxonomy with sixteen
+all required fields, an invalid-window taxonomy with seventeen
 trigger reasons, an eligibility-gate design with ten checks,
 deterministic-replay rules, a health-check / operator-dashboard
 design, security / credential boundaries, runtime-separation
