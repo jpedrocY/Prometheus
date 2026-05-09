@@ -57,6 +57,28 @@ credential, no ``.env`` / ``.mcp.json``. It never mutates the original
 manifest, raw zip, sidecar, or acquisition log, and the derived
 manifest is always written with ``research_eligible=False`` and
 ``eligibility_gate_status=pending`` (Stage-0 derived artefacts only).
+
+Phase 4bf adds the offline derived-family eligibility gate:
+
+- ``derived_gate_io``: read-only artefact loaders + atomic gate-report
+  writer + paired-SHA256 sidecar + path discipline
+  (``data/microstructure/gate-reports/normalized/``);
+- ``derived_gate_checks``: 55 Phase 4bf-A checks
+  (``4bf.13.1`` .. ``4bf.13.55``), ``DerivedAggTradesCheckStatus``,
+  ``DerivedAggTradesCheckResult``, ``DerivedGateContext``, and
+  ``run_all_checks``;
+- ``derived_gate_report``: ``DerivedAggTradesGateReport`` data model +
+  atomic JSON write + paired SHA256 sidecar;
+- ``derived_gate``: ``DerivedAggTradesGateInput`` /
+  ``DerivedAggTradesGateResult`` and the public
+  ``run_derived_aggtrades_gate`` orchestrator.
+
+The derived-family gate is offline-only and read-only: it never mutates
+the derived manifest, the normalized Parquet, the raw artefacts, or the
+Phase 4bb-D gate report. ``research_eligible_after`` is invariant
+``False`` and ``no_successor_authorization`` is invariant ``True``.
+``eligibility_gate_status_after`` is recorded on the report only and
+never written to the actual derived manifest.
 """
 
 from .aggtrades import (
@@ -87,6 +109,18 @@ from .config import (
     MicrostructureConfig,
     validate_config,
 )
+from .derived_gate import (
+    DerivedAggTradesGateInput,
+    DerivedAggTradesGateInputError,
+    DerivedAggTradesGateResult,
+    DerivedAggTradesGateUnsupportedError,
+    run_derived_aggtrades_gate,
+)
+from .derived_gate_checks import (
+    DerivedAggTradesCheckResult,
+    DerivedAggTradesCheckStatus,
+)
+from .derived_gate_report import DerivedAggTradesGateReport
 from .eligibility_gate import (
     AggTradesEligibilityCheckResult,
     AggTradesEligibilityCheckStatus,
@@ -171,6 +205,15 @@ __all__ = [
     "GateIOError",
     "InvalidWindowCandidate",
     "run_eligibility_gate",
+    # derived_gate (Phase 4bf)
+    "DerivedAggTradesCheckResult",
+    "DerivedAggTradesCheckStatus",
+    "DerivedAggTradesGateInput",
+    "DerivedAggTradesGateInputError",
+    "DerivedAggTradesGateReport",
+    "DerivedAggTradesGateResult",
+    "DerivedAggTradesGateUnsupportedError",
+    "run_derived_aggtrades_gate",
     # allowlist
     "EndpointNotAllowedError",
     "assert_endpoint_allowed",
