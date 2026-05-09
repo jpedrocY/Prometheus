@@ -35,6 +35,28 @@ WebSocket, no credential, no ``.env`` / ``.mcp.json``. It never mutates
 the original manifest, raw zip, sidecar, or acquisition log, and it
 never flips ``research_eligible`` to ``True`` for raw aggTrades
 families.
+
+Phase 4bd adds the offline aggTrades normalizer:
+
+- ``normalize_io``: read-only source-artefact loaders, output-path
+  discipline under ``data/microstructure/normalized/``, atomic Parquet
+  + JSON write helpers, SHA256 helpers;
+- ``normalize_aggtrades``: ``NormalizedAggTradeRow`` dataclass,
+  ``NormalizeAggTradesInput`` / ``NormalizeAggTradesResult``, the
+  ``run_normalize_aggtrades`` orchestrator, and the canonical
+  ``NORMALIZED_SCHEMA_V001`` 19-column constant;
+- ``normalize_manifest``: ``NormalizationManifestDraft`` and the
+  ``REQUIRED_GOVERNANCE_LABEL_KEYS`` for the derived family;
+- ``normalize_validation``: 27 Phase 4bc validation checks
+  (``4bc.24.1`` .. ``4bc.24.27``), ``NormalizationCheckStatus``,
+  ``NormalizationCheckResult``, ``NormalizationValidationContext``,
+  and ``run_all_checks``.
+
+The normalizer is offline-only: no Binance endpoint, no WebSocket, no
+credential, no ``.env`` / ``.mcp.json``. It never mutates the original
+manifest, raw zip, sidecar, or acquisition log, and the derived
+manifest is always written with ``research_eligible=False`` and
+``eligibility_gate_status=pending`` (Stage-0 derived artefacts only).
 """
 
 from .aggtrades import (
@@ -88,6 +110,26 @@ from .manifest import (
     FileEntry,
     ManifestImmutableError,
     MicrostructureManifest,
+)
+from .normalize_aggtrades import (
+    NORMALIZATION_SCHEMA_VERSION,
+    NORMALIZED_SCHEMA_V001,
+    NormalizationLineage,
+    NormalizationValidationError,
+    NormalizeAggTradesInput,
+    NormalizeAggTradesResult,
+    NormalizedAggTradeRow,
+    run_normalize_aggtrades,
+)
+from .normalize_io import NormalizationIOError
+from .normalize_manifest import (
+    NormalizationManifestDraft,
+    NormalizationManifestError,
+)
+from .normalize_validation import (
+    NormalizationCheckResult,
+    NormalizationCheckStatus,
+    NormalizationValidationResult,
 )
 from .raw_writer import (
     RawWriter,
@@ -144,6 +186,21 @@ __all__ = [
     "FileEntry",
     "ManifestImmutableError",
     "MicrostructureManifest",
+    # normalize (Phase 4bd)
+    "NORMALIZATION_SCHEMA_VERSION",
+    "NORMALIZED_SCHEMA_V001",
+    "NormalizationCheckResult",
+    "NormalizationCheckStatus",
+    "NormalizationIOError",
+    "NormalizationLineage",
+    "NormalizationManifestDraft",
+    "NormalizationManifestError",
+    "NormalizationValidationError",
+    "NormalizationValidationResult",
+    "NormalizeAggTradesInput",
+    "NormalizeAggTradesResult",
+    "NormalizedAggTradeRow",
+    "run_normalize_aggtrades",
     # raw_writer
     "RawWriter",
     "RawWriterAlreadyExistsError",
