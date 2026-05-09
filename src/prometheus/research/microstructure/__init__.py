@@ -19,12 +19,22 @@ Phase 4ax adds an aggTrades-only collector skeleton:
   and an explicit caller-provided-path writer that composes
   :class:`raw_writer.RawWriter` for use in pytest temp directories.
 
-Both layers are inert: no data acquisition, no endpoint contact, no
-streams, no archive downloads, no collectors / normalizers / replay /
-eligibility-gate execution, no writes under project
-``data/microstructure/``, no successor authorization. See
-``docs/00-meta/implementation-reports/2026-05-07_phase-4aw_*`` and
-``docs/00-meta/implementation-reports/2026-05-07_phase-4ax_*``.
+Phase 4bb-C adds the offline eligibility-gate primitive:
+
+- ``eligibility_io``: read-only artefact loaders + single-pass row
+  scanner used by the gate;
+- ``eligibility_gate``: value objects, enums, errors, and the public
+  ``run_eligibility_gate`` orchestrator;
+- ``eligibility_checks``: the 45 Phase 4ba §10 eligibility-time check
+  functions plus the orchestrator entry point ``run_all_checks``;
+- ``eligibility_report``: ``AggTradesGateReport`` data model + atomic
+  JSON write under ``data/microstructure/gate-reports/``.
+
+The eligibility-gate primitive is offline-only: no Binance endpoint, no
+WebSocket, no credential, no ``.env`` / ``.mcp.json``. It never mutates
+the original manifest, raw zip, sidecar, or acquisition log, and it
+never flips ``research_eligible`` to ``True`` for raw aggTrades
+families.
 """
 
 from .aggtrades import (
@@ -55,6 +65,18 @@ from .config import (
     MicrostructureConfig,
     validate_config,
 )
+from .eligibility_gate import (
+    AggTradesEligibilityCheckResult,
+    AggTradesEligibilityCheckStatus,
+    AggTradesEligibilityGateInput,
+    AggTradesEligibilityGateResult,
+    AggTradesGateInputError,
+    AggTradesGateUnsupportedError,
+    InvalidWindowCandidate,
+    run_eligibility_gate,
+)
+from .eligibility_io import GateIOError
+from .eligibility_report import AggTradesGateReport
 from .invalid_window import (
     DownstreamEligibilityAction,
     InvalidWindow,
@@ -96,6 +118,17 @@ __all__ = [
     "InvalidWindowThresholds",
     "MicrostructureConfig",
     "validate_config",
+    # eligibility_gate / eligibility_report / eligibility_io (Phase 4bb-C)
+    "AggTradesEligibilityCheckResult",
+    "AggTradesEligibilityCheckStatus",
+    "AggTradesEligibilityGateInput",
+    "AggTradesEligibilityGateResult",
+    "AggTradesGateInputError",
+    "AggTradesGateReport",
+    "AggTradesGateUnsupportedError",
+    "GateIOError",
+    "InvalidWindowCandidate",
+    "run_eligibility_gate",
     # allowlist
     "EndpointNotAllowedError",
     "assert_endpoint_allowed",
