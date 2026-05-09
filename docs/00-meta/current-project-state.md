@@ -213,7 +213,265 @@ Phase 4bb-B is the **AggTrades Eligibility-Gate Execution-Plan Memo** (docs-only
 
 Phase 4bb-C is the **AggTrades Offline Eligibility-Gate Primitive Implementation** (docs-and-code offline eligibility-gate implementation). Phase 4bb-C implements the offline aggTrades eligibility-gate primitive exactly as planned by Phase 4bb-B. The primitive reads the four Phase 4az-shaped artefacts (manifest, raw `.zip`, paired `.sha256` sidecar, acquisition log) read-only, runs all 45 Phase 4ba §10 eligibility-time checks against a shared in-memory single-pass row scan, returns an in-memory `AggTradesEligibilityGateResult`, and (when `write_report=True`) atomically writes a JSON gate report plus paired `.sha256` sidecar under the gitignored `data/microstructure/gate-reports/`. **Phase 4bb-C never flips `research_eligible=true` for raw aggTrades families, never mutates the original manifest / raw zip / sidecar / acquisition log, never contacts a Binance endpoint, never opens a WebSocket, never reads `.env` or any credential, and never authorises any successor phase.** The reserved `write_successor_manifest=True` mode is structurally rejected (`AggTradesGateUnsupportedError`); only a separately authorised future phase may enable it, and even then `research_eligible_after` must remain `false` for raw families. Phase 4bb-C added four new source modules under `src/prometheus/research/microstructure/` (`eligibility_io.py` — read-only artefact loaders + single-pass row scanner; `eligibility_gate.py` — value objects, enums, exceptions, and the public `run_eligibility_gate` orchestrator; `eligibility_checks.py` — the 45 Phase 4ba §10 check functions plus `run_all_checks`; `eligibility_report.py` — `AggTradesGateReport` data model + atomic JSON write under `data/microstructure/gate-reports/`), one narrow `__init__.py` re-export update (10 new public symbols: `AggTradesEligibilityCheckResult`, `AggTradesEligibilityCheckStatus`, `AggTradesEligibilityGateInput`, `AggTradesEligibilityGateResult`, `AggTradesGateInputError`, `AggTradesGateReport`, `AggTradesGateUnsupportedError`, `GateIOError`, `InvalidWindowCandidate`, `run_eligibility_gate`), one shared fixture builder under `tests/research/microstructure/_eligibility_fixtures.py`, and five new test files under `tests/research/microstructure/` (`test_eligibility_gate.py` — 12 tests; `test_eligibility_checks.py` — 20 tests; `test_eligibility_report.py` — 5 tests; `test_eligibility_io.py` — 12 tests; `test_eligibility_no_network.py` — 6 tests; **62 new tests total**). Phase 4bb-C also added two new docs files under `docs/00-meta/implementation-reports/` (the 22-section memo and the closeout) and narrowly updated `docs/00-meta/current-project-state.md` (this paragraph addition + new "Current phase:" block; prior Phase 4bb-B block preserved as historical context). **Validation:** whole-repo `ruff check .` passes; whole-repo `mypy` strict passes (`Success: no issues found in 93 source files` — was 89 + 4 new = 93); whole-repo `pytest` reports `1041 passed, 2 failed` where the two failures are the same pre-existing simulation failures (`tests/simulation/test_backtest_real_2026_03.py::test_real_2026_03_btcusdt` and `::test_real_2026_03_ethusdt`, both `KeyError: 'trade_count'` in `src/prometheus/research/data/storage.py:232`); zero new regressions from Phase 4bb-C; `git check-ignore -v data/microstructure/` returns `.gitignore:85:data/microstructure/	data/microstructure/`; the Phase 4az manifest mtime is the original Phase 4az `May 7 21:55`. Phase 4bb-C did NOT acquire data; did NOT modify `data/microstructure/`, any manifest, any sidecar, or any acquisition log; did NOT normalize the dataset; did NOT compute features, descriptive trading statistics, returns, alpha, edge, opportunity rate, taker imbalance, sweep detection, aggressive-flow score, spread / depth / liquidity / slippage / order-flow / execution-quality proxies; did NOT create JSONL / Parquet / DuckDB / feature tables / labels / derived datasets; did NOT train ML; did NOT create a strategy; did NOT run backtests; did NOT acquire ETHUSDT or additional BTCUSDT days; did NOT call any Binance endpoint, public endpoint, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT create `.env` or `.mcp.json`; did NOT enable MCP or Graphify; did NOT modify `pyproject.toml`, `README.md`, or `.gitignore`; did NOT add any `scripts/...` entrypoint; did NOT add any new dependency (stdlib + Phase 4aw / Phase 4ax modules only); did NOT modify any existing test outside the new tests; did NOT flip `research_eligible` (remains `false`); did NOT transition `eligibility_gate_status` out of `pending`; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 4bb-D, Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, or production keys. The Phase 4az dataset's `research_eligible=false` and `eligibility_gate_status=pending` are unchanged. **Implementation note:** the Phase 4bb-B plan §16 "network discipline" fail-closed rule is enforced statically via the pre-existing parametrised `tests/research/microstructure/test_import_boundaries.py` scan plus the new `tests/research/microstructure/test_eligibility_no_network.py::test_gate_modules_do_not_import_forbidden_modules_statically`. The runtime helper `assert_no_dangerous_imports_loaded()` exists for explicit-injection diagnostics but is **not** invoked by the orchestrator; other test suites in the same pytest session may legitimately import networking libraries for unrelated reasons, and aborting the gate because of that would be a false positive. The static guarantee is the binding contract. **Phase 4bb-C preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7 (kline strict integrity gate; aggTrades equivalent applied verbatim by Phase 4az and reaffirmed by Phase 4ba; structural QA confirmed by Phase 4bb-A; execution plan mapped by Phase 4bb-B; primitive implemented by Phase 4bb-C); Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au, 4av, 4aw, 4ax, 4ay, 4az, 4ba, 4bb-A, 4bb-B results — all preserved verbatim. **Phase 4 canonical remains unauthorized. Phase 4bb-D / Phase 4bc / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and additional aggTrades / 5m / 1m / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
+Phase 4bb-D is the **AggTrades Phase 4az Eligibility-Gate Execution** (docs-and-local-gitignored-output gate-execution phase). Phase 4bb-D ran the offline aggTrades eligibility-gate primitive (Phase 4bb-C) exactly once against the real local Phase 4az artefacts (BTCUSDT 2025-01-15 UTC; manifest at `data/microstructure/manifests/microstructure_raw_aggtrades_v001__v001.json`; raw zip at `data/microstructure/raw/microstructure_raw_aggtrades_v001/BTCUSDT/2025/01/BTCUSDT-aggTrades-2025-01-15.zip` with SHA256 `f560c2e529e980c1660b612c79408f3dfd27aa48136fa10965db15f3e2852b3e`; 1,681,098 events; paired `.sha256` sidecar; acquisition log) by direct Python import of `prometheus.research.microstructure.run_eligibility_gate` against an `AggTradesEligibilityGateInput` with `manifest_path=...microstructure_raw_aggtrades_v001__v001.json`, `output_root=data/microstructure/gate-reports`, `code_commit_sha=aa612ba2778c97a5150b80064244b90d024bfa54`, `write_report=True`, `write_successor_manifest=False`. The gate returned `overall_status=pass`; `len(checks)=45` with `PASS=45 / FAIL=0 / NOT_APPLICABLE=0 / ERROR=0`; `len(invalid_window_candidates)=0`; `research_eligible_after=False`; `eligibility_gate_status_after=pass` (recommendation only); `no_successor_authorization=True`; all 13 boundary confirmations `true` (`research_eligible_after_is_false_for_raw_family`, `no_successor_authorization`, `no_manifest_mutation`, `no_data_microstructure_write_outside_gate_reports`, `no_normalization_written`, `no_feature_computed`, `no_ml_trained`, `no_strategy_created`, `no_backtest_run`, `no_network_io`, `no_websocket`, `no_credential_read`, `no_env_read`, `no_mcp_or_graphify`). The gate report was written atomically at the gitignored path `data/microstructure/gate-reports/gate-reports/microstructure_raw_aggtrades_v001__v001__1778351069361__aa612ba2778c.json` (17,053 bytes) with paired sidecar at `....json.sha256` (140 bytes); the sidecar SHA256 `96f09159df7c89906637ada0f0f9e68e4b8850d8c5f2a38960aaa70f6afe6423` matches the recomputed report SHA bit-for-bit; both files are gitignored under `.gitignore:85: data/microstructure/`. The doubled `gate-reports/` segment in the report path is observed Phase 4bb-C orchestrator behavior (the writer composes `output_root / "gate-reports" / filename`); Phase 4bb-D does not modify code. **Manifest / raw zip / sidecar / acquisition-log immutability evidence:** SHA256 pre-run vs post-run is identical for all four artefacts (manifest `a371edd492fe12523af2fe9759391350ac415bfeabf34e4fdc6c33da8e16a201`; raw zip `f560c2e529e980c1660b612c79408f3dfd27aa48136fa10965db15f3e2852b3e`; sidecar `b80c27682689a97db5811f43c0e35036f884256b1cfce32d166f974aa605b42d`; acquisition log `f88b28b48ceb9d0aefff3f8e7738254e2e5c57982bd8f84c1ffeeba90dec8a1c`); manifest `mtime_ns=1778187340311355300` is unchanged across the run; the actual on-disk Phase 4az manifest still reads `research_eligible: false` and `eligibility_gate_status: pending`; the gate's own internal `manifest_sha_before` / `manifest_sha_after` / `raw_zip_sha_before` / `raw_zip_sha_after` / `sidecar_sha_before` / `sidecar_sha_after` (recorded inside `result.measured_summary`) match exactly. **Eligibility interpretation:** PASS at the gate level does NOT flip `research_eligible`; does NOT transition the actual manifest's `eligibility_gate_status` from `pending` to `pass`; does NOT authorize normalization, feature computation, ML training, strategy work, backtests, additional acquisition, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, or live WebSocket implementation. PASS at Stage 1 (inspected) only signals that the artefact has cleared the structural eligibility-time floor. Movement to Stage 2 (gate-passed) requires a separately authorized successor-manifest phase that records the status transition; Phase 4bb-D was not that phase. The 45 PASS check IDs returned in fixed order are `10.1.1`, `10.1.2`, `10.1.3`, `10.1.4`, `10.1.5`, `10.2.6`, `10.2.7`, `10.2.8`, `10.3.9`, `10.3.10`, `10.3.11`, `10.3.12`, `10.3.13`, `10.4.14`, `10.4.15`, `10.4.16`, `10.5.17`, `10.5.18`, `10.5.19`, `10.5.20`, `10.6.21`, `10.6.22`, `10.6.23`, `10.7.24`, `10.7.25`, `10.8.26`, `10.8.27`, `10.8.28`, `10.9.29`, `10.9.30`, `10.9.31`, `10.9.32`, `10.10.33`, `10.10.34`, `10.10.35`, `10.10.36`, `10.11.37`, `10.11.38`, `10.11.39`, `10.11.40`, `10.12.41`, `10.12.42`, `10.12.43`, `10.12.44`, `10.12.45`. Phase 4bb-D added two new docs files under `docs/00-meta/implementation-reports/` (the 20-section memo and the closeout) and narrowly updated `docs/00-meta/current-project-state.md` (this paragraph addition + new "Current phase:" block; prior Phase 4bb-C block preserved as historical context). **Validation:** `git diff --stat` empty pre-docs-commit; whole-repo `ruff check .` passed (`All checks passed!`); `pytest tests/research/microstructure/` returned `258 passed`; whole-repo `pytest` returned `1041 passed, 2 failed` where the two failures are the same pre-existing simulation failures (`tests/simulation/test_backtest_real_2026_03.py::test_real_2026_03_btcusdt` and `::test_real_2026_03_ethusdt`, both `KeyError: 'trade_count'` in `src/prometheus/research/data/storage.py:232`); zero new regressions from Phase 4bb-D; `mypy` strict returned `Success: no issues found in 93 source files`; `git check-ignore -v data/microstructure/` returns `.gitignore:85:data/microstructure/`; `git check-ignore -v data/microstructure/gate-reports/` returns `.gitignore:85:data/microstructure/	data/microstructure/gate-reports/`. Phase 4bb-D did NOT acquire data; did NOT call any Binance endpoint, public endpoint, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read `.env`; did NOT create or read `.mcp.json`; did NOT enable MCP or Graphify; did NOT modify the manifest; did NOT modify the raw zip; did NOT modify the sidecar; did NOT modify the acquisition log; did NOT write outside `data/microstructure/gate-reports/`; did NOT normalize the dataset; did NOT compute features, taker imbalance, sweep detection, aggressive-flow score, spread / depth / liquidity / slippage / order-flow / execution-quality proxies, returns, alpha, edge, predictiveness, signal quality, profitability, or opportunity rate; did NOT create JSONL, Parquet, DuckDB tables, feature tables, labels, or derived datasets; did NOT train ML; did NOT create a strategy; did NOT run backtests; did NOT acquire ETHUSDT or additional BTCUSDT days; did NOT modify `src/prometheus/`, tests, scripts, `pyproject.toml`, `README.md`, or `.gitignore`; did NOT add any new dependency; did NOT flip `research_eligible` (remains `false`); did NOT transition the actual manifest's `eligibility_gate_status` (remains `pending`); did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 4bb-E, Phase 4bc, Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, or live WebSocket implementation. The Phase 4az dataset's `research_eligible=false` and `eligibility_gate_status=pending` are unchanged. **Phase 4bb-D preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7 (kline strict integrity gate; aggTrades equivalent applied verbatim by Phase 4az and reaffirmed by Phase 4ba; structural QA confirmed by Phase 4bb-A; execution plan mapped by Phase 4bb-B; primitive implemented by Phase 4bb-C; primitive run by Phase 4bb-D); Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au, 4av, 4aw, 4ax, 4ay, 4az, 4ba, 4bb-A, 4bb-B, 4bb-C results — all preserved verbatim. **Phase 4 canonical remains unauthorized. Phase 4bb-E / Phase 4bc / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and additional aggTrades / 5m / 1m / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
+
 Current phase:
+
+```text
+Phase 4bb-D drafted (AggTrades Phase 4az Eligibility-
+Gate Execution, docs-and-local-gitignored-output
+gate-execution phase).
+Phase 4bb-D ran the Phase 4bb-C offline aggTrades
+eligibility-gate primitive exactly once against the
+real local Phase 4az artefacts.
+Phase 4bb-D inputs:
+- manifest_path =
+    data/microstructure/manifests/
+    microstructure_raw_aggtrades_v001__v001.json
+- raw zip path =
+    data/microstructure/raw/
+    microstructure_raw_aggtrades_v001/BTCUSDT/2025/01/
+    BTCUSDT-aggTrades-2025-01-15.zip
+- raw zip SHA256 =
+    f560c2e529e980c1660b612c79408f3dfd27aa48136fa10965
+    db15f3e2852b3e
+- event count = 1,681,098
+- code_commit_sha =
+    aa612ba2778c97a5150b80064244b90d024bfa54
+- write_report = True
+- write_successor_manifest = False
+Phase 4bb-D gate result:
+- overall_status = pass
+- len(checks) = 45
+- PASS = 45 / FAIL = 0 / NOT_APPLICABLE = 0 / ERROR = 0
+- len(invalid_window_candidates) = 0
+- research_eligible_after = False
+- eligibility_gate_status_after = pass (recommendation
+  only; the actual on-disk manifest is unchanged)
+- no_successor_authorization = True
+- 13 / 13 boundary confirmations true
+Phase 4bb-D gate report:
+- path =
+    data/microstructure/gate-reports/gate-reports/
+    microstructure_raw_aggtrades_v001__v001__
+    1778351069361__aa612ba2778c.json
+- sidecar =
+    same path with .sha256 suffix
+- report SHA256 (recomputed and matches sidecar) =
+    96f09159df7c89906637ada0f0f9e68e4b8850d8c5f2a38960
+    aaa70f6afe6423
+- both files are gitignored under
+    .gitignore:85:data/microstructure/
+- both files are NOT committed
+- Phase 4bb-D did NOT modify the report path scheme;
+  the doubled gate-reports/ segment is observed
+  Phase 4bb-C orchestrator behavior and is recorded
+  here as observed behavior only
+Phase 4bb-D manifest / raw / sidecar / acquisition-log
+immutability evidence:
+- manifest SHA pre-run / post-run identical
+- raw zip SHA pre-run / post-run identical
+- sidecar SHA pre-run / post-run identical
+- acquisition log SHA pre-run / post-run identical
+- manifest mtime_ns unchanged across the run
+- actual manifest still has research_eligible: false
+- actual manifest still has eligibility_gate_status:
+    pending
+Phase 4bb-D added:
+- docs/00-meta/implementation-reports/
+    2026-05-07_phase-4bb-d_aggtrades-phase4az-
+    eligibility-gate-execution.md
+- docs/00-meta/implementation-reports/
+    2026-05-07_phase-4bb-d_closeout.md
+Phase 4bb-D modified narrowly:
+- docs/00-meta/current-project-state.md (this Phase
+  4bb-D narrative paragraph + Current phase block
+  update; prior Phase 4bb-C block preserved as
+  historical context)
+.gitignore is unchanged.
+pyproject.toml is unchanged.
+README.md is unchanged.
+No scripts/... entrypoint added or modified.
+No file under src/prometheus/ modified.
+No test under tests/ modified.
+No file under data/, data/manifests/, data/research/,
+data/derived/, data/raw/, or data/normalized/
+modified.
+No file under data/microstructure/manifests/,
+data/microstructure/raw/, or
+data/microstructure/normalized/ modified.
+The only filesystem effect of Phase 4bb-D under
+data/microstructure/ is the creation of the
+data/microstructure/gate-reports/gate-reports/
+directory plus the gate report JSON and its paired
+.sha256 sidecar; both files are gitignored.
+Phase 4bb-D did NOT:
+- acquire data;
+- normalize the dataset;
+- compute features, taker imbalance, sweep detection,
+  aggressive-flow score, spread, depth, liquidity,
+  slippage, order-flow, or execution-quality proxies;
+- compute price returns, alpha, edge, predictiveness,
+  signal quality, profitability, or opportunity rate;
+- produce descriptive trading statistics;
+- create JSONL, Parquet, DuckDB tables, feature
+  tables, labels, or derived datasets;
+- train ML models;
+- create a strategy candidate;
+- run a backtest;
+- acquire ETHUSDT or additional BTCUSDT days;
+- call any Binance endpoint, public endpoint, or
+  private endpoint;
+- open any WebSocket;
+- use any credential;
+- read .env;
+- create or read .mcp.json;
+- enable MCP or Graphify;
+- modify any manifest;
+- flip research_eligible (remains false);
+- transition the actual manifest's
+  eligibility_gate_status (remains pending);
+- modify any source file, test, script, README,
+  pyproject, .gitignore, MCP file, or runtime
+  configuration;
+- revise any retained verdict;
+- change any project lock;
+- amend M0;
+- authorize Phase 4bb-E, Phase 4bc, Phase 5, Phase
+  4 canonical, paper / shadow, live-readiness,
+  deployment, exchange-write, production-key
+  creation, authenticated APIs, private endpoints,
+  user stream, or live WebSocket implementation.
+Phase 4bb-D eligibility interpretation:
+- the raw Phase 4az artefact has a PASS gate report;
+- the raw manifest remains research_eligible = false;
+- the raw manifest remains eligibility_gate_status =
+    pending unless a separately authorized successor-
+    manifest phase changes it;
+- the PASS report does not authorize normalization,
+  features, ML, strategy, backtest, paper / shadow,
+  live-readiness, deployment, exchange-write, or
+  more acquisition.
+Validation:
+- ruff check . (whole repo): All checks passed!
+- mypy (whole repo, strict): Success: no issues found
+  in 93 source files;
+- pytest (whole repo): 1041 passed, 2 failed; the two
+  failures are the same pre-existing simulation
+  failures (tests/simulation/test_backtest_real_
+  2026_03.py::test_real_2026_03_btcusdt and ::test_
+  real_2026_03_ethusdt; both KeyError: 'trade_count'
+  in src/prometheus/research/data/storage.py:232);
+  zero new regressions from Phase 4bb-D;
+- pytest tests/research/microstructure/ (targeted):
+  258 passed (114 + 47 + 35 + 62);
+- git check-ignore -v data/microstructure/:
+  .gitignore:85:data/microstructure/
+- git check-ignore -v data/microstructure/gate-reports/:
+  .gitignore:85:data/microstructure/	data/
+  microstructure/gate-reports/
+- git diff --check: clean.
+The Phase 4az dataset's eligibility flags are
+unchanged:
+- research_eligible remains false;
+- eligibility_gate_status remains pending;
+- the Phase 4aw MicrostructureManifest.flip_research_
+  eligible(...) method (which always raises) was not
+  bypassed.
+Phase 4bb-D preserves every retained verdict and
+project lock verbatim:
+- H0 FRAMEWORK ANCHOR;
+- R3 BASELINE-OF-RECORD;
+- R1a / R1b-narrow RETAINED — NON-LEADING;
+- R2 FAILED — §11.6;
+- F1 HARD REJECT;
+- D1-A MECHANISM PASS / FRAMEWORK FAIL;
+- 5m thread OPERATIONALLY CLOSED per Phase 3t;
+- V2 HARD REJECT — terminal for V2 first-spec;
+- G1 HARD REJECT — terminal for G1 first-spec;
+- C1 HARD REJECT — terminal for C1 first-spec;
+- §11.6 = 8 bps per side preserved verbatim;
+  round-trip = 16 bps;
+- §1.7.3 0.25% / 2× / one-position / mark-price
+  stops;
+- Phase 3p §4.7 strict integrity gate (aggTrades
+  equivalent applied verbatim by Phase 4az and
+  reaffirmed by Phase 4ba; structural QA confirmed
+  by Phase 4bb-A; execution plan mapped by Phase
+  4bb-B; primitive implemented by Phase 4bb-C;
+  primitive run by Phase 4bb-D);
+- Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8;
+- Phase 4j §11;
+- M0 (Phase 4ak) twelve-clause gate + post-null
+  cooldown + cooled-down families list + memo
+  template;
+- Phase 4al refined no-rescue rule + §13 boundary +
+  §14 hierarchy;
+- Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au,
+  4av, 4aw, 4ax, 4ay, 4az, 4ba, 4bb-A, 4bb-B, 4bb-C
+  results — all preserved verbatim.
+Phase 4bb-D primary recommendation:
+- remain paused.
+Phase 4bb-D conditional next recommendation
+(NOT authorized):
+- future docs-only Phase 4bb-E gate-report
+  interpretation / successor-state policy memo,
+  separately authorized.
+Phase 4bb-D conditional later recommendation
+(NOT authorized):
+- future docs-only Phase 4bc normalization-design
+  memo (Phase 4ba Stage 3 reachability), separately
+  authorized.
+Phase 4bb-D NOT recommended:
+- acquiring more data;
+- flipping research_eligible to true on any raw
+  aggTrades family;
+- transitioning the actual manifest's
+  eligibility_gate_status from pending to pass on
+  any raw family without a separately authorized
+  successor-manifest phase;
+- computing features;
+- training ML;
+- building a strategy.
+Phase 4bb-D FORBIDDEN options:
+- verdict revision;
+- lock revision;
+- parameter optimization;
+- strategy resurrection (R3-prime / R1a-prime /
+  R1b-narrow-prime / R2-prime / H0-prime / F1-prime /
+  D1-A-prime / D1-B / V2-prime / V2-narrow /
+  V2-relaxed / V2 hybrid / G1-prime / G1-narrow /
+  G1-extension / G1 hybrid / C1-prime / C1-narrow /
+  C1-extension / C1 hybrid / V1-D1 / F1-D1 / any
+  cross-strategy hybrid);
+- M0 amendment derived from Phase 4bb-D reasoning;
+- reopening the 5m research thread;
+- paper / shadow / live-readiness / deployment /
+  exchange-write / production-key creation /
+  authenticated APIs / private endpoints /
+  public-endpoint calls in code / user stream /
+  live WebSocket implementation / MCP / Graphify /
+  .mcp.json / credentials.
+Phase 4 (canonical) remains unauthorized.
+Phase 4bb-E / Phase 4bc / Phase 5 / any successor
+phase remains unauthorized.
+Paper/shadow, live-readiness, deployment, production
+keys, authenticated APIs, private endpoints,
+public-endpoint calls in code, user stream, WebSocket
+implementation, MCP, Graphify, .mcp.json, credentials,
+exchange-write, and additional aggTrades / 5m / 1m /
+tick / mark-price 30m / 4h / order-book data
+acquisition all remain unauthorized.
+M0 mechanism-admissibility gate and post-null cooldown
+rule remain binding prospective governance for any
+future research lane.
+Recommended state: remain paused.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4bb-C) is preserved by the Phase 4bb-C narrative paragraph above.
+
+Earlier Phase 4bb-C "Current phase:" block (preserved here for continuity; Phase 4bb-C is no longer the current phase):
 
 ```text
 Phase 4bb-C drafted (AggTrades Offline Eligibility-
