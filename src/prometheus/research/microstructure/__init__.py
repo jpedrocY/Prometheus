@@ -151,6 +151,51 @@ parquet, the source normalized manifest, the raw artefacts, the Phase
 ``no_successor_authorization`` is invariant ``True``.
 ``eligibility_gate_status_after`` is recorded on the report only and
 never written to the actual feature manifest.
+
+Phase 4bj-C adds the offline label kernel:
+
+- ``labels_schema``: the 39-column ``LABEL_SCHEMA_V001`` (17 lineage /
+  identity / metadata + 8 label columns + 14 support columns), the
+  8 ``LABEL_NAMES_V001``, the 4 horizons
+  ``LABEL_HORIZONS_V001 = ("1s", "5s", "15s", "60s")`` paired with
+  ``LABEL_HORIZON_MS_V001 = (1000, 5000, 15000, 60000)``, the
+  ``FORBIDDEN_LABEL_COLUMN_SUBSTRINGS`` detector, and the
+  deterministic ``build_label_config_hash`` helper;
+- ``labels_io``: atomic Parquet / JSON writers restricted to
+  ``data/microstructure/labels/`` and ``data/microstructure/manifests/``
+  plus paired-SHA256 sidecar writer; refuses to overwrite;
+- ``labels_compute``: ``compute_aggtrade_labels_v001`` builds the
+  39-column event-aligned label table from the source feature parquet
+  and the source normalized aggTrades parquet; right-edge per-horizon
+  censoring; Decimal-into-ratio with float64 cast only at the
+  natural-log step; strict sign threshold at ``0.0`` for
+  ``forward_direction_*``; no NaN / inf in any output column;
+- ``labels_manifest``: ``build_label_manifest_v001`` produces a
+  JSON-friendly manifest with ``research_eligible=False`` and
+  ``eligibility_gate_status="pending"`` defaults preserved, governance
+  labels (``labels = "allowed_by_phase_4bj_c"``,
+  ``targets = "allowed_by_phase_4bj_c"``, ``ml = "forbidden"``,
+  ``strategy = "forbidden"``, ``backtest = "forbidden"``,
+  ``acquisition = "unauthorized"``,
+  ``paper_shadow_live = "forbidden"``,
+  ``deployment = "forbidden"``,
+  ``exchange_write = "forbidden"``), 13 boundary confirmations all
+  ``True``, and full lineage SHAs (source feature parquet, source
+  feature manifest, Phase 4bi-D successor-state JSON, Phase 4bi-B
+  feature-family gate report, source normalized parquet);
+- ``labels_validation``: ``validate_label_dataset_v001`` runs schema,
+  type, value, lineage, support, censoring, sign, and upstream-
+  immutability checks against the Phase 4bj-B contract.
+
+The label kernel is offline-only: no Binance endpoint, no WebSocket,
+no credential, no environment file. It never mutates the source
+feature parquet, source feature manifest, Phase 4bi-B feature-family
+gate report, Phase 4bi-D successor-state artefact, normalized parquet,
+original derived manifest, raw manifest, or raw zip, and the label
+manifest is always written with ``research_eligible=False`` and
+``eligibility_gate_status="pending"``. Phase 4bj-C does NOT create a
+label gate report or a label successor-state artefact, and does NOT
+authorize Phase 4bj-D or any successor.
 """
 
 from .aggtrades import (
@@ -293,6 +338,60 @@ from .invalid_window import (
     InvalidWindow,
     InvalidWindowReason,
     InvalidWindowSeverity,
+)
+from .labels_compute import (
+    LabelComputationError,
+    LabelComputationSummary,
+    LabelLineage,
+    compute_aggtrade_labels_v001,
+    write_label_dataset_v001,
+)
+from .labels_io import (
+    LABELS_FAMILY_SUBDIR,
+    LabelIOError,
+    assert_label_manifest_path_under_manifests,
+    assert_label_path_under_data_microstructure,
+    assert_output_path_under_labels,
+    atomic_write_label_manifest,
+    atomic_write_label_parquet,
+    derive_label_manifest_output_path,
+    derive_label_output_path,
+    write_label_sha256_sidecar,
+)
+from .labels_manifest import (
+    FORBIDDEN_LABEL_GOVERNANCE_VALUES,
+    REQUIRED_LABEL_BOUNDARY_CONFIRMATIONS,
+    REQUIRED_LABEL_GOVERNANCE_KEYS,
+    LabelManifestError,
+    build_label_manifest_v001,
+)
+from .labels_schema import (
+    ANCHOR_POLICY_V001,
+    DIRECTION_THRESHOLD_POLICY_V001,
+    DTYPE_POLICY_V001,
+    FORBIDDEN_LABEL_COLUMN_SUBSTRINGS,
+    FUTURE_REFERENCE_POLICY_V001,
+    LABEL_DATASET_FAMILY_V001,
+    LABEL_DATASET_VERSION_V001,
+    LABEL_HORIZON_MS_V001,
+    LABEL_HORIZONS_V001,
+    LABEL_LINEAGE_COLUMNS_V001,
+    LABEL_NAMES_V001,
+    LABEL_SCHEMA_COLUMNS_V001,
+    LABEL_SCHEMA_V001,
+    LABEL_SCHEMA_VERSION_V001,
+    LABEL_SUPPORT_COLUMN_NAMES_V001,
+    NULL_CENSORING_POLICY_V001,
+    LabelSchemaError,
+    assert_no_forbidden_label_substrings,
+    build_label_config_hash,
+)
+from .labels_validation import (
+    LabelCheckResult,
+    LabelCheckStatus,
+    LabelValidationError,
+    LabelValidationResult,
+    validate_label_dataset_v001,
 )
 from .manifest import (
     EligibilityGateStatus,
@@ -472,4 +571,49 @@ __all__ = [
     "run_feature_family_gate",
     "validate_feature_gate_inputs",
     "write_feature_gate_report",
+    # labels (Phase 4bj-C)
+    "ANCHOR_POLICY_V001",
+    "DIRECTION_THRESHOLD_POLICY_V001",
+    "DTYPE_POLICY_V001",
+    "FORBIDDEN_LABEL_COLUMN_SUBSTRINGS",
+    "FORBIDDEN_LABEL_GOVERNANCE_VALUES",
+    "FUTURE_REFERENCE_POLICY_V001",
+    "LABELS_FAMILY_SUBDIR",
+    "LABEL_DATASET_FAMILY_V001",
+    "LABEL_DATASET_VERSION_V001",
+    "LABEL_HORIZONS_V001",
+    "LABEL_HORIZON_MS_V001",
+    "LABEL_LINEAGE_COLUMNS_V001",
+    "LABEL_NAMES_V001",
+    "LABEL_SCHEMA_COLUMNS_V001",
+    "LABEL_SCHEMA_V001",
+    "LABEL_SCHEMA_VERSION_V001",
+    "LABEL_SUPPORT_COLUMN_NAMES_V001",
+    "LabelCheckResult",
+    "LabelCheckStatus",
+    "LabelComputationError",
+    "LabelComputationSummary",
+    "LabelIOError",
+    "LabelLineage",
+    "LabelManifestError",
+    "LabelSchemaError",
+    "LabelValidationError",
+    "LabelValidationResult",
+    "NULL_CENSORING_POLICY_V001",
+    "REQUIRED_LABEL_BOUNDARY_CONFIRMATIONS",
+    "REQUIRED_LABEL_GOVERNANCE_KEYS",
+    "assert_label_manifest_path_under_manifests",
+    "assert_label_path_under_data_microstructure",
+    "assert_no_forbidden_label_substrings",
+    "assert_output_path_under_labels",
+    "atomic_write_label_manifest",
+    "atomic_write_label_parquet",
+    "build_label_config_hash",
+    "build_label_manifest_v001",
+    "compute_aggtrade_labels_v001",
+    "derive_label_manifest_output_path",
+    "derive_label_output_path",
+    "validate_label_dataset_v001",
+    "write_label_dataset_v001",
+    "write_label_sha256_sidecar",
 ]
