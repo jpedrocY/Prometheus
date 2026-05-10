@@ -317,14 +317,9 @@ Event-aligned to feature rows:
 
 ## 10. Finalized column schema
 
-The future label parquet must contain **exactly** the following 33
-columns in this canonical order. (8 feature labels + 8 reference row
-support + 8 reference timestamp support + 4 horizon censoring flags
-+ 2 row-level flags + 3 family identity + 1 schema version + 4
-source lineage + 1 phase-4bi-B lineage + 1 normalized lineage + 2
-identity + 2 anchor identity + 1 label-config hash = some 8 + 8 + 8
-+ 4 + 2 + 11 = 41 columns; the canonical list is enumerated below
-and overrides any informal count above.)
+The future label parquet must contain **exactly** the following 39
+columns in canonical order. The enumerated column list below is
+authoritative.
 
 Lineage / identity / metadata columns (15):
 
