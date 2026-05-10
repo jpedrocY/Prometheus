@@ -127,6 +127,30 @@ it never flips ``research_eligible`` to ``True`` for the feature
 family. Phase 4bh produces local Stage-2 feature artefacts only; the
 feature-family eligibility gate is the only path that may flip those
 flags in a separately authorized future phase.
+
+Phase 4bi-B adds the offline feature-family eligibility gate:
+
+- ``feature_gate_io``: read-only artefact loaders + atomic gate-report
+  writer + paired-SHA256 sidecar + path discipline
+  (``data/microstructure/gate-reports/features/``);
+- ``feature_gate_checks``: Phase 4bi-B check suite
+  (``4bi-b.A01`` .. ``4bi-b.N01``), :class:`FeatureGateCheckStatus`,
+  :class:`FeatureGateCheckResult`, :class:`FeatureGateContext`, and
+  ``run_all_checks``;
+- ``feature_gate_report``: :class:`FeatureGateReport` data model +
+  atomic JSON write + paired SHA256 sidecar + invariant enforcement;
+- ``feature_gate``: :class:`FeatureGateInput` /
+  :class:`FeatureGateResult`, :func:`validate_feature_gate_inputs`, and
+  the public :func:`run_feature_family_gate` orchestrator.
+
+The feature-family gate is offline-only and read-only: it never mutates
+the feature parquet, the feature manifest, the source normalized
+parquet, the source normalized manifest, the raw artefacts, the Phase
+4bb-D / 4bf gate reports, or the Phase 4bg-B successor-state artefact.
+``research_eligible_after`` is invariant ``False`` and
+``no_successor_authorization`` is invariant ``True``.
+``eligibility_gate_status_after`` is recorded on the report only and
+never written to the actual feature manifest.
 """
 
 from .aggtrades import (
@@ -181,6 +205,28 @@ from .eligibility_gate import (
 )
 from .eligibility_io import GateIOError
 from .eligibility_report import AggTradesGateReport
+from .feature_gate import (
+    FeatureGateError,
+    FeatureGateInput,
+    FeatureGateResult,
+    run_feature_family_gate,
+    validate_feature_gate_inputs,
+)
+from .feature_gate_checks import (
+    FeatureGateCheckResult,
+    FeatureGateCheckStatus,
+    FeatureGateContext,
+)
+from .feature_gate_io import (
+    FeatureGateIOError,
+    FeatureGateReportPaths,
+)
+from .feature_gate_report import (
+    FeatureGateReport,
+    FeatureGateReportError,
+    build_feature_gate_report,
+    write_feature_gate_report,
+)
 from .features_compute import (
     FeatureComputationError,
     FeatureComputationResult,
@@ -411,4 +457,19 @@ __all__ = [
     "validate_feature_dataset",
     "write_feature_dataset",
     "write_feature_sha256_sidecar",
+    # feature_gate (Phase 4bi-B)
+    "FeatureGateCheckResult",
+    "FeatureGateCheckStatus",
+    "FeatureGateContext",
+    "FeatureGateError",
+    "FeatureGateIOError",
+    "FeatureGateInput",
+    "FeatureGateReport",
+    "FeatureGateReportError",
+    "FeatureGateReportPaths",
+    "FeatureGateResult",
+    "build_feature_gate_report",
+    "run_feature_family_gate",
+    "validate_feature_gate_inputs",
+    "write_feature_gate_report",
 ]
