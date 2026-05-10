@@ -79,6 +79,54 @@ Phase 4bb-D gate report. ``research_eligible_after`` is invariant
 ``False`` and ``no_successor_authorization`` is invariant ``True``.
 ``eligibility_gate_status_after`` is recorded on the report only and
 never written to the actual derived manifest.
+
+Phase 4bh adds the offline aggTrades feature kernel:
+
+- ``features_schema``: the 61-column ``FEATURE_SCHEMA_V001`` (16
+  lineage / identity / metadata + 45 feature / quality columns), the
+  45 ``FEATURE_NAMES_V001``, the 4 trailing windows
+  ``FEATURE_WINDOWS_MS_V001 = (1000, 5000, 15000, 60000)``, the 26
+  ``FORBIDDEN_FEATURE_COLUMN_SUBSTRINGS``, and the deterministic
+  :class:`FeatureComputationConfig` (``feature_config_hash`` derived
+  from canonical-JSON over locked schema fields);
+- ``features_io``: read-only loaders for the source normalized Parquet,
+  source normalized manifest, and Phase 4bg-B successor-state JSON;
+  atomic Parquet/JSON writers restricted to
+  ``data/microstructure/features/`` and
+  ``data/microstructure/manifests/``; paired-SHA256 sidecar writer;
+- ``features_compute``: causal trailing-window kernel that computes
+  the 61-column event-aligned feature table via vectorised cumulative
+  sums plus deterministic Decimal-as-string formatting for
+  rolling quantity sums / aggressive quantities / imbalances and
+  rolling quantity means; ``float64`` for aggressive flow ratios and
+  log returns; aggressive-side rule
+  ``is_buyer_maker = false -> aggressive buy``; same-timestamp
+  tie-break ``row_index <= R``;
+- ``features_manifest``: ``build_feature_manifest`` produces a
+  JSON-friendly manifest with ``research_eligible=False`` and
+  ``eligibility_gate_status="pending"`` defaults preserved, governance
+  labels (``feature_computation = "allowed_by_phase_4bh"``,
+  ``labels = "forbidden"``, ``ml = "forbidden"``,
+  ``strategy = "forbidden"``, ``backtest = "forbidden"``,
+  ``acquisition = "unauthorized"``,
+  ``stop_trigger_domain = "trade_price_backtest_candidate"``), and
+  full lineage SHAs for the source normalized parquet, source
+  normalized manifest, Phase 4bg-B successor-state JSON, and the
+  Phase 4bf derived gate report;
+- ``features_validation``: ``validate_feature_dataset`` runs schema,
+  type, value, and lineage checks against the Phase 4bh-B contract
+  (61-column order; row_count parity with source; no forbidden
+  substrings; lineage hashes constant; ratio in ``[0, 1]``;
+  Decimal-as-string columns parse via :class:`Decimal`).
+
+The feature kernel is offline-only: no Binance endpoint, no WebSocket,
+no credential, no environment file. It never mutates the source
+normalized parquet, source normalized manifest, raw artefacts, Phase
+4bb-D / 4bf gate reports, or Phase 4bg-B successor-state artefact, and
+it never flips ``research_eligible`` to ``True`` for the feature
+family. Phase 4bh produces local Stage-2 feature artefacts only; the
+feature-family eligibility gate is the only path that may flip those
+flags in a separately authorized future phase.
 """
 
 from .aggtrades import (
@@ -133,6 +181,67 @@ from .eligibility_gate import (
 )
 from .eligibility_io import GateIOError
 from .eligibility_report import AggTradesGateReport
+from .features_compute import (
+    FeatureComputationError,
+    FeatureComputationResult,
+    FeatureLineage,
+    compute_aggtrades_features,
+    write_feature_dataset,
+)
+from .features_io import (
+    FEATURES_FAMILY_SUBDIR,
+    FeatureIOError,
+    SourceArtefactSummary,
+    assert_manifest_output_path_under_manifests,
+    assert_output_path_under_features,
+    assert_path_under_data_microstructure,
+    atomic_write_feature_manifest,
+    atomic_write_feature_parquet,
+    derive_feature_manifest_output_path,
+    derive_feature_output_path,
+    hash_source_file,
+    read_normalized_parquet,
+    read_source_normalized_manifest,
+    read_successor_state,
+    resolve_default_manifests_root,
+    write_feature_sha256_sidecar,
+)
+from .features_manifest import (
+    FORBIDDEN_FEATURE_GOVERNANCE_VALUES,
+    REQUIRED_BOUNDARY_CONFIRMATIONS,
+    REQUIRED_FEATURE_GOVERNANCE_KEYS,
+    FeatureManifestError,
+    build_feature_manifest,
+)
+from .features_schema import (
+    DECIMAL_POLICY_V001,
+    FEATURE_DATASET_FAMILY,
+    FEATURE_DATASET_VERSION,
+    FEATURE_NAMES_V001,
+    FEATURE_SCHEMA_V001,
+    FEATURE_SCHEMA_VERSION,
+    FEATURE_WINDOW_LABELS_V001,
+    FEATURE_WINDOWS_MS_V001,
+    FORBIDDEN_FEATURE_COLUMN_SUBSTRINGS,
+    INVALID_WINDOW_POLICY_V001,
+    LINEAGE_COLUMNS_V001,
+    NULL_POLICY_V001,
+    PER_WINDOW_FEATURE_TEMPLATES,
+    SOURCE_NORMALIZED_DATASET_FAMILY,
+    SOURCE_NORMALIZED_DATASET_VERSION,
+    FeatureComputationConfig,
+    FeatureSchemaError,
+    assert_no_forbidden_substrings,
+    build_feature_config,
+    compute_feature_config_hash,
+)
+from .features_validation import (
+    FeatureCheckResult,
+    FeatureCheckStatus,
+    FeatureValidationError,
+    FeatureValidationResult,
+    validate_feature_dataset,
+)
 from .invalid_window import (
     DownstreamEligibilityAction,
     InvalidWindow,
@@ -250,4 +359,56 @@ __all__ = [
     "RawWriterError",
     "RawWriterFileSummary",
     "RawWriterPathError",
+    # features (Phase 4bh)
+    "DECIMAL_POLICY_V001",
+    "FEATURES_FAMILY_SUBDIR",
+    "FEATURE_DATASET_FAMILY",
+    "FEATURE_DATASET_VERSION",
+    "FEATURE_NAMES_V001",
+    "FEATURE_SCHEMA_V001",
+    "FEATURE_SCHEMA_VERSION",
+    "FEATURE_WINDOW_LABELS_V001",
+    "FEATURE_WINDOWS_MS_V001",
+    "FORBIDDEN_FEATURE_COLUMN_SUBSTRINGS",
+    "FORBIDDEN_FEATURE_GOVERNANCE_VALUES",
+    "FeatureCheckResult",
+    "FeatureCheckStatus",
+    "FeatureComputationConfig",
+    "FeatureComputationError",
+    "FeatureComputationResult",
+    "FeatureIOError",
+    "FeatureLineage",
+    "FeatureManifestError",
+    "FeatureSchemaError",
+    "FeatureValidationError",
+    "FeatureValidationResult",
+    "INVALID_WINDOW_POLICY_V001",
+    "LINEAGE_COLUMNS_V001",
+    "NULL_POLICY_V001",
+    "PER_WINDOW_FEATURE_TEMPLATES",
+    "REQUIRED_BOUNDARY_CONFIRMATIONS",
+    "REQUIRED_FEATURE_GOVERNANCE_KEYS",
+    "SOURCE_NORMALIZED_DATASET_FAMILY",
+    "SOURCE_NORMALIZED_DATASET_VERSION",
+    "SourceArtefactSummary",
+    "assert_manifest_output_path_under_manifests",
+    "assert_no_forbidden_substrings",
+    "assert_output_path_under_features",
+    "assert_path_under_data_microstructure",
+    "atomic_write_feature_manifest",
+    "atomic_write_feature_parquet",
+    "build_feature_config",
+    "build_feature_manifest",
+    "compute_aggtrades_features",
+    "compute_feature_config_hash",
+    "derive_feature_manifest_output_path",
+    "derive_feature_output_path",
+    "hash_source_file",
+    "read_normalized_parquet",
+    "read_source_normalized_manifest",
+    "read_successor_state",
+    "resolve_default_manifests_root",
+    "validate_feature_dataset",
+    "write_feature_dataset",
+    "write_feature_sha256_sidecar",
 ]
