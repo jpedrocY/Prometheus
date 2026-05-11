@@ -27,10 +27,10 @@ This merge-closeout records Phase 4bb-F's transition from **branch-complete** to
 | Phase 4bb-F source branch | `phase-4bb-f/gate-report-output-path-hygiene` |
 | Phase 4bb-F branch commit (only commit on branch) | `dc3345a0363a658a03880298399754ff3a5375c0` |
 | Merge-base (`main`, branch) | `bb9e1322aef54dce80dd2afb49a51674d1994dbf` |
-| Merge commit (this merge) | `33cc6d3` (full SHA recorded in §16) |
-| Merge-closeout commit | (this commit, on `main`, recorded below once committed) |
-| Final `main` SHA after merge-closeout commit | (recorded below once committed) |
-| Final `origin/main` SHA after push | (recorded below once pushed) |
+| Merge commit (this merge) | `33cc6d33fab70dfbe766b7e43f4a45d4def69edc` |
+| Merge-closeout commit | `eddc28c25e33c220db78e8bedfd285c6a09cc779` |
+| Final `main` SHA after merge-closeout commit | `eddc28c25e33c220db78e8bedfd285c6a09cc779` |
+| Final `origin/main` SHA after push | `eddc28c25e33c220db78e8bedfd285c6a09cc779` (synchronized) |
 
 The SHA-chain pattern from Phase 4bj-E / Phase 4bj-F / Phase 4bj-G continues:
 
@@ -352,4 +352,4 @@ None of these is required. There is no precondition-satisfied next phase that is
 
 ## Closeout
 
-Phase 4bb-F is **project-complete** as of this merge-closeout commit on `main`. The final `main` / `origin/main` SHA after this commit and the subsequent push will be recorded in §2 above via the established SHA-chain-fixup pattern (a one-commit follow-up that records the final-SHA value into the §2 placeholder).
+Phase 4bb-F is **project-complete** as of this merge-closeout commit on `main`. The full Phase 4bb-F merge commit SHA is `33cc6d33fab70dfbe766b7e43f4a45d4def69edc`. The merge-closeout commit SHA is `eddc28c25e33c220db78e8bedfd285c6a09cc779`. The final `main` / `origin/main` SHA after the SHA-chain-fixup commit that records this paragraph is itself the SHA-chain anchor (see §2 above).
