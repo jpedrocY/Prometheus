@@ -422,4 +422,4 @@ separately authorised authorization prompt is required before any
 successor begins.
 
 **Final `main` / `origin/main` SHA after this merge-closeout commit
-+ push:** (recorded below once committed)
++ push:** `9657651cf227527d987d55cb610d9b7ede66a19e`
