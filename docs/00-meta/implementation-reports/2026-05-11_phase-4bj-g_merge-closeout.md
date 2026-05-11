@@ -26,9 +26,9 @@ This merge-closeout records Phase 4bj-G's transition from **branch-complete** to
 | Phase 4bj-G branch commit (only commit on branch) | `d84d398badaf9c6305fd59e832b0e22b4a0846cc` |
 | Merge-base (`main`, branch) | `0a069e24b5aeb15229bbf16f0e0dc9542a7d02b3` |
 | Merge commit (this merge) | `92d9e5b76fd5d34a26ed01ec4f1d2f6e87edf4b2` |
-| Merge-closeout commit | (this commit, on `main`, recorded below once committed) |
-| Final `main` SHA after merge-closeout commit | (recorded below once committed) |
-| Final `origin/main` SHA after push | (recorded below once pushed) |
+| Merge-closeout commit | `73970aff3ec51cba7f320a7d0ec6a38b69dc9e11` |
+| Final `main` SHA after merge-closeout commit | `73970aff3ec51cba7f320a7d0ec6a38b69dc9e11` |
+| Final `origin/main` SHA after push | `73970aff3ec51cba7f320a7d0ec6a38b69dc9e11` (synchronized) |
 
 The SHA-chain pattern from Phase 4bj-E and Phase 4bj-F continues:
 
