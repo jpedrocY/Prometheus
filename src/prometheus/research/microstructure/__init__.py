@@ -196,6 +196,34 @@ manifest is always written with ``research_eligible=False`` and
 ``eligibility_gate_status="pending"``. Phase 4bj-C does NOT create a
 label gate report or a label successor-state artefact, and does NOT
 authorize Phase 4bj-D or any successor.
+
+Phase 4bj-E adds the offline label-family eligibility gate:
+
+- ``label_gate_io``: read-only artefact loaders + atomic gate-report
+  writer + paired-SHA256 sidecar + path discipline
+  (``data/microstructure/gate-reports/labels/``);
+- ``label_gate_checks``: Phase 4bj-E check suite
+  (``4bj-e.A01`` .. ``4bj-e.O01``), :class:`LabelGateCheckStatus`,
+  :class:`LabelGateCheckResult`, :class:`LabelGateContext`, and
+  ``run_all_checks``;
+- ``label_gate_report``: :class:`LabelGateReport` data model +
+  atomic JSON write + paired SHA256 sidecar + invariant enforcement;
+- ``label_gate``: :class:`LabelGateInput` / :class:`LabelGateResult`,
+  :func:`validate_label_gate_inputs`, and the public
+  :func:`run_label_family_gate` orchestrator.
+
+The label-family gate is offline-only and read-only: it never mutates
+the label parquet, the label manifest, the source feature parquet, the
+source feature manifest, or any sidecar. ``research_eligible_after`` is
+invariant ``False`` and ``no_successor_authorization`` is invariant
+``True``. ``eligibility_gate_status_after`` is recorded on the report
+only and never written to the actual label manifest. The label
+manifest's ``chronological_split_policy`` is preserved at
+``"not_yet_defined"``. The gate report is written under
+``data/microstructure/gate-reports/labels/`` with paired ``.sha256``
+sidecar via atomic write-then-rename + refuse-to-overwrite discipline.
+Phase 4bj-E does NOT authorize Phase 4bj-F (research / ML-use
+decision) or Phase 4bj-G (successor-state recording).
 """
 
 from .aggtrades import (
@@ -338,6 +366,28 @@ from .invalid_window import (
     InvalidWindow,
     InvalidWindowReason,
     InvalidWindowSeverity,
+)
+from .label_gate import (
+    LabelGateError,
+    LabelGateInput,
+    LabelGateResult,
+    run_label_family_gate,
+    validate_label_gate_inputs,
+)
+from .label_gate_checks import (
+    LabelGateCheckResult,
+    LabelGateCheckStatus,
+    LabelGateContext,
+)
+from .label_gate_io import (
+    LabelGateIOError,
+    LabelGateReportPaths,
+)
+from .label_gate_report import (
+    LabelGateReport,
+    LabelGateReportError,
+    build_label_gate_report,
+    write_label_gate_report,
 )
 from .labels_compute import (
     LabelComputationError,
@@ -616,4 +666,19 @@ __all__ = [
     "validate_label_dataset_v001",
     "write_label_dataset_v001",
     "write_label_sha256_sidecar",
+    # label_gate (Phase 4bj-E)
+    "LabelGateCheckResult",
+    "LabelGateCheckStatus",
+    "LabelGateContext",
+    "LabelGateError",
+    "LabelGateIOError",
+    "LabelGateInput",
+    "LabelGateReport",
+    "LabelGateReportError",
+    "LabelGateReportPaths",
+    "LabelGateResult",
+    "build_label_gate_report",
+    "run_label_family_gate",
+    "validate_label_gate_inputs",
+    "write_label_gate_report",
 ]
