@@ -460,4 +460,4 @@ workflow standard, a separately authorised authorization prompt is
 required before any successor begins.
 
 **Final `main` / `origin/main` SHA after this merge-closeout commit
-+ push:** (recorded below once committed)
++ push:** `ef37b0fa3c4f91565b96d0f7da74885704d014b3`
