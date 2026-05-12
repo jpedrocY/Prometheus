@@ -30,15 +30,17 @@
 - **Phase 4bj-I branch commit SHA:** `56d5203a4270f67e1153902e49dbe9d88d976b11`
   (`docs(phase-4bj-i): chronological split policy design memo`).
 - **Merge commit SHA:** `8fc888fc64c2c00e497fda73ec2f55db8136216c`.
-- **Merge-closeout commit SHA:** (recorded below once committed and pushed).
+- **Merge-closeout commit SHA:** `8f920e00fc3e0f2064baac6d723eb75c61e81044`
+  (`docs(phase-4bj-i): add merge closeout`).
 - **Final `main` / `origin/main` SHA after push:** the canonical
   project-complete anchor for Phase 4bj-I is the merge-closeout
-  commit. Any one-commit SHA-chain-fixup on top of that anchor only
-  records the final-`main` SHA value back into §2 of this
-  merge-closeout; it does not change Phase 4bj-I lifecycle
-  semantics, consistent with the Phase 4bb-G / Phase
-  4bb-F-implementation / Phase 4bb-F / Phase 4bj-G / Phase 4bj-F /
-  Phase 4bj-H SHA-chain-fixup precedents.
+  commit `8f920e00fc3e0f2064baac6d723eb75c61e81044`. This
+  one-commit SHA-chain-fixup on top of that anchor only records the
+  final-`main` SHA value back into §2 of this merge-closeout; it
+  does not change Phase 4bj-I lifecycle semantics, consistent with
+  the Phase 4bb-G / Phase 4bb-F-implementation / Phase 4bb-F /
+  Phase 4bj-G / Phase 4bj-F / Phase 4bj-H SHA-chain-fixup
+  precedents.
 
 ## 3. Merge method
 
