@@ -33,17 +33,17 @@
 - **Phase 4bj-K branch commit SHA:** `8d72bf058404784a9cf47406384a812c774551cb`
   (`docs(phase-4bj-k): label diagnostic study plan`).
 - **Merge commit SHA:** `64f6a76d6d8aafd71238fc22bf0f53c33c7feffa`.
-- **Merge-closeout commit SHA:** (recorded below once committed and
-  pushed).
+- **Merge-closeout commit SHA:** `0074f696d5f4e9bd7fccf665d6742c77af2edaa2`
+  (`docs(phase-4bj-k): add merge closeout`).
 - **Final `main` / `origin/main` SHA after push:** the canonical
   project-complete anchor for Phase 4bj-K is the merge-closeout
-  commit recorded in this section once committed and pushed. A
-  subsequent one-commit SHA-chain-fixup on top of that anchor (if
-  needed) only records the final-`main` SHA value back into this
-  section; it does not change Phase 4bj-K lifecycle semantics,
-  consistent with the Phase 4bb-G / Phase 4bb-F-implementation /
-  Phase 4bb-F / Phase 4bj-G / Phase 4bj-F / Phase 4bj-H / Phase
-  4bj-I / Phase 4bj-J SHA-chain-fixup precedents.
+  commit `0074f696d5f4e9bd7fccf665d6742c77af2edaa2`. This
+  one-commit SHA-chain-fixup on top of that anchor only records the
+  final-`main` SHA value back into §2 of this merge-closeout; it
+  does not change Phase 4bj-K lifecycle semantics, consistent with
+  the Phase 4bb-G / Phase 4bb-F-implementation / Phase 4bb-F /
+  Phase 4bj-G / Phase 4bj-F / Phase 4bj-H / Phase 4bj-I / Phase
+  4bj-J SHA-chain-fixup precedents.
 
 ## 3. Merge method
 
