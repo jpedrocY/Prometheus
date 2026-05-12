@@ -145,18 +145,55 @@ def _atomic_write_json_with_sha(
 def write_report_atomic(
     report: AggTradesGateReport,
     output_root: Path,
+    *,
+    family_subdir: str | None = None,
 ) -> Path:
-    """Write *report* under ``<output_root>/<GATE_REPORTS_SUBDIR>/``.
+    """Write *report* under the gate-reports subdirectory of *output_root*.
 
-    *output_root* must resolve under ``data/microstructure/``. The report file
-    name is derived from ``report.report_id`` and is paired with a
+    *output_root* must resolve under ``data/microstructure/``. The report
+    file name is derived from ``report.report_id`` and is paired with a
     ``.sha256`` sidecar.
+
+    Backward-compatible placement (Phase 4bb-C original convention):
+
+    - When *family_subdir* is ``None`` (the default), the report is
+      written under ``<output_root>/<GATE_REPORTS_SUBDIR>/`` exactly as
+      it was prior to Phase 4bb-F-implementation. Existing local
+      gitignored artefacts produced under this convention (notably the
+      Phase 4bb-D report under ``data/microstructure/gate-reports/
+      gate-reports/``) remain valid and are not affected.
+
+    Canonical placement (Phase 4bb-F-implementation; opt-in):
+
+    - When *family_subdir* is a non-empty string (e.g. ``"raw"``), the
+      report is written under ``<output_root>/<family_subdir>/`` and
+      the legacy ``gate-reports`` subdirectory injection is skipped.
+      Canonical raw-gate callers pass ``output_root =
+      data/microstructure/gate-reports`` and ``family_subdir = "raw"``
+      to produce the Phase 4bb-F canonical placement
+      ``data/microstructure/gate-reports/raw/<report_id>.json``.
+
+    The function never modifies any existing file. It refuses to
+    overwrite an existing report or sidecar.
     """
     if not isinstance(output_root, Path):
         raise TypeError("output_root must be a pathlib.Path")
     assert_path_under_microstructure(output_root, label="output_root")
 
-    gate_dir = output_root / GATE_REPORTS_SUBDIR
+    if family_subdir is None:
+        gate_dir = output_root / GATE_REPORTS_SUBDIR
+    else:
+        if not isinstance(family_subdir, str) or not family_subdir:
+            raise ValueError(
+                "family_subdir must be a non-empty string when provided"
+            )
+        if "/" in family_subdir or "\\" in family_subdir:
+            raise ValueError(
+                f"family_subdir must not contain path separators "
+                f"(got {family_subdir!r})"
+            )
+        gate_dir = output_root / family_subdir
+
     _ensure_directory(gate_dir)
 
     target = gate_dir / f"{report.report_id}.json"

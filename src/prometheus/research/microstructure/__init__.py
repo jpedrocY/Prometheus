@@ -224,6 +224,37 @@ manifest's ``chronological_split_policy`` is preserved at
 sidecar via atomic write-then-rename + refuse-to-overwrite discipline.
 Phase 4bj-E does NOT authorize Phase 4bj-F (research / ML-use
 decision) or Phase 4bj-G (successor-state recording).
+
+Phase 4bb-F-implementation adds the canonical path policy helpers and
+narrow backward-compatible threading of the policy through the raw-gate
+writer / orchestrator:
+
+- ``canonical_paths``: ``FAMILY_SUBDIRS`` (raw / normalized / features /
+  labels), ``compose_canonical_gate_report_id`` (with ``phase-<id>``
+  tag), ``compose_canonical_successor_state_filename``,
+  ``derive_canonical_gate_report_path``,
+  ``derive_canonical_successor_state_path``, canonical sidecar body
+  composer + writer (``<sha>  <basename>\\n``; two spaces, trailing
+  newline; refuse-overwrite; atomic write-then-rename), path validation
+  helpers for gate-reports / successor-state / microstructure-root, and
+  ``derive_short_commit``.
+- ``eligibility_gate.AggTradesEligibilityGateInput`` gains two optional
+  fields: ``family_subdir`` (default ``None``) and ``phase_id`` (default
+  ``None``). When set, the raw-gate writer skips the legacy
+  ``gate-reports`` subdir injection and uses canonical placement under
+  ``<output_root>/<family_subdir>/``; the report identifier switches to
+  ``<family>__<version>__phase-<id>__<unix_ms>__<short>``. Defaults
+  preserve Phase 4bb-C behaviour verbatim so existing tests and the
+  prior Phase 4bb-D recorded path are unaffected.
+- ``eligibility_report.write_report_atomic`` gains a corresponding
+  optional ``family_subdir`` kwarg with the same semantics.
+
+This sub-phase is implementation-only. It does not rerun the raw or
+derived gate, does not migrate any existing local gitignored artefact,
+does not produce a new gate report or successor-state file, does not
+mutate any manifest, does not flip ``research_eligible`` on any
+family, and does not authorize Phase 4bb-G, Phase 4bj-H, label
+evaluation, ML, strategy, or any successor phase.
 """
 
 from .aggtrades import (
@@ -245,6 +276,30 @@ from .allowlist import (
     assert_endpoint_allowed,
     is_endpoint_allowed,
     is_endpoint_denied,
+)
+from .canonical_paths import (
+    FAMILY_SUBDIRS,
+    GATE_REPORTS_ROOT_PARTS,
+    MICROSTRUCTURE_ROOT_PARTS,
+    SUCCESSOR_STATE_ROOT_PARTS,
+    CanonicalPathError,
+    assert_path_under_gate_reports_subdir,
+    assert_path_under_successor_state,
+    compose_canonical_gate_report_id,
+    compose_canonical_sidecar_body,
+    compose_canonical_successor_state_filename,
+    derive_canonical_gate_report_path,
+    derive_canonical_successor_state_path,
+    derive_short_commit,
+    derive_sidecar_path,
+    normalize_family,
+    write_paired_sha256_sidecar,
+)
+from .canonical_paths import (
+    assert_path_under_microstructure as assert_canonical_path_under_microstructure,
+)
+from .canonical_paths import (
+    compute_file_sha256 as compute_canonical_file_sha256,
 )
 from .config import (
     ConfigValidationError,
@@ -478,6 +533,25 @@ from .raw_writer import (
 )
 
 __all__ = [
+    # canonical_paths (Phase 4bb-F-implementation)
+    "CanonicalPathError",
+    "FAMILY_SUBDIRS",
+    "GATE_REPORTS_ROOT_PARTS",
+    "MICROSTRUCTURE_ROOT_PARTS",
+    "SUCCESSOR_STATE_ROOT_PARTS",
+    "assert_canonical_path_under_microstructure",
+    "assert_path_under_gate_reports_subdir",
+    "assert_path_under_successor_state",
+    "compose_canonical_gate_report_id",
+    "compose_canonical_sidecar_body",
+    "compose_canonical_successor_state_filename",
+    "compute_canonical_file_sha256",
+    "derive_canonical_gate_report_path",
+    "derive_canonical_successor_state_path",
+    "derive_short_commit",
+    "derive_sidecar_path",
+    "normalize_family",
+    "write_paired_sha256_sidecar",
     # aggtrades
     "AggTradeMode",
     "AggTradePayload",

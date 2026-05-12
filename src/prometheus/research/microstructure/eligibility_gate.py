@@ -117,7 +117,20 @@ class InvalidWindowCandidate:
 
 @dataclass(frozen=True)
 class AggTradesEligibilityGateInput:
-    """Input contract for :func:`run_eligibility_gate`."""
+    """Input contract for :func:`run_eligibility_gate`.
+
+    The optional ``family_subdir`` field (Phase 4bb-F-implementation)
+    selects canonical gate-report placement under
+    ``<output_root>/<family_subdir>/`` instead of the legacy
+    ``<output_root>/gate-reports/``. The default (``None``) preserves
+    Phase 4bb-C placement verbatim so existing call sites are unchanged.
+
+    The optional ``phase_id`` field (Phase 4bb-F-implementation), when
+    provided, switches the report identifier to the Phase 4bb-F canonical
+    format ``<family>__<version>__phase-<id>__<unix_ms>__<short>``. The
+    default (``None``) preserves the Phase 4bb-C identifier format
+    ``<family>__<version>__<unix_ms>__<short>``.
+    """
 
     manifest_path: Path
     output_root: Path
@@ -126,6 +139,8 @@ class AggTradesEligibilityGateInput:
     write_successor_manifest: bool = False
     explicit_extra_symbols: tuple[str, ...] = ()
     config: MicrostructureConfig | None = None
+    family_subdir: str | None = None
+    phase_id: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.manifest_path, Path):
@@ -150,6 +165,24 @@ class AggTradesEligibilityGateInput:
                 "write_successor_manifest=True is reserved for a future, "
                 "separately authorized eligibility-gate phase. Phase 4bb-C "
                 "does not support this mode."
+            )
+        if self.family_subdir is not None:
+            if (
+                not isinstance(self.family_subdir, str)
+                or not self.family_subdir
+            ):
+                raise AggTradesGateInputError(
+                    "family_subdir must be a non-empty string when provided"
+                )
+            if "/" in self.family_subdir or "\\" in self.family_subdir:
+                raise AggTradesGateInputError(
+                    "family_subdir must not contain path separators"
+                )
+        if self.phase_id is not None and (
+            not isinstance(self.phase_id, str) or not self.phase_id
+        ):
+            raise AggTradesGateInputError(
+                "phase_id must be a non-empty string when provided"
             )
 
 
@@ -235,10 +268,25 @@ def _make_report_id(
     version: str,
     code_commit_sha: str,
     created_at_utc_ms: int,
+    *,
+    phase_id: str | None = None,
 ) -> str:
-    """Construct a deterministic-ish report identifier."""
+    """Construct a deterministic-ish report identifier.
+
+    When *phase_id* is ``None`` (the default), the Phase 4bb-C identifier
+    format is used: ``<family>__<version>__<unix_ms>__<short>``.
+
+    When *phase_id* is a non-empty string, the Phase 4bb-F canonical
+    identifier format is used:
+    ``<family>__<version>__phase-<phase_id>__<unix_ms>__<short>``.
+    """
     short = code_commit_sha[:12] if code_commit_sha else "no_sha"
-    return f"{dataset_family}__{version}__{created_at_utc_ms}__{short}"
+    if phase_id is None:
+        return f"{dataset_family}__{version}__{created_at_utc_ms}__{short}"
+    return (
+        f"{dataset_family}__{version}__phase-{phase_id}__"
+        f"{created_at_utc_ms}__{short}"
+    )
 
 
 def _now_utc_ms() -> int:
@@ -468,6 +516,7 @@ def run_eligibility_gate(
         manifest.version,
         inp.code_commit_sha,
         created_at_utc_ms,
+        phase_id=inp.phase_id,
     )
 
     # Build and (optionally) write the report.
@@ -494,7 +543,11 @@ def run_eligibility_gate(
 
     report_path: Path | None = None
     if inp.write_report:
-        report_path = _report.write_report_atomic(report, inp.output_root)
+        report_path = _report.write_report_atomic(
+            report,
+            inp.output_root,
+            family_subdir=inp.family_subdir,
+        )
 
     return AggTradesEligibilityGateResult(
         overall_status=overall,
