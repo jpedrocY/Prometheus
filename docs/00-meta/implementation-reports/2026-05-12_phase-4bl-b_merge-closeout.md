@@ -52,19 +52,17 @@
 - **Phase 4bl-B branch commit SHA:** `e5eb8caa6445dd011c4db253ca12cd8ec0cbfb15`
   (`docs(phase-4bl-b): multi-day aggtrades acquisition authorization / design memo`).
 - **Merge commit SHA:** `1e9051e82b37a13042fc44fcc06702304bff2c97`.
-- **Merge-closeout commit SHA:** to be recorded in a follow-up commit
-  on `main` once this file is committed (the merge-closeout commit
-  is the canonical project-complete anchor for Phase 4bl-B).
+- **Merge-closeout commit SHA:** `31e907fcb2034a45257f6f2513fc5b51b48f5e8f`
+  (`docs(phase-4bl-b): add merge closeout`).
 - **Final `main` / `origin/main` SHA after push:** the canonical
   project-complete anchor for Phase 4bl-B is the merge-closeout
-  commit itself (set by the upcoming commit of this file). A
-  subsequent one-commit SHA-chain-fixup may record the final-`main`
-  SHA value back into this §2 placeholder; that fixup, when it
-  exists, does not change Phase 4bl-B lifecycle semantics,
-  consistent with the Phase 4bb-G / Phase 4bb-F-implementation /
-  Phase 4bb-F / Phase 4bj-G / Phase 4bj-F / Phase 4bj-H / Phase 4bj-I /
-  Phase 4bj-J / Phase 4bj-K / Phase 4bl-A SHA-chain-fixup
-  precedents.
+  commit `31e907fcb2034a45257f6f2513fc5b51b48f5e8f`. This
+  one-commit SHA-chain-fixup on top of that anchor only records the
+  final-`main` SHA value back into this §2; it does not change
+  Phase 4bl-B lifecycle semantics, consistent with the Phase 4bb-G /
+  Phase 4bb-F-implementation / Phase 4bb-F / Phase 4bj-G / Phase 4bj-F /
+  Phase 4bj-H / Phase 4bj-I / Phase 4bj-J / Phase 4bj-K / Phase 4bl-A
+  SHA-chain-fixup precedents.
 
 ## 3. Merge method
 
