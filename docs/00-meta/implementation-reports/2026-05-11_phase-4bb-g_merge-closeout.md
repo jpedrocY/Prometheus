@@ -28,13 +28,16 @@
 - **Phase 4bb-G branch commit SHA:** `e101215d1a8763dea31523346aa3747c954d11a4`
   (`docs(phase-4bb-g): record raw-family successor-state artefact`).
 - **Merge commit SHA:** `6d14d864a0ac233f19e7ab33116cdae69d2b1c71`.
-- **Merge-closeout commit SHA:** (recorded below once committed and
-  pushed).
-- **Final `main` / `origin/main` SHA after push:** (recorded below
-  once the merge-closeout commit is pushed; a one-commit
-  SHA-chain-fixup may follow to record the final SHA into §2 of this
-  merge-closeout, consistent with Phase 4bb-F /
-  Phase 4bb-F-implementation / Phase 4bj-G precedents).
+- **Merge-closeout commit SHA:** `3f52176889fdb6ce91b227b2140002e7f44aba6b`
+  (`docs(phase-4bb-g): add merge closeout`).
+- **Final `main` / `origin/main` SHA after push:** the canonical
+  project-complete anchor for Phase 4bb-G is the merge-closeout
+  commit `3f52176889fdb6ce91b227b2140002e7f44aba6b`. This
+  one-commit SHA-chain-fixup on top of that anchor only records the
+  final-main SHA value back into §2 of this merge-closeout; it does
+  not change Phase 4bb-G lifecycle semantics, consistent with the
+  Phase 4bb-F / Phase 4bb-F-implementation / Phase 4bj-G / Phase 4bj-F
+  precedents.
 
 ## 3. Merge method
 
