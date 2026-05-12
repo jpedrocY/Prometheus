@@ -31,15 +31,17 @@
 - **Phase 4bj-J branch commit SHA:** `d8969abf1553ad4f369666057edf6b87c749078a`
   (`docs(phase-4bj-j): no-split determination recording`).
 - **Merge commit SHA:** `a9edfc0edfa0db55b51f66d653d00f735a3231d7`.
-- **Merge-closeout commit SHA:** (recorded below once committed and pushed).
+- **Merge-closeout commit SHA:** `5e5fc401d0776c7e86a4e0e0677cce87789b67b5`
+  (`docs(phase-4bj-j): add merge closeout`).
 - **Final `main` / `origin/main` SHA after push:** the canonical
   project-complete anchor for Phase 4bj-J is the merge-closeout
-  commit. Any one-commit SHA-chain-fixup on top of that anchor only
-  records the final-`main` SHA value back into §2 of this
-  merge-closeout; it does not change Phase 4bj-J lifecycle
-  semantics, consistent with the Phase 4bb-G / Phase
-  4bb-F-implementation / Phase 4bb-F / Phase 4bj-G / Phase 4bj-F /
-  Phase 4bj-H / Phase 4bj-I SHA-chain-fixup precedents.
+  commit `5e5fc401d0776c7e86a4e0e0677cce87789b67b5`. This
+  one-commit SHA-chain-fixup on top of that anchor only records the
+  final-`main` SHA value back into §2 of this merge-closeout; it
+  does not change Phase 4bj-J lifecycle semantics, consistent with
+  the Phase 4bb-G / Phase 4bb-F-implementation / Phase 4bb-F /
+  Phase 4bj-G / Phase 4bj-F / Phase 4bj-H / Phase 4bj-I
+  SHA-chain-fixup precedents.
 
 ## 3. Merge method
 
