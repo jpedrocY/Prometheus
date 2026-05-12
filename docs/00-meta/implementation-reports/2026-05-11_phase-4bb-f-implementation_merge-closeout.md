@@ -31,10 +31,18 @@ on `main`.**
   (created by `git merge --no-ff -s ort
   phase-4bb-f-implementation/gate-report-successor-state-writer-path-policy`
   on `main`).
-- **Merge-closeout commit SHA (full):** recorded by the commit that
-  adds this merge-closeout file on `main`.
-- **Final `main` / `origin/main` SHA after merge-closeout commit (full):**
-  (recorded below once committed and pushed)
+- **Merge-closeout commit SHA (full):**
+  `b1c49a12fd931a64e9c7d46821739432acd94479`
+  (the commit that adds this merge-closeout file on `main`).
+- **Final `main` / `origin/main` SHA after merge-closeout commit + SHA-chain fixup (full):**
+  recorded by the SHA-chain-fixup commit that follows this merge-closeout
+  on `main`. The fixup commit only edits §2 of this merge-closeout to
+  insert the final-main SHA value; it does not change merge lifecycle
+  semantics. Per the precedent set by Phase 4bb-F (`72d1710` fixup on
+  top of `eddc28c` merge-closeout), Phase 4bj-G (`bb9e132` fixup on
+  top of `73970af`), and Phase 4bj-F (`0a069e2` fixup on top of
+  `9657651`), the merge-closeout commit (`b1c49a12fd931a64e9c7d46821739432acd94479`)
+  is the canonical project-complete anchor.
 
 ## §3. Merge method
 
