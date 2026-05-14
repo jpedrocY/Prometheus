@@ -58,7 +58,17 @@ unsafe.
 
 ## Phase lifecycle overview
 
-A Prometheus phase moves through eleven ordered lifecycle steps:
+A Prometheus phase moves through eleven ordered lifecycle steps. The
+ceremony invoked by each step is calibrated to the phase's risk tier
+per `docs/00-meta/process/phase-risk-tiering-standard.md`
+(Phase 4bl-F): Tier 1 (Full Phase) for irreversible scientific or
+admissibility decisions; Tier 2 (Controlled Remediation) for bounded
+metadata fixes that satisfy a standing policy; Tier 3 (Batch) for
+repeated proven operations; Tier 4 (Administrative / Docs
+Correction) for purely administrative documentation cleanup. The
+eleven-step lifecycle below is the Tier 1 default; lighter tiers
+follow the same lifecycle but may use a short-form report and, for
+Tier 4, a short-form merge-closeout.
 
 1. **Recommendation / debate.** A docs-only or in-chat conversation
    identifies a candidate next phase, scopes it, and surfaces
@@ -353,6 +363,10 @@ A future chat must reference:
 - `docs/00-meta/process/operator-report-standard.md`,
 - `docs/00-meta/process/merge-closeout-standard.md`,
 - `docs/00-meta/process/chat-branching-handoff-standard.md`,
+- `docs/00-meta/process/phase-risk-tiering-standard.md`
+  (Phase 4bl-F; phase risk tiers, controlled remediation policy,
+  standing CRLF sidecar canonicalization rule, batch / short-form
+  / reusable non-authorization block guidance),
 - `docs/00-meta/current-project-state.md`,
 - the most recent merge-closeout,
 - the most recent phase implementation report.

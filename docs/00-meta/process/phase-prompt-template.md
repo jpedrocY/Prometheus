@@ -22,6 +22,16 @@ This document is **process-only**. It does not authorize any phase.
 
 ## Prompt design principles
 
+- **Declare the phase risk tier.** Every authorization prompt should
+  declare the phase's risk tier per
+  `docs/00-meta/process/phase-risk-tiering-standard.md`
+  (Phase 4bl-F): Tier 1 (Full Phase), Tier 2 (Controlled
+  Remediation), Tier 3 (Batch), or Tier 4 (Administrative / Docs
+  Correction). When in doubt, default to the higher tier. The tier
+  declaration determines whether a short-form report or short-form
+  merge-closeout is permissible, whether a standing remediation
+  rule applies, and which reusable non-authorization blocks may be
+  referenced rather than expanded in full.
 - **Name exactly one phase.** Never bundle two phases. Never imply a
   successor.
 - **Name exact allowed files.** List every tracked file Claude Code

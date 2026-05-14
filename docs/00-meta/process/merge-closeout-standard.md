@@ -38,6 +38,19 @@ A merge-closeout is required for every phase that is merged into
 If a phase is branch-complete but not merged, no merge-closeout
 exists. The phase is research-evidence on a branch, not project state.
 
+## Short-form merge-closeout (Tier 4 only)
+
+Per `docs/00-meta/process/phase-risk-tiering-standard.md`
+(Phase 4bl-F), a **short-form** merge-closeout is permitted **only**
+for Tier 4 (Administrative / Docs Correction) phases. A short-form
+merge-closeout may compress sections that are trivially preserved
+(for example, "no upstream artefacts touched", "no manifest
+changes", "no successor authorized") into a single statement, but
+must still record phase identity, SHAs, files brought forward,
+diff summary, validation results, and explicit non-authorization.
+Tier 1 (Full Phase), Tier 2 (Controlled Remediation), and Tier 3
+(Batch) phases must use the full 16-section structure below.
+
 ## Required merge-closeout sections
 
 Every merge-closeout must contain exactly these 16 sections in order:

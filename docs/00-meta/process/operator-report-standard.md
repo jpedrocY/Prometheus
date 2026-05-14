@@ -396,6 +396,18 @@ next-action recommendation:
 - **Branch chat.** Use when context has accumulated and the next
   phase deserves a fresh chat with a clean handoff.
 
+## Risk-tier acknowledgement
+
+When ChatGPT recommends or reviews a phase, the response should
+identify the phase's risk tier per
+`docs/00-meta/process/phase-risk-tiering-standard.md`
+(Phase 4bl-F): Tier 1 (Full Phase), Tier 2 (Controlled
+Remediation), Tier 3 (Batch), or Tier 4 (Administrative / Docs
+Correction). The tier determines whether a short-form report or
+short-form merge-closeout is permissible and which reusable
+non-authorization blocks may be referenced rather than expanded in
+full. When in doubt, default to the higher tier.
+
 ## Evidence and citation standard
 
 When ChatGPT cites evidence:
