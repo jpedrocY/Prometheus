@@ -367,6 +367,10 @@ A future chat must reference:
   (Phase 4bl-F; phase risk tiers, controlled remediation policy,
   standing CRLF sidecar canonicalization rule, batch / short-form
   / reusable non-authorization block guidance),
+- `docs/00-meta/process/claude-code-context-management-standard.md`
+  (Phase 4bm-A-P1; thin contractual Claude Code prompts, mandatory
+  vs optional read policy, session management, soft size guidance,
+  default-deny MCP / Graphify posture),
 - `docs/00-meta/current-project-state.md`,
 - the most recent merge-closeout,
 - the most recent phase implementation report.

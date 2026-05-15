@@ -32,6 +32,23 @@ This document is **process-only**. It does not authorize any phase.
   merge-closeout is permissible, whether a standing remediation
   rule applies, and which reusable non-authorization blocks may be
   referenced rather than expanded in full.
+- **Write thin contractual prompts, not vague prompts.** Per
+  `docs/00-meta/process/claude-code-context-management-standard.md`
+  (Phase 4bm-A-P1), a phase prompt should be a thin execution
+  contract: the phase identifier, tier, scope, allowed surface,
+  validation, fail-closed conditions, and explicit non-scope.
+  Repository docs carry the stable rules; the prompt carries the
+  phase execution contract. Avoid embedding large extracts of prior
+  phase reports, retained verdict ledgers, or governance text inside
+  the prompt — cite them by repo path instead. Cite the relevant
+  non-authorization blocks from
+  `docs/00-meta/process/phase-risk-tiering-standard.md` §7 by name
+  (N-ACQUISITION, N-ENDPOINT, N-CREDENTIALS, N-MANIFEST,
+  N-GATE-RERUN, N-SUCCESSOR-STATE, N-DERIVATION,
+  N-DIAGNOSTICS-ML-STRATEGY, N-PHASE-5, N-VERDICT-LOCK) rather than
+  restating each prohibition in full, unless a phase-specific
+  variation is required. A thin prompt is shorter, less likely to
+  exhaust Claude Code's context window, and more auditable.
 - **Name exactly one phase.** Never bundle two phases. Never imply a
   successor.
 - **Name exact allowed files.** List every tracked file Claude Code

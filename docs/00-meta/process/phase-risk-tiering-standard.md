@@ -804,6 +804,12 @@ A future chat that uses this standard must also reference:
   closeout structure;
 - `docs/00-meta/process/chat-branching-handoff-standard.md` —
   chat branching handoff structure;
+- `docs/00-meta/process/claude-code-context-management-standard.md`
+  (Phase 4bm-A-P1) — thin contractual Claude Code prompts,
+  mandatory vs optional read policy, session management, soft
+  size guidance, and default-deny MCP / Graphify posture; the
+  operational layer that sits on top of the tier model defined
+  here;
 - `docs/00-meta/current-project-state.md` — current project
   state;
 - the most recent merge-closeout under

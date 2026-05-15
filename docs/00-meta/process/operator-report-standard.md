@@ -408,6 +408,25 @@ short-form merge-closeout is permissible and which reusable
 non-authorization blocks may be referenced rather than expanded in
 full. When in doubt, default to the higher tier.
 
+## Thin contractual prompts
+
+When ChatGPT drafts an authorization prompt or merge prompt for
+Claude Code, the prompt should be a **thin execution contract**
+per `docs/00-meta/process/claude-code-context-management-standard.md`
+(Phase 4bm-A-P1): the phase identifier, tier, scope, allowed
+surface, validation, fail-closed conditions, and explicit non-scope
+— without embedding large extracts of prior phase reports, retained
+verdict ledgers, or governance text. The repository carries the
+stable rules; the prompt carries the phase execution contract.
+Reusable non-authorization blocks from
+`docs/00-meta/process/phase-risk-tiering-standard.md` §7 may be
+cited by name (N-ACQUISITION, N-ENDPOINT, N-CREDENTIALS,
+N-MANIFEST, N-GATE-RERUN, N-SUCCESSOR-STATE, N-DERIVATION,
+N-DIAGNOSTICS-ML-STRATEGY, N-PHASE-5, N-VERDICT-LOCK) rather than
+restated in full. Thin prompts reduce Claude Code context pressure,
+avoid auto-compact loops, and remain auditable because the cited
+files carry the binding rules.
+
 ## Evidence and citation standard
 
 When ChatGPT cites evidence:
