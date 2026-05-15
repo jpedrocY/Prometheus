@@ -51,6 +51,17 @@ diff summary, validation results, and explicit non-authorization.
 Tier 1 (Full Phase), Tier 2 (Controlled Remediation), and Tier 3
 (Batch) phases must use the full 16-section structure below.
 
+The merge-closeout itself is a tracked file. The merge prompt that
+produces it should follow the **thin merge prompt** shape defined
+in `docs/00-meta/process/claude-code-context-management-standard.md`
+(Phase 4bm-A-P1): cite this standard by path rather than embedding
+the full 16-section structure inline; cite reusable
+non-authorization blocks from
+`docs/00-meta/process/phase-risk-tiering-standard.md` §7 by name.
+A thin merge prompt reduces Claude Code context pressure while
+preserving every audit requirement, because the binding rules live
+in the cited files.
+
 ## Required merge-closeout sections
 
 Every merge-closeout must contain exactly these 16 sections in order:

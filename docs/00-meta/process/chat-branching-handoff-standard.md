@@ -270,6 +270,20 @@ State explicitly in every handoff:
 > A new chat that recommends a phase based on this handoff alone is
 > unsafe.
 
+## Thin handoff style
+
+The handoff itself should be a **thin contract**, not a vehicle for
+re-embedding the full history of the project. Per
+`docs/00-meta/process/claude-code-context-management-standard.md`
+(Phase 4bm-A-P1), the handoff should cite repo files by path rather
+than embedding their content. The retained verdict ledger and
+project lock list above are short, stable summaries — they are not
+substitutes for the binding text in `current-project-state.md`,
+specialist memos, or merge-closeouts. The continuation prompt's
+first responsibility is to instruct the new chat to read those
+files; the handoff's primary job is to point at them with correct
+SHAs, paths, and lifecycle state, not to re-encode them.
+
 ## Template
 
 A skeleton chat-branching handoff in markdown:
