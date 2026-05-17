@@ -371,6 +371,15 @@ A future chat must reference:
   (Phase 4bm-A-P1; thin contractual Claude Code prompts, mandatory
   vs optional read policy, session management, soft size guidance,
   default-deny MCP / Graphify posture),
+- `docs/00-meta/process/claude-code-lightweight-workspace-standard.md`
+  (Phase 4bm-D-P1; lightweight Claude Code launcher workspace at
+  `C:\ClaudeRuns\prometheus-light` paired with the real
+  `C:\Prometheus` repository for heavy execution sessions; recommended
+  launch command; default-off agent / memory posture; session
+  slicing; complements the Phase 4bm-A-P1 standard by governing
+  where the Claude Code session is launched from, while the
+  Phase 4bm-A-P1 standard governs what goes into the prompt and
+  what gets read),
 - `docs/00-meta/current-project-state.md`,
 - the most recent merge-closeout,
 - the most recent phase implementation report.

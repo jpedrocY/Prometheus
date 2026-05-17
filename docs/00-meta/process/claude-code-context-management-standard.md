@@ -879,6 +879,14 @@ A future chat that uses this standard must also reference:
 - `docs/00-meta/process/phase-risk-tiering-standard.md` — tier
   ceremony, R-SIDECAR-CRLF standing rule, reusable non-authorization
   blocks,
+- `docs/00-meta/process/claude-code-lightweight-workspace-standard.md`
+  (Phase 4bm-D-P1) — lightweight Claude Code launcher workspace for
+  heavy execution sessions, recommended launch command, IDE /
+  Antigravity posture, default-off agent / memory policy, session
+  slicing, and prompt format under the light workspace; complements
+  this standard by governing where the Claude Code session is
+  launched from while this standard governs what goes into the
+  prompt and what gets read,
 - `docs/00-meta/process/phase-prompt-template.md` — authorization
   prompt structure (long-form),
 - `docs/00-meta/process/operator-report-standard.md` — Claude Code

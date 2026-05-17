@@ -284,6 +284,20 @@ first responsibility is to instruct the new chat to read those
 files; the handoff's primary job is to point at them with correct
 SHAs, paths, and lifecycle state, not to re-encode them.
 
+For handoffs whose next phase is a heavy execution phase (code-
+heavy, test-heavy, data / gate execution, long validation), the
+continuation prompt should also include the lightweight Claude
+Code workspace fields defined in
+`docs/00-meta/process/claude-code-lightweight-workspace-standard.md`
+(Phase 4bm-D-P1) §10: the Claude Code working directory
+(`C:\ClaudeRuns\prometheus-light`), the real repository path
+(`C:\Prometheus`), and the command convention (`cd C:\Prometheus
+&& <command>`). These three fields make the workspace assumption
+auditable across the handoff boundary and keep the new chat
+aligned with the project's standard heavy-execution launch
+posture. Small docs-only handoffs and short merge-prompt handoffs
+may omit the fields.
+
 ## Template
 
 A skeleton chat-branching handoff in markdown:
