@@ -225,6 +225,68 @@ sidecar via atomic write-then-rename + refuse-to-overwrite discipline.
 Phase 4bj-E does NOT authorize Phase 4bj-F (research / ML-use
 decision) or Phase 4bj-G (successor-state recording).
 
+Phase 4bm-D adds the offline multi-day derived-family eligibility gate:
+
+- ``multiday_derived_gate_io``: read-only artefact loaders for the
+  v002 derived multi-day index manifest, paired manifest sidecar, the
+  Phase 4bl-C raw manifest + acquisition log, the Phase 4bl-D-R PASS
+  gate report, and the Phase 4bl-E Stage-2 successor-state record,
+  plus 90-entry per-file artefact-path resolution, streaming SHA256
+  helpers (1 MiB chunks), canonical Phase 4bb-F path discipline under
+  ``data/microstructure/gate-reports/normalized/`` with the
+  ``phase-4bm-d`` filename segment, and atomic JSON + paired-SHA256
+  sidecar writers (refuse-overwrite; atomic write-then-rename via
+  ``tempfile.mkstemp`` + ``fsync`` + ``os.replace``);
+- ``multiday_derived_gate_checks``: Phase 4bm-D 60-check suite
+  (``4bm-d.13.1`` .. ``4bm-d.13.60``) across 15 groups A–N + P
+  (envelope; multi-day boundary; date contiguity; adjacent-date
+  temporal monotonicity; adjacent-date agg_trade_id non-overlap and
+  continuity; per-file agg_trade_id density; aggregate totals;
+  governance witness immutability; raw-zip and sidecar immutability;
+  Phase 4bd v001 single-day Parquet immutability; manifest state
+  preservation); ``MultidayDerivedAggTradesCheckStatus`` StrEnum
+  (``PASS`` / ``FAIL`` / ``NOT_APPLICABLE`` / ``ERROR``);
+  ``MultidayDerivedAggTradesCheckResult`` frozen dataclass with
+  ``to_dict()``; ``MultidayPerFileMeasured`` mutable per-date
+  measurement record; ``MultidayDerivedGateContext`` per-run context;
+  ``SAMPLE_DATES`` predeclared bounded sample of 5 dates for per-row
+  content checks; ``CHECK_ORDER`` tuple of exactly 60 entries; and
+  ``run_all_checks`` orchestrator with try/except → ERROR conversion;
+- ``multiday_derived_gate_report``: ``MultidayDerivedAggTradesGateReport``
+  data model with multi-day ``utc_date_start`` / ``utc_date_end`` /
+  ``date_count`` and ``gate_verdict`` fields; the three-state
+  ``GATE_VERDICT_PASS`` / ``GATE_VERDICT_FAIL`` /
+  ``GATE_VERDICT_INCOMPLETE`` taxonomy; ``ALLOWED_GATE_VERDICTS`` and
+  ``ALLOWED_OVERALL_STATUSES`` frozensets; atomic JSON write +
+  paired-SHA256 sidecar; writer enforces both safety invariants
+  (``research_eligible_after`` must be ``False``;
+  ``no_successor_authorization`` must be ``True``) before any path
+  or file work happens;
+- ``multiday_derived_gate``: ``MultidayDerivedAggTradesGateInput``
+  with ``__post_init__`` path / commit-SHA validation;
+  ``MultidayDerivedAggTradesGateResult`` with the new ``gate_verdict``
+  field; the 19-key ``_BOUNDARY_KEYS`` set extending the Phase 4bf
+  15-key set with multi-day-specific per-file mutation tracking; the
+  three-state classifiers (``_classify_overall_status`` and
+  ``_classify_gate_verdict``); bounded ``_measure_per_file`` walk
+  (90 cheap metadata-only entries + 5 full ``pq.read_table`` for the
+  predeclared sample dates); post-check re-hash of all 5 governance
+  artefacts + 90 Parquets + 90 sidecars + 90 raw zips; and the
+  public ``run_multiday_derived_aggtrades_gate`` orchestrator with
+  hard-wired ``research_eligible_after=False`` and
+  ``no_successor_authorization=True`` invariants.
+
+The multi-day derived-family gate is offline-only and read-only on
+data: it never mutates the derived manifest, any per-day Parquet or
+sidecar, the raw v002 manifest, the 90 raw zips, the acquisition log,
+the Phase 4bl-D-R gate report, the Phase 4bl-E successor-state record,
+or any other on-disk governance artefact. The Phase 4aw
+``MicrostructureManifest.flip_research_eligible(...)`` always-raises
+invariant is preserved end-to-end (never invoked; the v002 multi-day
+index manifest is a sibling shape that does NOT use the single-file
+``MicrostructureManifest`` data class). Phase 4bm-D does NOT
+authorize Phase 4bm-E / 4bm-F / 4bm-* / any successor.
+
 Phase 4bb-F-implementation adds the canonical path policy helpers and
 narrow backward-compatible threading of the policy through the raw-gate
 writer / orchestrator:
@@ -504,6 +566,98 @@ from .manifest import (
     ManifestImmutableError,
     MicrostructureManifest,
 )
+from .multiday_derived_gate import (
+    MultidayDerivedAggTradesGateInput,
+    MultidayDerivedAggTradesGateInputError,
+    MultidayDerivedAggTradesGateResult,
+    MultidayDerivedAggTradesGateUnsupportedError,
+    run_multiday_derived_aggtrades_gate,
+)
+from .multiday_derived_gate_checks import (
+    CANONICAL_DATASET_FAMILY as MULTIDAY_CANONICAL_DATASET_FAMILY,
+)
+from .multiday_derived_gate_checks import (
+    CANONICAL_DATASET_VERSION as MULTIDAY_CANONICAL_DATASET_VERSION,
+)
+from .multiday_derived_gate_checks import (
+    CANONICAL_DATE_END as MULTIDAY_CANONICAL_DATE_END,
+)
+from .multiday_derived_gate_checks import (
+    CANONICAL_DATE_START as MULTIDAY_CANONICAL_DATE_START,
+)
+from .multiday_derived_gate_checks import (
+    CANONICAL_SYMBOL as MULTIDAY_CANONICAL_SYMBOL,
+)
+from .multiday_derived_gate_checks import (
+    CHECK_ORDER as MULTIDAY_CHECK_ORDER,
+)
+from .multiday_derived_gate_checks import (
+    EXPECTED_DATE_COUNT as MULTIDAY_EXPECTED_DATE_COUNT,
+)
+from .multiday_derived_gate_checks import (
+    EXPECTED_TOTAL_EVENT_COUNT as MULTIDAY_EXPECTED_TOTAL_EVENT_COUNT,
+)
+from .multiday_derived_gate_checks import (
+    SAMPLE_DATES as MULTIDAY_SAMPLE_DATES,
+)
+from .multiday_derived_gate_checks import (
+    MultidayDerivedAggTradesCheckResult,
+    MultidayDerivedAggTradesCheckStatus,
+    MultidayDerivedGateContext,
+    MultidayPerFileMeasured,
+)
+from .multiday_derived_gate_io import (
+    MultidayDerivedSourceArtefactPaths,
+    MultidayGateReportPaths,
+    MultidayLoadedArtefactBundle,
+    MultidayPerFileArtefactPaths,
+    resolve_multiday_derived_source_artefact_paths,
+)
+from .multiday_derived_gate_io import (
+    assert_gate_report_path_under_namespace as multiday_assert_gate_report_path_under_namespace,
+)
+from .multiday_derived_gate_io import (
+    assert_path_under_microstructure as multiday_assert_path_under_microstructure,
+)
+from .multiday_derived_gate_io import (
+    atomic_write_json as multiday_atomic_write_json,
+)
+from .multiday_derived_gate_io import (
+    compute_bytes_sha256 as multiday_compute_bytes_sha256,
+)
+from .multiday_derived_gate_io import (
+    compute_file_sha256 as multiday_compute_file_sha256,
+)
+from .multiday_derived_gate_io import (
+    compute_file_size as multiday_compute_file_size,
+)
+from .multiday_derived_gate_io import (
+    derive_report_id as multiday_derive_report_id,
+)
+from .multiday_derived_gate_io import (
+    derive_report_paths as multiday_derive_report_paths,
+)
+from .multiday_derived_gate_io import (
+    write_sha256_sidecar as multiday_write_sha256_sidecar,
+)
+from .multiday_derived_gate_report import (
+    ALLOWED_GATE_VERDICTS as MULTIDAY_ALLOWED_GATE_VERDICTS,
+)
+from .multiday_derived_gate_report import (
+    ALLOWED_OVERALL_STATUSES as MULTIDAY_ALLOWED_OVERALL_STATUSES,
+)
+from .multiday_derived_gate_report import (
+    GATE_VERDICT_FAIL,
+    GATE_VERDICT_INCOMPLETE,
+    GATE_VERDICT_PASS,
+    MultidayDerivedAggTradesGateReport,
+)
+from .multiday_derived_gate_report import (
+    build_report as multiday_build_report,
+)
+from .multiday_derived_gate_report import (
+    write_gate_report as multiday_write_gate_report,
+)
 from .normalize_aggtrades import (
     NORMALIZATION_SCHEMA_VERSION,
     NORMALIZED_SCHEMA_V001,
@@ -755,4 +909,45 @@ __all__ = [
     "run_label_family_gate",
     "validate_label_gate_inputs",
     "write_label_gate_report",
+    # multiday_derived_gate (Phase 4bm-D)
+    "GATE_VERDICT_FAIL",
+    "GATE_VERDICT_INCOMPLETE",
+    "GATE_VERDICT_PASS",
+    "MULTIDAY_ALLOWED_GATE_VERDICTS",
+    "MULTIDAY_ALLOWED_OVERALL_STATUSES",
+    "MULTIDAY_CANONICAL_DATASET_FAMILY",
+    "MULTIDAY_CANONICAL_DATASET_VERSION",
+    "MULTIDAY_CANONICAL_DATE_END",
+    "MULTIDAY_CANONICAL_DATE_START",
+    "MULTIDAY_CANONICAL_SYMBOL",
+    "MULTIDAY_CHECK_ORDER",
+    "MULTIDAY_EXPECTED_DATE_COUNT",
+    "MULTIDAY_EXPECTED_TOTAL_EVENT_COUNT",
+    "MULTIDAY_SAMPLE_DATES",
+    "MultidayDerivedAggTradesCheckResult",
+    "MultidayDerivedAggTradesCheckStatus",
+    "MultidayDerivedAggTradesGateInput",
+    "MultidayDerivedAggTradesGateInputError",
+    "MultidayDerivedAggTradesGateReport",
+    "MultidayDerivedAggTradesGateResult",
+    "MultidayDerivedAggTradesGateUnsupportedError",
+    "MultidayDerivedGateContext",
+    "MultidayDerivedSourceArtefactPaths",
+    "MultidayGateReportPaths",
+    "MultidayLoadedArtefactBundle",
+    "MultidayPerFileArtefactPaths",
+    "MultidayPerFileMeasured",
+    "multiday_assert_gate_report_path_under_namespace",
+    "multiday_assert_path_under_microstructure",
+    "multiday_atomic_write_json",
+    "multiday_build_report",
+    "multiday_compute_bytes_sha256",
+    "multiday_compute_file_sha256",
+    "multiday_compute_file_size",
+    "multiday_derive_report_id",
+    "multiday_derive_report_paths",
+    "multiday_write_gate_report",
+    "multiday_write_sha256_sidecar",
+    "resolve_multiday_derived_source_artefact_paths",
+    "run_multiday_derived_aggtrades_gate",
 ]
