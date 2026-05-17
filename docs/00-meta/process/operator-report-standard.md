@@ -427,6 +427,21 @@ restated in full. Thin prompts reduce Claude Code context pressure,
 avoid auto-compact loops, and remain auditable because the cited
 files carry the binding rules.
 
+For prompts whose execution will be heavy (code-heavy, test-heavy,
+data / gate execution, long validation), ChatGPT should also
+include the lightweight Claude Code workspace fields defined in
+`docs/00-meta/process/claude-code-lightweight-workspace-standard.md`
+(Phase 4bm-D-P1) §10: the Claude Code working directory
+(`C:\ClaudeRuns\prometheus-light`), the real Prometheus repository
+path (`C:\Prometheus`), and the command convention (`cd
+C:\Prometheus && <command>`). These three fields complement the
+thin-prompt discipline by making the workspace assumption explicit
+and auditable, and they pair with the default-off agent / memory
+posture in that standard's §7 to reduce hidden context pressure
+without weakening any repo authority. Small docs-only and short
+merge prompts may omit the fields per the standard's §11 "When to
+use the light workspace" rules.
+
 ## Evidence and citation standard
 
 When ChatGPT cites evidence:

@@ -49,6 +49,20 @@ This document is **process-only**. It does not authorize any phase.
   restating each prohibition in full, unless a phase-specific
   variation is required. A thin prompt is shorter, less likely to
   exhaust Claude Code's context window, and more auditable.
+- **For heavy execution phases, include the lightweight Claude
+  Code workspace fields.** Per
+  `docs/00-meta/process/claude-code-lightweight-workspace-standard.md`
+  (Phase 4bm-D-P1), heavy code / test / data / gate / kernel /
+  long-validation phase prompts should state the Claude Code
+  working directory (`C:\ClaudeRuns\prometheus-light`), the real
+  Prometheus repository path (`C:\Prometheus`), and the command
+  convention (`cd C:\Prometheus && <command>`) explicitly. These
+  three fields are low-cost in prompt size, make the workspace
+  assumption auditable, and pair with the thin-prompt discipline
+  above to reduce hidden context pressure without weakening any
+  repo authority. Small docs-only and short merge prompts may
+  omit the fields; the standard's §11 "When to use the light
+  workspace" rules govern.
 - **Name exactly one phase.** Never bundle two phases. Never imply a
   successor.
 - **Name exact allowed files.** List every tracked file Claude Code
