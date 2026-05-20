@@ -25,8 +25,10 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-F is project-
 - **Merge commit message**: `docs(phase-4bm-f): merge multi-day derived-family successor-state recording`
 - **Post-merge `main` SHA (after merge commit, pre-closeout-commit)**: `35227cb059a623932c9246c952b49d2d7a998746`
 - **Post-merge `origin/main` SHA (after `git push origin main` of the merge commit)**: `35227cb059a623932c9246c952b49d2d7a998746` (in sync)
-- **Merge-closeout commit SHA**: recorded by the next commit on `main` (this file's commit); the final `git rev-parse HEAD` / `git rev-parse main` / `git rev-parse origin/main` values are reported in the final operator report.
-- **Post-merge-closeout-commit `main` / `origin/main` SHA**: recorded by the final operator report (final `git rev-parse main == git rev-parse origin/main` values after the merge-closeout commit + push).
+- **Merge-closeout commit SHA**: `37adf9b8760b2f77cd7dc83f959f385ec3e7a343` (`docs(phase-4bm-f): add merge closeout`; 1 file / +444 / -0; this file's commit on `main`)
+- **Post-merge-closeout-commit `main` SHA**: `37adf9b8760b2f77cd7dc83f959f385ec3e7a343`
+- **Post-merge-closeout-commit `origin/main` SHA**: `37adf9b8760b2f77cd7dc83f959f385ec3e7a343` (pushed cleanly via `35227cb..37adf9b  main -> main`; no force, no skip-hooks, no skip-signing)
+- **Final `main == origin/main`**: true (both at `37adf9b8760b2f77cd7dc83f959f385ec3e7a343`)
 
 ## §3 Merge Method
 
@@ -41,7 +43,11 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-F is project-
   To https://github.com/jpedrocY/Prometheus.git
      fb0aa97..35227cb  main -> main
   ```
-  Second push (this merge-closeout commit): output recorded in the final operator report.
+  Second push (this merge-closeout commit) output:
+  ```
+  To https://github.com/jpedrocY/Prometheus.git
+     35227cb..37adf9b  main -> main
+  ```
 
 ## §4 Files Brought Forward by the Merge
 
