@@ -28,10 +28,10 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-H is project-
 - **Merge commit message**: `feat(phase-4bm-h): merge multi-day v002 feature computation`
 - **Post-merge `main` SHA (after merge commit, pre-closeout-commit)**: `c35816cfc1ab0048335fe66919bbc98f7d0de2c9`
 - **Post-merge `origin/main` SHA (after `git push origin main` of the merge commit)**: `c35816cfc1ab0048335fe66919bbc98f7d0de2c9` (in sync; pushed cleanly via `3a7c648..c35816c  main -> main`; no force, no skip-hooks, no skip-signing)
-- **Merge-closeout commit SHA**: recorded by the next commit (this file; `docs(phase-4bm-h): add merge closeout`)
-- **Post-merge-closeout-commit `main` SHA**: recorded by the next commit
-- **Post-merge-closeout-commit `origin/main` SHA**: recorded by the next commit
-- **Final `main == origin/main` after closeout push**: recorded by the next commit
+- **Merge-closeout commit SHA**: `8db6becec0d4f0229d2519552aeb8d3082873a20` (`docs(phase-4bm-h): add merge closeout`; 1 file / +371; this file's commit on `main`)
+- **Post-merge-closeout-commit `main` SHA**: `8db6becec0d4f0229d2519552aeb8d3082873a20`
+- **Post-merge-closeout-commit `origin/main` SHA**: `8db6becec0d4f0229d2519552aeb8d3082873a20` (pushed cleanly via `c35816c..8db6bec  main -> main`; no force, no skip-hooks, no skip-signing)
+- **Final `main == origin/main` after closeout push**: true (both at `8db6becec0d4f0229d2519552aeb8d3082873a20` immediately after the merge-closeout commit + push; the subsequent SHA-finalization commit then advances `main` and `origin/main` together by one additional commit, recorded in the final operator report)
 
 ## §3 Merge Method
 
@@ -46,7 +46,11 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-H is project-
   To https://github.com/jpedrocY/Prometheus.git
      3a7c648..c35816c  main -> main
   ```
-  Second push (this merge-closeout commit) output: recorded by the next commit.
+  Second push (this merge-closeout commit) output:
+  ```
+  To https://github.com/jpedrocY/Prometheus.git
+     c35816c..8db6bec  main -> main
+  ```
 
 ## §4 Files Brought Forward by the Merge
 
