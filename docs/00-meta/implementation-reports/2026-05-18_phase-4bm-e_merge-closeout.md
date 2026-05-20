@@ -24,8 +24,10 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-E is project-
 - **Merge commit message**: `docs(phase-4bm-e): merge multi-day derived-family research eligibility decision memo`
 - **Post-merge `main` SHA (after merge commit, pre-closeout-commit)**: `fcc1bd044d274c99520b4ab15282046e1428b3d0`
 - **Post-merge `origin/main` SHA (after `git push origin main` of the merge commit)**: `fcc1bd044d274c99520b4ab15282046e1428b3d0` (in sync)
-- **Merge-closeout commit SHA**: recorded by the next commit on `main` (this file's commit); final post-commit `git rev-parse HEAD` / `git rev-parse main` / `git rev-parse origin/main` are the canonical values reported in §17 of the final operator report.
-- **Post-merge-closeout-commit `main` / `origin/main` SHA**: recorded by §17 of the final operator report (final `git rev-parse main` / `git rev-parse origin/main` values).
+- **Merge-closeout commit SHA**: `d6acae535fee19a074096e3d7fa3590f4a0dd9ec` (`docs(phase-4bm-e): add merge closeout`; 1 file / +364 / -0; this file's commit on `main`)
+- **Post-merge-closeout-commit `main` SHA**: `d6acae535fee19a074096e3d7fa3590f4a0dd9ec`
+- **Post-merge-closeout-commit `origin/main` SHA**: `d6acae535fee19a074096e3d7fa3590f4a0dd9ec` (pushed cleanly via `fcc1bd0..d6acae5  main -> main`; no force, no skip-hooks, no skip-signing)
+- **Final `main == origin/main`**: true (both at `d6acae535fee19a074096e3d7fa3590f4a0dd9ec`)
 
 ## §3 Merge Method
 
@@ -35,10 +37,15 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-E is project-
 - **Hooks**: not skipped (no `--no-verify`)
 - **Signing**: not skipped (no `--no-gpg-sign`)
 - **Force**: not used
-- **Push status**: Pushed to `origin/main` with no force, no skip-hooks, no skip-signing (recorded in §17 of the final operator report). `git push origin main` output:
+- **Push status**: Pushed to `origin/main` with no force, no skip-hooks, no skip-signing. First push (merge commit) output:
   ```
   To https://github.com/jpedrocY/Prometheus.git
      8234375..fcc1bd0  main -> main
+  ```
+  Second push (this merge-closeout commit) output:
+  ```
+  To https://github.com/jpedrocY/Prometheus.git
+     fcc1bd0..d6acae5  main -> main
   ```
 
 ## §4 Files Brought Forward by the Merge
