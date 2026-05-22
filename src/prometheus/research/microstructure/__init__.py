@@ -709,6 +709,57 @@ from .multiday_derived_gate_report import (
 from .multiday_derived_gate_report import (
     write_gate_report as multiday_write_gate_report,
 )
+from .multiday_feature_gate import (
+    MultidayFeatureGateError,
+    MultidayFeatureGateInput,
+    MultidayFeatureGateResult,
+    run_multiday_feature_family_gate,
+)
+from .multiday_feature_gate_checks import (
+    CHECK_ORDER as MULTIDAY_FEATURE_GATE_CHECK_ORDER,
+)
+from .multiday_feature_gate_checks import (
+    SAMPLE_DATES as MULTIDAY_FEATURE_GATE_SAMPLE_DATES,
+)
+from .multiday_feature_gate_checks import (
+    MultidayFeatureGateCheckResult,
+    MultidayFeatureGateCheckStatus,
+    MultidayFeatureGateContext,
+)
+from .multiday_feature_gate_io import (
+    MultidayFeatureGateIOError,
+)
+from .multiday_feature_gate_io import (
+    assert_path_under_feature_gate_reports as _mf_assert_path_under_feature_gate_reports,
+)
+from .multiday_feature_gate_io import (
+    derive_gate_report_id as multiday_feature_derive_gate_report_id,
+)
+from .multiday_feature_gate_io import (
+    derive_gate_report_paths as multiday_feature_derive_gate_report_paths,
+)
+from .multiday_feature_gate_report import (
+    ALLOWED_GATE_VERDICTS as MULTIDAY_FEATURE_GATE_ALLOWED_VERDICTS,
+)
+from .multiday_feature_gate_report import (
+    GATE_VERDICT_FAIL as MULTIDAY_FEATURE_GATE_VERDICT_FAIL,
+)
+from .multiday_feature_gate_report import (
+    GATE_VERDICT_INDETERMINATE as MULTIDAY_FEATURE_GATE_VERDICT_INDETERMINATE,
+)
+from .multiday_feature_gate_report import (
+    GATE_VERDICT_PASS as MULTIDAY_FEATURE_GATE_VERDICT_PASS,
+)
+from .multiday_feature_gate_report import (
+    MultidayFeatureGateReport,
+    MultidayFeatureGateReportError,
+)
+from .multiday_feature_gate_report import (
+    build_report as multiday_feature_build_report,
+)
+from .multiday_feature_gate_report import (
+    write_gate_report as multiday_feature_write_gate_report,
+)
 from .normalize_aggtrades import (
     NORMALIZATION_SCHEMA_VERSION,
     NORMALIZED_SCHEMA_V001,
@@ -735,6 +786,11 @@ from .raw_writer import (
     RawWriterError,
     RawWriterFileSummary,
     RawWriterPathError,
+)
+
+# Phase 4bm-J alias bound to private import (kept short to satisfy ruff E501).
+multiday_feature_assert_path_under_feature_gate_reports = (
+    _mf_assert_path_under_feature_gate_reports
 )
 
 __all__ = [
@@ -1045,4 +1101,26 @@ __all__ = [
     "multiday_write_sha256_sidecar",
     "resolve_multiday_derived_source_artefact_paths",
     "run_multiday_derived_aggtrades_gate",
+    # multiday_feature_gate (Phase 4bm-J)
+    "MULTIDAY_FEATURE_GATE_ALLOWED_VERDICTS",
+    "MULTIDAY_FEATURE_GATE_CHECK_ORDER",
+    "MULTIDAY_FEATURE_GATE_SAMPLE_DATES",
+    "MULTIDAY_FEATURE_GATE_VERDICT_FAIL",
+    "MULTIDAY_FEATURE_GATE_VERDICT_INDETERMINATE",
+    "MULTIDAY_FEATURE_GATE_VERDICT_PASS",
+    "MultidayFeatureGateCheckResult",
+    "MultidayFeatureGateCheckStatus",
+    "MultidayFeatureGateContext",
+    "MultidayFeatureGateError",
+    "MultidayFeatureGateIOError",
+    "MultidayFeatureGateInput",
+    "MultidayFeatureGateReport",
+    "MultidayFeatureGateReportError",
+    "MultidayFeatureGateResult",
+    "multiday_feature_assert_path_under_feature_gate_reports",
+    "multiday_feature_build_report",
+    "multiday_feature_derive_gate_report_id",
+    "multiday_feature_derive_gate_report_paths",
+    "multiday_feature_write_gate_report",
+    "run_multiday_feature_family_gate",
 ]
