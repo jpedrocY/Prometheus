@@ -30,10 +30,8 @@ Phase 4bm-P is the multi-day v002 analogue of the v001 **Phase 4bj-D** label art
 
 ## 4. Phase branch commit SHA(s)
 
-- `df2cf6c0f3aa…` precursor (commit short shown; full SHA is the predecessor of branch HEAD) — `docs(phase-4bm-p): add multi-day v002 label artefact structural qa memo`.
+- `df2cf6cb2347a79ef780da0c8ff1df1435561e17` (precursor) — `docs(phase-4bm-p): add multi-day v002 label artefact structural qa memo`.
 - `d177ecc1f19710a16a26cf299a6dc32ecefce090` (branch HEAD) — `docs(phase-4bm-p): add closeout`.
-
-(The first commit's full SHA recorded in `git log`: `df2cf6c…` is the short form; the full SHA is reproducible via `git log --format=%H -2 phase-4bm-p/multi-day-v002-label-artefact-structural-qa-memo`.)
 
 ## 5. Merge commit SHA
 
@@ -41,13 +39,17 @@ Phase 4bm-P is the multi-day v002 analogue of the v001 **Phase 4bj-D** label art
 
 ## 6. Merge-closeout commit SHA
 
-To be filled at commit time (this file is the merge-closeout). Will be patched by the immediately-following SHA-finalization commit `docs(phase-4bm-p): finalize merge closeout shas`.
+`33b8082a600f9f3192325e4fc5d6ae4e9d97e68a` — `docs(phase-4bm-p): add merge closeout` (the commit that added this file on `main`).
 
-## 7. Post-merge `main` / `origin/main` SHA after merge commit + push
+## 7. Post-merge `main` / `origin/main` SHA evolution
 
-- `main` after `git push origin main`: `78b3db3193d449dd6e61eb82dd81c2207551d9de`.
-- `origin/main` after `git push origin main`: `78b3db3193d449dd6e61eb82dd81c2207551d9de`.
-- `main == origin/main` post-merge: **YES**.
+- After `git merge --no-ff phase-4bm-p/...`: `main = 78b3db3193d449dd6e61eb82dd81c2207551d9de`.
+- After first `git push origin main`: `main = origin/main = 78b3db3193d449dd6e61eb82dd81c2207551d9de`.
+- After `docs(phase-4bm-p): add merge closeout` commit: `main = 33b8082a600f9f3192325e4fc5d6ae4e9d97e68a`.
+- After second `git push origin main` (push of the merge-closeout commit; remote update line `78b3db3..33b8082  main -> main`): `main = origin/main = 33b8082a600f9f3192325e4fc5d6ae4e9d97e68a`.
+- `main == origin/main` after the merge-closeout commit push: **YES**.
+
+Per the project SHA-hygiene boundary, the SHA of the immediately-following SHA-finalization commit (`docs(phase-4bm-p): finalize merge closeout shas`) is intentionally **NOT** recorded inside this file (recording it would create an infinite self-reference, since the SHA-finalization commit modifies only this file and that modification would change the SHA itself). The SHA-finalization commit is recorded separately in the final operator report.
 
 ## 8. Merge method
 
