@@ -27,10 +27,10 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-M is project-
 - **Merge commit message**: `docs(phase-4bm-m): merge multi-day v002 label-family boundary design memo`
 - **Post-merge `main` SHA (after merge commit, pre-closeout-commit)**: `a4c523475b6ef283badf140c05ad01744b922991`
 - **Post-merge `origin/main` SHA (after `git push origin main` of the merge commit)**: `a4c523475b6ef283badf140c05ad01744b922991` (in sync; pushed cleanly via `38cf669..a4c5234  main -> main`; no force, no skip-hooks, no skip-signing)
-- **Merge-closeout commit SHA**: to be recorded in §2 immediately after this file is committed and pushed (the SHA-hygiene patch step will replace this placeholder with the concrete value).
-- **Post-merge-closeout-commit `main` SHA**: to be recorded after the closeout push.
-- **Post-merge-closeout-commit `origin/main` SHA**: to be recorded after the closeout push.
-- **Final `main == origin/main` after closeout push**: to be recorded after the closeout push.
+- **Merge-closeout commit SHA**: `cc67ad493b20e3b53e3c19a6f0bcafe268178944` (`docs(phase-4bm-m): add merge closeout`; 1 file / +480; this file's commit on `main`)
+- **Post-merge-closeout-commit `main` SHA**: `cc67ad493b20e3b53e3c19a6f0bcafe268178944`
+- **Post-merge-closeout-commit `origin/main` SHA**: `cc67ad493b20e3b53e3c19a6f0bcafe268178944` (pushed cleanly via `a4c5234..cc67ad4  main -> main`; no force, no skip-hooks, no skip-signing)
+- **Final `main == origin/main` after closeout push**: true (both at `cc67ad493b20e3b53e3c19a6f0bcafe268178944` immediately after the merge-closeout commit + push; the subsequent SHA-finalization commit then advances `main` and `origin/main` together by one additional commit, recorded in the final operator report)
 
 ## §3 Merge Method
 
@@ -45,7 +45,11 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-M is project-
   To https://github.com/jpedrocY/Prometheus.git
      38cf669..a4c5234  main -> main
   ```
-  Second push (this merge-closeout commit) output: to be recorded after the closeout push by the SHA-hygiene patch step.
+  Second push (this merge-closeout commit) output:
+  ```
+  To https://github.com/jpedrocY/Prometheus.git
+     a4c5234..cc67ad4  main -> main
+  ```
 
 ## §4 Files Brought Forward by the Merge
 
