@@ -231,6 +231,8 @@ Phase 4bb-F is the **Gate Report Output Path Hygiene Memo** (docs-only path-gove
 
 Phase 4bj-G is the **Label-Family Successor-State Recording** phase (docs + local gitignored successor-state artefact recording). Phase 4bj-G converts the Phase 4bj-F Option B policy-level admissibility decision into a single machine-readable sibling successor-state JSON artefact plus paired SHA256 sidecar under `data/microstructure/successor-state/` for the label family `microstructure_labels_aggtrades_v001`, while preserving the original label manifest, the original label parquet, both label sidecars, and the Phase 4bj-E gate report and its sidecar byte-identically. **Branch:** `phase-4bj-g/label-family-successor-state-recording`. **Base:** `main` at `0a069e24b5aeb15229bbf16f0e0dc9542a7d02b3` (post-Phase-4bj-F SHA-chain-fixup state). **Phase 4bj-F merge-closeout commit:** `9657651cf227527d987d55cb610d9b7ede66a19e`. **Phase 4bj-F merge commit:** `aa77c301c6fe1c21e67e81fbf564fe4056997259`. Phase 4bj-G mirrors the Phase 4bg-B (derived-family successor-state) and Phase 4bi-D (feature-family successor-state) precedents exactly, transposed to the label family: one sibling JSON file at a deterministic path under the gitignored `data/microstructure/successor-state/` namespace, one paired `.sha256` sidecar, canonical sorted-key indent-2 JSON serialization, atomic write-then-rename via `os.replace`, refuse-overwrite on either file, and byte-for-byte preservation of every upstream artefact. **Local gitignored output (NOT committed):** `data/microstructure/successor-state/microstructure_labels_aggtrades_v001__v001__stage5_research_ml_admissible__phase-4bj-g.json` (SHA256 `ce7d391756ef347568374a9ee71e2cfaaa14d4f90ded969ab5771abe3fed2ea5`; size 9 086 bytes) and same path with `.sha256` suffix (sidecar size 158 bytes; sidecar self-SHA256 `c6fe4fa1133d788976a7ecc7883b87e7cf04eb16ec76ec77e0467025e888a2fb`; sidecar parses to a token that matches the recomputed JSON SHA bit-for-bit). Both files gitignored under `.gitignore:85: data/microstructure/`. **Upstream artefact byte-identical immutability** verified for all six artefacts pre/post the write: label parquet `ef50038a3ff91ec9d42c741562521e2a14e8f5e134831349d7ba08f7580e8d26`; label parquet sidecar `b9681e6b029901a7f8379909b4d7bc5a753fa07764104519c3eb10e9fb45c78b`; label manifest `181a799c3b17d3365cb912d40fe3ce91b6a09daa94fa5bccf07f9a24f97ee0f3`; label manifest sidecar `3392a3364309e1392b8a790954db3ce5f68829911a477dfe825685fda3448a8d`; Phase 4bj-E gate report `b0b5405b94b916c2ce182f63b414b83887e4abddf422f18ae36d0bdc7273ead0`; Phase 4bj-E gate report sidecar `2f24ad3e378b13e51550dbe1891c43e1e91bc84229c02ea703cc910bd025d191`. `mtime_ns` values for the three primary upstream artefacts (label parquet `1778454596994144100`, label manifest `1778454597037866200`, Phase 4bj-E gate report `1778531608799920600`) are unchanged across the run. **Manifest state preserved:** the on-disk label manifest still reads `research_eligible: false`, `eligibility_gate_status: "pending"`, `chronological_split_policy: "not_yet_defined"`, and every `governance_labels.*` value unchanged from the Phase 4bj-C output. **Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved** end-to-end (never invoked). **Successor-state JSON content (28-key boundary block; 19 `*_authorized` flags all `false`):** `successor_admissibility_status = "admissible_in_principle_policy_level_only"`; `successor_research_use_admissible = true`; `successor_ml_use_admissible = "conditional_future_only"`; `manifest_mutation_permitted = false`; `manifest_research_eligible_after = false`; `manifest_eligibility_gate_status_after = "pending"`; `manifest_chronological_split_policy_after = "not_yet_defined"`; `original_label_manifest_must_remain_byte_identical = true`; every `governance_labels.*` forbidden / unauthorized; every `boundary_confirmations.*` `true` (28 / 28); `successor_authorizes_next_phase = false`; `recommended_state = "remain_paused"`. The artefact cites the Phase 4bj-E gate report id (`microstructure_labels_aggtrades_v001__v001__phase-4bj-e__1778531608796__89cde8ad14b5`) verbatim, the Phase 4bj-E gate report SHA / sidecar SHA verbatim, the Phase 4bj-E gate `overall_status = pass` with 72 / 72 PASS / 0 FAIL / 0 ERROR / 0 NOT_APPLICABLE verbatim, the Phase 4bj-F memo path, the Phase 4bj-F merge commit (`aa77c30`), the Phase 4bj-F merge-closeout commit (`9657651`), the locked `label_config_hash = fe4633af77c8dd6a56c381031a6f5c255a277777b1bc7f6ea54863c014286f00`, the locked `row_count = 1681098`, the locked `column_count = 39`, the locked `invalid_price_row_count = 0`, the locked `censored_per_horizon = {"1s": 9, "5s": 42, "15s": 118, "60s": 507}`, the retained verdict ledger verbatim, the preserved project locks verbatim, and an explicit no-rescue statement. **Critical interpretation:** the label-family research / ML-use admissibility marker exists **only** at the new sibling successor-state JSON. Any tool that wishes to interpret the label family as admissible in principle must read the successor-state JSON, never the label manifest, and never assume that `research_eligible=true` should be flipped on the label manifest. Label-family admissibility is a governance state, not an empirical claim about edge. Labels are not signals; labels are not strategy evidence; labels are not live-readiness evidence. ML use is `conditional_future_only` — a future authorized phase must satisfy additional safeguards before any ML training. Phase 4bj-G added `docs/00-meta/implementation-reports/2026-05-11_phase-4bj-g_label-family-successor-state-recording.md` and `docs/00-meta/implementation-reports/2026-05-11_phase-4bj-g_closeout.md`, and narrowly updated `docs/00-meta/current-project-state.md` (this Phase 4bj-G narrative paragraph + new "Current phase:" block; prior Phase 4bj-F "Current phase:" block preserved as historical context). No other files modified. **Validation:** `git diff --check` clean; `git status --short` shows only the pre-existing untracked entries (`.claude/scheduled_tasks.lock`, `data/research/`) plus the three tracked Phase 4bj-G docs files; `git check-ignore -v data/microstructure/`, `data/microstructure/successor-state/`, and both new artefact paths confirmed gitignored under `.gitignore:85`. Phase 4bj-G did NOT modify any source code, test, script, configuration, README, pyproject, `.gitignore`, MCP file, dataset, manifest, sidecar, prior gate report, or prior successor-state artefact; did NOT acquire data; did NOT call any Binance, public, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read or create `.env`; did NOT create or read `.mcp.json`; did NOT enable MCP or Graphify; did NOT rerun the normalizer, raw eligibility gate, derived-family gate, feature kernel, feature-family eligibility gate, label kernel, or label-family eligibility gate; did NOT compute features, labels, signals, ML, strategy, or backtest output; did NOT train ML; did NOT design ML architecture; did NOT rank features; did NOT create meta-labeling; did NOT create a strategy; did NOT run backtests; did NOT compute PnL / MFE / MAE / R-multiple / equity / position / alpha / edge / prediction / model-score / decision-score / entry-exit / strategy output; did NOT flip `research_eligible` on any actual manifest; did NOT transition `eligibility_gate_status` on any actual manifest; did NOT change `chronological_split_policy` on any actual manifest; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, or live WebSocket implementation; did NOT merge into `main`; did NOT commit anything under `data/microstructure/`. All retained verdicts (H0, R3, R1a, R1b-narrow, R2, F1, D1-A, 5m thread, V2, G1, C1) and all project locks (§11.6, round-trip, §1.7.3, Phase 3p §4.7, Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w, Phase 4ak M0 twelve-clause gate + post-null cooldown rule + cooled-down families list + memo template, Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy, Phase 4aw `flip_research_eligible(...)` always-raises invariant) preserved verbatim. **Phase 4bj-G is branch-complete only.** Per the Phase 4bk-A workflow standard, Phase 4bj-G is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** No successor phase is authorized by Phase 4bj-G.
 
+Phase 4bm-L is the **Multi-Day V002 Feature-Family Research-Use Successor-State Recording** phase (docs + local gitignored successor-state JSON + paired canonical Phase 4bb-F sidecar; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3 escalation rules and the v001 Phase 4bi-D feature-family successor-state recording precedent). **Phase 4bm-L is branch-complete only by this work; not merged into main; not project-complete.** Phase 4bm-L operationalises the Phase 4bm-K Outcome 1 / Decision form 1 (equivalent to `FEATURE_RESEARCH_USE_APPROVED_IN_PRINCIPLE`) outcome by creating the only machine-readable v002 Feature Stage-5 admissibility marker for the multi-day v002 feature family `microstructure_features_aggtrades_v001 @ v002` (BTCUSDT × 90 contiguous UTC dates 2024-12-01 .. 2025-02-28; 155,153,449 rows; 62-column canonical schema = 17 lineage / identity / metadata + 45 feature / quality; `feature_config_hash = 819cfa7a9b3a813333ce163074dfe31b5b2886253c0835c4646bc3797d7b5a1d`), while preserving the original v002 feature manifest and every upstream artefact byte-identically. Phase 4bm-L is the multi-day v002 analogue of Phase 4bi-D (v001 feature-family successor-state recording) and the v002 feature-family sibling of Phase 4bm-F (v002 derived-family Stage-3 successor-state recording); both precedents are cited verbatim inside the new artefact. **Local gitignored output (NOT committed):** successor-state JSON at `data/microstructure/successor-state/microstructure_features_aggtrades_v001__v002__stage5_research_use_approved__phase-4bm-l.json` (SHA256 `7eccaa8f5d9dda9baab08da6914a449e163dda55619d9d734d119d378b5435e4`; 13,499 bytes; UTF-8 ASCII-only; LF only; sorted-key indent-2 JSON; trailing newline) + paired canonical Phase 4bb-F sidecar (SHA256 `c2b7333055e9c524b22fe49cb27a727efd7ff0caed6c185eed8dfe0f4aa7ab98`; 159 bytes; canonical format byte-verified — 64-byte lowercase-hex SHA + 2 ASCII spaces + 92-byte ASCII basename + 1 LF; no CRLF; no BOM). Both files gitignored under `.gitignore:85: data/microstructure/`; `git status` does not surface them. The successor-state JSON records `schema_version = "v001"`, `phase_id = "4bm-L"`, `phase_name = "Multi-Day V002 Feature-Family Research-Use Successor-State Recording"`, `successor_state_kind = "feature_family_research_use_successor_state"`, `successor_state_type = "feature_family_research_use"`, `successor_stage = "Feature Stage-5"`, `stage_5_policy_admissible = true`, `feature_family_research_use_approved_in_principle = true`, `machine_readable_stage5_marker_created_by_this_file = true`, `research_use_successor_state = true`, the complete Phase 4bm-K decision linkage (`decision = "Outcome 1 / Decision form 1"`, `decision_equivalent_label = "FEATURE_RESEARCH_USE_APPROVED_IN_PRINCIPLE"`, Phase 4bm-K branch / merge / merge-closeout / SHA-finalization commit SHAs verbatim), the Phase 4bm-J feature-family eligibility gate evidence (`source_feature_gate_verdict = "FEATURE_GATE_PASS"`, `source_feature_gate_overall_status = "pass"`, `source_feature_gate_pass_count = 50`, `source_feature_gate_blocking_fail_count = 0`, report ID + path + SHA256 + sidecar SHA256 verbatim), the Phase 4bm-I structural QA verdict (`source_structural_qa_verdict = "FEATURE_STRUCTURAL_QA_PASS"`), Phase 4bm-H / 4bm-G / 4bm-F / 4bm-D / 4bl-D-R / 4bl-E linkage with verbatim SHAs, Phase 4bi-D v001 feature-family successor-state precedent verbatim (SHA `8176aa3fea1b78a0776fe13cd28053843b0ea67eb3fc3a894848e6bf41ce808a`), `original_feature_manifest_byte_identical = true`, `original_feature_manifest_research_eligible_after = false`, `original_feature_manifest_eligibility_gate_status_after = "pending"`, `original_feature_manifest_stage_4_feature_cleared_after = false`, every governance-label field (`labels` / `diagnostics` / `ml` / `strategy` / `backtest` = `"forbidden"`; `acquisition` = `"unauthorized"`), 20 explicit `*_authorized: false` markers, 20 explicit `no_*: true` negative-action confirmations, `retained_verdicts_preserved = true`, `governance_locks_preserved = true`, `phase_4aw_flip_research_eligible_invariant_preserved = true`, `base_commit_sha = "121865a26120d5f097fee95c00185ebd4c995703"`, `docs_commit_sha_at_creation = "121865a26120d5f097fee95c00185ebd4c995703"`, plain-English notes explaining machine-readable Stage-5 marker semantics, and a 50-key `boundary_confirmations` object with every value `true` (covering every preservation and non-action guarantee — feature manifest / sidecar / parquet / per-day-sidecar / normalized / raw / acquisition-log / Phase 4bm-J gate report + sidecar / Phase 4bm-F successor-state + sidecar / Phase 4bg-B / 4bi-D / 4bb-G / 4bl-E / 4bm-D / 4bl-D-R immutability; `no_labels` / `no_targets` / `no_signals` / `no_diagnostics_run` / `no_ml_training` / `no_strategy_design` / `no_backtest_run` / `no_acquisition` / `no_network_io` / `no_websocket` / `no_credential_read` / `no_env_read` / `no_mcp_or_graphify` / `no_exchange_write` / `no_m0_amendment` / `no_no_rescue_amendment` / `no_retained_verdict_revision` / `no_project_lock_change` / `no_phase_4aw_flip_invocation` / `no_successor_phase_authorization`; `feature_manifest_research_eligible_remains_false` / `feature_manifest_eligibility_gate_status_remains_pending` / `feature_manifest_stage_4_feature_cleared_remains_false`; `raw_family_research_eligible_remains_false` / `raw_family_permanently_ineligible_preserved`; `normalized_family_research_eligible_remains_false`). **Pre/post immutability:** all 14 upstream lineage artefact SHAs byte-for-byte identical pre- and post-Phase-4bm-L (v002 feature manifest `512a0a54…`, v002 feature manifest sidecar `22e2fb77…`, Phase 4bm-J gate report `3c59dfae…`, Phase 4bm-J gate sidecar `14a17764…`, v002 derived multi-day index manifest `01c5fa53…`, v002 derived manifest sidecar `d96f31ae…`, v002 raw manifest `01696786…`, v002 acquisition log `52f6d7fb…`, Phase 4bl-D-R gate report `f9493fd1…`, Phase 4bl-E successor-state `a0576ca6…`, Phase 4bm-D gate report `3b45e70b…`, Phase 4bm-D sidecar `8e74261c…`, Phase 4bm-F successor-state `72b6edd4…`, Phase 4bm-F sidecar `1e9ffb23…`). The v002 feature manifest still carries `research_eligible = false`, `eligibility_gate_status = "pending"`, and `stage_4_feature_cleared = false` byte-identically before and after the successor-state write. The Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant is preserved (never invoked). **Critical interpretation:** the v002 Feature Stage-5 research-use admissibility marker exists **only** at the new sibling Phase 4bm-L successor-state JSON. Any tool that wishes to interpret the v002 feature family as Stage-5-admissible must read the successor-state JSON, never the feature manifest, and never assume that `research_eligible=true` should be flipped on the manifest. v002 Feature Stage-5 admissibility is a governance state, not an empirical claim about edge; it does not license labels, diagnostics, ML, strategy work, or backtests on v002. Phase 4bm-L added two new docs files under `docs/00-meta/implementation-reports/` (the 31-section implementation report and the closeout) and narrowly updated `docs/00-meta/current-project-state.md` (this Phase 4bm-L narrative paragraph + new "Current phase:" block; prior Phase 4bm-K "Current phase:" block preserved as labelled historical context). No source code, tests, scripts, configurations, README, pyproject, `.gitignore`, `.gitattributes`, `.mcp.json` (absent), `.claude/`, or governance memo modified beyond the narrow `current-project-state.md` paragraph addition. Phase 4bm-L did NOT acquire data; did NOT modify any prior `data/microstructure/` artefact other than the new gitignored successor-state JSON + sidecar; did NOT run the normalizer, raw eligibility gate, derived-family gate, feature kernel, feature-family eligibility gate, label kernel, or label-family eligibility gate; did NOT generate any new gate report; did NOT create any new normalized Parquet, feature Parquet, derived manifest, feature manifest, label manifest, or any sibling manifest beyond the single new successor-state JSON; did NOT delete, move, rename, or modify any existing `data/microstructure/` file; did NOT modify any prior successor-state JSON (Phase 4bb-G v001 raw / Phase 4bl-E v002 raw / Phase 4bg-B v001 derived / Phase 4bm-F v002 derived / Phase 4bi-D v001 feature / Phase 4bj-G v001 label / Phase 4bj-J v001 label split-policy); did NOT modify any prior gate report; did NOT modify the Phase 4bm-J v002 feature-family gate report or its sidecar; did NOT modify the Phase 4bm-H v002 feature parquets, v002 feature sidecars, v002 feature manifest, or v002 feature manifest sidecar; did NOT create JSONL, DuckDB, feature, label, signal, proxy, ML, or strategy artefacts; did NOT call any Binance, public, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read `.env`; did NOT create `.env`; did NOT create or read `.mcp.json`; did NOT enable MCP or Graphify; did NOT compute features, taker imbalance, sweep detection, aggressive-flow score, spread / depth / liquidity / slippage / order-flow / execution-quality proxies, returns, alpha, edge, predictiveness, signal quality, profitability, opportunity rate, regime, momentum, volatility, PnL, MFE, MAE, R-multiple, equity, or position-state columns; did NOT train ML; did NOT create a strategy; did NOT run backtests; did NOT run diagnostics; did NOT flip `research_eligible` on any actual manifest; did NOT transition `eligibility_gate_status` on any actual manifest; did NOT mark `stage_4_feature_cleared = true` on any actual manifest; did NOT change `chronological_split_policy` on any actual manifest; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 4bm-L merge phase / Phase 4bm-M / multi-day v002 label-family / multi-day v002 chronological-split-policy / Phase 4bn-* / Phase 4bo-* / Phase 4bp-* / Phase 4bq-* / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production keys / authenticated APIs / private endpoints / user stream / live WebSocket implementation; did NOT commit anything under `data/microstructure/`. **Validation (docs + local gitignored output; ruff / mypy / pytest skipped per Phase 4bi-D / Phase 4bm-F precedent because no source / test / script / config touch occurred):** `git diff --check` clean; `git status --short` shows only the expected pre-existing untracked entries (`.claude/scheduled_tasks.lock`, `data/research/`) plus the three tracked Phase 4bm-L docs files (new gitignored artefacts do not appear); pre-existence check on target JSON + sidecar paths returned `False` for both before write; atomic write via `tmp + os.replace` for both files with refuse-overwrite logic in place; sidecar byte-by-byte verification PASS (64 sha + 2 spaces + 92 basename + 1 LF = 159 bytes; ASCII only; no CRLF; no BOM); JSON re-parses cleanly with all expected fields; SHA256 verification of all 14 upstream artefacts MATCH byte-for-byte pre- and post-write; v002 feature manifest invariants re-verified on disk after write. **Required exact phrases recorded verbatim in the implementation report and closeout:** *This successor-state JSON is the machine-readable v002 Feature Stage-5 research-use marker.* / *The v002 feature manifest remains byte-identical.* / *The v002 feature manifest still carries research_eligible=false, eligibility_gate_status="pending", and stage_4_feature_cleared=false.* / *Phase 4bm-M is not authorized by Phase 4bm-L.* / *Labels / diagnostics / ML / strategy / backtests are not authorized by Phase 4bm-L.* / *No feature artefact was modified.* / *No upstream artefact was mutated.* / *No data/microstructure file was committed.* **Phase 4bm-L preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant; Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bm-K results — all preserved verbatim. Reusable non-authorization blocks honored: **N-ACQUISITION**, **N-ENDPOINT**, **N-CREDENTIALS**, **N-MANIFEST**, **N-GATE-RERUN**, **N-DERIVATION**, **N-DIAGNOSTICS-ML-STRATEGY**, **N-PHASE-5**, **N-VERDICT-LOCK**. **N-SUCCESSOR-STATE** does NOT apply (Phase 4bm-L creates exactly one new sibling successor-state artefact governed by the Phase 4bi-D / Phase 4bm-F precedent). **Phase 4 canonical remains unauthorized. Phase 4bm-L merge phase / Phase 4bm-M / multi-day v002 label-family / multi-day v002 chronological-split-policy / Phase 4bn-* / Phase 4bo-* / Phase 4bp-* / Phase 4bq-* / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and any additional acquisition remain unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
+
 Phase 4bm-K is the **Multi-Day V002 Feature-Family Research-Use Decision Memo** (docs-only research-use decision / governance memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3 escalation rules and the v001 Phase 4bi-C v001 feature-family research-use / ML-use decision memo precedent). **Phase 4bm-K is branch-complete only by this work; not merged into main; not project-complete.** Phase 4bm-K evaluates whether the multi-day v002 feature family `microstructure_features_aggtrades_v001 @ v002` (BTCUSDT × 90 contiguous UTC dates 2024-12-01 .. 2025-02-28; 155,153,449 rows; `feature_config_hash = 819cfa7a9b3a813333ce163074dfe31b5b2886253c0835c4646bc3797d7b5a1d`; 62-column canonical schema = 17 lineage / identity / metadata + 45 feature / quality) is admissible in principle for a future v002 Feature Stage-5 research-use admissibility recording, given the completed v002 Feature Stage-0 (Phase 4bm-G feature-boundary design), v002 Feature Stage-2 (Phase 4bm-H computed feature artefacts), v002 Feature Stage-3 (Phase 4bm-I `FEATURE_STRUCTURAL_QA_PASS`), and report-level v002 Feature Stage-4 (Phase 4bm-J 50 / 50 `FEATURE_GATE_PASS`; gate report SHA256 `3c59dfaeb06c14cd1fdf4b589e17ecaa457277637d221bf35c3a69f42a898242`; sidecar SHA256 `14a17764cd5798f8df7d59203079b5e29823e1804ed8626d41ccd87b84166125`) evidence. **Recorded decision: Outcome 1 / Decision form 1 — equivalent to `FEATURE_RESEARCH_USE_APPROVED_IN_PRINCIPLE`.** v002 Feature Stage-5 research-use admissibility is admissible in principle at policy level for the multi-day v002 feature family, but **no manifest mutation occurs in this phase**, and a separately authorized Phase 4bm-L (Multi-Day V002 Feature-Family Research-Use Successor-State Recording; the v002 analogue of Phase 4bi-D) is required before any machine-readable v002 Feature Stage-5 marker exists. The actual v002 feature manifest at `data/microstructure/manifests/microstructure_features_aggtrades_v001__v002.json` remains `research_eligible = false`, `eligibility_gate_status = "pending"`, and `stage_4_feature_cleared = false` throughout Phase 4bm-K (verified on disk; SHA256 `512a0a54be40d9c3a61fe0a032ce0301b7b60de60e3147362fa3a4bce633343d` unchanged). The v002 raw family `microstructure_raw_aggtrades_v001 @ v002` remains permanently `research_eligible = false`. The v002 derived family `microstructure_normalized_aggtrades_v001 @ v002` retains `research_eligible = false / eligibility_gate_status = "pending"` on the actual derived multi-day index manifest (SHA256 `01c5fa538aaa732249483dfac5302945b67461b151cae573cf1cd200e1a2554a` unchanged). The Phase 4bm-F v002 derived-family Stage-3 successor-state JSON (SHA256 `72b6edd42d42cb4451108ea7adeb859c0d693b58c9c33c522285f7c2ba309ea9`) is preserved byte-identically and remains the only v002 Stage-3 machine-readable marker on record; it does not transitively extend to the v002 feature family. Phase 4bm-K confirmed all eight Phase 4bi-C deciding criteria are satisfied at the policy level for the multi-day v002 feature evidence chain (Phase 4bm-J gate report SHA recomputed and matches; gate `overall_status = pass` with 50 / 50 PASS; check totals 50 / 0 / 0 / 0 / 0; feature manifest SHA recomputed and matches; manifest sidecar SHA recomputed and matches; feature manifest remains `research_eligible = false / eligibility_gate_status = "pending" / stage_4_feature_cleared = false`; Phase 4bm-G / 4bm-H / 4bm-I / 4bm-J evidence internally consistent; non-scope and no-rescue boundaries preserved). Phase 4bm-K recorded explicit limitations: only one symbol (BTCUSDT); only 90 contiguous UTC days (2024-12-01 .. 2025-02-28); ~92× scale-up vs Phase 4bi-C single-day v001 evidence but cross-symbol gap unchanged; no day-type / regime distribution diagnosed; no label set authorized on v002; no leakage control design for v002 labels; no ML split design for v002; no strategy hypothesis under M0 that consumes v002; no costed backtest; no live/paper/shadow readiness. v002 Feature Stage-5 admissibility is policy-level only and does not license edge claims, label computation, ML, strategy work, diagnostics, or backtests on v002. Required exact affirmative-decision phrases recorded verbatim: **Feature-family research-use is approved in principle at policy level only.** / **No machine-readable research-use marker exists after Phase 4bm-K.** / **Phase 4bm-L is not authorized by Phase 4bm-K.** / **Successor-state recording is not authorized by Phase 4bm-K.** / **Labels / diagnostics / ML / strategy / backtests are not authorized by Phase 4bm-K.** / **No feature artefact was modified.** / **No upstream artefact was mutated.** / **No data/microstructure file was committed.** Phase 4bm-K added two new docs files under `docs/00-meta/implementation-reports/` (the 22-section main memo and the closeout) and narrowly updated `docs/00-meta/current-project-state.md` (this Phase 4bm-K narrative paragraph + new "Current phase:" block; prior Phase 4bm-J "Current phase:" block preserved as labelled historical context). `.gitignore` is unchanged. `pyproject.toml` is unchanged. `README.md` is unchanged. `.gitattributes` is unchanged. No `scripts/...` entrypoint added. No source code, tests, scripts, or governance memo modified beyond the narrow `current-project-state.md` paragraph addition. Phase 4bm-K did NOT acquire data; did NOT modify `data/microstructure/`; did NOT run the normalizer, raw eligibility gate, derived-family gate, feature kernel, feature-family eligibility gate, label kernel, or label-family eligibility gate; did NOT recompute features; did NOT generate a new gate report; did NOT create a new normalized Parquet, feature Parquet, derived manifest, feature manifest, label manifest, or any sibling manifest; did NOT create a new successor-state artefact (feature-family or otherwise); did NOT delete, move, rename, or modify any existing `data/microstructure/` file; did NOT modify the Phase 4bl-C raw v002 manifest, raw v002 zips, raw v002 sidecars, v002 acquisition log, Phase 4bl-D-R gate report, or Phase 4bl-E successor-state JSON; did NOT modify the Phase 4bm-B v002 per-day Parquets, v002 derived multi-day index manifest, or its sidecar; did NOT modify the Phase 4bm-D authoritative derived-family gate report or its sidecar; did NOT modify the Phase 4bm-F v002 derived-family successor-state JSON or its sidecar; did NOT modify the Phase 4bm-H v002 feature Parquets, v002 feature sidecars, v002 feature manifest, or v002 feature manifest sidecar; did NOT modify the Phase 4bm-J v002 feature-family eligibility gate report or its sidecar; did NOT create JSONL, DuckDB, feature, label, signal, proxy, ML, or strategy artefacts; did NOT call any Binance endpoint, public endpoint, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read `.env`; did NOT create `.env`; did NOT create or read `.mcp.json`; did NOT enable MCP or Graphify; did NOT compute features, taker imbalance, sweep detection, aggressive-flow score, spread / depth / liquidity / slippage / order-flow / execution-quality proxies, returns, alpha, edge, predictiveness, signal quality, profitability, opportunity rate, regime, momentum, volatility, PnL, MFE, MAE, R-multiple, equity, or position-state columns; did NOT train ML; did NOT create a strategy; did NOT run backtests; did NOT flip `research_eligible` on any family; did NOT transition `eligibility_gate_status` on any actual manifest; did NOT mark `stage_4_feature_cleared = true` on any manifest; did NOT change `chronological_split_policy` on any actual manifest; did NOT authorize v002 Feature Stage-4 cleared on manifest, v002 Feature Stage-5 successor-state recording, v002 label family, v002 chronological split policy, v002 ML, v002 strategy, or v002 backtests; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 4bm-L, Phase 4bn-*, Phase 4bo-*, Phase 4bp-*, Phase 4bq-*, Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, or live WebSocket implementation; did NOT commit anything under `data/microstructure/`. **Pre/post immutability:** all 14 upstream lineage artefact SHAs byte-for-byte identical pre- and post-Phase-4bm-K (v002 derived multi-day index manifest `01c5fa53…`, v002 derived manifest sidecar `d96f31ae…`, v002 raw manifest `01696786…`, v002 acquisition log `52f6d7fb…`, Phase 4bl-D-R gate report `f9493fd1…`, Phase 4bl-E successor-state `a0576ca6…`, Phase 4bm-D gate report `3b45e70b…`, Phase 4bm-D sidecar `8e74261c…`, Phase 4bm-F successor-state `72b6edd4…`, Phase 4bm-F sidecar `1e9ffb23…`, v002 feature manifest `512a0a54…`, v002 feature manifest sidecar `22e2fb77…`, Phase 4bm-J gate report `3c59dfae…`, Phase 4bm-J gate sidecar `14a17764…`). Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved end-to-end (never invoked). **Validation (docs-only memo; ruff / mypy / pytest skipped per Phase 4bi-C precedent because no source / test / script / config touch occurred):** `git diff --check` clean; `git status --short` shows only the expected pre-existing untracked entries (`.claude/scheduled_tasks.lock`, `data/research/`) plus the three tracked Phase 4bm-K docs files; SHA256 verification of Phase 4bm-J gate report + sidecar, v002 feature manifest + sidecar, v002 derived manifest, v002 raw manifest, and Phase 4bm-F successor-state JSON all MATCH recorded values byte-for-byte. **Phase 4bm-K preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal; G1 HARD REJECT — terminal; C1 HARD REJECT — terminal; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant; Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au, 4av, 4aw, 4ax, 4ay, 4az, 4ba, 4bb-A, 4bb-B, 4bb-C, 4bb-D, 4bb-E, 4bb-F, 4bb-G, 4bc, 4bd-A, 4bd, 4be, 4bf-A, 4bf, 4bg-A, 4bg-B, 4bh-A, 4bh-B, 4bh, 4bi-A, 4bi-B, 4bi-C, 4bi-D, 4bj-A, 4bj-B, 4bj-C, 4bj-D, 4bj-E, 4bj-F, 4bj-G, 4bj-H, 4bj-I, 4bj-J, 4bj-K, 4bk-A, 4bl-A, 4bl-B, 4bl-C, 4bl-D, 4bl-D-S1, 4bl-D-S2, 4bl-D-R, 4bl-E, 4bl-F, 4bm-A, 4bm-A-P1, 4bm-B, 4bm-C, 4bm-D, 4bm-D-P1, 4bm-E, 4bm-F, 4bm-G, 4bm-H, 4bm-I, 4bm-J results — all preserved verbatim. **Phase 4 canonical remains unauthorized. Phase 4bm-K merge phase / Phase 4bm-L / multi-day v002 feature-family successor-state recording / multi-day v002 label-family / multi-day v002 chronological split policy / Phase 4bn-* / Phase 4bo-* / Phase 4bp-* / Phase 4bq-* / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and any additional acquisition remain unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
 
 Phase 4bm-J is the **Multi-Day V002 Feature-Family Eligibility Gate Design / Implementation / Execution** (code + tests + docs + local gitignored feature-family gate report; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3 escalation rules and the v001 Phase 4bi-B feature-family eligibility gate precedent). **Phase 4bm-J is branch-complete only by this work; not merged into main; not project-complete.** Phase 4bm-J designs, implements, and runs the first multi-day v002 feature-family eligibility gate over the Phase 4bm-H v002 feature artefacts (90 per-day Parquets + 90 sidecars + 1 feature manifest + 1 manifest sidecar; 155,153,449 rows; BTCUSDT × 90 contiguous UTC dates 2024-12-01 .. 2025-02-28) using the Phase 4bm-I FEATURE_STRUCTURAL_QA_PASS as input precondition. **Gate verdict: FEATURE_GATE_PASS** at report level only. Phase 4bm-J added four new offline source modules under `src/prometheus/research/microstructure/` (`multiday_feature_gate_io.py`, `multiday_feature_gate_report.py`, `multiday_feature_gate_checks.py`, `multiday_feature_gate.py`), narrowly updated the package `__init__.py` to re-export the Phase 4bm-J public API, added one new standalone orchestrator script (`scripts/phase4bm_j_run_multiday_feature_gate.py`), added one shared fixture helper (`tests/research/microstructure/_multiday_feature_gate_fixtures.py`) and five new test files (test_multiday_feature_gate_io.py, test_multiday_feature_gate_report.py, test_multiday_feature_gate_checks.py, test_multiday_feature_gate.py, test_multiday_feature_gate_no_network.py; **53 new tests; all pass**), and added two new docs files (the main implementation report and the closeout). **Gate suite: 50 deterministic checks** in canonical order across 7 groups (A: 12 locked-precondition checks, B: 10 inventory/sidecar/gitignore checks, C: 10 schema/lineage/forbidden-substring checks, D: 6 row-count/partition/timestamp checks, E: 3 quality-flag/cross-day-boundary checks, F: 3 upstream-immutability checks, G: 6 non-authorization-invariant checks); **50 / 50 PASS** (0 FAIL / 0 ERROR / 0 NOT_APPLICABLE / 0 blocking failures). **Local gitignored output (NOT committed):** gate report at `data/microstructure/gate-reports/features/microstructure_features_aggtrades_v001__v002__phase-4bm-j__1779475950843__3212722a7ffd.json` (SHA `3c59dfaeb06c14cd1fdf4b589e17ecaa457277637d221bf35c3a69f42a898242`; 16,176 B) + paired canonical Phase 4bb-F sidecar (SHA `14a17764cd5798f8df7d59203079b5e29823e1804ed8626d41ccd87b84166125`; 158 B; canonical Phase 4bb-F format byte-verified — two ASCII spaces, LF, no CRLF, no BOM). The gate report carries `gate_verdict = "FEATURE_GATE_PASS"`, `overall_status = "pass"`, `pass_count = 50`, `fail_count = 0`, `error_count = 0`, `not_applicable_count = 0`, `blocking_fail_count = 0`, `research_eligible_after = false`, `eligibility_gate_status_after = "pending"`, `stage_4_feature_cleared_after = false`, all 8 non-authorization flags false, all 14 immutability flags true, 21 boundary_confirmations all True. **Pre/post immutability:** all 12 upstream artefacts (v002 derived manifest + sidecar `01c5fa53… / d96f31ae…`, v002 raw manifest `01696786…`, v002 acquisition log `52f6d7fb…`, Phase 4bl-D-R `f9493fd1…`, Phase 4bl-E `a0576ca6…`, Phase 4bm-D + sidecar `3b45e70b… / 8e74261c…`, Phase 4bm-F + sidecar `72b6edd4… / 1e9ffb23…`, v002 feature manifest + sidecar `512a0a54… / 22e2fb77…`) and all 90 per-day v002 normalized Parquets byte-for-byte identical pre- and post-gate-run. The Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant is preserved end-to-end (never invoked). The actual v002 feature manifest still carries `research_eligible = false`, `eligibility_gate_status = "pending"`, `stage_4_feature_cleared = false` byte-identically before and after the gate run. **Validation:** Phase 4bm-J surface `ruff check` (11 paths) PASS; whole-repo `ruff check .` PASS; `pytest tests/research/microstructure/test_multiday_feature_gate*.py` 53/53 PASS in 7.86s; `git diff --check` clean; `git status --short` shows only the expected pre-existing untracked entries; gate report + sidecar gitignored under `.gitignore:85`. Phase 4bm-J did NOT compute features; did NOT recompute features; did NOT acquire data; did NOT call any Binance / public / private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read or create `.env` / `.mcp.json`; did NOT enable MCP or Graphify; did NOT mutate any actual on-disk manifest; did NOT flip `research_eligible` on any manifest; did NOT transition `eligibility_gate_status` on any manifest; did NOT change `chronological_split_policy` on any manifest; did NOT create any new successor-state artefact; did NOT rerun any prior gate / normalizer / kernel / QA; did NOT compute labels, diagnostics, ML, strategy, signal, or backtest output; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0, Phase 4al, Phase 4aw, Phase 4bb-F, Phase 4bl-F, Phase 4bm-A-P1, Phase 4bm-D-P1, Phase 4bm-E, Phase 4bm-F, Phase 4bm-G, Phase 4bm-H, or Phase 4bm-I; did NOT authorize Phase 4bm-J merge phase / Phase 4bm-K / multi-day v002 feature-family research-use decision / feature-family successor-state recording / label-family / Phase 4bm-* / Phase 4bn-* / Phase 5 / Phase 4 canonical / paper / shadow / live-readiness / deployment / exchange-write / production keys / authenticated APIs / private endpoints / user stream / live WebSocket implementation / additional acquisition; did NOT commit anything under `data/microstructure/`. **Phase 4bm-J preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread closure / V2 / G1 / C1; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant; Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1; Phase 4bm-D-P1; Phase 4am .. Phase 4bm-I results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bm-J merge phase / Phase 4bm-K / multi-day v002 feature-family research-use decision / feature-family successor-state recording / label-family / Phase 4bm-* / Phase 4bn-* / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and any additional acquisition remain unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
@@ -322,6 +324,446 @@ Phase 4bg-A is the **Derived-Family Research-Eligibility Decision Memo** (docs-o
 Phase 4bf is the **AggTrades Derived-Family Eligibility-Gate Implementation and Execution** (docs-and-code derived-family eligibility-gate implementation + one local gitignored gate-report execution). **Phase 4bf is implementation-and-data-output only.** Phase 4bf implements the offline derived-family eligibility gate designed by Phase 4bf-A and runs it **exactly once** against the Phase 4bd / Phase 4be normalized aggTrades artefacts. Phase 4bf added four new source modules under `src/prometheus/research/microstructure/` (`derived_gate_io.py` 261 lines; `derived_gate_report.py` 113 lines; `derived_gate_checks.py` 786 lines; `derived_gate.py` 327 lines; ~1,487 lines total), narrowly updated the package `__init__.py` to re-export 8 new public symbols (`DerivedAggTradesCheckResult`, `DerivedAggTradesCheckStatus`, `DerivedAggTradesGateInput`, `DerivedAggTradesGateInputError`, `DerivedAggTradesGateReport`, `DerivedAggTradesGateResult`, `DerivedAggTradesGateUnsupportedError`, `run_derived_aggtrades_gate`; `GateIOError` was already exported from Phase 4bb-C and is reused) and extended the package docstring with a Phase 4bf section, and added one shared mini-fixture builder (`_derived_gate_fixtures.py`) plus five new test files under `tests/research/microstructure/` (`test_derived_gate_io.py` 18 tests; `test_derived_gate_report.py` 7 tests; `test_derived_gate_checks.py` 107 tests; `test_derived_gate.py` 13 tests; `test_derived_gate_no_network.py` 8 parametrized tests; **155 new tests; all pass**). Phase 4bf ran the gate **exactly once** against `data/microstructure/manifests/microstructure_normalized_aggtrades_v001__v001.json` with `output_root=data/microstructure/gate-reports/normalized` and `code_commit_sha=29e3f550e28ef4507fc7d008d2df9d53a46d52d8`; `write_report=True`. **Real-run result:** `overall_status=pass`; **55 / 55 PASS** validation checks (0 FAIL / 0 NOT_APPLICABLE / 0 ERROR); `research_eligible_after=False` (invariant); `eligibility_gate_status_after=pass` (report-level recommendation only); `no_successor_authorization=True` (invariant); `len(checks)=55`; gate report at `data/microstructure/gate-reports/normalized/microstructure_normalized_aggtrades_v001__v001__1778368468053__29e3f550e28e.json` (16,518 bytes; SHA256 `dd4e0c1c32b966378e4ac9b8db4803221ea4d735bdc62a0e0a7be9f710bd4ae6`) with paired `.sha256` sidecar (147 bytes). All 15 boundary confirmations `True`: `no_backtest_run`, `no_credential_read`, `no_data_microstructure_write_outside_gate_reports`, `no_env_read`, `no_feature_computed`, `no_label_computed`, `no_manifest_mutation`, `no_mcp_or_graphify`, `no_ml_trained`, `no_network_io`, `no_normalization_written_outside_namespace`, `no_signal_computed`, `no_strategy_created`, `no_websocket`, `research_eligible_after_is_false_for_derived_family`. **Pre/post immutability:** all seven raw / governance / Phase 4bd artefact SHAs byte-for-byte identical pre- and post-run (derived manifest `f6f0d947...`, normalized Parquet `2b3d6978...`, raw manifest `a371edd4...`, raw zip `f560c2e5...`, raw sidecar `b80c2768...`, acquisition log `f88b28b4...`, Phase 4bb-D gate report `96f09159...`). **Manifest state preservation:** raw manifest still `research_eligible=false / eligibility_gate_status=pending`; derived manifest still `research_eligible=false / eligibility_gate_status=pending`; Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved end-to-end. **Validation:** whole-repo `ruff check .` passed (`All checks passed!`); whole-repo `mypy src/prometheus` strict returned `Success: no issues found in 101 source files` (was 97 prior to Phase 4bf; +4 new `derived_gate_*.py` modules); targeted `pytest tests/research/microstructure/test_derived_gate*.py` returned `155 passed`; `pytest tests/research/microstructure/` returned `492 passed`; whole-repo `pytest` returned `1275 passed, 2 failed` where the 2 failures are the same pre-existing simulation failures (`tests/simulation/test_backtest_real_2026_03.py::test_real_2026_03_btcusdt` and `::test_real_2026_03_ethusdt`; both `KeyError: 'trade_count'` in unrelated `src/prometheus/research/data/storage.py:232`); **Phase 4bf introduces zero new test regressions**; `git check-ignore -v data/microstructure/` returns `.gitignore:85:data/microstructure/`; `git check-ignore -v data/microstructure/gate-reports/normalized/` confirms the new gate-report namespace is gitignored under the same rule. Phase 4bf did NOT modify any prior source module beyond the narrow `__init__.py` re-export update; did NOT modify any prior test; did NOT modify any script under `scripts/`; did NOT modify `pyproject.toml`, `README.md`, or `.gitignore`; did NOT modify any prior memo (other than the narrow `current-project-state.md` paragraph addition); did NOT modify the Phase 4az raw manifest, raw zip, sidecar, or acquisition log; did NOT modify the Phase 4bb-D gate report or its sidecar; did NOT modify the Phase 4bd normalized Parquet or derived manifest; did NOT modify any `data/microstructure/` artefact mtime or content other than the new gate-report under `gate-reports/normalized/`; did NOT compute features, labels, signals, proxies, taker imbalance, sweep detection, aggressive-flow score, spread / depth / liquidity / slippage / order-flow / execution-quality proxies, returns, alpha, edge, predictiveness, signal quality, profitability, or opportunity rate; did NOT train ML; did NOT create a strategy; did NOT run backtests; did NOT acquire data; did NOT call any Binance endpoint, public endpoint, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read `.env`; did NOT create `.env`; did NOT create or read `.mcp.json`; did NOT enable MCP or Graphify; did NOT flip `research_eligible` on any family; did NOT transition `eligibility_gate_status` on any actual manifest; did NOT acquire ETHUSDT or additional BTCUSDT days; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 4bg, Phase 4bg-A, Phase 4bb-F, Phase 4bb-G, Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, or live WebSocket implementation. **Stage-2 transition** for the derived family is now report-level confirmed by the Phase 4bf PASS gate report. **Stage-3 (`research_eligible: true`) is NOT reached by Phase 4bf** — the derived family carries `research_eligible=false / eligibility_gate_status=pending` on the actual manifest and may transition to Stage-3 only via a separately authorized Phase 4bg-A research-eligibility decision memo plus additional governance (M0-compatible research-use memo + feature-boundary design + explicit operator authorization). **Phase 4bf preserves every retained verdict and project lock verbatim:** H0 FRAMEWORK ANCHOR; R3 BASELINE-OF-RECORD; R1a / R1b-narrow RETAINED — NON-LEADING; R2 FAILED — §11.6; F1 HARD REJECT; D1-A MECHANISM PASS / FRAMEWORK FAIL; 5m thread OPERATIONALLY CLOSED per Phase 3t; V2 HARD REJECT — terminal for V2 first-spec; G1 HARD REJECT — terminal for G1 first-spec; C1 HARD REJECT — terminal for C1 first-spec; §11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7 (strict integrity gate); Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 twelve-clause gate + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy; Phase 4am, 4an, 4ao, 4ap, 4aq, 4ar, 4as, 4at, 4au, 4av, 4aw, 4ax, 4ay, 4az, 4ba, 4bb-A, 4bb-B, 4bb-C, 4bb-D, 4bb-E, 4bc, 4bd-A, 4bd, 4be, 4bf-A results — all preserved verbatim. **Phase 4 canonical remains unauthorized. Phase 4bg / Phase 4bg-A / Phase 4bb-F / Phase 4bb-G / Phase 5 / any successor phase remains unauthorized. Paper / shadow, live-readiness, deployment, production keys, authenticated APIs, private endpoints, public-endpoint calls in code, user stream, WebSocket implementation, MCP, Graphify, `.mcp.json`, credentials, exchange-write, and additional aggTrades / 5m / 1m / tick / mark-price 30m / 4h / order-book data acquisition all remain unauthorized.** **Recommended state remains paused unless the operator separately authorizes a future phase.** **No next phase authorized.**
 
 Current phase:
+
+```text
+Phase 4bm-L executed (Multi-Day V002
+Feature-Family Research-Use Successor-
+State Recording; docs + local gitignored
+successor-state JSON + paired canonical
+Phase 4bb-F sidecar; Tier 1 Full Phase
+per phase-risk-tiering-standard §3 and
+the v001 Phase 4bi-D feature-family
+successor-state recording precedent).
+Phase 4bm-L is branch-complete only by
+this work; not merged into main; not
+project-complete.
+Phase 4bm-L operationalises the Phase
+4bm-K Outcome 1 / Decision form 1
+(equivalent to FEATURE_RESEARCH_USE_
+APPROVED_IN_PRINCIPLE) outcome by
+creating the only machine-readable v002
+Feature Stage-5 admissibility marker for
+the multi-day v002 feature family
+microstructure_features_aggtrades_v001
+@ v002 (BTCUSDT × 90 contiguous UTC
+dates 2024-12-01 .. 2025-02-28;
+155,153,449 rows; 62-column canonical
+schema = 17 lineage / identity /
+metadata + 45 feature / quality;
+feature_config_hash 819cfa7a9b3a813333
+ce163074dfe31b5b2886253c0835c4646bc379
+7d7b5a1d), while preserving the
+original v002 feature manifest and
+every upstream artefact byte-
+identically.
+Phase 4bm-L is the multi-day v002
+analogue of Phase 4bi-D (v001 feature-
+family successor-state recording) and
+the v002 feature-family sibling of
+Phase 4bm-F (v002 derived-family
+Stage-3 successor-state recording).
+Branch:
+  phase-4bm-l/multi-day-v002-feature-
+  family-research-use-successor-state-
+  recording
+Base:
+  main at 121865a26120d5f097fee95c0018
+  5ebd4c995703 (Phase 4bm-K merge-
+   closeout SHA-finalization commit;
+   pre-branch main == origin/main).
+Predecessor: Phase 4bm-K (Multi-Day V002
+  Feature-Family Research-Use Decision
+  Memo; project-complete on main;
+  decision Outcome 1 / Decision form 1).
+Direct v001 precedent: Phase 4bi-D v001
+  feature-family successor-state
+  recording (SHA 8176aa3fea1b78a0776f
+  e13cd28053843b0ea67eb3fc3a894848e6bf
+  41ce808a).
+V002 derived sibling: Phase 4bm-F v002
+  derived-family Stage-3 successor-
+  state recording (SHA 72b6edd42d42cb4
+  451108ea7adeb859c0d693b58c9c33c52228
+  5f7c2ba309ea9).
+Local gitignored output created
+(NOT committed):
+  successor-state JSON path =
+    data/microstructure/successor-state/
+    microstructure_features_aggtrades_
+    v001__v002__stage5_research_use_
+    approved__phase-4bm-l.json
+  successor-state JSON sha256 =
+    7eccaa8f5d9dda9baab08da6914a449e
+    163dda55619d9d734d119d378b5435e4
+  successor-state JSON size = 13,499 B
+    (UTF-8 ASCII-only; LF only;
+     sorted-key indent-2 JSON;
+     trailing newline)
+  successor-state sidecar sha256 =
+    c2b7333055e9c524b22fe49cb27a727e
+    fd7ff0caed6c185eed8dfe0f4aa7ab98
+  successor-state sidecar size = 159 B
+    (canonical Phase 4bb-F format
+     byte-verified — 64 sha + 2 ASCII
+     spaces + 92 basename + 1 LF;
+     no CRLF; no BOM).
+Successor-state JSON records:
+  schema_version = "v001"
+  phase_id = "4bm-L"
+  successor_state_kind =
+    "feature_family_research_use_
+     successor_state"
+  successor_state_type =
+    "feature_family_research_use"
+  successor_stage = "Feature Stage-5"
+  stage_5_policy_admissible = true
+  feature_family_research_use_approved
+    _in_principle = true
+  machine_readable_stage5_marker_
+    created_by_this_file = true
+  research_use_successor_state = true
+  decision = "Outcome 1 / Decision
+              form 1"
+  decision_equivalent_label =
+    "FEATURE_RESEARCH_USE_APPROVED_IN_
+     PRINCIPLE"
+  decision_phase_id = "4bm-K"
+  source_feature_gate_verdict =
+    "FEATURE_GATE_PASS"
+  source_feature_gate_overall_status =
+    "pass"
+  source_feature_gate_pass_count = 50
+  source_feature_gate_blocking_fail_
+    count = 0
+  source_structural_qa_verdict =
+    "FEATURE_STRUCTURAL_QA_PASS"
+  original_feature_manifest_byte_
+    identical = true
+  original_feature_manifest_research_
+    eligible_after = false
+  original_feature_manifest_
+    eligibility_gate_status_after =
+    "pending"
+  original_feature_manifest_stage_4_
+    feature_cleared_after = false
+  labels / diagnostics / ml / strategy
+    / backtest = "forbidden"
+  acquisition = "unauthorized"
+  20 explicit *_authorized = false
+  20 explicit no_* = true
+  retained_verdicts_preserved = true
+  governance_locks_preserved = true
+  phase_4aw_flip_research_eligible_
+    invariant_preserved = true
+  base_commit_sha = "121865a26120d5f0
+    97fee95c00185ebd4c995703"
+  docs_commit_sha_at_creation =
+    "121865a26120d5f097fee95c00185ebd
+    4c995703"
+  boundary_confirmations = <50 keys;
+    every value true>
+Upstream immutability (14 / 14
+artefacts byte-identical pre / post;
+recomputed on disk both before and
+after the successor-state write):
+  v002 feature manifest (512a0a54...);
+  v002 feature manifest sidecar
+    (22e2fb77...);
+  Phase 4bm-J v002 feature-family
+    gate report (3c59dfae...);
+  Phase 4bm-J gate sidecar (14a17764
+    ...);
+  v002 derived multi-day index
+    manifest (01c5fa53...);
+  v002 derived manifest sidecar
+    (d96f31ae...);
+  v002 raw manifest (01696786...);
+  v002 acquisition log (52f6d7fb...);
+  Phase 4bl-D-R raw multi-day gate
+    report (f9493fd1...);
+  Phase 4bl-E raw multi-day successor-
+    state JSON (a0576ca6...);
+  Phase 4bm-D derived-family gate
+    report (3b45e70b...);
+  Phase 4bm-D gate sidecar (8e74261c
+    ...);
+  Phase 4bm-F v002 derived-family
+    Stage-3 successor-state JSON
+    (72b6edd4...);
+  Phase 4bm-F successor-state sidecar
+    (1e9ffb23...).
+Phase 4aw flip_research_eligible(...)
+  always-raises invariant preserved
+  (never invoked).
+Critical interpretation:
+  the v002 Feature Stage-5 research-
+  use admissibility marker exists ONLY
+  at the new sibling Phase 4bm-L
+  successor-state JSON. Any tool that
+  wishes to interpret the v002 feature
+  family as Stage-5-admissible must
+  read the successor-state JSON, never
+  the feature manifest, and never
+  assume that research_eligible=true
+  should be flipped on the manifest.
+  v002 Feature Stage-5 admissibility
+  is a governance state, not an
+  empirical claim about edge; it does
+  not license labels, diagnostics, ML,
+  strategy work, or backtests on v002.
+Validation:
+  git diff --check: clean;
+  git status --short shows only the
+    pre-existing untracked entries
+    plus the three tracked Phase
+    4bm-L docs files;
+  new artefacts gitignored under
+    .gitignore:85 data/microstructure/
+    (not surfaced by git status);
+  pre-existence check on both target
+    paths returned False before write;
+  atomic write via tmp + os.replace;
+  refuse-overwrite logic in place;
+  sidecar byte-by-byte verification
+    PASS (64 sha + 2 spaces + 92
+    basename + 1 LF; ASCII only; no
+    CRLF; no BOM);
+  JSON re-parses cleanly with all
+    expected fields;
+  SHA256 verification of all 14
+    upstream artefacts MATCH byte-for-
+    byte pre- and post-write;
+  v002 feature manifest invariants
+    re-verified on disk after write
+    (research_eligible=false,
+     eligibility_gate_status="pending",
+     stage_4_feature_cleared=false).
+Tracked files added by Phase 4bm-L (2):
+  - docs/00-meta/implementation-reports/
+    2026-05-18_phase-4bm-l_multi-day-
+    v002-feature-family-research-use-
+    successor-state-recording.md
+  - docs/00-meta/implementation-reports/
+    2026-05-18_phase-4bm-l_closeout.md
+Tracked files modified narrowly by
+Phase 4bm-L (1):
+  - docs/00-meta/current-project-state
+    .md (this Phase 4bm-L narrative
+     paragraph + this Current phase
+     block; prior Phase 4bm-K Current
+     phase block preserved as labelled
+     historical context).
+Files NOT modified:
+  - pyproject.toml; README.md;
+    .gitignore; .gitattributes;
+  - no .mcp.json (absent before and
+    after);
+  - no source code, tests, scripts;
+  - no prior implementation report,
+    closeout, or merge-closeout;
+  - no prior governance memo;
+  - no prior data/microstructure/
+    artefact (the only new gitignored
+    files are the Phase 4bm-L
+    successor-state JSON + sidecar).
+Required exact phrases (verbatim):
+  This successor-state JSON is the
+    machine-readable v002 Feature
+    Stage-5 research-use marker.
+  The v002 feature manifest remains
+    byte-identical.
+  The v002 feature manifest still
+    carries research_eligible=false,
+    eligibility_gate_status="pending",
+    and stage_4_feature_cleared=false.
+  Phase 4bm-M is not authorized by
+    Phase 4bm-L.
+  Labels / diagnostics / ML / strategy
+    / backtests are not authorized by
+    Phase 4bm-L.
+  No feature artefact was modified.
+  No upstream artefact was mutated.
+  No data/microstructure file was
+    committed.
+Phase 4bm-L did NOT:
+  - modify source code, tests, scripts,
+    configurations;
+  - acquire data; download anything;
+  - call any Binance / public /
+    private endpoint;
+  - open any WebSocket;
+  - use any credential;
+  - read or create .env / .mcp.json;
+  - enable MCP or Graphify;
+  - mutate any actual on-disk manifest;
+  - flip research_eligible on any
+    manifest;
+  - transition eligibility_gate_status
+    on any manifest;
+  - mark stage_4_feature_cleared = true
+    on the v002 feature manifest;
+  - change chronological_split_policy
+    on any manifest;
+  - create any other new successor-
+    state artefact (only one new
+    successor-state JSON + sidecar);
+  - rerun any prior gate / normalizer
+    / kernel / QA;
+  - compute features; recompute
+    features;
+  - compute labels, signals, ML,
+    strategy, diagnostics, or backtest
+    output;
+  - revise any retained verdict;
+  - change any project lock;
+  - amend M0, Phase 4al, Phase 4aw,
+    Phase 4bb-F, Phase 4bl-F, Phase
+    4bm-A-P1, Phase 4bm-D-P1, Phase
+    4bm-E, Phase 4bm-F, Phase 4bm-G,
+    Phase 4bm-H, Phase 4bm-I, Phase
+    4bm-J, or Phase 4bm-K;
+  - authorize Phase 4bm-L merge phase
+    / Phase 4bm-M / multi-day v002
+    label-family boundary or design
+    memo / multi-day v002 chrono-
+    logical-split-policy memo / multi-
+    day v002 label-family schema /
+    kernel / structural QA /
+    eligibility gate / research-use
+    decision / successor-state
+    recording / Phase 4bn-* / Phase
+    4bo-* / Phase 4bp-* / Phase 4bq-*
+    / Phase 5 / Phase 4 canonical /
+    paper / shadow / live-readiness /
+    deployment / exchange-write /
+    production-key creation /
+    authenticated APIs / private
+    endpoints / user stream / live
+    WebSocket implementation / agents-
+    by-default / copying Prometheus
+    agent packs or agent memory into
+    the light workspace;
+  - commit anything under
+    data/microstructure/.
+V002 multi-day derived / feature family
+lifecycle ladder (post-Phase-4bm-L
+branch-complete):
+  Stage-0 acquired + normalized:
+    Phase 4bm-B.
+  Stage-1 inspected:
+    Phase 4bm-C 56/56 PASS.
+  Stage-2 gate-passed at report level:
+    Phase 4bm-D 60/60 DERIVED_GATE_PASS.
+  Stage-2-decision:
+    Phase 4bm-E Option B / Decision
+    form 2.
+  Stage-3 successor-state marker:
+    Phase 4bm-F sha256 72b6edd4...
+  V002 Feature Stage-0:
+    Phase 4bm-G feature-boundary design
+    memo.
+  V002 Feature Stage-2:
+    Phase 4bm-H computed feature
+    artefacts (155,153,449 rows).
+  V002 Feature Stage-3:
+    Phase 4bm-I FEATURE_STRUCTURAL_QA_
+    PASS.
+  V002 Feature Stage-4 (eligibility-
+    gate-passed at report level):
+    Phase 4bm-J FEATURE_GATE_PASS.
+  V002 Feature Stage-5 admissibility
+    decision (policy-level only):
+    Phase 4bm-K Outcome 1 / Decision
+    form 1.
+  V002 Feature Stage-5 machine-
+    readable successor-state marker
+    (this phase):
+    Phase 4bm-L sha256 7eccaa8f...
+  V002 Feature Stage-6 and beyond:
+    NOT REACHED; not authorized.
+  Stage-4 feature-cleared on manifest:
+    NOT REACHED; not authorized.
+Recommended state:
+  Remain paused.
+Phase 4bm-L is branch-complete only.
+Per the Phase 4bk-A workflow standard,
+Phase 4bm-L is NOT project-complete until
+a separately authorized merge phase
+records its merge-closeout on main per
+merge-closeout-standard.md (Tier 1; full
+16-section merge-closeout).
+Conditional next, NOT authorized:
+  Future operator-authorized Phase
+  4bm-L merge phase that merges this
+  branch into main and records a Phase
+  4bm-L merge-closeout per merge-
+  closeout-standard.md (Tier 1; full
+  16-section merge-closeout). After
+  that merge, the recommended state
+  remains remain paused pending operator
+  decision on a further conditional
+  multi-day v002 label-family boundary /
+  design memo (multi-day analogue of
+  Phase 4bj-A). Neither Phase 4bm-L
+  merge phase nor any multi-day v002
+  label-family phase is authorized by
+  Phase 4bm-L itself.
+Phase 4 canonical remains unauthorized.
+Phase 4bm-L merge phase / Phase 4bm-M /
+multi-day v002 label-family / multi-day
+v002 chronological-split-policy / Phase
+4bn-* / Phase 4bo-* / Phase 4bp-* /
+Phase 4bq-* / Phase 5 / any successor
+phase remains unauthorized.
+Paper / shadow, live-readiness,
+deployment, production keys,
+authenticated APIs, private endpoints,
+public-endpoint calls in code, user
+stream, WebSocket implementation, MCP,
+Graphify, .mcp.json, credentials,
+exchange-write, and any additional
+acquisition remain unauthorized.
+Agents-by-default and copying Prometheus
+agent packs / agent memory into the
+light workspace at C:\ClaudeRuns\
+prometheus-light remain unauthorized
+(Phase 4bm-D-P1 default preserved).
+M0 mechanism-admissibility gate and
+post-null cooldown rule remain binding
+prospective governance for any future
+research lane.
+Phase 4bm-L is docs + local gitignored
+successor-state recording only.
+FEATURE_RESEARCH_USE_APPROVED_IN_
+PRINCIPLE is recorded as a machine-
+readable v002 Feature Stage-5 marker
+ONLY at the new sibling Phase 4bm-L
+successor-state JSON (gitignored, not
+committed).
+This successor-state JSON is the
+machine-readable v002 Feature Stage-5
+research-use marker.
+The v002 feature manifest remains
+byte-identical.
+The v002 feature manifest still carries
+research_eligible=false,
+eligibility_gate_status="pending", and
+stage_4_feature_cleared=false.
+Phase 4bm-M is not authorized by
+Phase 4bm-L.
+Labels / diagnostics / ML / strategy /
+backtests are not authorized by Phase
+4bm-L.
+No feature artefact was modified.
+No upstream artefact was mutated.
+No data/microstructure file was
+committed.
+No next phase authorized.
+```
+
+Earlier "Current phase:" content (Phase 4bm-K) is preserved by the Phase 4bm-K narrative paragraph above.
+
+Earlier Phase 4bm-K "Current phase:" block (preserved here for continuity; Phase 4bm-K is no longer the current phase):
 
 ```text
 Phase 4bm-K executed (Multi-Day V002
