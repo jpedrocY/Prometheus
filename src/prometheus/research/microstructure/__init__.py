@@ -564,6 +564,16 @@ from .labels_compute import (
     compute_aggtrade_labels_v001,
     write_label_dataset_v001,
 )
+from .labels_compute_v002 import (
+    LabelComputationErrorV002,
+    LabelComputationSummaryV002,
+    LabelLineageV002,
+    LabelMultiDaySummaryV002,
+    NormalizedDayRef,
+    compute_aggtrade_labels_v002_for_day,
+    load_normalized_day_ref,
+    write_label_dataset_v002,
+)
 from .labels_io import (
     LABELS_FAMILY_SUBDIR,
     LabelIOError,
@@ -576,12 +586,26 @@ from .labels_io import (
     derive_label_output_path,
     write_label_sha256_sidecar,
 )
+from .labels_io_v002 import (
+    V002_LABEL_DIR_SEGMENT,
+    V002_LABEL_MANIFEST_BASENAME,
+    compose_canonical_sidecar_v002_label,
+    derive_v002_label_manifest_path,
+    derive_v002_label_parquet_path,
+)
 from .labels_manifest import (
     FORBIDDEN_LABEL_GOVERNANCE_VALUES,
     REQUIRED_LABEL_BOUNDARY_CONFIRMATIONS,
     REQUIRED_LABEL_GOVERNANCE_KEYS,
     LabelManifestError,
     build_label_manifest_v001,
+)
+from .labels_manifest_v002 import (
+    FORBIDDEN_LABEL_GOVERNANCE_VALUES_V002,
+    REQUIRED_LABEL_BOUNDARY_CONFIRMATIONS_V002,
+    REQUIRED_LABEL_GOVERNANCE_KEYS_V002,
+    LabelManifestErrorV002,
+    build_label_manifest_v002,
 )
 from .labels_schema import (
     ANCHOR_POLICY_V001,
@@ -603,6 +627,47 @@ from .labels_schema import (
     LabelSchemaError,
     assert_no_forbidden_label_substrings,
     build_label_config_hash,
+)
+from .labels_schema_v002 import (
+    ANCHOR_POLICY_V002,
+    DIRECTION_THRESHOLD_POLICY_V002,
+    DTYPE_POLICY_V002,
+    FORBIDDEN_LABEL_COLUMN_SUBSTRINGS_V002,
+    FUTURE_REFERENCE_POLICY_V002,
+    LABEL_DATASET_FAMILY_V002,
+    LABEL_DATASET_VERSION_V002,
+    LABEL_DATE_COUNT_V002,
+    LABEL_EXPECTED_ROW_COUNT_V002,
+    LABEL_HORIZON_MS_V002,
+    LABEL_HORIZONS_V002,
+    LABEL_LINEAGE_COLUMNS_V002,
+    LABEL_NAMES_V002,
+    LABEL_SCHEMA_COLUMNS_V002,
+    LABEL_SCHEMA_V002,
+    LABEL_SCHEMA_VERSION_V002,
+    LABEL_SUPPORT_COLUMN_NAMES_V002,
+    LABEL_SYMBOL_LIST_V002,
+    LABEL_SYMBOL_V002,
+    LABEL_UTC_DATE_END_V002,
+    LABEL_UTC_DATE_START_V002,
+    NULL_CENSORING_POLICY_V002,
+    SOURCE_RAW_DATASET_FAMILY_V002,
+    SOURCE_RAW_DATASET_VERSION_V002,
+    LabelSchemaErrorV002,
+    assert_no_forbidden_label_substrings_v002,
+    build_label_config_hash_v002,
+)
+from .labels_schema_v002 import (
+    SOURCE_FEATURE_DATASET_FAMILY_V002 as LABELS_SOURCE_FEATURE_DATASET_FAMILY_V002,
+)
+from .labels_schema_v002 import (
+    SOURCE_FEATURE_DATASET_VERSION_V002 as LABELS_SOURCE_FEATURE_DATASET_VERSION_V002,
+)
+from .labels_schema_v002 import (
+    SOURCE_NORMALIZED_DATASET_FAMILY_V002 as LABELS_SOURCE_NORMALIZED_DATASET_FAMILY_V002,
+)
+from .labels_schema_v002 import (
+    SOURCE_NORMALIZED_DATASET_VERSION_V002 as LABELS_SOURCE_NORMALIZED_DATASET_VERSION_V002,
 )
 from .labels_validation import (
     LabelCheckResult,
@@ -1045,6 +1110,56 @@ __all__ = [
     "validate_label_dataset_v001",
     "write_label_dataset_v001",
     "write_label_sha256_sidecar",
+    # labels v002 (Phase 4bm-O)
+    "ANCHOR_POLICY_V002",
+    "DIRECTION_THRESHOLD_POLICY_V002",
+    "DTYPE_POLICY_V002",
+    "FORBIDDEN_LABEL_COLUMN_SUBSTRINGS_V002",
+    "FORBIDDEN_LABEL_GOVERNANCE_VALUES_V002",
+    "FUTURE_REFERENCE_POLICY_V002",
+    "LABELS_SOURCE_FEATURE_DATASET_FAMILY_V002",
+    "LABELS_SOURCE_FEATURE_DATASET_VERSION_V002",
+    "LABELS_SOURCE_NORMALIZED_DATASET_FAMILY_V002",
+    "LABELS_SOURCE_NORMALIZED_DATASET_VERSION_V002",
+    "LABEL_DATASET_FAMILY_V002",
+    "LABEL_DATASET_VERSION_V002",
+    "LABEL_DATE_COUNT_V002",
+    "LABEL_EXPECTED_ROW_COUNT_V002",
+    "LABEL_HORIZONS_V002",
+    "LABEL_HORIZON_MS_V002",
+    "LABEL_LINEAGE_COLUMNS_V002",
+    "LABEL_NAMES_V002",
+    "LABEL_SCHEMA_COLUMNS_V002",
+    "LABEL_SCHEMA_V002",
+    "LABEL_SCHEMA_VERSION_V002",
+    "LABEL_SUPPORT_COLUMN_NAMES_V002",
+    "LABEL_SYMBOL_LIST_V002",
+    "LABEL_SYMBOL_V002",
+    "LABEL_UTC_DATE_END_V002",
+    "LABEL_UTC_DATE_START_V002",
+    "LabelComputationErrorV002",
+    "LabelComputationSummaryV002",
+    "LabelLineageV002",
+    "LabelManifestErrorV002",
+    "LabelMultiDaySummaryV002",
+    "LabelSchemaErrorV002",
+    "NULL_CENSORING_POLICY_V002",
+    "NormalizedDayRef",
+    "REQUIRED_LABEL_BOUNDARY_CONFIRMATIONS_V002",
+    "REQUIRED_LABEL_GOVERNANCE_KEYS_V002",
+    "SOURCE_RAW_DATASET_FAMILY_V002",
+    "SOURCE_RAW_DATASET_VERSION_V002",
+    "V002_LABEL_DIR_SEGMENT",
+    "V002_LABEL_MANIFEST_BASENAME",
+    "assert_no_forbidden_label_substrings_v002",
+    "build_label_config_hash_v002",
+    "build_label_manifest_v002",
+    "compose_canonical_sidecar_v002_label",
+    "compute_aggtrade_labels_v002_for_day",
+    "derive_v002_label_manifest_path",
+    "derive_v002_label_parquet_path",
+    "load_normalized_day_ref",
+    "write_label_dataset_v002",
     # label_gate (Phase 4bj-E)
     "LabelGateCheckResult",
     "LabelGateCheckStatus",
