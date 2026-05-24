@@ -28,10 +28,10 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-O is project-
 - **Merge commit message**: `feat(phase-4bm-o): merge multi-day v002 label kernel local artefacts`
 - **Post-merge `main` SHA (after merge commit, pre-closeout-commit)**: `a6d31cc2eda87b6245e617a895b80f4315a8eb4c`
 - **Post-merge `origin/main` SHA (after `git push origin main` of the merge commit)**: `a6d31cc2eda87b6245e617a895b80f4315a8eb4c` (in sync; pushed cleanly via `e2574c4..a6d31cc  main -> main`; no force, no skip-hooks, no skip-signing)
-- **Merge-closeout commit SHA**: recorded by the SHA-finalization patch (`docs(phase-4bm-o): finalize merge closeout shas`) immediately after this file is first committed and pushed; written in §2 of this file by that patch
-- **Post-merge-closeout-commit `main` SHA**: recorded by the SHA-finalization patch
-- **Post-merge-closeout-commit `origin/main` SHA**: recorded by the SHA-finalization patch
-- **Final `main == origin/main` after closeout push**: recorded by the SHA-finalization patch; the subsequent SHA-finalization commit then advances `main` and `origin/main` together by one additional commit, recorded in the final operator report
+- **Merge-closeout commit SHA**: `b5401e44f74a6cb203c5f46c5c35c294ea766c6f` (`docs(phase-4bm-o): add merge closeout`; 1 file / +434; this file's commit on `main`)
+- **Post-merge-closeout-commit `main` SHA**: `b5401e44f74a6cb203c5f46c5c35c294ea766c6f`
+- **Post-merge-closeout-commit `origin/main` SHA**: `b5401e44f74a6cb203c5f46c5c35c294ea766c6f` (pushed cleanly via `a6d31cc..b5401e4  main -> main`; no force, no skip-hooks, no skip-signing)
+- **Final `main == origin/main` after closeout push**: true (both at `b5401e44f74a6cb203c5f46c5c35c294ea766c6f` immediately after the merge-closeout commit + push; the subsequent SHA-finalization commit `docs(phase-4bm-o): finalize merge closeout shas` then advances `main` and `origin/main` together by one additional commit, recorded in the final operator report)
 
 ## §3 Merge Method
 
@@ -46,7 +46,11 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-O is project-
   To https://github.com/jpedrocY/Prometheus.git
      e2574c4..a6d31cc  main -> main
   ```
-  Second push (this merge-closeout commit) output: recorded by the SHA-finalization patch.
+  Second push (this merge-closeout commit) output:
+  ```
+  To https://github.com/jpedrocY/Prometheus.git
+     a6d31cc..b5401e4  main -> main
+  ```
 
 ## §4 Files Brought Forward by the Merge
 
