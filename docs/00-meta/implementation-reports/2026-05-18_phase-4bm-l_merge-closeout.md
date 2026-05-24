@@ -28,10 +28,10 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-L is project-
 - **Merge commit message**: `docs(phase-4bm-l): merge multi-day v002 feature-family research-use successor-state recording`
 - **Post-merge `main` SHA (after merge commit, pre-closeout-commit)**: `1f87436195a48c7fc8154a10066799ed5e810f60`
 - **Post-merge `origin/main` SHA (after `git push origin main` of the merge commit)**: `1f87436195a48c7fc8154a10066799ed5e810f60` (in sync; pushed cleanly via `121865a..1f87436  main -> main`; no force, no skip-hooks, no skip-signing)
-- **Merge-closeout commit SHA**: to be recorded by the immediate next SHA-finalization commit (immediate SHA hygiene rule); the post-merge-closeout `main` SHA and `origin/main` SHA are recorded by the SHA-finalization patch
-- **Post-merge-closeout-commit `main` SHA**: to be recorded by the SHA-finalization patch on this file
-- **Post-merge-closeout-commit `origin/main` SHA**: to be recorded by the SHA-finalization patch on this file
-- **Final `main == origin/main` after closeout push**: to be recorded by the SHA-finalization patch on this file
+- **Merge-closeout commit SHA**: `460740b2f0d59cf8d7446333ae20bc576a8289c7` (`docs(phase-4bm-l): add merge closeout`; 1 file / +361; this file's commit on `main`)
+- **Post-merge-closeout-commit `main` SHA**: `460740b2f0d59cf8d7446333ae20bc576a8289c7`
+- **Post-merge-closeout-commit `origin/main` SHA**: `460740b2f0d59cf8d7446333ae20bc576a8289c7` (pushed cleanly via `1f87436..460740b  main -> main`; no force, no skip-hooks, no skip-signing)
+- **Final `main == origin/main` after closeout push**: true (both at `460740b2f0d59cf8d7446333ae20bc576a8289c7` immediately after the merge-closeout commit + push; the subsequent SHA-finalization commit then advances `main` and `origin/main` together by one additional commit, recorded in the final operator report)
 
 ## §3 Merge Method
 
@@ -46,7 +46,11 @@ Per `docs/00-meta/process/phase-workflow-standard.md`, **Phase 4bm-L is project-
   To https://github.com/jpedrocY/Prometheus.git
      121865a..1f87436  main -> main
   ```
-  Second push (this merge-closeout commit) output: to be recorded by the SHA-finalization patch.
+  Second push (this merge-closeout commit) output:
+  ```
+  To https://github.com/jpedrocY/Prometheus.git
+     1f87436..460740b  main -> main
+  ```
 
 ## §4 Files Brought Forward by the Merge
 
