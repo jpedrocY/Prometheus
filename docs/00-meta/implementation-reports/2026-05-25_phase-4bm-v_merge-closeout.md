@@ -21,7 +21,7 @@
 - **`main` SHA before merge:** `dbb9ce92ab002b0adef11fdd51556617ae222e99` (Phase 4bm-U merge-closeout SHA-finalization commit; `main == origin/main` before merge).
 - **Branch tip SHA before merge:** `fc96dbc48c9acfac20cea2612d3d49d98cfc48c1` (commit `docs(phase-4bm-v): define diagnostics readiness and scope` — memo + closeout + narrow `current-project-state.md` block in one docs commit).
 - **Merge commit SHA:** `6170cb8087870b8aa47bee5806bb56d2e9b4ed49` (`git merge --no-ff`, strategy `ort`).
-- **Merge-closeout commit SHA:** `<filled by SHA-finalization commit>` (commit `docs(phase-4bm-v): add merge closeout`). The closeout commit SHA cannot self-reference; it is recorded by the follow-up SHA-finalization commit and captured in the final operator report and git log.
+- **Merge-closeout commit SHA:** `7ba87bb110a9419e531d8872dc0d8f8ef8f6dbed` (commit `docs(phase-4bm-v): add merge closeout`). The closeout commit SHA cannot self-reference; it is recorded by the follow-up SHA-finalization commit and captured in the final operator report and git log.
 - **SHA-finalization commit SHA:** the commit `docs(phase-4bm-v): finalize merge closeout shas` (this edit); captured in the final operator report and in git log rather than by impossible self-reference. After this commit is pushed, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
 
 ### SHAs section (final SHA-finalization plan)
@@ -31,7 +31,7 @@
 | Base SHA (`main` before merge) | `dbb9ce92ab002b0adef11fdd51556617ae222e99` |
 | Branch tip SHA before merge | `fc96dbc48c9acfac20cea2612d3d49d98cfc48c1` |
 | Merge commit SHA | `6170cb8087870b8aa47bee5806bb56d2e9b4ed49` |
-| Merge-closeout commit SHA | `<this SHA-finalization edit fills the value>` (commit `docs(phase-4bm-v): add merge closeout`) |
+| Merge-closeout commit SHA | `7ba87bb110a9419e531d8872dc0d8f8ef8f6dbed` (commit `docs(phase-4bm-v): add merge closeout`) |
 | SHA-finalization commit SHA | the commit `docs(phase-4bm-v): finalize merge closeout shas`; captured in the final operator report and git log; after this commit final `main` == final `origin/main` == this SHA |
 
 **SHA-finalization plan:** following the repo convention used for Phase 4bm-U / 4bm-T / 4bm-S, the merge-closeout commit SHA is filled in by a follow-up SHA-finalization edit (this section), and the SHA-finalization commit's own SHA is captured in the final operator report and git log rather than by impossible self-reference. After the SHA-finalization commit is pushed, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
