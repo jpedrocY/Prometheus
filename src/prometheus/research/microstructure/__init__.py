@@ -825,6 +825,57 @@ from .multiday_feature_gate_report import (
 from .multiday_feature_gate_report import (
     write_gate_report as multiday_feature_write_gate_report,
 )
+from .multiday_label_gate import (
+    MultidayLabelGateError,
+    MultidayLabelGateInput,
+    MultidayLabelGateResult,
+    run_multiday_label_family_gate,
+)
+from .multiday_label_gate_checks import (
+    CHECK_ORDER as MULTIDAY_LABEL_GATE_CHECK_ORDER,
+)
+from .multiday_label_gate_checks import (
+    SAMPLE_DATES as MULTIDAY_LABEL_GATE_SAMPLE_DATES,
+)
+from .multiday_label_gate_checks import (
+    MultidayLabelGateCheckResult,
+    MultidayLabelGateCheckStatus,
+    MultidayLabelGateContext,
+)
+from .multiday_label_gate_io import (
+    MultidayLabelGateIOError,
+)
+from .multiday_label_gate_io import (
+    assert_path_under_label_gate_reports as _ml_assert_path_under_label_gate_reports,
+)
+from .multiday_label_gate_io import (
+    derive_gate_report_id as multiday_label_derive_gate_report_id,
+)
+from .multiday_label_gate_io import (
+    derive_gate_report_paths as multiday_label_derive_gate_report_paths,
+)
+from .multiday_label_gate_report import (
+    ALLOWED_GATE_VERDICTS as MULTIDAY_LABEL_GATE_ALLOWED_VERDICTS,
+)
+from .multiday_label_gate_report import (
+    GATE_VERDICT_FAIL as MULTIDAY_LABEL_GATE_VERDICT_FAIL,
+)
+from .multiday_label_gate_report import (
+    GATE_VERDICT_INDETERMINATE as MULTIDAY_LABEL_GATE_VERDICT_INDETERMINATE,
+)
+from .multiday_label_gate_report import (
+    GATE_VERDICT_PASS as MULTIDAY_LABEL_GATE_VERDICT_PASS,
+)
+from .multiday_label_gate_report import (
+    MultidayLabelGateReport,
+    MultidayLabelGateReportError,
+)
+from .multiday_label_gate_report import (
+    build_report as multiday_label_build_report,
+)
+from .multiday_label_gate_report import (
+    write_gate_report as multiday_label_write_gate_report,
+)
 from .normalize_aggtrades import (
     NORMALIZATION_SCHEMA_VERSION,
     NORMALIZED_SCHEMA_V001,
@@ -856,6 +907,11 @@ from .raw_writer import (
 # Phase 4bm-J alias bound to private import (kept short to satisfy ruff E501).
 multiday_feature_assert_path_under_feature_gate_reports = (
     _mf_assert_path_under_feature_gate_reports
+)
+
+# Phase 4bm-Q alias bound to private import (kept short to satisfy ruff E501).
+multiday_label_assert_path_under_label_gate_reports = (
+    _ml_assert_path_under_label_gate_reports
 )
 
 __all__ = [
@@ -1238,4 +1294,26 @@ __all__ = [
     "multiday_feature_derive_gate_report_paths",
     "multiday_feature_write_gate_report",
     "run_multiday_feature_family_gate",
+    # multiday_label_gate (Phase 4bm-Q)
+    "MULTIDAY_LABEL_GATE_ALLOWED_VERDICTS",
+    "MULTIDAY_LABEL_GATE_CHECK_ORDER",
+    "MULTIDAY_LABEL_GATE_SAMPLE_DATES",
+    "MULTIDAY_LABEL_GATE_VERDICT_FAIL",
+    "MULTIDAY_LABEL_GATE_VERDICT_INDETERMINATE",
+    "MULTIDAY_LABEL_GATE_VERDICT_PASS",
+    "MultidayLabelGateCheckResult",
+    "MultidayLabelGateCheckStatus",
+    "MultidayLabelGateContext",
+    "MultidayLabelGateError",
+    "MultidayLabelGateIOError",
+    "MultidayLabelGateInput",
+    "MultidayLabelGateReport",
+    "MultidayLabelGateReportError",
+    "MultidayLabelGateResult",
+    "multiday_label_assert_path_under_label_gate_reports",
+    "multiday_label_build_report",
+    "multiday_label_derive_gate_report_id",
+    "multiday_label_derive_gate_report_paths",
+    "multiday_label_write_gate_report",
+    "run_multiday_label_family_gate",
 ]

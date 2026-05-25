@@ -107,11 +107,18 @@ ALLOWLIST_DENY_TOKENS: tuple[str, ...] = (
     "/fapi/v1/leverage",
     "/fapi/v1/marginType",
     "/fapi/v1/forceOrders",
-    ".env",
     "Graphify",
     "MCP",
     ".mcp.json",
 )
+
+# ``.env`` is checked separately with a word boundary so it does not collide
+# with legitimate identifiers like ``envelope_terminal_unix_ms`` (Phase
+# 4bm-N v002 label schema field) accessed via ``self.envelope_terminal_unix_ms``
+# inside dataclass methods. The boundary requires that ``.env`` is followed
+# by a non-word character so ``.env``, ``.env.local``, ``.env "`` trip the
+# check but ``.envelope_*`` attribute access does not.
+_DOT_ENV_RE = re.compile(r"\.env(?![A-Za-z0-9_])")
 
 
 def test_strict_deny_tokens_absent_from_all_scaffold_code() -> None:
@@ -148,6 +155,10 @@ def test_allowlist_deny_tokens_only_in_allowlist_code() -> None:
                 f"{module_path.name} code (excluding docstrings/comments) must not "
                 f"contain denylist token {token!r}; only allowlist.py may encode such tokens"
             )
+        assert not _DOT_ENV_RE.search(code), (
+            f"{module_path.name} code (excluding docstrings/comments) must not "
+            f"reference any '.env' file (word-boundary match)"
+        )
 
 
 # ----------------------------------------------------------------------
