@@ -31,7 +31,7 @@ Phase 4bm-S records the machine-readable label-family research-use successor-sta
 
 ## 6. Merge-closeout commit SHA
 
-Recorded in §7 of the SHAs section below after the merge-closeout commit is made (this report is committed by `docs(phase-4bm-s): add merge closeout`). The closeout commit SHA cannot self-reference; it is finalized in the subsequent SHA-finalization commit and captured in the final operator report and git log.
+`320015efefd0e12ea5d3584c8910220d52ddbd0d` (commit `docs(phase-4bm-s): add merge closeout`), as recorded in §7 of the SHAs section below. The closeout commit SHA cannot self-reference; it is filled in by the subsequent SHA-finalization commit and captured in the final operator report and git log.
 
 ## 7. SHAs section (final SHA-finalization plan)
 
@@ -40,8 +40,8 @@ Recorded in §7 of the SHAs section below after the merge-closeout commit is mad
 | Base SHA | `e2fdbdd6d7388235c2e4495072455c2ae787349d` |
 | Branch tip SHA before merge | `10ba13753b721c2e21abeeed7224c2dbed31264b` |
 | Merge commit SHA | `3df3c3b16714149e9e6d5a9cd73df25f18e00fe8` |
-| Merge-closeout commit SHA | _to be recorded in the SHA-finalization edit (commit `docs(phase-4bm-s): add merge closeout`)_ |
-| SHA-finalization commit SHA | _the commit `docs(phase-4bm-s): finalize merge closeout shas`; captured in the final operator report and in git log; after this commit final `main` == final `origin/main` == this SHA_ |
+| Merge-closeout commit SHA | `320015efefd0e12ea5d3584c8910220d52ddbd0d` (commit `docs(phase-4bm-s): add merge closeout`) |
+| SHA-finalization commit SHA | the commit `docs(phase-4bm-s): finalize merge closeout shas` (this edit); captured in the final operator report and in git log; after this commit final `main` == final `origin/main` == this SHA |
 
 **SHA-finalization plan:** following the repo convention used for Phase 4bm-R / 4bm-Q / 4bm-P, the merge-closeout commit SHA is filled in by a follow-up SHA-finalization edit (this section), and the SHA-finalization commit's own SHA is captured in the final operator report and git log rather than by impossible self-reference. After the SHA-finalization commit is pushed, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
 
