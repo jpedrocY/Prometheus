@@ -38,9 +38,9 @@
 - **`main` SHA before merge (base SHA):** `219c8b0d1f7e74c596ecc9aa50662101dc59a9d3` (Phase 4bm-Q merge-closeout SHA-finalization commit; pre-branch `main == origin/main`).
 - **Branch tip SHA before merge:** `fbb8ad4132e1615029de1797f66464163baeb3e7` — `docs(phase-4bm-r): decide label-family research-use recommendation` (the single Phase 4bm-R docs commit: decision memo + closeout + narrow `current-project-state.md` update).
 - **Merge commit SHA:** `1c132f35b8afe759b1da3f5cd6fe584187dfc35b` — `docs(phase-4bm-r): merge label-family research-use decision`. Merge strategy: `--no-ff` (true merge commit via `ort`; preserves the branch in history).
-- **Merge-closeout commit SHA (this memo):** recorded in the operator report and in `git log` immediately after this memo is committed.
-- **SHA-finalization commit SHA (the follow-on commit finalizing §2):** per prior-phase repo convention (Phase 4bm-Q / 4bm-P / 4bm-O merge-closeout SHA-finalization), the SHA-finalization commit's own SHA is not self-referenced inside this memo (cannot be known at edit time without amending the commit it records); it is captured only in the operator report and in `git log`.
-- **Final `main` / `origin/main` SHA after the SHA-finalization push:** recorded in the operator report; equal to the SHA-finalization commit SHA.
+- **Merge-closeout commit SHA (this memo, initial commit on `main`):** `c0630b95e5c0995cce42d484c873ab6cc52bc230` — `docs(phase-4bm-r): add merge closeout`.
+- **SHA-finalization commit SHA (the follow-on commit finalizing this §2, i.e. this edit):** per prior-phase repo convention (Phase 4bm-Q / 4bm-P / 4bm-O merge-closeout SHA-finalization), the SHA-finalization commit's own SHA is **not** self-referenced inside this memo (it cannot be known at edit time without amending the commit it is supposed to record); it is captured in the final operator report and in `git log` immediately after this memo edit is committed as `docs(phase-4bm-r): finalize merge closeout shas`.
+- **Final `main` / `origin/main` SHA after the SHA-finalization push:** equal to the SHA-finalization commit SHA above; recorded in the final operator report and in `git log`. After this commit, `main == origin/main`, and the final `main` SHA equals the final `origin/main` SHA.
 
 ## 3. Merge method
 
