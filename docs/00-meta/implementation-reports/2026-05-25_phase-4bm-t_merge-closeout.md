@@ -31,7 +31,7 @@ Phase 4bm-T recorded, at memo level only, a conservative formal chronological tr
 
 ## 6. Merge-closeout commit SHA
 
-`<filled by SHA-finalization>` (commit `docs(phase-4bm-t): add merge closeout`). The closeout commit SHA cannot self-reference; it is filled in by the subsequent SHA-finalization commit and captured in the final operator report and git log.
+`d3ee2f7995ee540b518e19bcd88bfbf3243565c4` (commit `docs(phase-4bm-t): add merge closeout`). The closeout commit SHA cannot self-reference; it is filled in by this SHA-finalization commit and captured in the final operator report and git log.
 
 ## 7. SHAs section (final SHA-finalization plan)
 
@@ -40,7 +40,7 @@ Phase 4bm-T recorded, at memo level only, a conservative formal chronological tr
 | Base SHA | `ab1269d4c0b46e95961542e032173eb9a098be32` |
 | Branch tip SHA before merge | `72b3e266deddbc926a3d75fa7327ec282cc30f08` |
 | Merge commit SHA | `14e52c369031bce37cda83cfc79f345b57c6ff15` |
-| Merge-closeout commit SHA | `<filled by SHA-finalization>` (commit `docs(phase-4bm-t): add merge closeout`) |
+| Merge-closeout commit SHA | `d3ee2f7995ee540b518e19bcd88bfbf3243565c4` (commit `docs(phase-4bm-t): add merge closeout`) |
 | SHA-finalization commit SHA | the commit `docs(phase-4bm-t): finalize merge closeout shas` (this edit); captured in the final operator report and in git log; after this commit final `main` == final `origin/main` == this SHA |
 
 **SHA-finalization plan:** following the repo convention used for Phase 4bm-S / 4bm-R / 4bm-Q, the merge-closeout commit SHA is filled in by a follow-up SHA-finalization edit (this section), and the SHA-finalization commit's own SHA is captured in the final operator report and git log rather than by impossible self-reference. After the SHA-finalization commit is pushed, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
