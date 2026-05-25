@@ -44,7 +44,7 @@ Earlier branch commits preserved by the merge:
 
 ## 6. Final main SHA at merge time
 
-Pre-push: `e2817f6a0c768e5fb19a4cd76c557ee2e0d5583a` (the merge commit itself; SHA-finalized into this document below after the merge-closeout commit lands).
+Merge commit SHA: `e2817f6a0c768e5fb19a4cd76c557ee2e0d5583a`. Merge-closeout commit SHA on `main` (next commit after the merge): `2ba8323d1ae29bc71e5ec6dd0cf18329e3dfbfe3` — `docs(phase-4bm-q): add merge closeout`. SHA-finalization commit (this edit) immediately follows the merge-closeout commit. See §23 for finalized SHAs.
 
 ## 7. Validation commands and results
 
@@ -222,6 +222,15 @@ Reusable non-authorization blocks honored: **N-ACQUISITION**, **N-ENDPOINT**, **
 
 Phase 4bm-Q is now merge-complete on `main`. No successor phase is authorized. The operator may, separately and explicitly, authorize a future multi-day v002 label-family research-use decision memo (multi-day analogue of Phase 4bj-F) — but that is a docs-only decision phase, **not** an authorization for any data work, and it is **not** authorized by this merge-closeout. Phase 4bm-R, label-family research-use, label-family successor-state recording, chronological-split-policy, diagnostics, ML, strategy, backtests, acquisition, manifest mutation, successor-state JSON creation, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user streams, WebSockets, MCP, Graphify, `.mcp.json`, and credentials all remain unauthorized.
 
-## 23. Final SHAs to be filled by a follow-up SHA-finalization commit (per merge-closeout standard)
+## 23. Finalized SHAs
 
-This memo is committed immediately after the merge commit. The merge commit SHA `e2817f6a0c768e5fb19a4cd76c557ee2e0d5583a` is already recorded above. The follow-up "finalize merge closeout shas" commit (which will be the next commit after this memo is committed) will land directly on `main` and update the `main` and `origin/main` references in the final operator report. The latest known main SHA at the time of this memo write is `e2817f6a0c768e5fb19a4cd76c557ee2e0d5583a` (the merge commit). The merge-closeout commit SHA will be the next commit on `main`; the operator report will cite both.
+| Item | SHA |
+|---|---|
+| Phase 4bm-Q merge commit | `e2817f6a0c768e5fb19a4cd76c557ee2e0d5583a` |
+| Phase 4bm-Q merge-closeout commit (this memo, initial commit on `main`) | `2ba8323d1ae29bc71e5ec6dd0cf18329e3dfbfe3` |
+| Phase 4bm-Q SHA-finalization commit (the follow-on commit that finalizes this section) | recorded in the corresponding operator report and in `git log` immediately after this memo was added; per the prior-phase repo convention (Phase 4bm-P / Phase 4bm-O / Phase 4bm-N merge-closeout SHA-finalization), the SHA-finalization commit's own SHA is **not** self-referenced inside this memo (cannot be known at edit time without amending the commit it is supposed to record), and is captured only in the operator report and in `git log` |
+| Final `main` SHA after SHA-finalization push | recorded in the operator report; equal to the SHA-finalization commit SHA above |
+| Final `origin/main` SHA after push | recorded in the operator report; equal to the final `main` SHA |
+| `main == origin/main` after push | **yes** |
+
+**LABEL_GATE_PASS remains report-level only.** **Label-family research-use is not authorized by the Phase 4bm-Q merge.** **Label-family successor-state recording is not authorized by the Phase 4bm-Q merge.** **Chronological split policy is not authorized by the Phase 4bm-Q merge.** **Diagnostics / ML / strategy / backtests are not authorized by the Phase 4bm-Q merge.** **No data/microstructure file is committed by the Phase 4bm-Q merge.** **No manifest transition is authorized by the Phase 4bm-Q merge.** **No successor-state JSON creation is authorized by the Phase 4bm-Q merge.** **Phase 4bm-R is not authorized by the Phase 4bm-Q merge.** **Recommended state remains paused.**
