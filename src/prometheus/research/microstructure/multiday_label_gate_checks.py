@@ -1045,7 +1045,7 @@ def run_all_checks(
     def _safe(
         check_id: str,
         group: str,
-        fn: "Callable[[], MultidayLabelGateCheckResult]",
+        fn: Callable[[], MultidayLabelGateCheckResult],
     ) -> None:
         try:
             res = fn()
