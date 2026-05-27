@@ -37,7 +37,7 @@
 | Code / tests / script / `.gitignore` commit | `7101357de4f2bf760e2f40c65f36e2ad9f79b59b` |
 | Docs commit | `440b149aac010be8fdb254613683301f27c19be7` |
 | Merge commit SHA | `cd8913a273c030dd5a2e6e5e5eeab142fd1ffda4` |
-| Merge-closeout commit SHA | `__MERGE_CLOSEOUT_COMMIT_SHA__` (commit `docs(phase-4bm-w): add merge closeout`; filled in by the SHA-finalization edit) |
+| Merge-closeout commit SHA | `da76f8e07f2cfe6f74816cbc3892ee100bc7b94f` (commit `docs(phase-4bm-w): add merge closeout`) |
 | SHA-finalization commit SHA | the commit `docs(phase-4bm-w): finalize merge closeout shas`; captured in the final operator report and git log; after this commit final `main` == final `origin/main` == this SHA |
 
 **SHA-finalization plan:** following the repo convention used for Phase 4bm-V / 4bm-U / 4bm-T, the merge-closeout commit SHA is filled in by a follow-up SHA-finalization edit (this section), and the SHA-finalization commit's own SHA is captured in the final operator report and git log rather than by impossible self-reference. After the SHA-finalization commit is pushed, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
