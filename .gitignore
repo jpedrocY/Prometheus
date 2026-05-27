@@ -83,6 +83,9 @@ private/
 data/secrets/
 data/runtime/
 data/microstructure/
+# Phase 4bm-W: local gitignored research-output namespace (descriptive
+# diagnostics tables/reports and other local research artefacts). Never commit.
+data/research/
 
 # SSH / keypairs
 id_rsa*
