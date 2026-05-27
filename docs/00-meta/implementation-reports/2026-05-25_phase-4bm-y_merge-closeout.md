@@ -54,7 +54,7 @@ Following the repo convention used for Phase 4bm-X / 4bm-W / 4bm-V / 4bm-U / 4bm
 | Docs commit | `03468a453828fa8dc8b67f62c729e85761bece9d` |
 | Branch tip SHA before merge | `03468a453828fa8dc8b67f62c729e85761bece9d` |
 | Merge commit SHA | `5c86c4df9459d1cf854f1c72b2677605745b0e85` |
-| Merge-closeout commit SHA | `2cd6e3e8a7e8e0b5f6c4e7a9d0b1c2d3e4f5a6b7` (commit `docs(phase-4bm-y): add merge closeout`; placeholder — replaced by the actual SHA in the SHA-finalization edit) |
+| Merge-closeout commit SHA | `9d90e6aefea82ccbb7d08fb2647985f73c9e6b71` (commit `docs(phase-4bm-y): add merge closeout`) |
 | SHA-finalization commit SHA | the commit `docs(phase-4bm-y): finalize merge closeout shas`; captured in the final operator report and git log; after this commit final `main` == final `origin/main` == this SHA |
 
 ## 9. Merge method
