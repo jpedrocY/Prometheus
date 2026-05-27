@@ -20,7 +20,7 @@
 - **Branch tip SHA before merge:** `a311eb24031535fddf866fc0dca4aa90ca99c720`.
 - **Docs commit SHA:** `a311eb24031535fddf866fc0dca4aa90ca99c720` (`docs(phase-4bn-a): scope ml-baseline implementation design`; the memo + closeout + current-project-state block are a single docs commit, which is also the branch tip).
 - **Merge commit SHA:** `fdd15fedb8acbf62f6b0882bed42fda82fd67156` (`docs(phase-4bn-a): merge ml-baseline implementation design`).
-- **Merge-closeout commit SHA:** `<this file's own commit, `docs(phase-4bn-a): add merge closeout`; recorded in the final operator report and git log, then back-filled here by the SHA-finalization commit>`.
+- **Merge-closeout commit SHA:** `6610070ed753788fc0ecd4520998aa5457577cfc` (`docs(phase-4bn-a): add merge closeout`).
 - **SHA-finalization commit:** recorded in the final operator report and git log as `docs(phase-4bn-a): finalize merge closeout shas`; it is the commit that records these final SHAs into this file. Per the repo convention used for Phase 4bm-Z / 4bm-Y / 4bm-X, the SHA-finalization commit cannot self-reference its own hash inside its own diff; its SHA is captured in the final operator report and git log. After that commit and push, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
 - **Final `main` / `origin/main` SHA after push:** equals the SHA-finalization commit; recorded in the final operator report.
 
