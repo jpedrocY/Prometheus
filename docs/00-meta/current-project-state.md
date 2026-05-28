@@ -231,6 +231,163 @@ Phase 4bb-F is the **Gate Report Output Path Hygiene Memo** (docs-only path-gove
 
 Phase 4bj-G is the **Label-Family Successor-State Recording** phase (docs + local gitignored successor-state artefact recording). Phase 4bj-G converts the Phase 4bj-F Option B policy-level admissibility decision into a single machine-readable sibling successor-state JSON artefact plus paired SHA256 sidecar under `data/microstructure/successor-state/` for the label family `microstructure_labels_aggtrades_v001`, while preserving the original label manifest, the original label parquet, both label sidecars, and the Phase 4bj-E gate report and its sidecar byte-identically. **Branch:** `phase-4bj-g/label-family-successor-state-recording`. **Base:** `main` at `0a069e24b5aeb15229bbf16f0e0dc9542a7d02b3` (post-Phase-4bj-F SHA-chain-fixup state). **Phase 4bj-F merge-closeout commit:** `9657651cf227527d987d55cb610d9b7ede66a19e`. **Phase 4bj-F merge commit:** `aa77c301c6fe1c21e67e81fbf564fe4056997259`. Phase 4bj-G mirrors the Phase 4bg-B (derived-family successor-state) and Phase 4bi-D (feature-family successor-state) precedents exactly, transposed to the label family: one sibling JSON file at a deterministic path under the gitignored `data/microstructure/successor-state/` namespace, one paired `.sha256` sidecar, canonical sorted-key indent-2 JSON serialization, atomic write-then-rename via `os.replace`, refuse-overwrite on either file, and byte-for-byte preservation of every upstream artefact. **Local gitignored output (NOT committed):** `data/microstructure/successor-state/microstructure_labels_aggtrades_v001__v001__stage5_research_ml_admissible__phase-4bj-g.json` (SHA256 `ce7d391756ef347568374a9ee71e2cfaaa14d4f90ded969ab5771abe3fed2ea5`; size 9 086 bytes) and same path with `.sha256` suffix (sidecar size 158 bytes; sidecar self-SHA256 `c6fe4fa1133d788976a7ecc7883b87e7cf04eb16ec76ec77e0467025e888a2fb`; sidecar parses to a token that matches the recomputed JSON SHA bit-for-bit). Both files gitignored under `.gitignore:85: data/microstructure/`. **Upstream artefact byte-identical immutability** verified for all six artefacts pre/post the write: label parquet `ef50038a3ff91ec9d42c741562521e2a14e8f5e134831349d7ba08f7580e8d26`; label parquet sidecar `b9681e6b029901a7f8379909b4d7bc5a753fa07764104519c3eb10e9fb45c78b`; label manifest `181a799c3b17d3365cb912d40fe3ce91b6a09daa94fa5bccf07f9a24f97ee0f3`; label manifest sidecar `3392a3364309e1392b8a790954db3ce5f68829911a477dfe825685fda3448a8d`; Phase 4bj-E gate report `b0b5405b94b916c2ce182f63b414b83887e4abddf422f18ae36d0bdc7273ead0`; Phase 4bj-E gate report sidecar `2f24ad3e378b13e51550dbe1891c43e1e91bc84229c02ea703cc910bd025d191`. `mtime_ns` values for the three primary upstream artefacts (label parquet `1778454596994144100`, label manifest `1778454597037866200`, Phase 4bj-E gate report `1778531608799920600`) are unchanged across the run. **Manifest state preserved:** the on-disk label manifest still reads `research_eligible: false`, `eligibility_gate_status: "pending"`, `chronological_split_policy: "not_yet_defined"`, and every `governance_labels.*` value unchanged from the Phase 4bj-C output. **Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved** end-to-end (never invoked). **Successor-state JSON content (28-key boundary block; 19 `*_authorized` flags all `false`):** `successor_admissibility_status = "admissible_in_principle_policy_level_only"`; `successor_research_use_admissible = true`; `successor_ml_use_admissible = "conditional_future_only"`; `manifest_mutation_permitted = false`; `manifest_research_eligible_after = false`; `manifest_eligibility_gate_status_after = "pending"`; `manifest_chronological_split_policy_after = "not_yet_defined"`; `original_label_manifest_must_remain_byte_identical = true`; every `governance_labels.*` forbidden / unauthorized; every `boundary_confirmations.*` `true` (28 / 28); `successor_authorizes_next_phase = false`; `recommended_state = "remain_paused"`. The artefact cites the Phase 4bj-E gate report id (`microstructure_labels_aggtrades_v001__v001__phase-4bj-e__1778531608796__89cde8ad14b5`) verbatim, the Phase 4bj-E gate report SHA / sidecar SHA verbatim, the Phase 4bj-E gate `overall_status = pass` with 72 / 72 PASS / 0 FAIL / 0 ERROR / 0 NOT_APPLICABLE verbatim, the Phase 4bj-F memo path, the Phase 4bj-F merge commit (`aa77c30`), the Phase 4bj-F merge-closeout commit (`9657651`), the locked `label_config_hash = fe4633af77c8dd6a56c381031a6f5c255a277777b1bc7f6ea54863c014286f00`, the locked `row_count = 1681098`, the locked `column_count = 39`, the locked `invalid_price_row_count = 0`, the locked `censored_per_horizon = {"1s": 9, "5s": 42, "15s": 118, "60s": 507}`, the retained verdict ledger verbatim, the preserved project locks verbatim, and an explicit no-rescue statement. **Critical interpretation:** the label-family research / ML-use admissibility marker exists **only** at the new sibling successor-state JSON. Any tool that wishes to interpret the label family as admissible in principle must read the successor-state JSON, never the label manifest, and never assume that `research_eligible=true` should be flipped on the label manifest. Label-family admissibility is a governance state, not an empirical claim about edge. Labels are not signals; labels are not strategy evidence; labels are not live-readiness evidence. ML use is `conditional_future_only` — a future authorized phase must satisfy additional safeguards before any ML training. Phase 4bj-G added `docs/00-meta/implementation-reports/2026-05-11_phase-4bj-g_label-family-successor-state-recording.md` and `docs/00-meta/implementation-reports/2026-05-11_phase-4bj-g_closeout.md`, and narrowly updated `docs/00-meta/current-project-state.md` (this Phase 4bj-G narrative paragraph + new "Current phase:" block; prior Phase 4bj-F "Current phase:" block preserved as historical context). No other files modified. **Validation:** `git diff --check` clean; `git status --short` shows only the pre-existing untracked entries (`.claude/scheduled_tasks.lock`, `data/research/`) plus the three tracked Phase 4bj-G docs files; `git check-ignore -v data/microstructure/`, `data/microstructure/successor-state/`, and both new artefact paths confirmed gitignored under `.gitignore:85`. Phase 4bj-G did NOT modify any source code, test, script, configuration, README, pyproject, `.gitignore`, MCP file, dataset, manifest, sidecar, prior gate report, or prior successor-state artefact; did NOT acquire data; did NOT call any Binance, public, or private endpoint; did NOT open any WebSocket; did NOT use any credential; did NOT read or create `.env`; did NOT create or read `.mcp.json`; did NOT enable MCP or Graphify; did NOT rerun the normalizer, raw eligibility gate, derived-family gate, feature kernel, feature-family eligibility gate, label kernel, or label-family eligibility gate; did NOT compute features, labels, signals, ML, strategy, or backtest output; did NOT train ML; did NOT design ML architecture; did NOT rank features; did NOT create meta-labeling; did NOT create a strategy; did NOT run backtests; did NOT compute PnL / MFE / MAE / R-multiple / equity / position / alpha / edge / prediction / model-score / decision-score / entry-exit / strategy output; did NOT flip `research_eligible` on any actual manifest; did NOT transition `eligibility_gate_status` on any actual manifest; did NOT change `chronological_split_policy` on any actual manifest; did NOT revise any retained verdict; did NOT change any project lock; did NOT amend M0; did NOT authorize Phase 5, Phase 4 canonical, paper / shadow, live-readiness, deployment, exchange-write, production keys, authenticated APIs, private endpoints, user stream, or live WebSocket implementation; did NOT merge into `main`; did NOT commit anything under `data/microstructure/`. All retained verdicts (H0, R3, R1a, R1b-narrow, R2, F1, D1-A, 5m thread, V2, G1, C1) and all project locks (§11.6, round-trip, §1.7.3, Phase 3p §4.7, Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w, Phase 4ak M0 twelve-clause gate + post-null cooldown rule + cooled-down families list + memo template, Phase 4al refined no-rescue rule + §13 boundary + §14 hierarchy, Phase 4aw `flip_research_eligible(...)` always-raises invariant) preserved verbatim. **Phase 4bj-G is branch-complete only.** Per the Phase 4bk-A workflow standard, Phase 4bj-G is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** No successor phase is authorized by Phase 4bj-G.
 
+Phase 4bn-C is the **Multi-Day V002 ML-Baseline Evidence Interpretation / Forensic Memo** (docs-only governance / interpretation / forensic memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3; the first phase of the ML arc that interprets actual ML-baseline implementation evidence; separately authorized by the operator following the Phase 4bn-B merge-closeout `RECORD_EVIDENCE_ONLY` decision). **Phase 4bn-C is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-c/multi-day-v002-ml-baseline-evidence-interpretation`. **Base:** `main` at `3c59a323e4f0e506caf63ef73afccaf931b3c631` (Phase 4bn-B merge-closeout SHA-finalization commit `docs(phase-4bn-b): finalize merge closeout shas`; pre-branch `main == origin/main`; Phase 4bn-B merge commit `97b3f8f50edc6c13241b4adaedd4a1eff332dea1` and merge-closeout commit `b321e5ce4419a0218341b0d35a934a10e4bf0ff0` present on main). **Tracked changes (3 files):** the interpretation / forensic memo (`docs/00-meta/implementation-reports/2026-05-28_phase-4bn-c_ml-baseline-evidence-interpretation-memo.md`), the closeout (`docs/00-meta/implementation-reports/2026-05-28_phase-4bn-c_closeout.md`), and this narrow `current-project-state.md` paragraph + Current-phase-block addition (prior Phase 4bn-B paragraph and prior Current-phase blocks preserved as labelled historical context). **No source / test / committed-script / configuration / manifest / sidecar / gate-report / successor-state file modified. No local data artefact created or mutated. No ML rerun. No diagnostics rerun. No new local gitignored artefact created. No ML artefact created. No reusable split mask created. No model binary persisted. No row-level prediction persisted.** **Interpretation decision:** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING` — recommends only that a future, separately authorized docs-only / design-only scoping phase may scope a bounded baseline-expansion attempt; authorizes no implementation, no model training, no successor execution by itself, and no strategy / signals / PnL simulation / backtests / acquisition / paper / shadow / live-readiness / exchange-write. **Phase 4bn-B decision carried forward:** `RECORD_EVIDENCE_ONLY` — Phase 4bn-B implemented exactly the Phase 4bn-A §9 – §20 design and produced descriptive ML-baseline evidence on train / validation only; test holdout sealed (`test_rows_loaded: 0`); no model selected as best; no feature ranked or selected; no hyperparameter or threshold tuned; no strategy / signal / PnL / backtest. **Phase 4bm-W diagnostic verdict carried forward:** `DESCRIPTIVE_DIAGNOSTICS_PASS_WITH_CAVEATS` (0 blocking structural failures; 4 non-blocking caveats — envelope-terminal censoring asymmetry 857 rows `{1s:14, 5s:39, 15s:170, 60s:634}` all in test split; 538 embargo-excluded earlier-split rows; approximate-quantile method; historical `diagnostics_authorized=false` manifest flag). **Interpretation summary (read read-only from Phase 4bn-B local gitignored outputs):** the `flat` class is *underrepresented* at 0.15 – 1.09 % across both included horizons and both supervised splits; directional classes near-balanced (down ≈ up ≈ 0.495 ± 0.005); majority-class accuracy floor on validation 0.4938 (15s) / 0.4950 (60s); majority macro-F1 floor ~0.22 (since majority predicts one class only); L2 / L1 linear classifiers achieve accuracy 0.5435 (15s, +5 pp over majority) / 0.5095 (60s, +1.5 pp) and macro-F1 0.3638 / 0.3291 (+14 pp / +11 pp over majority); train-validation deltas small (~0.5 pp) — no overfitting at this level of measurement; flat class never predicted by L2 / L1 (per-class P / R / F1 = 0 / 0 / 0 on flat); persistence beats majority on hard accuracy by +2.3 pp (15s) / +0.2 pp (60s) but is catastrophically worse on log-loss (~18× majority) and Brier (~2× majority) due to hard one-hot probability outputs; calibration summary shows L2-15s well calibrated in the dominant 0.5 – 0.6 confidence bin (~86 % of validation rows) but severely over-confident in the 0.6 – 1.0 tail (reliability gaps −0.061 to −0.392; high-confidence predictions are *no better than chance*); §11.6 cost-commensurability at 15s validation shows only 6.2 % of `|forward_log_return|` exceed 1× round-trip cost (16 bps) / 1.6 % > 2× / 0.16 % > 5×; at 60s 18.3 % / 5.8 % / 0.93 %; descriptive context only; not a tradability claim. **Phase 4bn-C surfaces twelve forensic hypotheses for the weak baseline-vs-prior separation** (label imbalance / flat-class collapse; target bluntness; horizon-vs-cost mismatch; v002 feature-surface limitations; linear-model simplicity; class-weighting absence by design; shallow-tree memory fail-closed; regime heterogeneity; time-of-day effects; feature-stationarity drift; labels capturing common no-move behavior more than exploitable directional edge; the market may not contain a simple exploitable edge under this family); none is ranked, weighted, resolved, or converted into a design or strategy proposal. **Phase 4bn-C evaluates five candidate follow-up paths and chooses** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING` because (a) the 15s lift is reproducible with controlled stability deltas and remaining paused over-claims confidence in the negative direction; (b) the calibration evidence shows the obvious "threshold-tune for confidence" follow-up would actively fail; (c) the questions that need answering next (class weighting? horizon decay? memory-bounded shallow tree? regime conditioning?) are subtle and require predeclaration in a docs-only scoping memo; (d) label / target rework or class-imbalance scoping are legitimate but belong inside that scoping menu rather than as the immediate next phase; (e) the evidence does not warrant stopping further ML work on the v002 family. **Phase 4bn-C does NOT train ML models; does NOT run ML; does NOT score models; does NOT generate predictions; does NOT select models through results; does NOT rank or select features; does NOT tune hyperparameters; does NOT tune thresholds; does NOT define or run any strategy; does NOT generate trade signals; does NOT simulate PnL; does NOT run backtests; does NOT authorize acquisition; does NOT call any public, authenticated, or private endpoint; does NOT open any WebSocket or user stream; does NOT use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does NOT mutate any manifest; does NOT mutate any successor-state artefact; does NOT commit data/microstructure; does NOT commit data/research; does NOT persist model binaries; does NOT persist row-level predictions; does NOT create reusable split masks; does NOT authorize Phase 4bn-D, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, or any successor phase.** **Local-evidence re-hash (read-only, all IDENTICAL):** Phase 4bn-B `ml_baseline_run_manifest.json` `cd436e38…` + sidecar `b13dbedf…`, `per_horizon_model_summary.json` `d94f8d72…` + sidecar `23f91cc0…`, `metrics_train_validation.csv` `40cde4a0…` + sidecar `5b3a04fa…`, `calibration_summary.csv` `a0f469d2…` + sidecar `1b43de79…`, `class_balance_summary.csv` `6e6338bf…` + sidecar `41ca08d6…`, `feature_schema_used.json` `5f3d84b4…` + sidecar `2f99379a…`, `transform_metadata.json` `73b455af…` + sidecar `d3b91fb2…` (gitignored `.gitignore:88: data/research/`); Phase 4bm-U successor-state `6834ab11…` + sidecar `fa9ae709…`; Phase 4bm-S successor-state `081730006c…` + sidecar `05597fe4…`; v002 label manifest `5e17074d…` + sidecar `451d5b88…`; v002 feature manifest `512a0a54…` + sidecar `22e2fb77…`; Phase 4bm-Q gate report `8a360608…` + sidecar `3913a510…`; Phase 4bm-W `descriptive_diagnostics_summary.json` `f4b825af…` + sidecar `ff52873c…`, `diagnostics_manifest.json` `ac10061d…` + sidecar `644506e3…`. **Required exact phrases recorded verbatim in the memo and closeout:** *Phase 4bn-C is a docs-only ML-baseline evidence interpretation / forensic memo.* / *Phase 4bn-C does not train ML models.* / *Phase 4bn-C does not run ML.* / *Phase 4bn-C does not score models.* / *Phase 4bn-C does not generate predictions.* / *Phase 4bn-C does not select models through results.* / *Phase 4bn-C does not rank or select features.* / *Phase 4bn-C does not tune hyperparameters.* / *Phase 4bn-C does not tune thresholds.* / *Phase 4bn-C does not define or run any strategy.* / *Phase 4bn-C does not generate trade signals.* / *Phase 4bn-C does not simulate PnL.* / *Phase 4bn-C does not run backtests.* / *Phase 4bn-C does not authorize acquisition.* / *Phase 4bn-C does not call any public, authenticated, or private endpoint.* / *Phase 4bn-C does not open any WebSocket or user stream.* / *Phase 4bn-C does not use credentials, .env, .mcp.json, MCP, or Graphify.* / *Phase 4bn-C does not mutate any manifest.* / *Phase 4bn-C does not mutate any successor-state artefact.* / *Phase 4bn-C does not commit data/microstructure.* / *Phase 4bn-C does not commit data/research.* / *Phase 4bn-C does not persist model binaries.* / *Phase 4bn-C does not persist row-level predictions.* / *Phase 4bn-C does not create reusable split masks.* / *Phase 4bn-C does not authorize Phase 4bn-D, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, or any successor phase.* / *Recommended state remains paused.* **Phase 4bn-C preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bn-B results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-C merge phase / Phase 4bn-D / any bounded ML-baseline expansion scoping phase / any ML implementation / any model training / any model selection through results / any feature ranking / any feature selection / any hyperparameter tuning / any threshold tuning / any strategy / any signals / any PnL / any backtest / any acquisition / any paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-C executed (Multi-Day V002
+ML-Baseline Evidence Interpretation /
+Forensic Memo; docs-only governance /
+interpretation / forensic memo; Tier 1
+Full Phase per phase-risk-tiering
+-standard §3; the first phase of the
+ML arc that interprets actual ML-
+baseline implementation evidence).
+Phase 4bn-C is branch-complete only by
+this work; not merged into main; not
+project-complete.
+Phase 4bn-C reads the Phase 4bn-B
+local gitignored outputs read-only,
+interprets them descriptively,
+surfaces forensic hypotheses for the
+weak baseline-vs-prior separation,
+evaluates five candidate follow-up
+paths, and records a single
+recommendation. It trains nothing,
+scores nothing, predicts nothing,
+selects nothing, ranks nothing, tunes
+nothing, runs nothing, materializes
+no split mask, creates no ML
+artefact, mutates no manifest or
+successor-state artefact, acquires no
+data, and authorizes no successor.
+Branch:
+  phase-4bn-c/multi-day-v002-ml-
+  baseline-evidence-interpretation
+Base:
+  main at 3c59a323e4f0e506caf63ef73afc
+  caf931b3c631 (Phase 4bn-B merge-
+  closeout SHA-finalization commit;
+  pre-branch main == origin/main).
+Predecessor chain reviewed:
+  - Phase 4bm-W (DESCRIPTIVE_
+    DIAGNOSTICS_PASS_WITH_CAVEATS)
+  - Phase 4bm-Z (RECOMMEND_AUTHORIZE_
+    ML_BASELINE_IMPLEMENTATION_
+    SCOPING)
+  - Phase 4bn-A (RECOMMEND_AUTHORIZE_
+    ML_BASELINE_IMPLEMENTATION)
+  - Phase 4bn-B (RECORD_EVIDENCE_ONLY)
+Interpretation decision:
+  RECOMMEND_AUTHORIZE_BOUNDED_ML_
+  BASELINE_EXPANSION_SCOPING.
+Phase 4bn-B decision carried forward:
+  RECORD_EVIDENCE_ONLY.
+Key descriptive observations (read
+read-only from Phase 4bn-B local
+gitignored outputs; none recomputed):
+  - flat class underrepresented at
+    0.15 – 1.09 % across both
+    included horizons and both
+    supervised splits; directional
+    classes near-balanced.
+  - L2 / L1 linear classifiers reach
+    accuracy 0.5435 at 15s validation
+    (+5 pp over majority floor) and
+    0.5095 at 60s (+1.5 pp).
+  - Macro F1 lift +14 pp at 15s and
+    +11 pp at 60s, structurally
+    driven by the linear models
+    predicting both up and down
+    classes while majority predicts
+    one.
+  - Flat class never predicted by
+    L2 / L1 (per-class P / R / F1 =
+    0 / 0 / 0 on flat).
+  - Persistence beats majority on
+    hard accuracy (+2.3 pp at 15s,
+    +0.2 pp at 60s) but is
+    catastrophically worse on log-
+    loss (~18× majority) and Brier
+    (~2× majority) due to hard one-
+    hot probability outputs.
+  - L2-15s calibration is well
+    calibrated in the dominant
+    0.5 – 0.6 confidence bin (~86 %
+    of validation rows) but severely
+    over-confident in the 0.6 – 1.0
+    tail (reliability gaps −0.061
+    to −0.392; high-confidence
+    predictions are no better than
+    chance).
+  - §11.6 cost-commensurability at
+    15s shows only 6.2 % of validation
+    |forward_log_return| exceed 1×
+    round-trip cost (16 bps); at
+    60s 18.3 %. Descriptive context
+    only; not a tradability claim.
+  - Train-validation deltas small
+    (~0.5 pp on hard metrics); no
+    overfitting at this measurement
+    level.
+  - Test holdout sealed (0 test rows
+    loaded).
+Twelve forensic hypotheses for weak
+separation surfaced (label imbalance /
+flat-class collapse; target
+bluntness; horizon-vs-cost mismatch;
+feature-surface limitations; linear-
+model simplicity; class-weighting
+absence by design; shallow-tree
+memory fail-closed; regime
+heterogeneity; time-of-day effects;
+feature-stationarity drift; labels
+capturing common no-move behavior;
+market may not contain a simple edge
+under this family). None ranked,
+weighted, resolved, or converted
+into design or strategy proposals.
+Five candidate follow-up paths
+evaluated:
+  1. RECOMMEND_REMAIN_PAUSED_ML_ARC
+     — rejected (over-claims
+     negative-direction confidence).
+  2. RECOMMEND_AUTHORIZE_BOUNDED_ML_
+     BASELINE_EXPANSION_SCOPING —
+     CHOSEN.
+  3. RECOMMEND_AUTHORIZE_LABEL_
+     TARGET_REWORK_SCOPING — listed
+     as a question family inside
+     option 2; not the immediate
+     next phase.
+  4. RECOMMEND_AUTHORIZE_CLASS_
+     IMBALANCE_OR_REGIME_
+     CONDITIONING_SCOPING — listed
+     as a question family inside
+     option 2; not a concurrent
+     phase.
+  5. DO_NOT_RECOMMEND_FURTHER_ML_
+     WORK_ON_CURRENT_V002_FAMILY —
+     rejected (evidence does not
+     warrant stop-work verdict).
+Validation: git diff --check clean;
+git status --short shows only the
+pre-existing untracked entries +
+the three tracked Phase 4bn-C docs
+files; git check-ignore -v confirms
+all Phase 4bn-B local outputs and
+Phase 4bm-W diagnostic outputs
+remain gitignored under .gitignore:88;
+v002 / Phase 4bm-* / Phase 4bn-B
+artefacts byte-identical pre/post.
+No successor phase authorized by
+Phase 4bn-C. Recommended state at
+merge time: remain paused.
+No next phase authorized by Phase
+4bn-C.
+```
+
 Phase 4bn-B is the **Multi-Day V002 ML-Baseline Implementation** phase (code + tests + docs + local gitignored output ML-baseline implementation phase; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3; the first phase of the ML arc that actually trains and evaluates baseline classifiers; separately authorized by the operator following the Phase 4bn-A recommendation `RECOMMEND_AUTHORIZE_ML_BASELINE_IMPLEMENTATION`). **Phase 4bn-B is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-b/multi-day-v002-ml-baseline-implementation`. **Base:** `main` at `5b938b4ae5986874d0f7c3de6122df180c74790a` (Phase 4bn-A merge-closeout SHA-finalization commit `docs(phase-4bn-a): finalize merge closeout shas`; pre-branch `main == origin/main`; Phase 4bn-A merge commit `fdd15fe` and merge-closeout commit `6610070` present on main). **Tracked changes (16 files):** five new source modules under `src/prometheus/research/microstructure/` (`ml_baseline_design_v002.py`, `ml_baseline_dataset_v002.py`, `ml_baseline_models_v002.py`, `ml_baseline_metrics_v002.py`, `ml_baseline_report_v002.py`); one new runner script `scripts/phase4bn_b_run_ml_baseline_v002.py`; seven new test files under `tests/research/microstructure/` (`test_ml_baseline_dataset_v002.py`, `test_ml_baseline_split_policy_v002.py`, `test_ml_baseline_no_leakage_v002.py`, `test_ml_baseline_no_network.py`, `test_ml_baseline_outputs_v002.py`, `test_ml_baseline_models_v002.py`, `test_ml_baseline_metrics_v002.py`); the implementation report `docs/00-meta/implementation-reports/2026-05-28_phase-4bn-b_multi-day-v002-ml-baseline-implementation.md`; the closeout `docs/00-meta/implementation-reports/2026-05-28_phase-4bn-b_closeout.md`; and this narrow `current-project-state.md` paragraph + Current-phase-block addition (prior Phase 4bn-A paragraph preserved as labelled historical context). The package `__init__.py` was deliberately NOT modified. **No `pyproject.toml`, `README.md`, `.gitignore`, MCP file, manifest, sidecar, gate report, successor-state artefact, existing source / test / script file, or any `data/microstructure/` artefact modified.** **Implementation decision:** `RECORD_EVIDENCE_ONLY` — the Phase 4bn-B run produced descriptive ML-evaluation evidence for four fixed-a-priori baselines × two horizons × train and validation; the test holdout is sealed (0 test rows loaded into any supervised stream); no model is "best", no feature is "ranked", no threshold is "tuned", and no strategy / signals / PnL / backtest exists. **Phase 4bn-A design carried forward verbatim:** target framing direction classification only with `{-1, 0, +1}` and zero/flat preserved (Phase 4bn-A §9); horizons 15s and 60s included, 1s/5s deferred (Phase 4bn-A §10); `CHRONO_SPLIT_45D_30D_15D_WITH_60S_BOUNDARY_EMBARGO` enforced verbatim (Phase 4bn-A §11); per-horizon censored-row exclusion (Phase 4bn-A §12); 45 v002 computed feature columns with 17 lineage columns excluded (Phase 4bn-A §13; `feature_config_hash 819cfa7a9b3a813333ce163074dfe31b5b2886253c0835c4646bc3797d7b5a1d` preserved); train-only mean/std + fixed-zero numeric imputation (Phase 4bn-A §14); four fixed-a-priori baselines (`majority_class_prior`, `persistence_past_return_sign`, `multinomial_logistic_regression_l2`, `multinomial_linear_classifier_l1`) run once each with locked SGD hyperparameters (`batch_size=8192`, `lr=0.1`, `epochs=1`, `l2=1e-4`, `l1=1e-4`, `grad_clip_norm=10.0`, `rng_seed=20260528`) — no hyperparameter search, no model selection through results, no ensemble selection (Phase 4bn-A §15); descriptive metrics only — class prevalence, confusion matrix, accuracy, balanced accuracy, macro F1, per-class precision/recall, log loss, Brier score, train/validation stability (Phase 4bn-A §16); validation-only descriptive calibration summary, no threshold tuning, no probability-to-signal conversion (Phase 4bn-A §17); §11.6-locked cost-commensurability summary at 8 bps per side / 16 bps round trip, descriptive only (Phase 4bn-A §18). **Local gitignored outputs (NOT committed; gitignored under `.gitignore:88: data/research/`):** seven JSON / CSV artefacts plus paired canonical Phase 4bb-F sidecars (`<sha>  <basename>\n`; two spaces; LF only; no CRLF; no BOM) under `data/research/microstructure/ml-baselines/phase-4bn-b/` — `ml_baseline_run_manifest.json`, `per_horizon_model_summary.json`, `metrics_train_validation.csv`, `calibration_summary.csv`, `class_balance_summary.csv`, `feature_schema_used.json`, `transform_metadata.json` (each paired with `.sha256`). **Model binaries are NOT persisted.** **Row-level predictions are NOT persisted.** **Reusable split masks are NOT persisted.** **Test holdout sealed evidence:** the runner partitions the 90 refs by split and iterates train + validation only; `test_n_partitions_unused = 15`; `test_rows_loaded = 0`; the dataset module's `iter_partitions(split="test", ...)` raises `MlBaselineDatasetError`. **Local-data re-hash (read-only, all MATCH):** v002 label manifest `5e17074d…` + sidecar `451d5b88…`; v002 feature manifest `512a0a54…` + sidecar `22e2fb77…`; label parquet count 90; label sidecar count 90; feature parquet count 90; feature sidecar count 90; `data/microstructure/` gitignored under `.gitignore:85`; `data/research/` gitignored under `.gitignore:88`. **Validation:** `ruff check .` All checks passed; the seven targeted Phase 4bn-B tests pass (58 / 58 PASS); whole-repo `pytest` returns the same pre-existing failure pair (`tests/unit/research/backtest/test_engine_d1a_dispatch.py::test_d1a_runner_scaffold_*`) unchanged from `main` immediately before branch creation; `mypy src` shows the same pre-existing baseline error categories (`[type-arg]` / `[no-any-return]` numpy / pyarrow stub annotations) as the existing v002 modules; `git diff --check` clean; `git check-ignore -v` confirms every Phase 4bn-B local output file is covered by `.gitignore:88: data/research/`. **Phase 4bn-B performs: no strategy; no signals; no PnL simulation; no backtest; no walk-forward optimization; no hyperparameter tuning; no threshold tuning; no model selection through results; no feature ranking; no feature selection; no feature pruning; no use of the test holdout for training / calibration / evaluation / tuning / design / model selection / reporting; no fit of transforms on validation or test; no manifest mutation; no successor-state artefact mutation; no `data/microstructure/` commit; no `data/research/` commit; no model binary persistence; no row-level prediction persistence; no reusable split-mask persistence; no acquisition; no public / authenticated / private endpoint; no WebSocket / user stream; no credential / `.env` / `.mcp.json` / MCP / Graphify use.** Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved end-to-end (never invoked by Phase 4bn-B). **Phase 4bn-B preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant; Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bn-A results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-B merge phase / Phase 4bn-C / any ML-baseline-expansion / calibration / horizon / strategy-research / feature-ranking / model-selection / hyperparameter-tuning / threshold-tuning / strategy / signal / PnL / backtest / paper / shadow / live-readiness / deployment / production-key / exchange-write / acquisition phase / Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
 
 Current phase:
