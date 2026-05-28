@@ -20,7 +20,7 @@
   - EOF-style commit: `7099da6412f6d24cd9e0258b4a031096768535ce` (`style(phase-4bn-b): trim trailing blank lines at EOF`). Two-file pure-whitespace cleanup that removed two trailing blank lines flagged by `git diff --check` at the EOF of `ml_baseline_metrics_v002.py` and `ml_baseline_models_v002.py`. No functional change.
 - **Branch tip SHA before merge:** `7099da6412f6d24cd9e0258b4a031096768535ce`.
 - **Merge commit SHA:** `97b3f8f50edc6c13241b4adaedd4a1eff332dea1` (`feat(phase-4bn-b): merge ml-baseline implementation`).
-- **Merge-closeout commit SHA:** captured in the final operator report and git log as `docs(phase-4bn-b): add merge closeout`.
+- **Merge-closeout commit SHA:** `b321e5ce4419a0218341b0d35a934a10e4bf0ff0` (`docs(phase-4bn-b): add merge closeout`).
 - **SHA-finalization commit:** recorded in the final operator report and git log as `docs(phase-4bn-b): finalize merge closeout shas`. Per the repo convention used for Phase 4bn-A / 4bm-Z / 4bm-Y / 4bm-X, the SHA-finalization commit cannot self-reference its own hash inside its own diff; its SHA is captured in the final operator report and git log. After that commit and push, final `main` SHA == final `origin/main` SHA == the SHA-finalization commit.
 - **Final `main` / `origin/main` SHA after push:** equals the SHA-finalization commit; recorded in the final operator report.
 
