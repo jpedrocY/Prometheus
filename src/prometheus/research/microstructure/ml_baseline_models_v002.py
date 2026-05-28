@@ -578,5 +578,3 @@ __all__ = [
     "evaluate_predictions",
     "fit_majority_class_baseline",
 ]
-
-
