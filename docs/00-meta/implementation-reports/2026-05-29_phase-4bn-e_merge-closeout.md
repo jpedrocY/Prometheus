@@ -76,16 +76,18 @@ paused.**
 - **Merge commit SHA:** `9a6e9aceffc6ecac06556e7113851ab713cf2829`
   (`docs/research(phase-4bn-e): merge train-validation feature drift
   diagnostics`).
-- **Merge-closeout commit SHA:** to be filled at commit time
+- **Merge-closeout commit SHA:** `0ce98d361c8614c1ebdbfae8f7a9eabf9f4fe07c`
   (`docs(phase-4bn-e): add merge closeout`).
-- **SHA-finalization commit:** to be filled at commit time. Per the
-  repo convention used for Phase 4bn-D / 4bn-C / 4bn-B / 4bn-A /
-  4bm-Z / 4bm-Y / 4bm-X, the SHA-finalization commit cannot
-  self-reference its own hash inside its own diff; its SHA is captured
-  in the final operator report and `git log`.
+- **SHA-finalization commit:** recorded in the final operator report
+  and `git log` as `docs(phase-4bn-e): finalize merge closeout shas`.
+  Per the repo convention used for Phase 4bn-D / 4bn-C / 4bn-B /
+  4bn-A / 4bm-Z / 4bm-Y / 4bm-X, the SHA-finalization commit cannot
+  self-reference its own hash inside its own diff; its SHA is
+  captured in the final operator report and `git log`. After that
+  commit and push, final `main` SHA == final `origin/main` SHA ==
+  the SHA-finalization commit.
 - **Final `main` / `origin/main` SHA after push:** equals the
-  SHA-finalization commit; recorded in the final operator report and
-  updated into this merge-closeout by the SHA-finalization commit.
+  SHA-finalization commit; recorded in the final operator report.
 
 ## 3. Merge method
 
