@@ -69,12 +69,14 @@ successor phase.** **Recommended state remains paused.**
   block are a single docs commit, which is also the branch tip).
 - **Merge commit SHA:** `615c172de55aac2b7c8b127625b2f22bb14fe591`
   (`docs(phase-4bn-f): merge v002 data sufficiency scoping`).
-- **Merge-closeout commit SHA:** recorded in the final operator report and
-  `git log` as `docs(phase-4bn-f): add merge closeout`. Per the repo
-  convention used for Phase 4bn-E / 4bn-D / 4bn-C / 4bn-B / 4bn-A /
-  4bm-Z / 4bm-Y / 4bm-X, the merge-closeout commit cannot self-reference
-  its own hash inside its own diff; its SHA is captured in the final
-  operator report and `git log`.
+- **Merge-closeout commit SHA:** `76c4f8befe9fd9f41470d1836f181796f45197a6`
+  (`docs(phase-4bn-f): add merge closeout`). Per the repo convention used
+  for Phase 4bn-E / 4bn-D / 4bn-C / 4bn-B / 4bn-A / 4bm-Z / 4bm-Y /
+  4bm-X, the merge-closeout commit cannot self-reference its own hash
+  inside its own diff; the SHA recorded above was filled in by the
+  subsequent SHA-finalization commit, which can reference the
+  merge-closeout commit hash because that hash exists in `git log`
+  before the SHA-finalization commit is created.
 - **SHA-finalization commit:** recorded in the final operator report and
   `git log` as `docs(phase-4bn-f): finalize merge closeout shas`. Same
   convention: the SHA-finalization commit cannot self-reference its own
