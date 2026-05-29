@@ -233,6 +233,163 @@ Phase 4bj-G is the **Label-Family Successor-State Recording** phase (docs + loca
 
 Phase 4bn-C is the **Multi-Day V002 ML-Baseline Evidence Interpretation / Forensic Memo** (docs-only governance / interpretation / forensic memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3; the first phase of the ML arc that interprets actual ML-baseline implementation evidence; separately authorized by the operator following the Phase 4bn-B merge-closeout `RECORD_EVIDENCE_ONLY` decision). **Phase 4bn-C is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-c/multi-day-v002-ml-baseline-evidence-interpretation`. **Base:** `main` at `3c59a323e4f0e506caf63ef73afccaf931b3c631` (Phase 4bn-B merge-closeout SHA-finalization commit `docs(phase-4bn-b): finalize merge closeout shas`; pre-branch `main == origin/main`; Phase 4bn-B merge commit `97b3f8f50edc6c13241b4adaedd4a1eff332dea1` and merge-closeout commit `b321e5ce4419a0218341b0d35a934a10e4bf0ff0` present on main). **Tracked changes (3 files):** the interpretation / forensic memo (`docs/00-meta/implementation-reports/2026-05-28_phase-4bn-c_ml-baseline-evidence-interpretation-memo.md`), the closeout (`docs/00-meta/implementation-reports/2026-05-28_phase-4bn-c_closeout.md`), and this narrow `current-project-state.md` paragraph + Current-phase-block addition (prior Phase 4bn-B paragraph and prior Current-phase blocks preserved as labelled historical context). **No source / test / committed-script / configuration / manifest / sidecar / gate-report / successor-state file modified. No local data artefact created or mutated. No ML rerun. No diagnostics rerun. No new local gitignored artefact created. No ML artefact created. No reusable split mask created. No model binary persisted. No row-level prediction persisted.** **Interpretation decision:** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING` — recommends only that a future, separately authorized docs-only / design-only scoping phase may scope a bounded baseline-expansion attempt; authorizes no implementation, no model training, no successor execution by itself, and no strategy / signals / PnL simulation / backtests / acquisition / paper / shadow / live-readiness / exchange-write. **Phase 4bn-B decision carried forward:** `RECORD_EVIDENCE_ONLY` — Phase 4bn-B implemented exactly the Phase 4bn-A §9 – §20 design and produced descriptive ML-baseline evidence on train / validation only; test holdout sealed (`test_rows_loaded: 0`); no model selected as best; no feature ranked or selected; no hyperparameter or threshold tuned; no strategy / signal / PnL / backtest. **Phase 4bm-W diagnostic verdict carried forward:** `DESCRIPTIVE_DIAGNOSTICS_PASS_WITH_CAVEATS` (0 blocking structural failures; 4 non-blocking caveats — envelope-terminal censoring asymmetry 857 rows `{1s:14, 5s:39, 15s:170, 60s:634}` all in test split; 538 embargo-excluded earlier-split rows; approximate-quantile method; historical `diagnostics_authorized=false` manifest flag). **Interpretation summary (read read-only from Phase 4bn-B local gitignored outputs):** the `flat` class is *underrepresented* at 0.15 – 1.09 % across both included horizons and both supervised splits; directional classes near-balanced (down ≈ up ≈ 0.495 ± 0.005); majority-class accuracy floor on validation 0.4938 (15s) / 0.4950 (60s); majority macro-F1 floor ~0.22 (since majority predicts one class only); L2 / L1 linear classifiers achieve accuracy 0.5435 (15s, +5 pp over majority) / 0.5095 (60s, +1.5 pp) and macro-F1 0.3638 / 0.3291 (+14 pp / +11 pp over majority); train-validation deltas small (~0.5 pp) — no overfitting at this level of measurement; flat class never predicted by L2 / L1 (per-class P / R / F1 = 0 / 0 / 0 on flat); persistence beats majority on hard accuracy by +2.3 pp (15s) / +0.2 pp (60s) but is catastrophically worse on log-loss (~18× majority) and Brier (~2× majority) due to hard one-hot probability outputs; calibration summary shows L2-15s well calibrated in the dominant 0.5 – 0.6 confidence bin (~86 % of validation rows) but severely over-confident in the 0.6 – 1.0 tail (reliability gaps −0.061 to −0.392; high-confidence predictions are *no better than chance*); §11.6 cost-commensurability at 15s validation shows only 6.2 % of `|forward_log_return|` exceed 1× round-trip cost (16 bps) / 1.6 % > 2× / 0.16 % > 5×; at 60s 18.3 % / 5.8 % / 0.93 %; descriptive context only; not a tradability claim. **Phase 4bn-C surfaces twelve forensic hypotheses for the weak baseline-vs-prior separation** (label imbalance / flat-class collapse; target bluntness; horizon-vs-cost mismatch; v002 feature-surface limitations; linear-model simplicity; class-weighting absence by design; shallow-tree memory fail-closed; regime heterogeneity; time-of-day effects; feature-stationarity drift; labels capturing common no-move behavior more than exploitable directional edge; the market may not contain a simple exploitable edge under this family); none is ranked, weighted, resolved, or converted into a design or strategy proposal. **Phase 4bn-C evaluates five candidate follow-up paths and chooses** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING` because (a) the 15s lift is reproducible with controlled stability deltas and remaining paused over-claims confidence in the negative direction; (b) the calibration evidence shows the obvious "threshold-tune for confidence" follow-up would actively fail; (c) the questions that need answering next (class weighting? horizon decay? memory-bounded shallow tree? regime conditioning?) are subtle and require predeclaration in a docs-only scoping memo; (d) label / target rework or class-imbalance scoping are legitimate but belong inside that scoping menu rather than as the immediate next phase; (e) the evidence does not warrant stopping further ML work on the v002 family. **Phase 4bn-C does NOT train ML models; does NOT run ML; does NOT score models; does NOT generate predictions; does NOT select models through results; does NOT rank or select features; does NOT tune hyperparameters; does NOT tune thresholds; does NOT define or run any strategy; does NOT generate trade signals; does NOT simulate PnL; does NOT run backtests; does NOT authorize acquisition; does NOT call any public, authenticated, or private endpoint; does NOT open any WebSocket or user stream; does NOT use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does NOT mutate any manifest; does NOT mutate any successor-state artefact; does NOT commit data/microstructure; does NOT commit data/research; does NOT persist model binaries; does NOT persist row-level predictions; does NOT create reusable split masks; does NOT authorize Phase 4bn-D, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, or any successor phase.** **Local-evidence re-hash (read-only, all IDENTICAL):** Phase 4bn-B `ml_baseline_run_manifest.json` `cd436e38…` + sidecar `b13dbedf…`, `per_horizon_model_summary.json` `d94f8d72…` + sidecar `23f91cc0…`, `metrics_train_validation.csv` `40cde4a0…` + sidecar `5b3a04fa…`, `calibration_summary.csv` `a0f469d2…` + sidecar `1b43de79…`, `class_balance_summary.csv` `6e6338bf…` + sidecar `41ca08d6…`, `feature_schema_used.json` `5f3d84b4…` + sidecar `2f99379a…`, `transform_metadata.json` `73b455af…` + sidecar `d3b91fb2…` (gitignored `.gitignore:88: data/research/`); Phase 4bm-U successor-state `6834ab11…` + sidecar `fa9ae709…`; Phase 4bm-S successor-state `081730006c…` + sidecar `05597fe4…`; v002 label manifest `5e17074d…` + sidecar `451d5b88…`; v002 feature manifest `512a0a54…` + sidecar `22e2fb77…`; Phase 4bm-Q gate report `8a360608…` + sidecar `3913a510…`; Phase 4bm-W `descriptive_diagnostics_summary.json` `f4b825af…` + sidecar `ff52873c…`, `diagnostics_manifest.json` `ac10061d…` + sidecar `644506e3…`. **Required exact phrases recorded verbatim in the memo and closeout:** *Phase 4bn-C is a docs-only ML-baseline evidence interpretation / forensic memo.* / *Phase 4bn-C does not train ML models.* / *Phase 4bn-C does not run ML.* / *Phase 4bn-C does not score models.* / *Phase 4bn-C does not generate predictions.* / *Phase 4bn-C does not select models through results.* / *Phase 4bn-C does not rank or select features.* / *Phase 4bn-C does not tune hyperparameters.* / *Phase 4bn-C does not tune thresholds.* / *Phase 4bn-C does not define or run any strategy.* / *Phase 4bn-C does not generate trade signals.* / *Phase 4bn-C does not simulate PnL.* / *Phase 4bn-C does not run backtests.* / *Phase 4bn-C does not authorize acquisition.* / *Phase 4bn-C does not call any public, authenticated, or private endpoint.* / *Phase 4bn-C does not open any WebSocket or user stream.* / *Phase 4bn-C does not use credentials, .env, .mcp.json, MCP, or Graphify.* / *Phase 4bn-C does not mutate any manifest.* / *Phase 4bn-C does not mutate any successor-state artefact.* / *Phase 4bn-C does not commit data/microstructure.* / *Phase 4bn-C does not commit data/research.* / *Phase 4bn-C does not persist model binaries.* / *Phase 4bn-C does not persist row-level predictions.* / *Phase 4bn-C does not create reusable split masks.* / *Phase 4bn-C does not authorize Phase 4bn-D, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, or any successor phase.* / *Recommended state remains paused.* **Phase 4bn-C preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bn-B results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-C merge phase / Phase 4bn-D / any bounded ML-baseline expansion scoping phase / any ML implementation / any model training / any model selection through results / any feature ranking / any feature selection / any hyperparameter tuning / any threshold tuning / any strategy / any signals / any PnL / any backtest / any acquisition / any paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
 
+Phase 4bn-D is the **Multi-Day V002 Bounded ML-Baseline Expansion Scoping Memo** (docs-only / design-only / scoping-only governance memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3; the separately authorized scoping phase that follows the Phase 4bn-C interpretation decision `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING`). **Phase 4bn-D is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-d/bounded-ml-baseline-expansion-scoping`. **Base:** `main` at `e1dc2fa4570baccfc9e4a866899ca6c98fa03c66` (Phase 4bn-C SHA-finalization commit `docs(phase-4bn-c): finalize merge closeout shas`; pre-branch `main == origin/main`; Phase 4bn-C merge commit `cf6172f4468d3ae28d91a0b3f016a00ba5d9159a` and merge-closeout commit `7fca0d538418293fe9b556a8aa67c26ad6165f52` present on main). **Tracked changes (3 files):** the scoping memo (`docs/00-meta/implementation-reports/2026-05-29_phase-4bn-d_bounded-ml-baseline-expansion-scoping.md`), the closeout (`docs/00-meta/implementation-reports/2026-05-29_phase-4bn-d_closeout.md`), and this narrow `current-project-state.md` paragraph + Current-phase-block addition (prior Phase 4bn-A / 4bn-B / 4bn-C paragraphs and prior Current-phase blocks preserved as labelled historical context). **No source / test / committed-script / configuration / manifest / sidecar / gate-report / successor-state file modified. No local data artefact created or mutated. No ML rerun. No diagnostics rerun. No new local gitignored artefact created. No ML artefact created. No reusable split mask created. No model binary persisted. No row-level prediction persisted. No data acquired. No endpoint called. No credential / `.env` / `.mcp.json` / MCP / Graphify used.** **Inputs read (committed repository Markdown only):** `docs/00-meta/current-project-state.md`; `docs/00-meta/process/phase-workflow-standard.md`; `docs/00-meta/process/phase-risk-tiering-standard.md`; `docs/00-meta/process/phase-prompt-template.md`; `docs/00-meta/process/operator-report-standard.md`; `docs/00-meta/process/merge-closeout-standard.md`; the three Phase 4bn-C reports (merge-closeout, scoping memo, closeout); the three Phase 4bn-B reports (merge-closeout, implementation, closeout); the three Phase 4bn-A reports (merge-closeout, scoping / design, closeout). **Inputs explicitly NOT used:** local gitignored `data/research/microstructure/ml-baselines/phase-4bn-b/` outputs; local gitignored Phase 4bm-W / Phase 4bm-Q / Phase 4bm-S / Phase 4bm-U / Phase 4bm-X artefacts; the sealed test split (preserved verbatim from Phase 4bn-A / 4bn-B / 4bn-C: `test_rows_loaded: 0`; `iter_partitions(split="test", ...)` raises). **Scoping decision:** `RECOMMEND_BOUNDED_ML_BASELINE_EXPANSION_PHASE_4BN_E_DESIGN_LEVEL_SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — recommends only that a future, separately authorized Phase 4bn-E bounded ML-baseline expansion implementation phase, scoped to *one* of {C-A class weighting, C-D train-vs-validation feature drift diagnostics, C-E calibration-limited evaluation}, may be considered by the operator as the cleanest non-paused option; the operator may equivalently remain paused or reject the successor and close the ML arc; Phase 4bn-D authorizes nothing executable. **Phase 4bn-C interpretation carried forward verbatim:** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING`. **Phase 4bn-B decision carried forward verbatim:** `RECORD_EVIDENCE_ONLY`. **Corrected Phase 4bn-B evidence summary (preserved verbatim from Phase 4bn-C):** the flat class is *underrepresented* at 0.15 – 1.09 %, not dominant; near-balanced up / down (down ≈ up ≈ 0.495 ± 0.005); majority accuracy floor ~50 % (0.4938 at 15s; 0.4950 at 60s); majority macro-F1 floor ~0.22; L2 / L1 linear lift ~+5 pp accuracy at 15s / ~+1.5 pp at 60s / ~+14 pp macro-F1 at 15s / ~+11 pp macro-F1 at 60s; flat class never predicted by L2 / L1 (per-class P / R / F1 = 0 / 0 / 0 on flat); persistence beats majority on hard accuracy (+2.3 pp at 15s, +0.2 pp at 60s) but is catastrophically worse on log-loss (~18× majority) and Brier (~2× majority) due to hard one-hot probability outputs; L2-15s well-calibrated in the dominant 0.5 – 0.6 confidence bin (~86 % of validation rows; reliability gap −0.0047) but severely over-confident in the 0.6 – 1.0 tail (reliability gaps −0.061 to −0.392; high-confidence predictions are *no better than chance*); §11.6 cost-commensurability fractions per horizon: 15s 6.2 % > 1× / 1.6 % > 2× / 0.16 % > 5×; 60s 18.3 % > 1× / 5.8 % > 2× / 0.93 % > 5×; train-validation deltas small (~0.5 pp on hard metrics) — no overfitting at this measurement level; test holdout sealed (0 test rows loaded). **A naive "trade when confidence is high" idea would fail under current evidence; statistical descriptive lift is not edge, profitability, tradability, strategy-readiness, or a signal.** **15s has stronger model signal but worse cost / tradability context; 60s has better cost context but weaker model signal.** **Six candidate bounded expansion paths evaluated at design level only (memo §9 – §10):** C-A class weighting / flat-class handling feasibility; C-B cost-commensurate label framing feasibility; C-C horizon-envelope feasibility; C-D train-vs-validation feature drift diagnostics feasibility; C-E calibration-limited evaluation feasibility; C-F optional shallow non-linear baseline feasibility (only if memory and leakage controls can be bounded). For each candidate the memo records purpose; evidence source from Phase 4bn-B / 4bn-C; allowed future inputs; forbidden future inputs (including the sealed test split, any new feature, any feature ranking / selection, any hyperparameter / threshold tuning through validation, any probability-to-signal conversion, any model binary or row-level prediction persistence, any reusable split mask, any manifest mutation, any successor-state mutation, any acquisition, any endpoint call, any credential / `.env` / `.mcp.json` / MCP / Graphify use, any strategy / signal / PnL / backtest); expected output if separately authorized later (descriptive-only local gitignored summary artefacts under `data/research/...` with canonical Phase 4bb-F sidecars; never committed); failure / stop condition; and explicit non-strategy / non-signal / non-edge status. **No candidate is selected by Phase 4bn-D for execution.** **Phase 4bn-D does NOT train ML models; does NOT run ML; does NOT score models; does NOT generate predictions; does NOT generate reusable split masks; does NOT persist model binaries; does NOT persist row-level predictions; does NOT read, inspect, evaluate, or report any test-holdout metric; does NOT use the sealed test split; does NOT select models through results; does NOT rank features; does NOT select features; does NOT tune hyperparameters; does NOT tune thresholds; does NOT run strategy research; does NOT define a strategy; does NOT generate trade signals; does NOT simulate PnL; does NOT run backtests; does NOT run diagnostics; does NOT rerun Phase 4bn-B; does NOT acquire data; does NOT call any public, authenticated, or private endpoint; does NOT open any WebSocket or user stream; does NOT use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does NOT mutate any manifest; does NOT mutate any successor-state artefact; does NOT commit data/microstructure; does NOT commit data/research; does NOT authorize Phase 4bn-E, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** **Required exact phrases recorded verbatim in the memo and closeout:** *Phase 4bn-D is a docs-only / design-only / scoping-only bounded ML-baseline expansion scoping memo.* / *Phase 4bn-D does not train ML models.* / *Phase 4bn-D does not run ML.* / *Phase 4bn-D does not score models.* / *Phase 4bn-D does not generate predictions.* / *Phase 4bn-D does not generate reusable split masks.* / *Phase 4bn-D does not persist model binaries.* / *Phase 4bn-D does not persist row-level predictions.* / *Phase 4bn-D does not read, inspect, evaluate, or report any test-holdout metric.* / *Phase 4bn-D does not use the sealed test split.* / *Phase 4bn-D does not select models through results.* / *Phase 4bn-D does not rank features.* / *Phase 4bn-D does not select features.* / *Phase 4bn-D does not tune hyperparameters.* / *Phase 4bn-D does not tune thresholds.* / *Phase 4bn-D does not run strategy research.* / *Phase 4bn-D does not define a strategy.* / *Phase 4bn-D does not generate trade signals.* / *Phase 4bn-D does not simulate PnL.* / *Phase 4bn-D does not run backtests.* / *Phase 4bn-D does not run diagnostics.* / *Phase 4bn-D does not rerun Phase 4bn-B.* / *Phase 4bn-D does not acquire data.* / *Phase 4bn-D does not call any public, authenticated, or private endpoint.* / *Phase 4bn-D does not open any WebSocket or user stream.* / *Phase 4bn-D does not use credentials, .env, .mcp.json, MCP, or Graphify.* / *Phase 4bn-D does not mutate any manifest.* / *Phase 4bn-D does not mutate any successor-state artefact.* / *Phase 4bn-D does not commit data/microstructure.* / *Phase 4bn-D does not commit data/research.* / *Phase 4bn-D does not authorize Phase 4bn-E, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.* / *Recommended state remains paused.* **Phase 4bn-D preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bn-C results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-D merge phase / Phase 4bn-E / any bounded ML-baseline expansion implementation phase / any ML implementation / any model training / any model selection through results / any feature ranking / any feature selection / any hyperparameter tuning / any threshold tuning / any strategy / any signals / any PnL / any backtest / any acquisition / any paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-D executed (Multi-Day V002
+Bounded ML-Baseline Expansion Scoping
+Memo; docs-only / design-only /
+scoping-only governance memo; Tier 1
+Full Phase per phase-risk-tiering
+-standard §3; the separately
+authorized scoping phase that follows
+the Phase 4bn-C interpretation
+decision RECOMMEND_AUTHORIZE_BOUNDED_
+ML_BASELINE_EXPANSION_SCOPING).
+Phase 4bn-D is branch-complete only by
+this work; not merged into main; not
+project-complete.
+Phase 4bn-D reads only committed
+repository Markdown reports as the
+evidence base. It opens no local
+gitignored data/research/ ML output.
+It creates no data artefact.
+It mutates no existing output,
+manifest, sidecar, gate report, or
+successor-state file.
+Branch:
+  phase-4bn-d/bounded-ml-baseline-
+  expansion-scoping
+Base:
+  main at e1dc2fa4570baccfc9e4a8668
+  99ca6c98fa03c66 (Phase 4bn-C SHA-
+  finalization commit; pre-branch
+  main == origin/main).
+Predecessor chain reviewed (committed
+reports only):
+  - Phase 4bn-A (RECOMMEND_AUTHORIZE_
+    ML_BASELINE_IMPLEMENTATION)
+  - Phase 4bn-B (RECORD_EVIDENCE_ONLY)
+  - Phase 4bn-C (RECOMMEND_AUTHORIZE_
+    BOUNDED_ML_BASELINE_EXPANSION_
+    SCOPING)
+Scoping decision:
+  RECOMMEND_BOUNDED_ML_BASELINE_
+  EXPANSION_PHASE_4BN_E_DESIGN_LEVEL_
+  SUBJECT_TO_SEPARATE_OPERATOR_
+  AUTHORIZATION.
+Phase 4bn-C interpretation carried
+forward verbatim:
+  RECOMMEND_AUTHORIZE_BOUNDED_ML_
+  BASELINE_EXPANSION_SCOPING.
+Phase 4bn-B decision carried forward
+verbatim:
+  RECORD_EVIDENCE_ONLY.
+Required interpretation preserved
+verbatim from Phase 4bn-C:
+  - flat class underrepresented at
+    0.15 – 1.09 % across both included
+    horizons and both supervised
+    splits; directional classes near-
+    balanced (down ≈ up ≈ 0.495 ±
+    0.005).
+  - classification problem is
+    effectively near-balanced binary
+    in practice with a very thin flat
+    class.
+  - majority accuracy ~50 % (0.4938
+    at 15s; 0.4950 at 60s on
+    validation).
+  - L2 / L1 linear lift ~+5 pp
+    accuracy at 15s; ~+1.5 pp at 60s;
+    ~+14 pp macro-F1 at 15s; ~+11 pp
+    macro-F1 at 60s.
+  - persistence beats majority on
+    hard accuracy (+2.3 pp at 15s,
+    +0.2 pp at 60s) but is
+    catastrophically worse on log-
+    loss (~18× majority) and Brier
+    (~2× majority) due to hard one-
+    hot outputs.
+  - L2-15s well calibrated in the
+    dominant 0.5 – 0.6 confidence bin
+    (~86 % of validation rows; gap
+    −0.0047) but severely over-
+    confident in the 0.6 – 1.0 tail
+    (gaps −0.061 to −0.392; high-
+    confidence predictions are no
+    better than chance).
+  - 15s: stronger model signal,
+    worse cost / tradability context
+    (only 6.2 % of validation rows
+    exceed 1× the 16 bps round-trip
+    cost).
+  - 60s: better cost context
+    (18.3 % > 1×), weaker model
+    signal.
+  - none of this is edge,
+    profitability, tradability,
+    strategy-readiness, or a signal.
+  - test holdout sealed (0 test rows
+    loaded; iter_partitions(split=
+    "test", ...) raises).
+Six candidate bounded expansion paths
+evaluated at design level only:
+  - C-A class weighting / flat-class
+    handling feasibility.
+  - C-B cost-commensurate label
+    framing feasibility.
+  - C-C horizon-envelope feasibility.
+  - C-D train-vs-validation feature
+    drift diagnostics feasibility.
+  - C-E calibration-limited
+    evaluation feasibility.
+  - C-F optional shallow non-linear
+    baseline feasibility (only if
+    memory and leakage controls can
+    be bounded).
+For each candidate the memo records
+purpose, evidence source from Phase
+4bn-B / 4bn-C, allowed future inputs,
+forbidden future inputs, expected
+output if separately authorized later,
+failure / stop condition, and why it
+is not a strategy, signal, or trading
+edge. No candidate is selected by
+Phase 4bn-D for execution.
+Recommended successor (NOT authorized
+by Phase 4bn-D): Phase 4bn-E — a
+bounded ML-baseline expansion
+implementation phase scoped to one of
+{C-A class weighting, C-D feature
+drift diagnostics, C-E calibration-
+limited evaluation}, selected by
+separate operator authorization. The
+operator may equivalently remain
+paused or reject the successor and
+close the ML arc.
+Validation: git diff --check clean;
+git status --short shows only the
+pre-existing untracked entries +
+the three tracked Phase 4bn-D docs
+files; git check-ignore -v confirms
+all Phase 4bn-B local outputs and
+Phase 4bm-W diagnostic outputs
+remain gitignored under .gitignore:88
+(read-only confirmation; Phase 4bn-D
+opened no local data file);
+v002 / Phase 4bm-* / Phase 4bn-B
+artefacts unchanged (Phase 4bn-D did
+not access them for mutation).
+No successor phase authorized by
+Phase 4bn-D. Recommended state at
+merge time: remain paused.
+No next phase authorized by Phase
+4bn-D.
+```
+
 Current phase:
 
 ```text
