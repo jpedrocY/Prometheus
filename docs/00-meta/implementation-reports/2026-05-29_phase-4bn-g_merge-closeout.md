@@ -70,15 +70,16 @@ keys, or any successor phase.** **Recommended state remains paused.**
   tip).
 - **Merge commit SHA:** `f46c70545825817c528a3c2d61bdbdbb2622e5ca`
   (`docs(phase-4bn-g): merge combined data expansion storage scoping`).
-- **Merge-closeout commit SHA:** to be filled at commit time (per the repo
-  convention used for Phase 4bn-F / 4bn-E / 4bn-D / 4bn-C / 4bn-B / 4bn-A /
-  4bm-Z / 4bm-Y / 4bm-X, the merge-closeout commit cannot self-reference
-  its own hash inside its own diff; the SHA recorded here is filled in by
-  the subsequent SHA-finalization commit, which can reference the
+- **Merge-closeout commit SHA:** `6073a7e70e19756b6d968ac482c20236d3be256e`
+  (`docs(phase-4bn-g): add merge closeout`). Per the repo convention used
+  for Phase 4bn-F / 4bn-E / 4bn-D / 4bn-C / 4bn-B / 4bn-A / 4bm-Z / 4bm-Y /
+  4bm-X, the merge-closeout commit cannot self-reference its own hash
+  inside its own diff; the SHA recorded above was filled in by the
+  subsequent SHA-finalization commit, which can reference the
   merge-closeout commit hash because that hash exists in `git log` before
-  the SHA-finalization commit is created).
-- **SHA-finalization commit:** to be recorded in the final operator report
-  and `git log` as `docs(phase-4bn-g): finalize merge closeout shas`. Same
+  the SHA-finalization commit is created.
+- **SHA-finalization commit:** recorded in the final operator report and
+  `git log` as `docs(phase-4bn-g): finalize merge closeout shas`. Same
   convention: the SHA-finalization commit cannot self-reference its own
   hash inside its own diff; its SHA is captured in the final operator
   report and `git log`. After that commit and push, final `main` SHA ==
