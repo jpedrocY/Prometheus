@@ -243,6 +243,215 @@ Phase 4bn-G is the **Combined Data-Expansion Requirements + Storage-Scaling Arch
 
 Phase 4bn-H is the **Docs-Only Acquisition-Readiness Memo** (docs-only / design-only / scoping-only governance memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3; the separately authorized scoping phase that follows the Phase 4bn-G recommendation `RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`). **Phase 4bn-H is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-h/docs-only-acquisition-readiness`. **Base:** `main` at `1ab9ebea5b959764c9cfc6821245103ceb301ffa` (Phase 4bn-G SHA-finalization commit `docs(phase-4bn-g): finalize merge closeout shas`; pre-branch `main == origin/main`; Phase 4bn-G merge commit `f46c70545825817c528a3c2d61bdbdbb2622e5ca`, Phase 4bn-G merge-closeout commit `6073a7e70e19756b6d968ac482c20236d3be256e`, and Phase 4bn-G branch commit `90c8dba527a11c24f6c15d3368ae1c3d8b85f87c` all present on main). **Tracked changes (3 files):** the acquisition-readiness memo (`docs/00-meta/implementation-reports/2026-05-30_phase-4bn-h_docs-only-acquisition-readiness.md`), the closeout (`docs/00-meta/implementation-reports/2026-05-30_phase-4bn-h_closeout.md`), and this narrow `current-project-state.md` paragraph + Current-phase-block addition (prior Phase 4bn-A / 4bn-B / 4bn-C / 4bn-D / 4bn-E / 4bn-F / 4bn-G paragraphs and prior Current-phase blocks preserved as labelled historical context). **No source / test / committed-script / configuration / manifest / sidecar / gate-report / successor-state file modified. No local data artefact created or mutated. No diagnostic rerun. No ML rerun. No new local gitignored artefact created. No ML artefact created. No reusable split mask created. No model binary persisted. No row-level prediction persisted. No data acquired. No storage migration. No database created. No Parquet compaction. No v003 dataset created. No endpoint called. No credential / `.env` / `.mcp.json` / MCP / Graphify used.** **Inputs read (committed repository Markdown only):** `docs/00-meta/current-project-state.md`; `docs/00-meta/process/phase-workflow-standard.md`; `docs/00-meta/process/phase-risk-tiering-standard.md`; `docs/00-meta/process/phase-prompt-template.md`; `docs/00-meta/process/operator-report-standard.md`; `docs/00-meta/process/merge-closeout-standard.md`; the three Phase 4bn-G reports (merge-closeout, scoping memo, closeout); the three Phase 4bn-F reports (merge-closeout, scoping memo, closeout); the three Phase 4bn-E reports (merge-closeout, implementation, closeout); the three Phase 4bn-D reports (merge-closeout, scoping memo, closeout); the three Phase 4bn-C reports (merge-closeout, scoping memo, closeout); the three Phase 4bn-B reports (merge-closeout, implementation, closeout); the three Phase 4bn-A reports (merge-closeout, scoping / design, closeout); `docs/04-data/data-requirements.md`; `docs/04-data/historical-data-spec.md`; `docs/04-data/timestamp-policy.md`; `docs/04-data/dataset-versioning.md`; `docs/08-architecture/database-design.md`. **Inputs explicitly NOT used:** local gitignored `data/research/microstructure/ml-baselines/phase-4bn-b/` outputs; local gitignored `data/research/microstructure/ml-baselines/phase-4bn-e/` outputs; local gitignored Phase 4bm-W / Phase 4bm-Q / Phase 4bm-S / Phase 4bm-U / Phase 4bm-X artefacts; local `data/microstructure/` raw / normalized / feature / label parquets; the sealed test split (preserved verbatim from Phase 4bn-A / 4bn-B / 4bn-C / 4bn-D / 4bn-E / 4bn-F / 4bn-G: `test_rows_loaded: 0`; `iter_partitions(split="test", ...)` raises). **Scoping decision:** `RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — recommends only that a future, separately authorized Phase 4bn-I docs-only / design-only / scoping-only acquisition execution plan (focused on the recommended Option C — 12-month continuous BTCUSDT aggTrades history, preserving v002 semantics, Parquet canonical storage (Storage A), DuckDB-in-place query posture (Storage C), and no ETHUSDT / v003 / compaction / cache in the first expansion) may be considered by the operator as the cleanest non-paused option; the operator may equivalently remain paused, request a merge prompt for Phase 4bn-H, reject the successor and close the ML arc, separately authorize only a future docs-only storage-architecture decision memo, or separately authorize a future docs-only combined acquisition execution plan + storage-architecture decision memo; Phase 4bn-H authorizes nothing executable. **Phase 4bn-G decision carried forward verbatim:** `RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-F decision carried forward verbatim:** `RECOMMEND_AUTHORIZE_COMBINED_DATA_EXPANSION_AND_STORAGE_SCOPING_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-E decision carried forward verbatim:** `RECORD_FEATURE_DRIFT_EVIDENCE_ONLY__REMAIN_PAUSED`. **Phase 4bn-D scoping decision carried forward verbatim:** `RECOMMEND_BOUNDED_ML_BASELINE_EXPANSION_PHASE_4BN_E_DESIGN_LEVEL_SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-C interpretation carried forward verbatim:** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING`. **Phase 4bn-B decision carried forward verbatim:** `RECORD_EVIDENCE_ONLY`. **Required exact factual frame recorded verbatim in the memo:** the current v002 microstructure ML-baseline window is 90 calendar days; the split structure is 45 train days, 30 validation days, and 15 sealed test days; the sealed test split remains sealed and is not inspected; Phase 4bn-B produced descriptive ML-baseline evidence only; Phase 4bn-C interpreted that evidence as small descriptive lift, not edge; Phase 4bn-D scoped bounded expansion options but authorized nothing; Phase 4bn-E partially ruled out gross train-vs-validation feature-distribution drift at the measurement-frame level only; Phase 4bn-F concluded the 90-day window is useful but not enough to prove broad sufficiency, insufficiency, representativeness, or outlier status; Phase 4bn-G defined a concrete data-expansion requirements framework and storage-scaling comparison, then recommended this acquisition-readiness memo; none of the Phase 4bn-A through Phase 4bn-H evidence establishes edge, profitability, tradability, strategy-readiness, signal-readiness, paper / shadow readiness, or live-readiness. **Candidate acquisition question defined verbatim (memo §8):** *Would a longer single continuous BTCUSDT aggTrades history, preserving the v002 feature/label family and keeping the existing v002 sealed test split untouched, provide a materially better basis for interpreting the Phase 4bn-B / 4bn-C descriptive ML-baseline evidence across calendar, volatility, activity, funding, and cost-commensurability regimes?* — not phrased as "Will more data make ML work?", "Can we find edge with more data?", "Can we rescue the model?", "Can we tune until performance improves?", or "Can we get a tradable signal?". **Proposed future acquisition envelope at design level only (memo §9):** BTCUSDT only; Binance USDⓈ-M futures aggTrades only; longer single continuous history; preserve v002 feature and label family semantics initially; preserve horizons 15s and 60s initially; keep existing v002 sealed test set untouched; keep Parquet canonical; permit DuckDB querying Parquet in place; do not create DuckDB database cache; do not compact Parquet; do not add ETHUSDT yet; do not create v003 yet; do not change manifest invariants; do not authorize ML, models, tuning, strategy, signals, PnL, or backtests. **Five candidate calendar-coverage options compared at design level only (memo §10):** Option A — no acquisition; remain with 90-day v002 (available); Option B — extend to 6 months continuous BTCUSDT (available but not preferred); Option C — extend to 12 months continuous BTCUSDT (recommended at design level only); Option D — extend to 24 months continuous BTCUSDT (deferred); Option E — close the ML-baseline arc (available). **No option is selected for execution; no option is authorized.** **Selected readiness recommendation (memo §10):** recommend a future separately authorized docs-only acquisition execution plan for a 12-month continuous BTCUSDT aggTrades expansion, preserving v002 semantics, Parquet canonical storage, DuckDB-in-place query posture, and no ETHUSDT / v003 / compaction / cache in the first expansion; acquisition itself remains unauthorized; the operator may equivalently choose Option A (remain paused) or Option E (close the arc) without contradicting Phase 4bn-H's design-level reading. **Required future data families defined at design level only (memo §11):** raw aggTrades archives; normalized aggTrades; v002-compatible feature outputs; v002-compatible label outputs; manifests and sidecars; future descriptive ML-baseline outputs only if separately authorized later; future diagnostics outputs only if separately authorized later. **Storage posture for any future acquisition preserved verbatim from Phase 4bn-G §10 / §12 (memo §12):** Parquet remains canonical (Storage A); DuckDB querying Parquet in place is the preferred non-invasive query layer if needed (Storage C); DuckDB database cache is deferred (Storage D); Parquet compaction is deferred (Storage B); SQLite remains runtime / control metadata only, not research matrices (Storage E preserved verbatim for runtime; structurally rejected for research); no storage migration is authorized; no database is created; no Parquet is compacted. **Required pre-acquisition gates (memo §13 — 14 gates extending Phase 4bn-G §13):** acquisition execution plan separately authorized and merged; exact calendar range fixed; disk-footprint estimate recorded; derivation-time estimate recorded; source endpoint policy confirmed; canonical path layout predeclared; Phase 4bb-F sidecar policy preserved; manifest schema impact predeclared; existing v002 sealed test split remains sealed; new holdout policy (if any) predeclared and sealed; fail-closed stop conditions defined; no `research_eligible` or manifest eligibility transitions from acquisition alone; no ML execution from acquisition alone; no strategy / backtest execution from acquisition alone. **Stop conditions and fail-closed rules (memo §14 — 13 conditions extending Phase 4bn-G §8.24):** endpoint / source-policy mismatch; unexpected schema; timestamp monotonicity or gap issue; sidecar mismatch; hash mismatch; disk-footprint cap exceeded; derivation-time cap exceeded; missing archive; duplicate archive; manifest validation failure; any accidental test-holdout access; any attempt to commit data artefacts; any credential / private-endpoint usage. **Phase 4bn-H does not acquire data; does not migrate storage; does not create any database; does not compact Parquet; does not create v003; does not authorize acquisition; does not authorize any successor; does not run diagnostics; does not run ML; does not train models; does not score models; does not generate predictions; does not inspect the test holdout; does not use the sealed test split; does not rank features; does not select features; does not prune features; does not engineer features; does not tune hyperparameters; does not tune thresholds; does not fit calibrators; does not run strategy research; does not define a strategy; does not generate trade signals; does not simulate PnL; does not run backtests; does not modify dataset layout; does not call any public, authenticated, or private endpoint; does not open any WebSocket or user stream; does not use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does not mutate any manifest; does not mutate any successor-state artefact; does not commit data/microstructure; does not commit data/research; does not authorize Phase 4bn-I, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** **Required interpretation rules honoured verbatim:** does not claim that more data will solve the ML problem; does not claim that 3 months is definitely insufficient; does not claim that 3 months is definitely representative; does not call the 3-month window an outlier as fact; treats "outlier" as an unresolved risk, not a conclusion; does not recommend acquisition directly (only frames it as a future separately authorized acquisition execution plan); does not recommend storage migration directly; does not recommend model tuning; does not recommend threshold tuning; does not recommend strategy or signal work; does not recommend paper / shadow / live-readiness / deployment; any future acquisition must be preceded by a separately authorized acquisition execution plan; any future storage change must be preceded by a separately authorized storage-architecture decision memo; if recommending closing the ML-baseline arc, that means no further v002 ML-baseline follow-up under this arc unless reopened by separate future authorization (does not delete evidence; does not close Prometheus). **Validation:** `git diff --check` clean; `git status --short` shows only the pre-existing untracked entry `.claude/scheduled_tasks.lock` plus the three tracked Phase 4bn-H docs files; no source / test / script / config / data artefact touched; no manifest / sidecar / gate-report / successor-state artefact mutated; no local gitignored output created or read; no ML / diagnostic / backtest / acquisition kernel invoked; no Phase 4bn-E runner invoked; no Phase 4bn-B runner invoked; v002 / Phase 4bm-* / Phase 4bn-B / Phase 4bn-E artefacts unchanged (Phase 4bn-H did not access them for mutation); no `data/microstructure/` or `data/research/` artefact committed; repository tooling (ruff / mypy / pytest) is not required for a docs-only Tier 1 scoping memo that creates no code surface and is omitted; the diff-check and status-check are the relevant validation surface. **Phase 4bn-H preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bn-G results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-H merge phase / Phase 4bn-I / any docs-only acquisition execution plan / any docs-only storage-architecture decision memo / any docs-only combined acquisition execution plan + storage-decision memo / any acquisition phase / any storage-migration phase / any database-creation phase / any Parquet-compaction phase / any v003-creation phase / any ML implementation / any model training / any model selection through results / any feature ranking / any feature selection / any hyperparameter tuning / any threshold tuning / any calibrator fitting / any strategy / any signals / any PnL / any backtest / any paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
 
+Phase 4bn-I is the **Docs-Only Acquisition Execution Plan** (docs-only / design-only / scoping-only acquisition execution plan; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3; the separately authorized execution-plan phase that follows the Phase 4bn-H recommendation `RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`). **Phase 4bn-I is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-i/docs-only-acquisition-execution-plan`. **Base:** `main` at `654befd236884c8c47cc062722ac74c794272d12` (Phase 4bn-H SHA-finalization commit `docs(phase-4bn-h): finalize merge closeout shas`; pre-branch `main == origin/main`; Phase 4bn-H merge commit `1aad93a983f6e4fdfefeef97503bfc9327bc2c14`, Phase 4bn-H merge-closeout commit `55b011d96b9693f331c277ed874f28f84dc68200`, and Phase 4bn-H branch commit `c1038f94e19b23bd883972e2fd1a7a5d88a7b3d3` all present on main). **Tracked changes (3 files):** the acquisition execution plan memo (`docs/00-meta/implementation-reports/2026-05-30_phase-4bn-i_docs-only-acquisition-execution-plan.md`), the closeout (`docs/00-meta/implementation-reports/2026-05-30_phase-4bn-i_closeout.md`), and this narrow `current-project-state.md` paragraph + Current-phase-block addition (prior Phase 4bn-A / 4bn-B / 4bn-C / 4bn-D / 4bn-E / 4bn-F / 4bn-G / 4bn-H paragraphs and prior Current-phase blocks preserved as labelled historical context). **No source / test / committed-script / configuration / manifest / sidecar / gate-report / successor-state file modified. No local data artefact created, read, hashed, or mutated. No local parquet / CSV / JSON output read or inspected. No diagnostic rerun. No ML rerun. No new local gitignored artefact created. No data acquired. No endpoint called. No storage migration. No database created. No Parquet compaction. No v003 dataset created. No credential / `.env` / `.mcp.json` / MCP / Graphify used.** **Inputs read (committed repository Markdown / architecture docs only):** `docs/00-meta/current-project-state.md`; `docs/00-meta/process/merge-closeout-standard.md`; `docs/00-meta/process/phase-risk-tiering-standard.md`; `docs/00-meta/process/phase-workflow-standard.md`; `docs/00-meta/process/phase-prompt-template.md`; `docs/00-meta/process/operator-report-standard.md`; the three Phase 4bn-H reports; the three Phase 4bn-G reports; the three Phase 4bn-F reports; the three Phase 4bn-E reports; the three Phase 4bn-D reports; the three Phase 4bn-C reports; the three Phase 4bn-B reports; the three Phase 4bn-A reports; `docs/04-data/data-requirements.md`; `docs/04-data/historical-data-spec.md`; `docs/04-data/timestamp-policy.md`; `docs/04-data/dataset-versioning.md`; `docs/08-architecture/database-design.md`. **Inputs explicitly NOT used:** local gitignored Phase 4bn-B / Phase 4bn-E ML-baseline and diagnostics outputs; local gitignored Phase 4bm-* artefacts; local `data/microstructure/` raw / normalized / feature / label parquets; the sealed v002 test split (`test_rows_loaded: 0`; `iter_partitions(split="test", ...)` raises). **Acquisition execution-plan decision:** `RECOMMEND_AUTHORIZE_ACQUISITION_ONLY_PHASE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — recommends only that a future, separately authorized acquisition-only phase, bounded exactly by this plan, may be considered by the operator as the cleanest non-paused option; the operator may equivalently remain paused, request a merge prompt for Phase 4bn-I, reject further ML-baseline successors and close the ML arc, separately authorize a docs-only storage-architecture decision memo, or separately authorize a docs-only holdout and split-policy memo; Phase 4bn-I authorizes nothing executable. **Phase 4bn-H decision carried forward verbatim:** `RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-G decision carried forward verbatim:** `RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-F decision carried forward verbatim:** `RECOMMEND_AUTHORIZE_COMBINED_DATA_EXPANSION_AND_STORAGE_SCOPING_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-E decision carried forward verbatim:** `RECORD_FEATURE_DRIFT_EVIDENCE_ONLY__REMAIN_PAUSED`. **Phase 4bn-D scoping decision carried forward verbatim:** `RECOMMEND_BOUNDED_ML_BASELINE_EXPANSION_PHASE_4BN_E_DESIGN_LEVEL_SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Phase 4bn-C interpretation carried forward verbatim:** `RECOMMEND_AUTHORIZE_BOUNDED_ML_BASELINE_EXPANSION_SCOPING`. **Phase 4bn-B decision carried forward verbatim:** `RECORD_EVIDENCE_ONLY`. **Required exact factual frame recorded verbatim in the memo:** the current v002 microstructure ML-baseline window is 90 calendar days; the split structure is 45 train days, 30 validation days, and 15 sealed test days; the sealed test split remains sealed and is not inspected; Phase 4bn-B produced descriptive ML-baseline evidence only; Phase 4bn-C interpreted that evidence as small descriptive lift, not edge; Phase 4bn-D scoped bounded expansion options but authorized nothing; Phase 4bn-E partially ruled out gross train-vs-validation feature-distribution drift at the measurement-frame level only; Phase 4bn-F concluded the 90-day window is useful but not enough to prove broad sufficiency, insufficiency, representativeness, or outlier status; Phase 4bn-G defined a concrete data-expansion requirements framework and storage-scaling comparison; Phase 4bn-H recommended a docs-only acquisition execution plan for a 12-month continuous BTCUSDT expansion at design level only; none of Phase 4bn-A through Phase 4bn-I establishes edge, profitability, tradability, strategy-readiness, signal-readiness, paper / shadow readiness, or live-readiness; any actual acquisition requires a separate future operator authorization after this phase is merged; any future acquisition phase must remain constrained to acquisition only and must not run ML, diagnostics, strategy, PnL, backtests, storage migration, database creation, or manifest eligibility transitions. **Exact acquisition execution question defined verbatim (memo §7):** *Can the project safely execute a future acquisition-only phase for a 12-month continuous BTCUSDT Binance USDⓈ-M futures aggTrades history, preserving v002 feature/label semantics and the existing sealed v002 test split, while keeping Parquet canonical and enforcing fail-closed disk, runtime, sidecar, manifest, holdout, and endpoint boundaries?* — not phrased as "Will more data make ML work?", "Can we find edge with more data?", "Can we rescue the model?", "Can we tune until performance improves?", "Can we get a tradable signal?", or "Can we go to paper / shadow / live after acquisition?". **Exact proposed acquisition envelope (memo §8):** BTCUSDT only; Binance USDⓈ-M futures; aggTrades only; 12-month continuous history; exact UTC range 2024-03-01 through 2025-02-28 inclusive; existing v002 envelope included as terminal 90-day portion 2024-12-01 through 2025-02-28; existing v002 sealed test split preserved untouched 2025-02-14 through 2025-02-28; new acquisition adds only pre-v002 history 2024-03-01 through 2024-11-30; no post-v002 dates; no ETHUSDT; no extra horizons; no mark-price; no spot; no cross-venue; no order book; no tick data; no v003; no storage migration; no database creation; no Parquet compaction; no ML / diagnostics / strategy / signals / PnL / backtests. **Exact UTC calendar range reasoning (memo §9):** 365 calendar days; continuous single-symbol BTCUSDT history; extends the current 90-day v002 window backward; preserves the existing terminal v002 test split untouched; avoids introducing post-v002 dates before a new holdout policy is designed; materially broader calendar / volatility / activity / funding / intraday / weekday / event-regime exposure than 90 days; bounded compared with 24 months; keeps the terminal 90-day portion comparable to the Phase 4bn-B / 4bn-C evidence. **Source endpoint policy confirmation requirement (memo §10):** public Binance USDⓈ-M futures bulk historical archives only; no credentials; no private endpoint; no authenticated API; no WebSocket; no user stream; no `.env` / `.mcp.json` / MCP / Graphify; fail closed if source URL, archive naming, schema, or availability differs from committed source policy; the committed `historical-data-spec.md` aggTrades-bulk-archive source-policy gap is flagged so that, if source policy is insufficient or ambiguous, the future phase must stop and require a separate source-policy memo before acquisition. **Canonical path layout, design-level only (memo §11):** raw under `data/microstructure/raw/`; normalized under `data/microstructure/normalized/`; features under `data/microstructure/features/`; labels under `data/microstructure/labels/`; manifests under `data/microstructure/manifests/`; any future descriptive ML-baseline / diagnostics outputs only under `data/research/` and only if separately authorized later; all gitignored; never committed; Phase 4bn-I does not create these paths or write these files. **Manifest and sidecar policy (memo §13):** Phase 4bb-F canonical sidecars (`<sha256>  <basename>\n`; two-space separator; LF only; no CRLF; no BOM; no extra fields; refuse-overwrite); SHA256 sidecars for every future artefact; manifest immutability; dataset-versioning `__vNNN` naming; all new manifests start `research_eligible: false`, `eligibility_gate_status: "pending"`; label manifest starts `chronological_split_policy: "not_yet_defined"`; no `research_eligible` / `eligibility_gate_status` / `chronological_split_policy` / `diagnostics_authorized` / `ml_authorized` transition from acquisition alone; Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved. **Sealed-test preservation and new holdout policy (memo §14):** existing v002 test split 2025-02-14 through 2025-02-28 remains sealed; no test-holdout read / count / sample / hash / summary / metric / inspection; remains terminal within the proposed range; any future new holdout policy must be separately predeclared before ML or diagnostics; acquisition alone must not define a model-evaluation holdout. **Disk-footprint cap (memo §15):** 5 GiB hard / 3 GiB warning additional local footprint across raw + normalized + feature + label + manifest; fail-closed on preflight estimate exceeding 5 GiB and on actual footprint crossing 5 GiB; safer cap used if repo evidence indicates one. **Derivation-time cap (memo §15):** 4 hours hard / 2 hours warning total wall-clock for raw verification + normalization + v002-compatible feature + v002-compatible label derivation on the 12-month BTCUSDT envelope; fail-closed on preflight estimate exceeding 4 hours and on actual runtime crossing 4 hours; safer cap used if repo evidence indicates one. **Fail-closed stop conditions (memo §16 — 25 conditions):** source / archive-name mismatch; public source unavailable; archive missing for any expected day; duplicate archive / overwrite attempt; unexpected schema; timestamp monotonicity violation; unexpected timestamp gap; unexpected duplicate aggTrade primary key; sidecar format mismatch; SHA256 hash mismatch; manifest validation failure; disk-footprint warning crossed; disk-footprint hard cap exceeded; derivation-time warning crossed; derivation-time hard cap exceeded; any test-holdout read attempt; any new-ML-split attempt without authorization; any ML / diagnostics / strategy / PnL / backtest attempt; any DuckDB / SQLite / database creation attempt; any Parquet-compaction attempt; any `data/microstructure` or `data/research` commit attempt; any credential / private-endpoint / WebSocket / user-stream / `.env` / `.mcp.json` / MCP / Graphify usage; any manifest eligibility transition; any deviation from the exact UTC range; any requirement to add ETHUSDT / v003 / mark-price / spot / cross-venue / order-book / extra-horizon data. **Future acquisition phase non-authorization envelope (memo §17):** the future acquisition phase, if separately authorized, would be acquisition-only and would still not authorize ML / scoring / predictions / diagnostics / feature ranking / selection / pruning / engineering / hyperparameter tuning / threshold tuning / calibration fitting / strategy / signals / PnL / backtests / paper / shadow / live / exchange-write / production keys / storage migration / database creation / Parquet compaction / v003 / ETHUSDT / mark-price / spot / cross-venue / order book / manifest eligibility transitions. **Post-acquisition successor chain predeclared (memo §18):** acquisition merge-closeout on main; raw eligibility gate; normalized eligibility gate; feature-family derivation + gate; label-family derivation + gate; successor-state recording if required; new chronological split / holdout policy memo before any ML or diagnostics; separate descriptive ML-baseline implementation plan before any ML rerun; separate diagnostics plan before any diagnostics rerun; no test-holdout use until a future explicitly authorized terminal-holdout phase, if ever — each separately authorized. **Phase 4bn-I does not acquire data; does not call public / Binance / authenticated / private endpoints; does not open any WebSocket or user stream; does not migrate storage; does not create any database; does not compact Parquet; does not create v003; does not authorize acquisition; does not authorize any successor; does not read local parquets; does not inspect local data; does not open any local gitignored data/research or data/microstructure artefact; does not create or modify any manifest; does not run diagnostics; does not run ML; does not train models; does not score models; does not generate predictions; does not inspect the test holdout; does not use the sealed test split; does not rank / select / prune / engineer features; does not tune hyperparameters; does not tune thresholds; does not fit calibrators; does not run strategy research; does not define a strategy; does not generate trade signals; does not simulate PnL; does not run backtests; does not modify dataset layout; does not use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does not mutate any manifest; does not mutate any successor-state artefact; does not commit data/microstructure; does not commit data/research; does not authorize Phase 4bn-J, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** **Required interpretation rules honoured verbatim:** does not claim that more data will solve the ML problem; does not claim that 3 months is definitely insufficient; does not claim that 12 months is definitely sufficient; does not claim that the current 90-day window is an outlier; treats "outlier" as an unresolved risk, not a conclusion; does not recommend acquisition as edge-search; does not recommend storage migration; does not recommend model tuning; does not recommend threshold tuning; does not recommend strategy or signal work; does not recommend paper / shadow / live-readiness / deployment; any future acquisition must be separately authorized; any future storage change must be preceded by a separately authorized storage-architecture decision memo; if recommending closing the ML-baseline arc, that means no further v002 ML-baseline follow-up under this arc unless reopened by separate future authorization (does not delete evidence; does not close Prometheus). **Validation:** `git diff --check` clean; `git status --short` shows only the pre-existing untracked entry `.claude/scheduled_tasks.lock` plus the three tracked Phase 4bn-I docs files; no source / test / script / config / data artefact touched; no manifest / sidecar / gate-report / successor-state artefact mutated; no local gitignored output created or read; no ML / diagnostic / backtest / acquisition kernel invoked; no Phase 4bn-E runner invoked; no Phase 4bn-B runner invoked; repository tooling (ruff / mypy / pytest) omitted for a docs-only Tier 1 phase that creates no code surface; the diff-check and status-check are the relevant validation surface. **Phase 4bn-I preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3 0.25% / 2× / one-position / mark-price stops; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0 + post-null cooldown + cooled-down families list + memo template; Phase 4al refined no-rescue + §13 boundary + §14 hierarchy; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path + sidecar policy; Phase 4bl-F four-tier risk model + R-SIDECAR-CRLF + nine reusable non-authorization blocks; Phase 4bm-A-P1 thin-prompt context-management standard; Phase 4bm-D-P1 lightweight Claude Code workspace standard; Phase 4am .. Phase 4bn-H results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-I merge phase / the recommended acquisition-only phase / Phase 4bn-J / any docs-only storage-architecture decision memo / any docs-only holdout and split-policy memo / any acquisition phase / any storage-migration phase / any database-creation phase / any Parquet-compaction phase / any v003-creation phase / any ML implementation / any model training / any model selection through results / any feature ranking / any feature selection / any hyperparameter tuning / any threshold tuning / any calibrator fitting / any strategy / any signals / any PnL / any backtest / any paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-I executed (Docs-Only
+Acquisition Execution Plan; docs-only /
+design-only / scoping-only acquisition
+execution plan; Tier 1 Full Phase per
+phase-risk-tiering-standard §3; the
+separately authorized execution-plan
+phase that follows the Phase 4bn-H
+recommendation
+RECOMMEND_AUTHORIZE_DOCS_ONLY_ACQUISITION_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION).
+Phase 4bn-I is branch-complete only by
+this work; not merged into main; not
+project-complete. Phase 4bn-I reads only
+committed repository Markdown reports and
+committed architecture docs. It opens no
+test-holdout row. It opens no local
+gitignored data/research/ or
+data/microstructure/ artefact. It reads
+no local parquet / CSV / JSON output. It
+mutates no prior source / test / script /
+config / manifest / sidecar / gate report
+/ successor-state artefact. It runs no
+ML, diagnostic, simulation, backtest, or
+acquisition kernel. It calls no public,
+Binance, authenticated, or private
+endpoint. It opens no WebSocket or user
+stream. It uses no credential, .env,
+.mcp.json, MCP, or Graphify.
+
+Tracked changes (3 files):
+- docs/00-meta/implementation-reports/
+  2026-05-30_phase-4bn-i_docs-only-
+  acquisition-execution-plan.md (added;
+  this phase execution-plan memo; 22
+  sections + 3 appendices).
+- docs/00-meta/implementation-reports/
+  2026-05-30_phase-4bn-i_closeout.md
+  (added; this phase closeout).
+- docs/00-meta/current-project-state.md
+  (this Phase 4bn-I paragraph + new
+  Current-phase block; prior Phase 4bn-A /
+  4bn-B / 4bn-C / 4bn-D / 4bn-E / 4bn-F /
+  4bn-G / 4bn-H paragraphs and prior
+  Current-phase blocks preserved as
+  labelled historical context).
+
+Base SHA: main at
+654befd236884c8c47cc062722ac74c794272d12
+(Phase 4bn-H SHA-finalization commit
+docs(phase-4bn-h): finalize merge closeout
+shas; pre-branch main == origin/main
+verified in sync).
+
+Acquisition execution-plan decision:
+RECOMMEND_AUTHORIZE_ACQUISITION_ONLY_PHASE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION
+(recommends only that a future,
+separately authorized acquisition-only
+phase, bounded exactly by this plan, may
+be considered as the cleanest non-paused
+option; the operator may equivalently
+remain paused, request a merge prompt for
+Phase 4bn-I, reject further ML-baseline
+successors and close the ML arc,
+separately authorize a docs-only
+storage-architecture decision memo, or
+separately authorize a docs-only holdout
+and split-policy memo; Phase 4bn-I
+authorizes nothing executable).
+
+Exact proposed future acquisition range:
+BTCUSDT-only Binance USDⓈ-M futures
+aggTrades; 12-month continuous history;
+2024-03-01 through 2025-02-28 inclusive
+UTC; existing v002 90-day envelope
+included as terminal portion 2024-12-01
+through 2025-02-28; existing v002 sealed
+test split 2025-02-14 through 2025-02-28
+preserved untouched and terminal; new
+acquisition adds only pre-v002 history
+2024-03-01 through 2024-11-30; no
+post-v002 dates; no ETHUSDT; no extra
+horizons; no v003; no mark-price / spot /
+cross-venue / order-book / tick data.
+
+Disk-footprint cap: 5 GiB hard / 3 GiB
+warning additional local footprint
+(fail-closed on preflight estimate over
+5 GiB and on actual footprint crossing
+5 GiB). Derivation-time cap: 4 hours hard
+/ 2 hours warning total wall-clock
+(fail-closed on preflight estimate over
+4 hours and on actual runtime crossing
+4 hours). 25 fail-closed stop conditions
+defined.
+
+v002 semantics preserved (45 feature
+columns; 3-class strict-sign labels at
+15s and 60s). Parquet canonical; DuckDB
+querying Parquet in place as a
+non-invasive query layer only; no DuckDB
+database cache; no Parquet compaction; no
+SQLite research matrices. All new
+manifests start research_eligible: false,
+eligibility_gate_status: pending; label
+manifest starts chronological_split_policy:
+not_yet_defined; no eligibility transition
+from acquisition alone.
+
+The current v002 microstructure
+ML-baseline window is 90 calendar days.
+The split structure is 45 train days, 30
+validation days, and 15 sealed test days.
+The sealed test split remains sealed and
+is not inspected. Phase 4bn-B produced
+descriptive ML-baseline evidence only.
+Phase 4bn-C interpreted that evidence as
+small descriptive lift, not edge. Phase
+4bn-D scoped bounded expansion options but
+authorized nothing. Phase 4bn-E partially
+ruled out gross train-vs-validation
+feature-distribution drift at the
+measurement-frame level only. Phase 4bn-F
+concluded the 90-day window is useful but
+not enough to prove broad sufficiency,
+insufficiency, representativeness, or
+outlier status. Phase 4bn-G defined a
+concrete data-expansion requirements
+framework and storage-scaling comparison.
+Phase 4bn-H recommended a docs-only
+acquisition execution plan for a 12-month
+continuous BTCUSDT expansion at design
+level only. None of Phase 4bn-A through
+Phase 4bn-I establishes edge,
+profitability, tradability,
+strategy-readiness, signal-readiness,
+paper / shadow readiness, or
+live-readiness.
+
+Phase 4bn-I does not acquire data; does
+not call public / Binance / authenticated
+/ private endpoints; does not migrate
+storage; does not create any database;
+does not compact Parquet; does not create
+v003; does not authorize acquisition;
+does not authorize any successor; does not
+run diagnostics; does not run ML; does not
+train models; does not score models; does
+not generate predictions; does not inspect
+the test holdout; does not use the sealed
+test split; does not rank / select / prune
+/ engineer features; does not tune
+hyperparameters; does not tune thresholds;
+does not fit calibrators; does not run
+strategy research; does not define a
+strategy; does not generate trade signals;
+does not simulate PnL; does not run
+backtests; does not modify dataset layout;
+does not open any WebSocket or user
+stream; does not use credentials, .env,
+.mcp.json, MCP, or Graphify; does not
+mutate any manifest; does not mutate any
+successor-state artefact; does not commit
+data/microstructure; does not commit
+data/research; does not authorize Phase
+4bn-J, Phase 5, paper / shadow,
+live-readiness, deployment, exchange-write,
+production keys, or any successor phase.
+
+Any actual acquisition requires a separate
+future operator authorization after this
+phase is merged. Any future acquisition
+phase must remain constrained to
+acquisition only and must not run ML,
+diagnostics, strategy, PnL, backtests,
+storage migration, database creation, or
+manifest eligibility transitions.
+
+Every retained verdict (H0 / R3 / R1a /
+R1b-narrow / R2 / F1 / D1-A / 5m thread /
+V2 / G1 / C1) and every project lock is
+preserved verbatim. Phase 4aw
+MicrostructureManifest.flip_research_eligible(...)
+always-raises invariant preserved (never
+invoked). Phase 4 canonical remains
+unauthorized. Phase 4bn-I merge phase /
+the recommended acquisition-only phase /
+Phase 4bn-J / any storage-architecture
+decision memo / any holdout and
+split-policy memo / any acquisition phase
+/ any storage-migration phase / any
+database-creation phase / any
+v003-creation phase / any
+Parquet-compaction phase / any ML
+implementation / any diagnostics
+implementation / any strategy / any
+signals / any PnL / any backtest / any
+paper / shadow / live-readiness /
+deployment / exchange-write / production
+keys / any Phase 5 / any successor phase
+remains unauthorized.
+
+Recommended state: remain paused.
+No next phase authorized.
+```
+
 Current phase:
 
 ```text
