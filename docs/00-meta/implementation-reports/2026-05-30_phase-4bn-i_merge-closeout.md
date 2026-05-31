@@ -74,7 +74,7 @@ or any successor phase.** **Recommended state remains paused.**
   also the branch tip).
 - **Merge commit SHA:** `4733d90ce631cb23d1646329cb202c20103cf5a9`
   (`docs(phase-4bn-i): merge acquisition execution plan`).
-- **Merge-closeout commit SHA:** recorded by the subsequent
+- **Merge-closeout commit SHA:** `5aed51052fa841437f13b1173d66b933cd1b485a` (`docs(phase-4bn-i): add merge closeout`), recorded by the subsequent
   SHA-finalization commit. Per the repo convention used for Phase 4bn-H /
   4bn-G / 4bn-F / 4bn-E / 4bn-D / 4bn-C / 4bn-B / 4bn-A, the merge-closeout
   commit cannot self-reference its own hash inside its own diff; the SHA is
