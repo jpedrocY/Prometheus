@@ -29,12 +29,22 @@
   (`docs(phase-4bn-j-r1): amend workspace path and raw cap`).
 - **Merge commit SHA:** `f63ded86bbc3d010f3f329f40ef2e3bb9df091f6`
   (`docs(phase-4bn-j-r1): merge workspace relocation raw cap amendment`).
-- **Merge-closeout commit SHA:** `<to be filled at SHA-finalization>`
-  (`docs(phase-4bn-j-r1): add merge closeout`).
-- **SHA-finalization commit SHA:** `<to be filled at SHA-finalization>`
-  (`docs(phase-4bn-j-r1): finalize merge closeout shas`).
-- **Final `main` / `origin/main` SHA after push:**
-  `<to be filled at SHA-finalization>`
+- **Merge-closeout commit SHA:** `bbe8b46bf93f8c5ddba7c4252fdc249c237ede9b`
+  (`docs(phase-4bn-j-r1): add merge closeout`), recorded by this
+  subsequent SHA-finalization commit. Per the repo convention used for
+  Phase 4bn-I / 4bn-H / 4bn-G / 4bn-F / 4bn-E / 4bn-D / 4bn-C / 4bn-B /
+  4bn-A, the merge-closeout commit cannot self-reference its own hash
+  inside its own diff; the SHA is filled in by this SHA-finalization
+  commit, which can reference the merge-closeout commit hash because that
+  hash exists in `git log` before the SHA-finalization commit is created.
+- **SHA-finalization commit:** recorded in the final operator report and
+  `git log` as `docs(phase-4bn-j-r1): finalize merge closeout shas`. Same
+  convention: the SHA-finalization commit cannot self-reference its own
+  hash inside its own diff; its SHA is captured in the final operator
+  report and `git log`. After that commit and push, final `main` SHA ==
+  final `origin/main` SHA == the SHA-finalization commit.
+- **Final `main` / `origin/main` SHA after push:** equals the
+  SHA-finalization commit; recorded in the final operator report
   (`main == origin/main` verified in sync after push).
 
 ## 3. Merge method
