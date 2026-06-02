@@ -247,6 +247,178 @@ Phase 4bn-I is the **Docs-Only Acquisition Execution Plan** (docs-only / design-
 
 Phase 4bn-J-R1 is the **Workspace Relocation + Raw-Only Acquisition Cap Amendment** (docs-only / governance-only / amendment-only phase; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3, because it amends the acquisition execution contract adjacent to public historical data acquisition, local disk / runtime caps, data / microstructure artefact generation, future eligibility gates, and future ML-baseline admissibility, while explicitly authorizing no acquisition and no downstream use). **Phase 4bn-J-R1 is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-j-r1/workspace-relocation-raw-cap-amendment`. **Base:** `main` at `27dbc5723f3f068c34663ec57cd85a0e6b42f501` (Phase 4bn-I SHA-finalization commit `docs(phase-4bn-i): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-I merge-closeout `5aed510`, merge `4733d90`, and branch `a513c4f` all present on main). **Tracked changes (4 files):** the Phase 4bn-J **stop report** (`docs/00-meta/implementation-reports/2026-05-31_phase-4bn-j_acquisition-stop-report.md`), previously untracked, now committed byte-for-byte as **tracked documentation — a stop report, not a closeout**; the amendment memo (`docs/00-meta/implementation-reports/2026-05-31_phase-4bn-j-r1_workspace-relocation-raw-cap-amendment.md`; 17 sections); the closeout (`docs/00-meta/implementation-reports/2026-05-31_phase-4bn-j-r1_closeout.md`); and this narrow `current-project-state.md` paragraph + new "Current phase:" block (prior Phase 4bn-A … 4bn-I paragraphs and prior "Current phase:" blocks preserved as labelled historical context). **Workspace relocation:** the active local repository path is now `D:\Prometheus` (previous `C:\Prometheus` is no longer the active repo path); the active Claude Code lightweight workspace is now `D:\ClaudeRuns\prometheus-light` (previous `C:\ClaudeRuns\prometheus-light` is no longer active); new launch convention is `cd D:\ClaudeRuns\prometheus-light` + `$env:CLAUDE_CODE_DISABLE_CLAUDE_MDS="1"` + `$env:CLAUDE_CODE_DISABLE_AUTO_MEMORY="1"` + `claude --add-dir D:\Prometheus`; new command convention is `cd D:\Prometheus <command>` (on Windows PowerShell 5.1, `cd D:\Prometheus; <command>`); the GitHub remote `origin` → `https://github.com/jpedrocY/Prometheus.git` did NOT need re-pointing (repository-local config, preserved by the copy) and is intact; future prompts must use `D:\Prometheus` unless explicitly amended later; the old `C:` folders, if retained, are backups only and are not active project roots. The process standard `docs/00-meta/process/claude-code-lightweight-workspace-standard.md` (Phase 4bm-D-P1) still uses the old `C:` example path strings; it was deliberately NOT edited by this phase because it was not named in this phase's allowed tracked files and its own §15 change-control requires a phase that names it; its *principle* is unchanged and binding, its `C:` path strings are superseded by this amendment for the active convention, and a separate §15-compliant docs-only process-doc update phase is recommended to refresh them. **Phase 4bn-J stopped state:** Phase 4bn-J stopped before acquisition; it is not branch-complete, not merged, not committed (by the stopped attempt), and not project-complete; no archive was downloaded; no data was acquired; no data/microstructure or data/research artefact, manifest, or sidecar was created; no acquisition code was written; no existing script was modified; no `current-project-state.md` update and no commit were made by the stopped attempt; the stop report is now preserved as tracked documentation by this amendment phase. **Source-policy finding (carried forward):** the source-policy preflight PASSED in the stopped attempt; the committed `historical-data-spec.md` gap is real (it does not fully document aggTrades bulk historical archives) but existing committed tooling resolves the source policy clearly enough for acquisition (public unauthenticated `data.binance.vision` daily BTCUSDT USDⓈ-M futures aggTrades zip + `.CHECKSUM`, checksum-first discipline, no credentials / private endpoint / authenticated API / WebSocket / user stream / `.env` / `.mcp.json` / MCP / Graphify); a future source-policy documentation memo is useful hygiene but not required before retry unless new evidence contradicts the stop report. **Disk-cap defect + amendment:** Phase 4bn-I recorded a 5 GiB hard / 3 GiB warning cap that mixed raw-only with derived-stack footprint; the stopped preflight estimated the 275 new pre-v002 raw days (2024-03-01 .. 2024-11-30) at ~5.5–7.5 GiB raw-only, exceeding the 5 GiB hard cap; the operator moved the repo to `D:\Prometheus` with ~1.25 TB free, so `C:` disk pressure is no longer the binding constraint. For the **acquisition-only retry only**, the **raw-only** acquisition disk cap is amended to **10 GiB warning / 25 GiB hard** additional local raw acquisition footprint (BTCUSDT, Binance USDⓈ-M futures, aggTrades, 2024-03-01 .. 2024-11-30 new pre-v002 segment, under the 2024-03-01 .. 2025-02-28 envelope). This amendment does NOT authorize derived normalized / feature / label cap expansion, normalization, feature/label derivation, ML, diagnostics, strategy, storage migration, database creation, Parquet compaction, v003, or acquisition itself; future normalized / feature / label phases need a SEPARATE derived-stack disk budget set before execution (planning warning only: ~150–250 GiB plausible for a full ML-ready 12-month stack, ~300 GiB comfortable; exact cap set in the future derivation / gate phase, not here). **Runtime cap unchanged:** 2 hours warning / 4 hours hard total wall-clock. **Preserved envelope:** BTCUSDT only; Binance USDⓈ-M futures; aggTrades only; new segment 2024-03-01 .. 2024-11-30 inclusive UTC; existing v002 terminal window 2024-12-01 .. 2025-02-28 not re-downloaded or overwritten; existing v002 sealed test split 2025-02-14 .. 2025-02-28 untouched; no post-v002 dates; no ETHUSDT; no extra horizons; no mark-price / spot / cross-venue / order-book / tick data; no v003. **Preserved storage posture:** Parquet canonical; no DuckDB database cache; no `.duckdb`; no SQLite research matrices; no `.sqlite`; DuckDB querying Parquet in place permitted only as a non-invasive query layer; no Parquet compaction; no storage migration; no dataset-layout modification. **Preserved sealed-test boundary:** existing v002 test split 2025-02-14 .. 2025-02-28 remains sealed and must not be read / counted / sampled / hashed / summarized / inspected or used for any reason; Phase 4bn-B `test_rows_loaded: 0` and the `iter_partitions(split="test", ...)` always-raise pattern preserved. **Revised acquisition-retry requirements (if separately authorized):** use `D:\Prometheus`; a new bounded 275-day raw-only acquisition script if needed (the locked `scripts/phase4bl_c_acquire_btcusdt_aggtrades_multiday.py` is hardcoded to the 90-day v002 range and must not be repointed); reuse proven Phase 4bl-C patterns; reject any date `>= 2024-12-01`; reject any date outside 2024-03-01 .. 2024-11-30; BTCUSDT-only and aggTrades-only; enforce the 10 GiB / 25 GiB raw-only cap and 2 h / 4 h runtime cap; create only raw artefacts; produce canonical Phase 4bb-F sidecars; refuse overwrite; keep manifests non-eligible (`research_eligible: false`, `eligibility_gate_status: "pending"`); create no research outputs; commit no data/microstructure or data/research; recommend a raw archive eligibility gate only if acquisition succeeds; recommend remain paused or another corrective docs-only memo if acquisition fails closed again. **Decision:** `RECOMMEND_AUTHORIZE_REVISED_ACQUISITION_ONLY_RETRY__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — the stopped attempt found source policy passed and the only binding issue was an unrealistically low, scope-confused disk cap; the repo is now on `D:` with much larger free space; the cap can be amended raw-only without changing any other boundary; the revised acquisition-only retry is recommended as the cleanest non-paused option but is NOT authorized by this amendment, and no successor is authorized from inside Phase 4bn-J-R1. **Phase 4bn-J-R1 does not acquire data; does not call any public / Binance / authenticated / private endpoint; does not open any WebSocket or user stream; does not write acquisition code; does not modify any script; does not run acquisition; does not create any manifest; does not create any sidecar except normal tracked Git docs files; does not create any data/microstructure or data/research artefact; does not read any local parquet / data output; does not run ML; does not train or score models; does not generate predictions; does not run diagnostics; does not run backtests; does not migrate storage; does not create any database; does not compact Parquet; does not create v003; does not mutate any manifest / sidecar / gate report / successor-state artefact; does not inspect or use the sealed test split; does not use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does not authorize Phase 4bn-J-R2, Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock is preserved verbatim; Phase 4aw `flip_research_eligible(...)` always-raises invariant preserved (never invoked); the Phase 4bm-D-P1 lightweight-workspace standard's principle is preserved while its `C:` example paths are superseded by this amendment for the active convention pending a separate §15-compliant update. **Recommended state: remain paused. No next phase authorized.**
 
+Phase 4bn-J-R2 is the **Revised Acquisition-Only BTCUSDT aggTrades Raw Retry** (acquisition-only / raw-only / local gitignored data-artefact generation / integrity-bound execution phase; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3), executing the revised acquisition-only retry recommended by Phase 4bn-J-R1. **Phase 4bn-J-R2 is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-j-r2/revised-acquisition-only-btcusdt-aggtrades-raw`. **Base:** `main` at `03dc876cab9ecd3db982beb0ba51712858cbdf9c` (Phase 4bn-J-R1 SHA-finalization commit `docs(phase-4bn-j-r1): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-J-R1 merge-closeout `bbe8b46`, merge `f63ded8`, branch `3f792a6` all present on main). **Result:** `ACQUISITION_SUCCEEDED__RAW_ARTEFACTS_LOCAL_GITIGNORED__REMAIN_PAUSED` — all **275** new pre-v002 raw BTCUSDT Binance USDⓈ-M futures aggTrades daily archives for **2024-03-01 .. 2024-11-30 inclusive UTC** were acquired and integrity-verified (CHECKSUM-first → SHA256 match → `testzip()` → bounded Phase 4ax row-sample validation; 0 missing / 0 checksum-mismatch / 0 decompression-failure / 0 row-sample-failure / 0 retry-exhausted / 0 cap-skip), totalling **5,140,686,147 bytes ≈ 4.788 GiB** and **400,001,695** aggTrade rows, in **2,051 s (≈34 min)** wall-clock. **No warning threshold and no hard cap was crossed** (raw footprint 4.788 GiB < 10 GiB warning < 25 GiB hard; runtime 34 min < 2 h warning < 4 h hard). **Tracked changes (5 files):** the new bounded raw-only acquisition script `scripts/phase4bn_j_r2_acquire_btcusdt_aggtrades_pre_v002.py` (reuses the proven Phase 4bl-C patterns — host allowlist, URL/path pattern, CHECKSUM-first ordering, SHA256, `testzip()`, bounded row-sample validation, Phase 4bb-F canonical sidecars, refuse-overwrite, non-eligible manifest seed — and adds a hard segment date guard rejecting any date `>= 2024-12-01` or outside 2024-03-01..2024-11-30, BTCUSDT-only and aggTrades-only guards, a forbidden-scope-token denylist, the amended 10 GiB/25 GiB raw-only disk cap and 2 h/4 h runtime cap enforced at per-day boundaries, a HEAD-only `--preflight` footprint estimate, and a phase-scoped segment manifest writer; stdlib + Phase 4ax validator only), its offline test module `tests/research/microstructure/test_phase4bn_j_r2_acquisition_script.py` (117 tests; no network / no local data / no sealed-test read; ruff clean), the implementation report, the closeout, and this narrow `current-project-state.md` paragraph + new Current-phase block (prior Phase 4bn-A … 4bn-J-R1 paragraphs and blocks preserved as labelled historical context). **Local gitignored outputs (NOT committed):** 275 raw zips + 275 `.sha256` sidecars under `data/microstructure/raw/microstructure_raw_aggtrades_v001/BTCUSDT/{YYYY}/{MM}/`, plus one phase-scoped segment manifest `microstructure_raw_aggtrades_v001__v002_pre_v002_segment_4bn_j_r2.json` (sha256 `1659e6da9ccc1c4a49c2f497e1f4a70f8082cac24142c77ac6d5217197b3a3d1`) + acquisition log (sha256 `0266210f23cae53ceda83270fd3466f15ffafdd7ded22bca828fc0cb788bcf93`), each with a `.sha256` sidecar, all non-eligible (`research_eligible=false`, `eligibility_gate_status="pending"`, `test_holdout_touched=false`, `test_rows_loaded=0`). **Source-policy preflight PASSED** (public unauthenticated `data.binance.vision` daily BTCUSDT USDⓈ-M futures aggTrades zip + `.CHECKSUM`, two-space checksum format; no credentials / private endpoint / authenticated API / WebSocket / user stream / `.env` / `.mcp.json` / MCP / Graphify). **Preservation:** the existing published v002 raw manifest `microstructure_raw_aggtrades_v001__v002.json` was not read or mutated; the existing v002 terminal window 2024-12-01..2025-02-28 was not re-downloaded, overwritten, or read; the sealed v002 test split 2025-02-14..2025-02-28 was not read / counted / sampled / hashed / summarized / inspected (structurally unreachable via the segment date guard); Phase 4bn-B `test_rows_loaded: 0` and the `iter_partitions(split="test", ...)` always-raise pattern preserved; Phase 4aw `flip_research_eligible(...)` always-raises invariant preserved (never invoked). **Decision:** `RECOMMEND_AUTHORIZE_RAW_ARCHIVE_ELIGIBILITY_GATE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — acquisition succeeded and raw artefacts/manifest/sidecars were created, so a future raw archive eligibility gate is the recommended next option, subject to separate operator authorization; no successor is authorized from inside Phase 4bn-J-R2. **Phase 4bn-J-R2 does not normalize data; does not derive features; does not derive labels; does not run ML; does not train or score models; does not generate predictions; does not run diagnostics; does not run strategy / signals / PnL / backtests; does not migrate storage; does not create any database; does not create `.duckdb` / `.sqlite`; does not compact Parquet; does not create v003; does not mutate any existing manifest / sidecar / gate report / successor-state artefact; does not transition any manifest eligibility, `chronological_split_policy`, `diagnostics_authorized`, or `ml_authorized`; does not define a new holdout / ML split; does not read or touch the sealed v002 test split; does not use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does not call any authenticated / private endpoint, WebSocket, or user stream; does not commit `data/microstructure` or `data/research`; does not authorize Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock is preserved verbatim. **Recommended state: remain paused. No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-J-R2 executed (Revised
+Acquisition-Only BTCUSDT aggTrades Raw
+Retry; acquisition-only / raw-only / local
+gitignored data-artefact generation /
+integrity-bound execution phase; Tier 1 Full
+Phase per phase-risk-tiering-standard §3).
+Phase 4bn-J-R2 is branch-complete only by
+this work; not merged into main; not
+project-complete.
+
+Branch:
+phase-4bn-j-r2/revised-acquisition-only-btcusdt-aggtrades-raw
+Base SHA: main at
+03dc876cab9ecd3db982beb0ba51712858cbdf9c
+(docs(phase-4bn-j-r1): finalize merge
+closeout shas; pre-branch main ==
+origin/main == HEAD verified in sync).
+
+Result:
+ACQUISITION_SUCCEEDED__RAW_ARTEFACTS_LOCAL_GITIGNORED__REMAIN_PAUSED.
+All 275 new pre-v002 raw BTCUSDT Binance
+USDⓈ-M futures aggTrades daily archives for
+2024-03-01 .. 2024-11-30 inclusive UTC were
+acquired and integrity-verified
+(CHECKSUM-first -> SHA256 match -> testzip()
+-> bounded Phase 4ax row-sample validation;
+0 missing / 0 checksum-mismatch / 0
+decompression-failure / 0 row-sample-failure
+/ 0 retry-exhausted / 0 cap-skip), totalling
+5,140,686,147 bytes ~= 4.788 GiB and
+400,001,695 aggTrade rows, in 2,051 s (~34
+min) wall-clock. No warning threshold and no
+hard cap was crossed (4.788 GiB < 10 GiB
+warning < 25 GiB hard; 34 min < 2 h warning <
+4 h hard).
+
+Source-policy preflight PASSED: public
+unauthenticated data.binance.vision daily
+BTCUSDT USDⓈ-M futures aggTrades zip +
+.CHECKSUM (two-space checksum format); no
+credentials / private endpoint /
+authenticated API / WebSocket / user stream /
+.env / .mcp.json / MCP / Graphify.
+
+Tracked changes (5 files):
+- scripts/phase4bn_j_r2_acquire_btcusdt_aggtrades_pre_v002.py
+  (added; new bounded raw-only 275-day
+  acquisition script; reuses proven Phase
+  4bl-C patterns; adds segment date guard
+  rejecting any date >= 2024-12-01 or outside
+  2024-03-01..2024-11-30, BTCUSDT-only +
+  aggTrades-only guards, scope-token
+  denylist, 10 GiB/25 GiB raw-only disk cap +
+  2 h/4 h runtime cap, HEAD-only preflight,
+  segment manifest writer; stdlib + Phase 4ax
+  validator only).
+- tests/research/microstructure/test_phase4bn_j_r2_acquisition_script.py
+  (added; 117 offline tests; no network / no
+  local data / no sealed-test read).
+- docs/00-meta/implementation-reports/
+  2026-05-31_phase-4bn-j-r2_revised-acquisition-only-btcusdt-aggtrades-raw.md
+  (added; implementation report; 21
+  sections).
+- docs/00-meta/implementation-reports/
+  2026-05-31_phase-4bn-j-r2_closeout.md
+  (added; this phase closeout).
+- docs/00-meta/current-project-state.md
+  (this Phase 4bn-J-R2 paragraph + new
+  Current-phase block; prior paragraphs and
+  blocks preserved as labelled historical
+  context).
+
+Local gitignored outputs (NOT committed):
+275 raw zips + 275 .sha256 sidecars under
+data/microstructure/raw/microstructure_raw_aggtrades_v001/BTCUSDT/{YYYY}/{MM}/,
+plus one phase-scoped segment manifest
+microstructure_raw_aggtrades_v001__v002_pre_v002_segment_4bn_j_r2.json
+(sha256
+1659e6da9ccc1c4a49c2f497e1f4a70f8082cac24142c77ac6d5217197b3a3d1)
++ acquisition log (sha256
+0266210f23cae53ceda83270fd3466f15ffafdd7ded22bca828fc0cb788bcf93),
+each with a .sha256 sidecar; all non-eligible
+(research_eligible=false,
+eligibility_gate_status="pending",
+test_holdout_touched=false,
+test_rows_loaded=0). No data/microstructure
+or data/research artefact was committed.
+
+Preservation: the existing published v002 raw
+manifest
+microstructure_raw_aggtrades_v001__v002.json
+was not read or mutated; the existing v002
+terminal window 2024-12-01..2025-02-28 was
+not re-downloaded, overwritten, or read; the
+sealed v002 test split 2025-02-14..2025-02-28
+was not read / counted / sampled / hashed /
+summarized / inspected (structurally
+unreachable via the segment date guard);
+Phase 4bn-B test_rows_loaded: 0 and the
+iter_partitions(split="test", ...)
+always-raise pattern preserved; Phase 4aw
+flip_research_eligible(...) always-raises
+invariant preserved (never invoked).
+
+Decision:
+RECOMMEND_AUTHORIZE_RAW_ARCHIVE_ELIGIBILITY_GATE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION
+(acquisition succeeded and raw
+artefacts/manifest/sidecars were created, so
+a future raw archive eligibility gate is the
+recommended next option, subject to separate
+operator authorization; the operator may
+equivalently remain paused, request a merge
+prompt for Phase 4bn-J-R2, separately
+authorize a source-policy documentation memo,
+separately authorize a derived-stack
+storage-budget memo before any normalization
+/ features / labels, or reject further
+ML-baseline successors and close the ML arc;
+no successor is authorized from inside Phase
+4bn-J-R2).
+
+Phase 4bn-J-R2 does not normalize data; does
+not derive features; does not derive labels;
+does not run ML; does not train or score
+models; does not generate predictions; does
+not run diagnostics; does not run strategy /
+signals / PnL / backtests; does not migrate
+storage; does not create any database; does
+not create .duckdb / .sqlite; does not
+compact Parquet; does not create v003; does
+not mutate any existing manifest / sidecar /
+gate report / successor-state artefact; does
+not transition any manifest eligibility,
+chronological_split_policy,
+diagnostics_authorized, or ml_authorized;
+does not define a new holdout / ML split;
+does not read or touch the sealed v002 test
+split; does not use credentials, .env,
+.mcp.json, MCP, or Graphify; does not call
+any authenticated / private endpoint,
+WebSocket, or user stream; does not commit
+data/microstructure or data/research; does
+not authorize Phase 5, paper / shadow,
+live-readiness, deployment, exchange-write,
+production keys, or any successor phase.
+
+Every retained verdict (H0 / R3 / R1a /
+R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 /
+G1 / C1) and every project lock is preserved
+verbatim. Phase 4 canonical remains
+unauthorized. The Phase 4bn-J-R2 merge phase
+/ any raw archive eligibility gate / any
+source-policy documentation memo / any
+derived-stack storage-budget memo / any
+normalization / feature / label / ML /
+diagnostics / strategy / signals / PnL /
+backtest / storage-migration /
+database-creation / Parquet-compaction /
+v003-creation / paper / shadow /
+live-readiness / deployment / exchange-write /
+production-key / any Phase 5 / any successor
+phase remains unauthorized.
+
+Recommended state: remain paused.
+No next phase authorized.
+```
+
 Current phase:
 
 ```text
