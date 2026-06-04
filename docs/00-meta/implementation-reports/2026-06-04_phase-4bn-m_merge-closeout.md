@@ -25,10 +25,14 @@
   (`docs(phase-4bn-m): plan normalization readiness`).
 - **Merge commit SHA:** `3dad0cb476573a10e358525eaf5b8bd8023399ea`
   (`docs(phase-4bn-m): merge normalization readiness plan`).
-- **Merge-closeout commit SHA:** `<recorded at SHA-finalization>`
+- **Merge-closeout commit SHA:** `6d8f9d3613702a41cc03b23860c00adb4f9c75d9`
   (`docs(phase-4bn-m): add merge closeout`).
-- **Final `main` / `origin/main` SHA after push:**
-  `<recorded at SHA-finalization>`.
+- **SHA-finalization commit:** `docs(phase-4bn-m): finalize merge closeout
+  shas` — this commit (the published `main` tip after push); its exact
+  40-char SHA is recorded in the final operator report after push.
+- **Final `main` / `origin/main` SHA after push:** the SHA-finalization
+  commit above; exact 40-char SHA recorded in the final operator report
+  after push (`main == origin/main` at that SHA).
 
 ## 3. Merge method
 
@@ -38,7 +42,8 @@
 - No `--no-verify`; no `--no-gpg-sign`; no `-c commit.gpgsign=false`; no
   force-push.
 - **Push status:** pushed to `origin/main` with no force, no skip-hooks, no
-  skip-signing (recorded after the SHA-finalization commit).
+  skip-signing, after the SHA-finalization commit
+  `docs(phase-4bn-m): finalize merge closeout shas`.
 
 ## 4. Files brought forward by the merge
 
