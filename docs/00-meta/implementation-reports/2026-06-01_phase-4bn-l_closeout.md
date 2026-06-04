@@ -28,7 +28,11 @@ Recommended state remains paused.**
   `main == origin/main == HEAD` verified in sync; Phase 4bn-K
   SHA-finalization `d8d3ba8`, merge-closeout `63a43cc`, merge `19c6661`,
   branch `b00a4f3` all present on `main`).
-- **Commit SHA:** `<COMMIT_SHA>`.
+- **Commit SHA:** `d56420ce8d29bc9062398ad906932069d6119f73`
+  (`docs(phase-4bn-l): budget derived stack storage`; the budget memo
+  commit). This closeout was finalized on the branch by a follow-up commit
+  `docs(phase-4bn-l): finalize branch closeout`, which became the final
+  branch tip used for merge.
 - **Active local repo path:** `D:\Prometheus`.
 - **Active Claude workspace:** `D:\ClaudeRuns\prometheus-light`.
 - **GitHub remote:** `origin` →
@@ -149,8 +153,28 @@ live-readiness / deployment / exchange-write / production-key / any Phase 5
 
 ## Final git status / log / SHAs
 
-- `git status --short`: `<GIT_STATUS>`
-- `git log --oneline -8 --decorate`: `<GIT_LOG>`
-- `git rev-parse HEAD`: `<HEAD_SHA>`
+Branch-complete state at the budget memo commit
+`d56420ce8d29bc9062398ad906932069d6119f73` (before this branch-closeout
+finalization commit):
+
+- `git status --short`: `?? .claude/scheduled_tasks.lock` (only the
+  expected untracked transient; no `data/microstructure/` or
+  `data/research/` artefact staged).
+- `git log --oneline -8 --decorate`:
+
+  ```text
+  d56420c (HEAD -> phase-4bn-l/derived-stack-storage-budget-memo) docs(phase-4bn-l): budget derived stack storage
+  d8d3ba8 (origin/main, origin/HEAD, main) docs(phase-4bn-k): finalize merge closeout shas
+  63a43cc docs(phase-4bn-k): add merge closeout
+  19c6661 data(phase-4bn-k): merge expanded raw archive eligibility gate
+  b00a4f3 (phase-4bn-k/expanded-raw-archive-eligibility-gate) data(phase-4bn-k): add expanded raw archive eligibility gate
+  cf7dc4f docs(phase-4bn-j-r2): finalize merge closeout shas
+  26afba7 docs(phase-4bn-j-r2): add merge closeout
+  c80ab68 data(phase-4bn-j-r2): merge revised raw aggtrades acquisition
+  ```
+
+- `git rev-parse HEAD`: `d56420ce8d29bc9062398ad906932069d6119f73`
+  (budget memo commit; the subsequent `docs(phase-4bn-l): finalize branch
+  closeout` commit is the final branch tip used for merge).
 - `git rev-parse main`: `d8d3ba845362e2c1d294522a89e3b90be93ba89f`
 - `git rev-parse origin/main`: `d8d3ba845362e2c1d294522a89e3b90be93ba89f`
