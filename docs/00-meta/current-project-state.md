@@ -259,6 +259,121 @@ Phase 4bn-N is the **Normalization Manifest / Versioning Memo** (docs-only / nor
 
 Phase 4bn-O is the **Normalization-Only Pre-V002 BTCUSDT aggTrades Segment Execution** (normalization-only / bounded local gitignored data-artefact generation / normalized manifest + sidecar generation / code + tests + docs phase; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3, because it reads approved local raw artefacts, writes local normalized artefacts, creates a non-eligible normalized segment manifest, and is adjacent to future normalized-layer eligibility gates, future feature derivation, future label derivation, future holdout/split policy, future ML-baseline admissibility, and local disk/runtime budgets, while explicitly authorizing no features, no labels, no ML, no diagnostics, no strategy, no research eligibility, and no downstream use). **Phase 4bn-O is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-o/normalization-only-pre-v002-segment`. **Base:** `main` at `f55b47ff94637e72ebacc40f1a133a5526afaef6` (`docs(phase-4bn-n): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-N SHA-finalization `f55b47f`, merge-closeout `7417a25`, merge `9ee0c4b`, and branch `0ba6ef0` all present on main; Phase 4bn-M SHA-finalization `6d41c2e` present as predecessor). **Tracked changes (5 files):** the bounded runner `scripts/phase4bn_o_normalize_pre_v002_aggtrades.py` (reuses the locked Phase 4bd primitives unchanged; adds pre-v002 segment-manifest input source, hard date-range/symbol/family/scope guards, the Phase 4bn-L preflight + budget caps, the Phase 4bn-N segment naming, and the segment manifest writer), the offline test module `tests/research/microstructure/test_phase4bn_o_normalization_pre_v002.py` (37 tests), the implementation report (`docs/00-meta/implementation-reports/2026-06-04_phase-4bn-o_normalization-only-pre-v002-segment.md`; 23 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-04_phase-4bn-o_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-N paragraphs and blocks preserved as labelled historical context). **No source module and no locked prior-phase script was modified.** **Result:** **PASS** — `NORMALIZATION_SUCCEEDED__LOCAL_NORMALIZED_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED`. The runner normalized the approved pre-v002 segment (BTCUSDT / Binance USDⓈ-M futures / aggTrades; 2024-03-01 .. 2024-11-30 inclusive UTC; 275 dates) verified against the Phase 4bn-J-R2 raw segment manifest (SHA256 `1659e6da…3a3d1`), the Phase 4bn-K PASS gate report (SHA256 `051bed7b…20f9c24`), and the acquisition log (SHA256 `0266210f…88bcf93`), producing **275 normalized Parquet + 275 canonical two-space `.sha256` sidecars** under the version-suffixed segment directory `data/microstructure/normalized/microstructure_normalized_aggtrades_v001__v002_pre_v002_segment_4bn_o/BTCUSDT/<YYYY>/<MM>/` plus one non-eligible **segment manifest** `data/microstructure/manifests/microstructure_normalized_aggtrades_v001__v002_pre_v002_segment_4bn_o.json` (SHA256 `0e96ae37ff3a02a940724187d973bd0af1ef83585c8427494d33ab32d6bdd9fa`) + sidecar (SHA256 `5d7dcbefbafcc81f2fcb1977ff9f35b08d58684542608317368c1f60f11e6402`). **Aggregates:** `produced_file_count = 275`; `total_event_count = total_row_count = 400,001,695` (exact match to the raw segment); normalized footprint **3,954,532,918 B ≈ 3.68 GiB**; runtime **3624.3 s (≈ 60.4 min)**; temp peak 55.7 MiB (post-cleanup 0); `D:` free preflight 1246.3 GiB / min observed 1242.6 GiB. **No Phase 4bn-L warning threshold and no hard cap crossed** (normalized 100/150 GiB, runtime 4/8 h, temp 50/100 GiB, total-stack 250/300 GiB, `D:` floor 500/350 GiB). Schema is exactly the locked 19-column `NORMALIZED_SCHEMA_V001` with the forbidden-substring column guard passing; all raw inputs (segment manifest, gate report, acquisition log, 275 zips, 275 zip sidecars) were byte-identical pre/post; the segment manifest carries `dataset_family = "microstructure_normalized_aggtrades_v001"`, `dataset_version = "v002"`, `version = "v002"`, `schema_version = "v001"`, `segment_label = "pre_v002_segment"`, `full_intended_envelope_start/end = 2024-03-01/2025-02-28`, `existing_v002_normalized_reference` (`read: false`, `mutated: false`), `v002_terminal_window_mode: "by_reference"`, `research_eligible: false`, `eligibility_gate_status: "pending"`, `no_successor_authorization: true`, `sealed_test_split_touched: false`, `test_holdout_touched: false`, `test_rows_loaded: 0`, and the Phase 4bn-L budget witnesses; the §13 forbidden fields are absent. **All normalized outputs are local, gitignored (`.gitignore:85`), non-eligible, and uncommitted; no `data/microstructure` or `data/research` artefact was committed.** **The published normalized `__v002` family (directory + parquets + `microstructure_normalized_aggtrades_v001__v002.json`) was not read and not mutated (path-disjoint output, refuse-overwrite, never opened); the v002 terminal raw window (2024-12-01 .. 2025-02-28) was by reference only and not read; the sealed v002 test split (2025-02-14 .. 2025-02-28) was untouched; no v003 path, no `.duckdb`/`.sqlite`, no compacted Parquet was created.** **Decision:** `RECOMMEND_AUTHORIZE_NORMALIZED_LAYER_ELIGIBILITY_GATE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — normalization succeeded fully with no v003, no `__v002` mutation, no v002 terminal raw read, and no sealed-test touch, so the only recommended next technical step is a future, separately-authorized bounded normalized-layer eligibility gate (validate the segment manifest field contract; verify forbidden fields absent; validate per-date parquet+sidecar presence and SHA256s; recompute aggregates; validate predecessor integrity; confirm `__v002` not mutated and the v002 terminal/sealed-test were not read; confirm schema = `NORMALIZED_SCHEMA_V001`; confirm `research_eligible` stays `false` and `eligibility_gate_status` stays `"pending"`), which itself flips no eligibility and authorizes no successor; acceptable alternatives are remain paused, request a merge prompt for Phase 4bn-O, separately authorize a holdout-boundary memo (only if the v002 terminal raw window must be read), separately authorize a source-policy documentation memo, separately authorize a process-doc `D:` path-string update, or reject further ML-baseline successors and close the ML arc; no successor is authorized from inside Phase 4bn-O. **Phase 4bn-O does not derive features; does not derive labels; does not run ML; does not score models; does not generate predictions; does not run diagnostics; does not run strategy / signals / PnL / backtests; does not acquire data; does not call any endpoint / public endpoint / Binance / `data.binance.vision`; does not download any archive or CHECKSUM; does not run HEAD preflight; does not re-run the raw gate; does not read the v002 terminal raw window; does not touch the sealed v002 test split; does not read or mutate the published normalized `__v002` family; does not read any `data/research` artefact; does not create a database / `.duckdb` / `.sqlite`; does not compact Parquet; does not migrate storage; does not create v003; does not flip `research_eligible`; does not transition `eligibility_gate_status` / `chronological_split_policy` / `diagnostics_authorized` / `ml_authorized`; does not commit any `data/microstructure` or `data/research` artefact; does not use credentials / `.env` / `.mcp.json` / MCP / Graphify; does not open any WebSocket / user stream / private / authenticated endpoint; does not authorize Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock (§11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue rule; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path + sidecar policy; the Phase 4bn-J-R1 raw-only cap amendment; the Phase 4bn-L derived-stack storage budget; the Phase 4bn-N normalization manifest/versioning convention) is preserved verbatim. Phase 4 canonical remains unauthorized. **Validation:** `git status --short` shows only the five tracked Phase 4bn-O code/test/docs files plus the expected untracked `.claude/scheduled_tasks.lock`; `git diff --check` clean; `ruff check` on the runner + test → all checks passed; `pytest` on the new module (37 passed) and the reused-primitive set `test_normalize_io.py` / `test_normalize_validation.py` / `test_normalize_manifest.py` / `test_phase4bm_b_multiday_normalization.py` (71 passed); `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`; no `data/microstructure/` or `data/research/` artefact staged; post-run filesystem checks confirm 275 parquets / 275 sidecars / manifest+sidecar, canonical sidecar format, 0 `.duckdb`/`.sqlite`, 0 `v003` paths, 0 leftover `.tmp`. **Phase 4bn-O is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** **No next phase authorized.**
 
+Phase 4bn-P is the **Normalized-Layer Eligibility Gate for the Pre-V002 BTCUSDT aggTrades Segment** (normalized-layer eligibility gate / local gitignored normalized artefact validation / code + tests + docs + local gate-report phase; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3, because it reads local normalized BTCUSDT Binance USDⓈ-M futures aggTrades artefacts and their manifest/sidecars, validates a newly generated normalized segment, and is adjacent to future feature derivation, label derivation, chronological split/holdout policy, future ML-baseline admissibility, and downstream research gates, while explicitly authorizing no feature derivation, no labels, no ML, no diagnostics, no strategy, no research-eligibility flip, and no downstream use). **Phase 4bn-P is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-p/normalized-layer-eligibility-gate`. **Base:** `main` at `3fd795ceac4fc6804015301f7f21b4ef7b22f78b` (`docs(phase-4bn-o): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-O SHA-finalization `3fd795c`, merge-closeout `19ed9b9`, merge `2c6c178`, and branch `814112c` all present on main). **Tracked changes (5 files):** the bounded read-only gate runner `scripts/phase4bn_p_validate_normalized_pre_v002_gate.py` (reuses the locked normalize primitives unchanged; the existing `multiday_derived_gate` is hardcoded to the published `__v002` family and a different manifest shape and is not reusable for this segment), the offline test module `tests/research/microstructure/test_phase4bn_p_normalized_layer_gate.py` (19 tests), the implementation report (`docs/00-meta/implementation-reports/2026-06-04_phase-4bn-p_normalized-layer-eligibility-gate.md`; 24 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-04_phase-4bn-p_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-O paragraphs and blocks preserved as labelled historical context). **No source module and no locked prior-phase script was modified.** **Result:** **PASS** — `NORMALIZED_LAYER_GATE_PASSED__LOCAL_NORMALIZED_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED`. The read-only gate validated the Phase 4bn-O local normalized pre-v002 segment (BTCUSDT / Binance USDⓈ-M futures / aggTrades; 2024-03-01 .. 2024-11-30 inclusive UTC; 275 dates) across **25/25 checks PASS** in 15.0 s: streamed the SHA256 of every one of the 275 Parquet (each matched its canonical sidecar and the manifest `per_file_inventory`), validated 275 contiguous in-segment dates, exact segment path layout, canonical two-space `.sha256` sidecars, the segment manifest SHA256 (`0e96ae37ff3a02a940724187d973bd0af1ef83585c8427494d33ab32d6bdd9fa`) + sidecar (`5d7dcbef…6402`), the Phase 4bn-N required-field contract and forbidden-field absence, the locked 19-column `NORMALIZED_SCHEMA_V001` (metadata for all 275; full row-level deep checks on a 10-date sample of month-firsts + 2024-11-30), adjacent-date non-overlap for all 274 pairs, recomputed total rows = **400,001,695** (exact) and recomputed footprint (parquet + sidecar bytes) = **3,954,532,918 B** (exact), and predecessor integrity (raw segment manifest `1659e6da…3a3d1`, raw gate report `051bed7b…20f9c24` with PASS verdict, raw acquisition log `0266210f…88bcf93`). **Local gitignored gate output (uncommitted):** one gate report `data/microstructure/gate-reports/normalized/microstructure_normalized_aggtrades_v001__v002_pre_v002_segment_4bn_o__phase-4bn-p__1780599605192__3fd795ceac4f.json` (SHA256 `3452fd9d33e45c3570693919f419e3ca2c9e9f886b1490fe3755d322e27af134`) + canonical sidecar, recording `segment_non_eligible: true`, `research_eligible_after: false`, `eligibility_gate_status_after: pending`, `no_successor_authorization: true`, `v002_terminal_window_read: false`, `sealed_test_split_touched: false`, `published_v002_mutated: false`, `data_committed: false`. **The gate is read-only on all data: it did not mutate the segment manifest, any Parquet, any sidecar, or the published `__v002` family; it did not flip `research_eligible` or transition `eligibility_gate_status`; the published normalized `__v002` family was not read and not mutated (path-disjoint, refuse-overwrite, never opened); the v002 terminal raw window was by reference only and not read; the sealed v002 test split was untouched (`test_rows_loaded: 0`); no v003 path, no `.duckdb`/`.sqlite`, no compacted Parquet was created; no data/microstructure or data/research artefact was committed.** **Decision:** `RECOMMEND_AUTHORIZE_FEATURE_DERIVATION_READINESS_OR_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — with raw acquisition, raw gate, normalization, and the normalized-layer gate all passed for the pre-v002 segment, the next clean technical stage is a separately-authorized feature-derivation readiness/execution plan (which must still derive no labels, run no ML/diagnostics/strategy/PnL/backtests, flip no eligibility, and use no sealed test split); acceptable alternatives are remain paused, request a merge prompt for Phase 4bn-P, separately authorize a holdout-boundary memo (only if a future scope touches the v002 terminal raw window), separately authorize a source-policy documentation memo, separately authorize a process-doc `D:` path-string update, or reject further ML-baseline successors and close the ML arc; no successor is authorized from inside Phase 4bn-P. **A passing normalized-layer gate does not make the dataset research-eligible and authorizes no features, labels, ML, diagnostics, strategy, PnL, backtests, storage migration, v003, paper/shadow/live, exchange-write, or any successor.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock (§11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue rule; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path + sidecar policy; the Phase 4bn-J-R1 raw-only cap amendment; the Phase 4bn-L derived-stack storage budget; the Phase 4bn-N normalization manifest/versioning convention) is preserved verbatim. Phase 4 canonical remains unauthorized. **Validation:** `git status --short` shows only the five tracked Phase 4bn-P code/test/docs files plus the expected untracked `.claude/scheduled_tasks.lock`; `git diff --check` clean; `ruff check` on the runner + test → all checks passed; `pytest` on the new module (19 passed) and the reused-primitive set `test_normalize_io.py` / `test_normalize_validation.py` / `test_normalize_manifest.py` / `test_phase4bn_o_normalization_pre_v002.py` (75 passed); `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`; no `data/microstructure/` or `data/research/` artefact staged. **Phase 4bn-P is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-P executed (Normalized-Layer
+Eligibility Gate for the Pre-V002 BTCUSDT
+aggTrades Segment; normalized-layer
+eligibility gate / local gitignored
+normalized artefact validation / code +
+tests + docs + local gate-report phase;
+Tier 1 Full Phase per
+phase-risk-tiering-standard §3).
+Phase 4bn-P is branch-complete only by
+this work; not merged into main; not
+project-complete.
+
+Branch:
+phase-4bn-p/normalized-layer-eligibility-gate
+Base SHA: main at
+3fd795ceac4fc6804015301f7f21b4ef7b22f78b
+(docs(phase-4bn-o): finalize merge
+closeout shas; pre-branch main ==
+origin/main == HEAD verified in sync).
+
+Result:
+NORMALIZED_LAYER_GATE_PASSED__LOCAL_NORMALIZED_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED.
+Decision:
+RECOMMEND_AUTHORIZE_FEATURE_DERIVATION_READINESS_OR_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION.
+The local normalized pre-v002 segment
+passed every gate check and remains
+non-eligible (research_eligible=false,
+eligibility_gate_status=pending); no
+manifest eligibility transition occurred.
+
+Segment gated (read-only):
+- BTCUSDT / Binance USDⓈ-M futures /
+  aggTrades; 2024-03-01 .. 2024-11-30
+  inclusive UTC; 275 dates.
+- Normalized manifest
+  microstructure_normalized_aggtrades_v001__v002_pre_v002_segment_4bn_o.json
+  (sha256 0e96ae37...d9fa) + sidecar
+  (sha256 5d7dcbef...6402).
+- Output dir
+  data/microstructure/normalized/
+  microstructure_normalized_aggtrades_v001__v002_pre_v002_segment_4bn_o/
+
+Gate result (25/25 PASS; 15.0 s):
+- 275 parquet + 275 sidecars; every
+  parquet SHA256 == sidecar == manifest
+  inventory.
+- 275 contiguous in-segment dates; exact
+  path layout; canonical two-space
+  .sha256 sidecars.
+- Manifest required-field contract +
+  forbidden-field absence; non-eligible
+  posture.
+- Locked 19-column NORMALIZED_SCHEMA_V001
+  (all 275 via metadata; 10-date deep
+  row-level sample); forbidden-column
+  guard passed.
+- Recomputed total rows = 400,001,695
+  (exact); recomputed footprint
+  (parquet+sidecar) = 3,954,532,918 B
+  (exact); adjacent-date non-overlap for
+  all 274 pairs.
+- Predecessor integrity: raw segment
+  manifest 1659e6da...3a3d1; raw gate
+  051bed7b...20f9c24 (PASS); acq log
+  0266210f...88bcf93.
+
+Local gitignored gate output
+(uncommitted):
+- gate report
+  data/microstructure/gate-reports/normalized/
+  microstructure_normalized_aggtrades_v001__v002_pre_v002_segment_4bn_o__phase-4bn-p__1780599605192__3fd795ceac4f.json
+  (sha256 3452fd9d...af134) + canonical
+  sidecar. segment_non_eligible=true;
+  research_eligible_after=false;
+  eligibility_gate_status_after=pending;
+  no_successor_authorization=true;
+  v002_terminal_window_read=false;
+  sealed_test_split_touched=false;
+  published_v002_mutated=false;
+  data_committed=false.
+
+Boundary preservation:
+- Read-only on all data; no segment
+  manifest / parquet / sidecar mutation.
+- Published normalized __v002 not read,
+  not mutated (path-disjoint,
+  refuse-overwrite, never opened); v002
+  terminal raw window by reference only,
+  not read; sealed v002 test split
+  untouched (test_rows_loaded=0); no
+  v003; no database / .duckdb / .sqlite;
+  no compacted Parquet.
+
+A passing normalized-layer gate does NOT
+make the dataset research-eligible and
+authorizes no features, labels, ML,
+diagnostics, strategy, PnL, backtests, or
+any successor. No data artefact was
+committed. No successor is authorized from
+inside Phase 4bn-P.
+
+Phase 4bn-P is branch-complete only. Per
+the workflow standard it is NOT
+project-complete until a separately
+authorized merge phase records its
+merge-closeout on main. Recommended
+state: remain paused. No next phase
+authorized.
+```
+
 Current phase:
 
 ```text
