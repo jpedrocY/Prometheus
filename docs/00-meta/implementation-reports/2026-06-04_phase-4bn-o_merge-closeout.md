@@ -28,11 +28,15 @@
   (`data(phase-4bn-o): normalize pre-v002 aggtrades segment`).
 - **Merge commit SHA:** `2c6c1789ed3b677229c741652699f27b16be21c5`
   (`data(phase-4bn-o): merge normalized pre-v002 segment`).
-- **Merge-closeout commit SHA:** recorded in the SHA-finalization commit
-  `docs(phase-4bn-o): finalize merge closeout shas` (see §"SHA finalization").
-- **SHA-finalization commit SHA:** recorded in the SHA-finalization commit.
-- **Final `main` / `origin/main` SHA after push:** recorded in the
-  SHA-finalization commit.
+- **Merge-closeout commit SHA:** `19ed9b9de45cdb994c89d8582b8d0c522a51e7ff`
+  (`docs(phase-4bn-o): add merge closeout`).
+- **SHA-finalization commit SHA:** this commit
+  (`docs(phase-4bn-o): finalize merge closeout shas`) — its own hash is the new
+  `main` tip; the full value is recorded in the final operator report after it
+  is created and pushed.
+- **Final `main` / `origin/main` SHA after push:** the SHA-finalization commit
+  above; `main == origin/main` after push (recorded verbatim in the final
+  operator report).
 
 ## 3. Merge method
 
