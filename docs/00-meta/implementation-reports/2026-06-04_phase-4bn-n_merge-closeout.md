@@ -26,9 +26,9 @@
   (`docs(phase-4bn-n): settle normalization manifest versioning`).
 - **Merge commit SHA:** `9ee0c4becf652302c8f3607b2c2b202e9c45ba36`
   (`docs(phase-4bn-n): merge normalization manifest versioning`).
-- **Merge-closeout commit SHA:** `docs(phase-4bn-n): add merge closeout` —
-  the commit that adds this file; its exact 40-char SHA is recorded in the
-  SHA-finalization commit and the final operator report.
+- **Merge-closeout commit SHA:**
+  `7417a25acf3aa278a6ac2c17f31ebcd00db46328`
+  (`docs(phase-4bn-n): add merge closeout` — the commit that adds this file).
 - **SHA-finalization commit:** `docs(phase-4bn-n): finalize merge closeout
   shas` — the published `main` tip after push; its exact 40-char SHA is
   recorded in the final operator report after push.
