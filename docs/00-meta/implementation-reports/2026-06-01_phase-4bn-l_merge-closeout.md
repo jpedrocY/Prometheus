@@ -39,14 +39,14 @@
   values before merge).
 - **Merge commit SHA:** `5c7b5a944efd20141c388a49adfd3d31ad2bc6ed`
   (`docs(phase-4bn-l): merge derived stack storage budget`).
-- **Merge-closeout commit SHA:** `docs(phase-4bn-l): add merge closeout`,
-  recorded in `git log` and the final operator report. Per the repo
-  convention used for Phase 4bn-K / 4bn-J-R2 / 4bn-J-R1 / 4bn-I and
-  earlier, the merge-closeout commit cannot self-reference its own hash
-  inside its own diff; the SHA is filled in by the subsequent
-  SHA-finalization commit, which can reference the merge-closeout commit
-  hash because that hash exists in `git log` before the SHA-finalization
-  commit is created.
+- **Merge-closeout commit SHA:**
+  `4479a69f3574ca78c9fce07380f953b7e8854b05`
+  (`docs(phase-4bn-l): add merge closeout`). Per the repo convention used
+  for Phase 4bn-K / 4bn-J-R2 / 4bn-J-R1 / 4bn-I and earlier, the
+  merge-closeout commit could not self-reference its own hash inside its
+  own diff; this SHA is recorded here by the subsequent SHA-finalization
+  commit, which can reference the merge-closeout commit hash because that
+  hash exists in `git log` before the SHA-finalization commit is created.
 - **SHA-finalization commit:** `docs(phase-4bn-l): finalize merge closeout
   shas`, recorded in the final operator report and `git log`. The
   SHA-finalization commit likewise cannot self-reference its own hash
