@@ -249,6 +249,160 @@ Phase 4bn-J-R1 is the **Workspace Relocation + Raw-Only Acquisition Cap Amendmen
 
 Phase 4bn-J-R2 is the **Revised Acquisition-Only BTCUSDT aggTrades Raw Retry** (acquisition-only / raw-only / local gitignored data-artefact generation / integrity-bound execution phase; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3), executing the revised acquisition-only retry recommended by Phase 4bn-J-R1. **Phase 4bn-J-R2 is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-j-r2/revised-acquisition-only-btcusdt-aggtrades-raw`. **Base:** `main` at `03dc876cab9ecd3db982beb0ba51712858cbdf9c` (Phase 4bn-J-R1 SHA-finalization commit `docs(phase-4bn-j-r1): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-J-R1 merge-closeout `bbe8b46`, merge `f63ded8`, branch `3f792a6` all present on main). **Result:** `ACQUISITION_SUCCEEDED__RAW_ARTEFACTS_LOCAL_GITIGNORED__REMAIN_PAUSED` — all **275** new pre-v002 raw BTCUSDT Binance USDⓈ-M futures aggTrades daily archives for **2024-03-01 .. 2024-11-30 inclusive UTC** were acquired and integrity-verified (CHECKSUM-first → SHA256 match → `testzip()` → bounded Phase 4ax row-sample validation; 0 missing / 0 checksum-mismatch / 0 decompression-failure / 0 row-sample-failure / 0 retry-exhausted / 0 cap-skip), totalling **5,140,686,147 bytes ≈ 4.788 GiB** and **400,001,695** aggTrade rows, in **2,051 s (≈34 min)** wall-clock. **No warning threshold and no hard cap was crossed** (raw footprint 4.788 GiB < 10 GiB warning < 25 GiB hard; runtime 34 min < 2 h warning < 4 h hard). **Tracked changes (5 files):** the new bounded raw-only acquisition script `scripts/phase4bn_j_r2_acquire_btcusdt_aggtrades_pre_v002.py` (reuses the proven Phase 4bl-C patterns — host allowlist, URL/path pattern, CHECKSUM-first ordering, SHA256, `testzip()`, bounded row-sample validation, Phase 4bb-F canonical sidecars, refuse-overwrite, non-eligible manifest seed — and adds a hard segment date guard rejecting any date `>= 2024-12-01` or outside 2024-03-01..2024-11-30, BTCUSDT-only and aggTrades-only guards, a forbidden-scope-token denylist, the amended 10 GiB/25 GiB raw-only disk cap and 2 h/4 h runtime cap enforced at per-day boundaries, a HEAD-only `--preflight` footprint estimate, and a phase-scoped segment manifest writer; stdlib + Phase 4ax validator only), its offline test module `tests/research/microstructure/test_phase4bn_j_r2_acquisition_script.py` (117 tests; no network / no local data / no sealed-test read; ruff clean), the implementation report, the closeout, and this narrow `current-project-state.md` paragraph + new Current-phase block (prior Phase 4bn-A … 4bn-J-R1 paragraphs and blocks preserved as labelled historical context). **Local gitignored outputs (NOT committed):** 275 raw zips + 275 `.sha256` sidecars under `data/microstructure/raw/microstructure_raw_aggtrades_v001/BTCUSDT/{YYYY}/{MM}/`, plus one phase-scoped segment manifest `microstructure_raw_aggtrades_v001__v002_pre_v002_segment_4bn_j_r2.json` (sha256 `1659e6da9ccc1c4a49c2f497e1f4a70f8082cac24142c77ac6d5217197b3a3d1`) + acquisition log (sha256 `0266210f23cae53ceda83270fd3466f15ffafdd7ded22bca828fc0cb788bcf93`), each with a `.sha256` sidecar, all non-eligible (`research_eligible=false`, `eligibility_gate_status="pending"`, `test_holdout_touched=false`, `test_rows_loaded=0`). **Source-policy preflight PASSED** (public unauthenticated `data.binance.vision` daily BTCUSDT USDⓈ-M futures aggTrades zip + `.CHECKSUM`, two-space checksum format; no credentials / private endpoint / authenticated API / WebSocket / user stream / `.env` / `.mcp.json` / MCP / Graphify). **Preservation:** the existing published v002 raw manifest `microstructure_raw_aggtrades_v001__v002.json` was not read or mutated; the existing v002 terminal window 2024-12-01..2025-02-28 was not re-downloaded, overwritten, or read; the sealed v002 test split 2025-02-14..2025-02-28 was not read / counted / sampled / hashed / summarized / inspected (structurally unreachable via the segment date guard); Phase 4bn-B `test_rows_loaded: 0` and the `iter_partitions(split="test", ...)` always-raise pattern preserved; Phase 4aw `flip_research_eligible(...)` always-raises invariant preserved (never invoked). **Decision:** `RECOMMEND_AUTHORIZE_RAW_ARCHIVE_ELIGIBILITY_GATE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — acquisition succeeded and raw artefacts/manifest/sidecars were created, so a future raw archive eligibility gate is the recommended next option, subject to separate operator authorization; no successor is authorized from inside Phase 4bn-J-R2. **Phase 4bn-J-R2 does not normalize data; does not derive features; does not derive labels; does not run ML; does not train or score models; does not generate predictions; does not run diagnostics; does not run strategy / signals / PnL / backtests; does not migrate storage; does not create any database; does not create `.duckdb` / `.sqlite`; does not compact Parquet; does not create v003; does not mutate any existing manifest / sidecar / gate report / successor-state artefact; does not transition any manifest eligibility, `chronological_split_policy`, `diagnostics_authorized`, or `ml_authorized`; does not define a new holdout / ML split; does not read or touch the sealed v002 test split; does not use credentials, `.env`, `.mcp.json`, MCP, or Graphify; does not call any authenticated / private endpoint, WebSocket, or user stream; does not commit `data/microstructure` or `data/research`; does not authorize Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock is preserved verbatim. **Recommended state: remain paused. No next phase authorized.**
 
+Phase 4bn-K is the **Expanded Raw Archive Eligibility Gate** (raw archive eligibility gate / local gitignored data-validation / docs + gate-report phase; Tier 1 Full Phase per `phase-risk-tiering-standard.md` §3). **Phase 4bn-K is validation-and-docs only.** It evaluated the Phase 4bn-J-R2 pre-v002 raw segment (BTCUSDT / Binance USDⓈ-M futures / aggTrades; 2024-03-01 .. 2024-11-30 inclusive UTC; 275 daily archives) for structural eligibility to proceed to a future separately authorized normalization gate, reading only files recorded in the Phase 4bn-J-R2 segment manifest and guarding every inventory date so any date >= 2024-12-01 is rejected and never opened. **Branch:** `phase-4bn-k/expanded-raw-archive-eligibility-gate`. **Base:** `main` at `cf7dc4f7e663d6f17610e775a9e5061de0b523ce`. A new bounded standalone gate script `scripts/phase4bn_k_validate_pre_v002_raw_archive_gate.py` (modelled on the locked Phase 4bl-D multi-day raw gate but scoped to the segment manifest; imports only the Phase 4ax validator + Phase 4bb-F canonical-path helpers; the locked Phase 4bl-D script was not modified or invoked) plus 53 offline tests were added. **Result: `RAW_ARCHIVE_GATE_PASSED__LOCAL_RAW_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED`; 33 / 33 checks PASS / 0 FAIL / 0 ERROR.** The gate recomputed and matched the Phase 4bn-J-R2 recorded aggregates exactly (275 archives, 275 sidecars, 5,140,686,147 bytes, 400,001,695 rows), verified the segment manifest SHA256 `1659e6da9ccc1c4a49c2f497e1f4a70f8082cac24142c77ac6d5217197b3a3d1` and acquisition-log SHA256 `0266210f23cae53ceda83270fd3466f15ffafdd7ded22bca828fc0cb788bcf93`, ran full SHA256 + `zipfile.testzip()` + a full streaming structural scan (UTC-day boundary, strictly-increasing aggregate-trade-id, min/max + first/last bounds, adjacent-date non-overlap) over every row, plus a bounded Phase 4ax row-sample (head+tail per archive; 281,600 rows validated), and confirmed every sidecar is canonical (`<sha256>␠␠<basename>\n`). One local gitignored gate report + paired `.sha256` sidecar were written under `data/microstructure/gate-reports/raw/` (`microstructure_raw_aggtrades_v001__v002__phase-4bn-k__1780436389489__cf7dc4f7e663.json`; SHA256 `051bed7b3a146278e389bd8e265243d30fd541b5f36061d0573f3522920f9c24`); both remain uncommitted. (A first gate run fail-closed on a denylist tool defect — the token `trades-` matched the in-scope `aggTrades-` token; it was corrected to `-trades-`, a regression test added, the false-failure report deleted, and the gate re-run clean.) **Decision: `RECOMMEND_AUTHORIZE_DOCS_ONLY_DERIVED_STACK_STORAGE_BUDGET_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`** (acceptable alternative `RECOMMEND_AUTHORIZE_NORMALIZATION_READINESS_OR_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`; both subject to separate operator authorization). The existing v002 terminal window (2024-12-01 .. 2025-02-28) was treated by reference only and not read, re-downloaded, or overwritten; the sealed v002 test split (2025-02-14 .. 2025-02-28) was not read / counted / sampled / hashed / summarized / inspected (structurally unreachable via the segment date guard); the Phase 4aw `flip_research_eligible(...)` always-raises invariant was preserved (never invoked). **A passing raw archive gate does NOT flip `research_eligible` (raw remains `false`), does NOT transition `eligibility_gate_status` out of `pending`, and does NOT authorize normalization, feature derivation, label derivation, ML, diagnostics, strategy, or any successor phase.** Phase 4bn-K did NOT acquire data; did NOT call any endpoint / public endpoint / Binance / `data.binance.vision`; did NOT download any archive or CHECKSUM; did NOT run HEAD preflight; did NOT normalize / derive features / derive labels / train or score ML / generate predictions / run diagnostics / run strategy / signals / PnL / backtests; did NOT migrate storage; did NOT create a database / `.duckdb` / `.sqlite`; did NOT compact Parquet; did NOT create v003; did NOT mutate any existing manifest / sidecar / gate report / successor-state artefact; did NOT transition any manifest eligibility; did NOT use credentials / `.env` / `.mcp.json` / MCP / Graphify; did NOT commit `data/microstructure/` or `data/research/`; did NOT authorize Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase. Phase 4bn-K added `scripts/phase4bn_k_validate_pre_v002_raw_archive_gate.py`, `tests/research/microstructure/test_phase4bn_k_raw_archive_gate.py`, `docs/00-meta/implementation-reports/2026-06-01_phase-4bn-k_expanded-raw-archive-eligibility-gate.md`, and `docs/00-meta/implementation-reports/2026-06-01_phase-4bn-k_closeout.md`, and narrowly updated `docs/00-meta/current-project-state.md` (this Phase 4bn-K paragraph + new `Current phase:` block; prior paragraphs and blocks preserved as labelled historical context). **Validation:** `ruff check` new script + test → All checks passed; `pytest` new test module → 53 passed; gate execution → exit 0 / 33 of 33 PASS; `git diff --check` clean; `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`; no `data/microstructure/` or `data/research/` artefact staged. All retained verdicts (H0, R3, R1a, R1b-narrow, R2, F1, D1-A, 5m thread, V2, G1, C1) and all project locks (§11.6, round-trip, §1.7.3, Phase 3p §4.7, Phase 3r §8, Phase 3v §8, Phase 3w §6 / §7 / §8, Phase 4j §11, Phase 4k, Phase 4p, Phase 4q, Phase 4v, Phase 4w, Phase 4ak M0, Phase 4al refined no-rescue rule, Phase 4aw `flip_research_eligible(...)` always-raises invariant, Phase 4bb-F canonical path policy, Phase 4bn-J-R1 raw-only cap amendment) preserved verbatim. **Phase 4bn-K is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-K executed (Expanded Raw
+Archive Eligibility Gate; raw archive
+eligibility gate / local gitignored
+data-validation / docs + gate-report
+phase; Tier 1 Full Phase per
+phase-risk-tiering-standard §3).
+Phase 4bn-K is branch-complete only by
+this work; not merged into main; not
+project-complete.
+
+Branch:
+phase-4bn-k/expanded-raw-archive-eligibility-gate
+Base SHA: main at
+cf7dc4f7e663d6f17610e775a9e5061de0b523ce
+(docs(phase-4bn-j-r2): finalize merge
+closeout shas; pre-branch main ==
+origin/main == HEAD verified in sync).
+
+Result:
+RAW_ARCHIVE_GATE_PASSED__LOCAL_RAW_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED.
+33 / 33 gate checks PASS / 0 FAIL / 0
+ERROR over the Phase 4bn-J-R2 pre-v002
+raw segment (BTCUSDT / Binance USDⓈ-M
+futures / aggTrades; 2024-03-01 ..
+2024-11-30 inclusive UTC; 275 daily
+archives). The gate recomputed and
+matched the recorded aggregates exactly
+(275 archives, 275 sidecars,
+5,140,686,147 bytes, 400,001,695 rows);
+verified segment manifest SHA256
+1659e6da9ccc1c4a49c2f497e1f4a70f8082cac24142c77ac6d5217197b3a3d1
+and acquisition-log SHA256
+0266210f23cae53ceda83270fd3466f15ffafdd7ded22bca828fc0cb788bcf93;
+ran full SHA256 + zipfile.testzip() +
+full streaming structural scan over
+every row + bounded Phase 4ax row-sample
+(281,600 rows); and confirmed canonical
+sidecars. Wall-clock 496.2 s. A first
+run fail-closed on a denylist tool
+defect (token 'trades-' matched the
+in-scope 'aggTrades-' token); the token
+was corrected to '-trades-', a
+regression test added, the false-failure
+report deleted, and the gate re-run
+clean.
+
+Local gitignored output (NOT committed):
+one gate report
+microstructure_raw_aggtrades_v001__v002__phase-4bn-k__1780436389489__cf7dc4f7e663.json
+(sha256
+051bed7b3a146278e389bd8e265243d30fd541b5f36061d0573f3522920f9c24)
++ paired .sha256 sidecar under
+data/microstructure/gate-reports/raw/;
+segment_non_eligible=true,
+research_eligible_after=false,
+no_successor_authorization=true,
+v002_terminal_window_read=false,
+sealed_test_split_touched=false,
+manifest_mutated=false. No
+data/microstructure or data/research
+artefact was committed.
+
+Preservation: the existing published
+v002 raw manifest was not read or
+mutated; the existing v002 terminal
+window 2024-12-01..2025-02-28 was not
+read, re-downloaded, or overwritten; the
+sealed v002 test split
+2025-02-14..2025-02-28 was not read /
+counted / sampled / hashed / summarized
+/ inspected (structurally unreachable
+via the segment date guard); Phase 4aw
+flip_research_eligible(...) always-raises
+invariant preserved (never invoked).
+
+Decision:
+RECOMMEND_AUTHORIZE_DOCS_ONLY_DERIVED_STACK_STORAGE_BUDGET_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION
+(the gate passed and the local raw
+artefacts are structurally sound; before
+any normalization / feature / label
+derivation a derived-stack storage-budget
+memo should set explicit caps and stage
+boundaries, grounded in the Phase 4bn-G
+storage-scaling scoping; acceptable
+alternative
+RECOMMEND_AUTHORIZE_NORMALIZATION_READINESS_OR_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION;
+the operator may equivalently remain
+paused, request a merge prompt for Phase
+4bn-K, separately authorize a
+source-policy documentation memo, or
+reject further ML-baseline successors and
+close the ML arc; no successor is
+authorized from inside Phase 4bn-K).
+
+Even on PASS, Phase 4bn-K does not flip
+research_eligible (raw remains false);
+does not transition
+eligibility_gate_status out of pending;
+does not transition
+chronological_split_policy; does not set
+diagnostics_authorized or ml_authorized;
+does not normalize data; does not derive
+features; does not derive labels; does
+not run ML; does not train or score
+models; does not generate predictions;
+does not run diagnostics; does not run
+strategy / signals / PnL / backtests;
+does not migrate storage; does not create
+any database / .duckdb / .sqlite; does
+not compact Parquet; does not create
+v003; does not acquire data; does not
+call any endpoint; does not download any
+archive or CHECKSUM; does not run HEAD
+preflight; does not read the v002
+terminal window; does not touch the
+sealed v002 test split; does not mutate
+any existing manifest / sidecar / gate
+report / successor-state artefact; does
+not use credentials, .env, .mcp.json,
+MCP, or Graphify; does not commit
+data/microstructure or data/research;
+does not authorize Phase 5, paper /
+shadow, live-readiness, deployment,
+exchange-write, production keys, or any
+successor phase.
+
+Every retained verdict (H0 / R3 / R1a /
+R1b-narrow / R2 / F1 / D1-A / 5m thread /
+V2 / G1 / C1) and every project lock is
+preserved verbatim. Phase 4 canonical
+remains unauthorized. The Phase 4bn-K
+merge phase / any derived-stack
+storage-budget memo / any
+normalization-readiness or normalization
+execution plan / any source-policy
+documentation memo / any normalization /
+feature / label / ML / diagnostics /
+strategy / signals / PnL / backtest /
+storage-migration / database-creation /
+Parquet-compaction / v003-creation /
+paper / shadow / live-readiness /
+deployment / exchange-write /
+production-key / any Phase 5 / any
+successor phase remains unauthorized.
+
+Recommended state: remain paused.
+No next phase authorized.
+```
+
 Current phase:
 
 ```text
