@@ -25,9 +25,8 @@
   (`docs(phase-4bn-q): plan feature derivation readiness`).
 - **Merge commit SHA:** `7ac685b307cfd7a8454e3758f7c059135bf8b29d`
   (`docs(phase-4bn-q): merge feature derivation readiness plan`).
-- **Merge-closeout commit SHA:** `<this file's add commit>`
-  (`docs(phase-4bn-q): add merge closeout`); recorded verbatim in the
-  SHA-finalization commit and the final operator report.
+- **Merge-closeout commit SHA:** `51a20a2d3c7cc64160dc56ebf4713f5bbbcf0f0f`
+  (`docs(phase-4bn-q): add merge closeout`).
 - **SHA-finalization commit SHA:** this commit
   (`docs(phase-4bn-q): finalize merge closeout shas`) — its own hash is the new
   `main` tip; recorded verbatim in the final operator report after push.
