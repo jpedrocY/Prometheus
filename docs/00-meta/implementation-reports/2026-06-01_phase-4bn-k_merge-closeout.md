@@ -31,8 +31,8 @@
   (`data(phase-4bn-k): add expanded raw archive eligibility gate`).
 - **Merge commit SHA:** `19c6661ad4e4173dd0277bc34b1b1684be6d20f7`
   (`data(phase-4bn-k): merge expanded raw archive eligibility gate`).
-- **Merge-closeout commit SHA:** `<MERGE_CLOSEOUT_COMMIT_SHA>`
-  (`docs(phase-4bn-k): add merge closeout`), recorded by the subsequent
+- **Merge-closeout commit SHA:** `63a43cc8d2cf77cfb8de57f271fec2e1341fc16f`
+  (`docs(phase-4bn-k): add merge closeout`), recorded by this subsequent
   SHA-finalization commit. Per the repo convention used for Phase
   4bn-J-R2 / 4bn-J-R1 / 4bn-I / 4bn-H / 4bn-G / 4bn-F / 4bn-E / 4bn-D /
   4bn-C / 4bn-B / 4bn-A, the merge-closeout commit cannot self-reference
@@ -40,15 +40,15 @@
   SHA-finalization commit, which can reference the merge-closeout commit
   hash because that hash exists in `git log` before the SHA-finalization
   commit is created.
-- **SHA-finalization commit:** `<SHA_FINALIZATION_COMMIT_SHA>`
-  (`docs(phase-4bn-k): finalize merge closeout shas`). Same convention:
-  the SHA-finalization commit cannot self-reference its own hash inside
-  its own diff; its SHA is captured in the final operator report and
-  `git log`.
-- **Final `main` / `origin/main` SHA after push:**
-  `<FINAL_MAIN_SHA>` — after the SHA-finalization commit and push, final
-  `main` SHA == final `origin/main` SHA == the SHA-finalization commit
-  (recorded in the final operator report and `git log`).
+- **SHA-finalization commit:** recorded in the final operator report and
+  `git log` as `docs(phase-4bn-k): finalize merge closeout shas`. Same
+  convention: the SHA-finalization commit cannot self-reference its own
+  hash inside its own diff; its SHA is captured in the final operator
+  report and `git log`.
+- **Final `main` / `origin/main` SHA after push:** after the
+  SHA-finalization commit and push, final `main` SHA == final
+  `origin/main` SHA == the SHA-finalization commit (recorded in the final
+  operator report and `git log`).
 
 ## 3. Merge method
 
