@@ -28,9 +28,8 @@
   (`data(phase-4bn-p): gate normalized pre-v002 segment`).
 - **Merge commit SHA:** `a10f255a5fabfb507a739fef25360a7e0bae4cdf`
   (`data(phase-4bn-p): merge normalized-layer eligibility gate`).
-- **Merge-closeout commit SHA:** `19ed9b9`-analogue recorded in the
-  SHA-finalization commit (see below; this file's add commit is
-  `docs(phase-4bn-p): add merge closeout`).
+- **Merge-closeout commit SHA:** `486c8c75ec168837bf7e2d66df0e8605725c2800`
+  (`docs(phase-4bn-p): add merge closeout`).
 - **SHA-finalization commit SHA:** this commit
   (`docs(phase-4bn-p): finalize merge closeout shas`) — its own hash is the new
   `main` tip; recorded verbatim in the final operator report after push.
