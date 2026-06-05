@@ -32,12 +32,11 @@
   (`data(phase-4bn-t): gate feature pre-v002 segment`).
 - **Merge commit SHA:** `8149750801fdf8bad219f1baba1614d9c36e068b`
   (`data(phase-4bn-t): merge feature-layer eligibility gate`).
-- **Merge-closeout commit SHA:** this commit
-  (`docs(phase-4bn-t): add merge closeout`) — recorded in the final operator
-  report.
-- **SHA-finalization commit SHA:** the subsequent
-  `docs(phase-4bn-t): finalize merge closeout shas` commit — its own hash becomes
-  the new `main` tip; recorded verbatim in the final operator report after push.
+- **Merge-closeout commit SHA:** `019bc399bbebce2d8846614c493c096a40f67582`
+  (`docs(phase-4bn-t): add merge closeout`).
+- **SHA-finalization commit SHA:** this commit
+  (`docs(phase-4bn-t): finalize merge closeout shas`) — its own hash becomes the
+  new `main` tip; recorded verbatim in the final operator report after push.
 - **Final `main` / `origin/main` SHA after push:** the SHA-finalization commit;
   `main == origin/main` after push (recorded in the final operator report).
 
