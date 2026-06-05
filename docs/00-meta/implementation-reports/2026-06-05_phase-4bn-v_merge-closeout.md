@@ -35,8 +35,8 @@
   (`docs(phase-4bn-v): settle label manifest versioning`).
 - **Merge commit SHA:** `7d6409c1f201c3e2ed5bdba8b218aa6cb92d2a33`
   (`docs(phase-4bn-v): merge label manifest versioning`).
-- **Merge-closeout commit SHA:** recorded in the final operator report after the
-  `docs(phase-4bn-v): add merge closeout` commit.
+- **Merge-closeout commit SHA:** `02b3259f5070ab6ea7b62aa5a957b871d8813ed7`
+  (`docs(phase-4bn-v): add merge closeout`).
 - **SHA-finalization commit SHA:** the subsequent
   `docs(phase-4bn-v): finalize merge closeout shas` commit — its own hash becomes
   the new `main` tip; recorded verbatim in the final operator report after push.
