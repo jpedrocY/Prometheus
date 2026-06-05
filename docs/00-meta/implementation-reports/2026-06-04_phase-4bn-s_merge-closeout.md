@@ -32,10 +32,9 @@
   (`data(phase-4bn-s): compute pre-v002 feature segment`).
 - **Merge commit SHA:** `8005fb587ea6f7711a064c4c361c77a5b4820327`
   (`data(phase-4bn-s): merge pre-v002 feature segment`).
-- **Merge-closeout commit SHA:** this commit
-  (`docs(phase-4bn-s): add merge closeout`); recorded verbatim in the final
-  operator report.
-- **SHA-finalization commit SHA:** the subsequent commit
+- **Merge-closeout commit SHA:** `1314c274dd400c9fe92490dd7a031f76b1b81dfd`
+  (`docs(phase-4bn-s): add merge closeout`).
+- **SHA-finalization commit SHA:** this commit
   (`docs(phase-4bn-s): finalize merge closeout shas`) — its own hash becomes the
   new `main` tip; recorded verbatim in the final operator report after push.
 - **Final `main` / `origin/main` SHA after push:** the SHA-finalization commit;
