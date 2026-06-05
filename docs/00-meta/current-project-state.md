@@ -267,6 +267,98 @@ Phase 4bn-R is the **Feature Manifest / Versioning Memo** (docs-only / feature-m
 
 Phase 4bn-S is the **Feature-Only Pre-V002 BTCUSDT aggTrades Segment Execution** (feature-only / bounded local gitignored feature artefact generation / feature segment manifest + sidecar generation / code + tests + docs phase; **Tier 1 Full Phase** per `phase-risk-tiering-standard` §3). **Phase 4bn-S executed the feature-only phase recommended by Phase 4bn-R.** **Branch:** `phase-4bn-s/feature-only-pre-v002-segment`. **Base:** `main` at `40f0b3e54392e0e108b8664beedf25169a2d9778` (`docs(phase-4bn-r): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync). It feature-derived the approved Phase 4bn-O pre-v002 normalized BTCUSDT Binance USDⓈ-M futures aggTrades segment (2024-03-01 .. 2024-11-30 inclusive UTC; 275 days; 400,001,695 events) into a phase-scoped **pre-v002 feature segment** of the existing v002 feature family `microstructure_features_aggtrades_v001`, writing only local gitignored feature artefacts plus one non-eligible feature segment manifest + canonical sidecar. The non-eligible-source precondition was anchored on the Phase 4bn-P normalized-layer gate report (SHA256 `3452fd9d…d322e27af134`, PASS, 25/25) over the Phase 4bn-O normalized segment manifest (SHA256 `0e96ae37…ab32d6bdd9fa`), NOT a Stage-3 successor-state; the source segment was verified `research_eligible=false` / `eligibility_gate_status=pending`. **Result: `FEATURE_EXECUTION_SUCCEEDED__LOCAL_FEATURE_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED`.** It produced **275 feature Parquet files + 275 canonical `.sha256` sidecars** under `data/microstructure/features/microstructure_features_aggtrades_v001__v002_pre_v002_segment_4bn_s/BTCUSDT/<YYYY>/<MM>/` and **one feature segment manifest** `data/microstructure/manifests/microstructure_features_aggtrades_v001__v002_pre_v002_segment_4bn_s.json` (SHA256 `4881eb874b132d5952e34c9d1d3e8191dd32d89a3bc2a02e65a02eebc4599b52`) + sidecar (SHA256 `f2ca2f48a5ac8ccfb892d0460cdfbbbb891451b9d94135adb3bff0936c8592e5`). Total feature rows = source events = **400,001,695**; total footprint **54,254,406,538 bytes (≈50.53 GiB)**; locked **62-column `FEATURE_SCHEMA_V002`** (17 lineage + 45 feature/quality) preserved exactly; `FEATURE_SCHEMA_VERSION_V002="v001"`; causal-only kernel (`leakage_policy="causal_only_no_future_lookahead"`, `cross_day_lookback_policy="causal_cross_day_lookback"`, `cross_day_tail_buffer_ms=60000`); 2024-03-01 used no pre-segment read (early rows carry `rolling_missing_window_flag`), 2024-11-30 required no forward read into 2024-12-01. Phase 4bn-L budget witnesses: runtime 14,321.7 s (≈3.98 h; below the 4 h warning and 8 h hard cap), D: free min observed ≈1192.1 GiB (≫ 350 GiB floor), temp peak ≈0.82 GiB (post-cleanup 0); `warning_thresholds_crossed=["feature_warn"]` (50.53 GiB > 50 GiB warning); `hard_caps_crossed=false`. Generated features remain `research_eligible=false` / `eligibility_gate_status=pending` / `no_successor_authorization=true` / `source_eligibility_posture="non_eligible_gate_passed_pending"`; 18-key boundary confirmations all true (incl. `no_future_lookahead`, `phase_4aw_flip_research_eligible_invariant_preserved`); 8-flag non-authorization set all false (incl. `successor_authorization_after`). **Phase 4bn-S did NOT** derive labels / targets / future returns, run ML / score models / generate predictions, run diagnostics / strategy / signals / PnL / backtests, run feature ranking / selection / pruning / tuning / calibration, acquire data, call any endpoint, download any archive, run any HEAD preflight, re-run the raw / normalization / normalized-layer gates, run the feature-layer gate, read the v002 terminal normalized or raw window, touch the sealed test split, read or mutate the published normalized / feature `__v002` family, create a database / `.duckdb` / `.sqlite`, compact Parquet, migrate storage, create v003, flip `research_eligible`, transition `eligibility_gate_status`, create a `chronological_split_policy`, commit any `data/microstructure` / `data/research` artefact, or use credentials / `.env` / `.mcp.json` / MCP / Graphify / WebSocket. The published feature `__v002` manifest/family was neither read nor mutated; the v002 terminal normalized window stayed by-reference and unread (`read=false`, `normalized_dates_read=false`); sealed-test split untouched (`sealed_test_split_touched=false`, `test_rows_loaded=0`). Phase 4bn-S added `scripts/phase4bn_s_compute_pre_v002_features.py`, `tests/research/microstructure/test_phase4bn_s_feature_pre_v002.py` (32 offline tests), the implementation report `docs/00-meta/implementation-reports/2026-06-04_phase-4bn-s_feature-only-pre-v002-segment.md`, the closeout `docs/00-meta/implementation-reports/2026-06-04_phase-4bn-s_closeout.md`, and this narrow `current-project-state.md` update; no source module or locked prior-phase script was modified. **Validation:** `ruff check` (script + test) All checks passed; `pytest` Phase 4bn-S (32) + 4bn-P + 4bn-O + normalize io/validation/manifest suites = 126 passed; `git diff --check` clean; `git status` shows only the two new tracked source files + `.claude/scheduled_tasks.lock`; `data/microstructure/` and `data/research/` gitignored under `.gitignore:85` / `.gitignore:88`; no data artefact staged or committed. Phase 4aw `MicrostructureManifest.flip_research_eligible(...)` always-raises invariant preserved (never invoked). **Phase 4bn-S is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Decision: `RECOMMEND_AUTHORIZE_FEATURE_LAYER_ELIGIBILITY_GATE__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`** (validation-only future gate; must not flip eligibility or authorize labels / ML / diagnostics / strategy / any successor). **Recommended state: remain paused unless the operator separately authorizes a future phase.** **No successor is authorized from inside Phase 4bn-S. No next phase authorized.**
 
+Phase 4bn-T is the **Feature-Layer Eligibility Gate for the Pre-V002 BTCUSDT aggTrades Feature Segment** (feature-layer eligibility gate / local gitignored feature artefact validation / code + tests + docs + local gate-report phase; **Tier 1 Full Phase** per `phase-risk-tiering-standard` §3, because it reads local feature BTCUSDT Binance USDⓈ-M futures aggTrades artefacts and their manifest/sidecars, validates a newly generated feature segment, and is adjacent to future label derivation, chronological split/holdout policy, future ML-baseline admissibility, and downstream research gates, while explicitly authorizing no label derivation, no ML, no diagnostics, no strategy, no research-eligibility flip, and no downstream use). **Phase 4bn-T is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-t/feature-layer-eligibility-gate`. **Base:** `main` at `e647435c81d784f610b9cf8b5e2f2dc8ee0e914e` (`docs(phase-4bn-s): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-S SHA-finalization `e647435`, merge-closeout `1314c27`, merge `8005fb5`, and branch `9679d9a` all present on main; Phase 4bn-R finalization `40f0b3e` present as predecessor). **Tracked changes (5 files):** the bounded read-only gate runner `scripts/phase4bn_t_validate_feature_pre_v002_gate.py` (reuses only the locked generic SHA/sidecar/path primitives and the locked `FEATURE_SCHEMA_V002` constants; the committed `multiday_feature_gate*` / Phase 4bm-J feature gate is hardcoded to the published `__v002` 90-day terminal window, the published `__v002` manifest shape, and a Stage-3 research-eligible successor-state precondition, so it is not reusable for the non-eligible pre-v002 segment), the offline test module `tests/research/microstructure/test_phase4bn_t_feature_layer_gate.py` (31 tests), the implementation report (`docs/00-meta/implementation-reports/2026-06-04_phase-4bn-t_feature-layer-eligibility-gate.md`; 25 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-04_phase-4bn-t_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-S paragraphs and blocks preserved as labelled historical context). **No source module and no locked prior-phase script was modified.** **Result:** **PASS** — `FEATURE_LAYER_GATE_PASSED__LOCAL_FEATURE_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED`. The read-only gate validated the Phase 4bn-S local feature pre-v002 segment (BTCUSDT / Binance USDⓈ-M futures / aggTrades; 2024-03-01 .. 2024-11-30 inclusive UTC; 275 dates) across **27/27 checks PASS** in 348.9 s: streamed the SHA256 of every one of the 275 feature Parquet (each matched its canonical two-space `.sha256` sidecar and the manifest `per_file_inventory`), validated 275 contiguous in-segment dates, exact segment path layout + `BTCUSDT-features-aggtrades-<YYYY-MM-DD>.parquet` basename, the feature segment manifest SHA256 (`4881eb874b132d5952e34c9d1d3e8191dd32d89a3bc2a02e65a02eebc4599b52`) + sidecar (`f2ca2f48…92e5`), the Phase 4bn-R required-field contract and forbidden-field absence, the locked **62-column `FEATURE_SCHEMA_V002`** (17 lineage + 45 feature/quality; metadata for all 275; full identity-column deep checks on a 10-date sample of month-firsts + 2024-11-30) with the 26-token forbidden-substring column guard, the causal kernel policy (`leakage_policy=causal_only_no_future_lookahead`, `cross_day_lookback_policy=causal_cross_day_lookback`, `cross_day_tail_buffer_ms=60000`; sampled `feature_timestamp_ms == source_transact_time_ms`, no future lookahead), adjacent-date non-overlap for all 274 pairs, recomputed total rows = **400,001,695** (exact) and recomputed footprint (parquet + sidecar bytes) = **54,254,406,538 B** (exact, ≈50.53 GiB), and predecessor integrity (Phase 4bn-O normalized segment manifest `0e96ae37…d9fa` + sidecar `5d7dcbef…6402`, Phase 4bn-P normalized-layer gate report `3452fd9d…f134` with verdict `NORMALIZED_LAYER_GATE_PASSED__LOCAL_NORMALIZED_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED` and 25/25 PASS). **Local gitignored gate output (uncommitted):** one gate report `data/microstructure/gate-reports/features/microstructure_features_aggtrades_v001__v002_pre_v002_segment_4bn_s__phase-4bn-t__1780674917156__e647435c81d7.json` (SHA256 `db731d1be06295404ef195d9b5b5bad8010ce6ae6efef43ece90c29653d6ab08`) + canonical sidecar (SHA256 `12d2e437f444f8445306f6c3eebbf77821d59428d23dc621f3e39a541bd986ea`), recording `segment_non_eligible: true`, `research_eligible_after: false`, `eligibility_gate_status_after: pending`, `no_successor_authorization: true`, `feature_execution_rerun: false`, `v002_terminal_window_read: false`, `sealed_test_split_touched: false`, `published_v002_mutated: false`, `data_committed: false`. **The gate is read-only on all data: it did not rerun feature execution; it did not mutate the segment manifest, any feature Parquet, any sidecar, or the published feature `__v002` family; it did not flip `research_eligible` or transition `eligibility_gate_status`; the published feature `__v002` manifest/Parquet were not read and not mutated (path-disjoint, refuse-overwrite, never opened); the v002 terminal raw/normalized window was by reference only and unread; the sealed v002 test split was untouched (`test_rows_loaded: 0`); no v003 path, no `.duckdb`/`.sqlite`, no compacted Parquet was created; no data/microstructure or data/research artefact was committed.** **Decision:** `RECOMMEND_AUTHORIZE_LABEL_DERIVATION_READINESS_OR_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — with raw acquisition, raw gate, normalization, normalized-layer gate, feature derivation, and now the feature-layer gate all passed for the pre-v002 segment, the next clean technical stage is a separately-authorized label-derivation readiness/execution plan (which must still run no ML/diagnostics/strategy/PnL/backtests, flip no eligibility, and use no sealed test split); acceptable alternatives are remain paused, request a merge prompt for Phase 4bn-T, separately authorize a holdout-boundary memo (only if a future scope touches the v002 terminal raw/normalized window or sealed-test dates), separately authorize a source-policy documentation memo, separately authorize a process-doc `D:` path-string update, or reject further ML-baseline successors and close the ML arc; no successor is authorized from inside Phase 4bn-T. **A passing feature-layer gate does not make the dataset research-eligible and authorizes no labels, ML, diagnostics, strategy, PnL, backtests, chronological split policy, storage migration, v003, paper/shadow/live, exchange-write, or any successor.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock (§11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue rule; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path + sidecar policy; the Phase 4bn-J-R1 raw-only cap amendment; the Phase 4bn-L derived-stack storage budget; the Phase 4bn-N normalization manifest/versioning convention; the Phase 4bn-R feature manifest/versioning convention) is preserved verbatim. Phase 4 canonical remains unauthorized. **Validation:** `git status --short` shows only the two tracked Phase 4bn-T source files (plus the three docs) and the expected untracked `.claude/scheduled_tasks.lock`; `git diff --check` clean; `ruff check` on the runner + test → all checks passed; `pytest` on the new module (31 passed) and the predecessor set `test_phase4bn_s_feature_pre_v002.py` / `test_phase4bn_p_normalized_layer_gate.py` / `test_phase4bn_o_normalization_pre_v002.py` (88 passed); `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`; no `data/microstructure/` or `data/research/` artefact staged. **Phase 4bn-T is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-T executed (Feature-Layer
+Eligibility Gate for the Pre-V002 BTCUSDT
+aggTrades Feature Segment; feature-layer
+eligibility gate / local gitignored feature
+artefact validation / code + tests + docs +
+local gate-report phase; Tier 1 Full Phase
+per phase-risk-tiering-standard §3).
+Phase 4bn-T is branch-complete only by this
+work; not merged into main; not
+project-complete.
+
+Branch:
+phase-4bn-t/feature-layer-eligibility-gate
+Base SHA: main at
+e647435c81d784f610b9cf8b5e2f2dc8ee0e914e
+(docs(phase-4bn-s): finalize merge closeout
+shas; pre-branch main == origin/main == HEAD
+verified in sync).
+
+Result:
+FEATURE_LAYER_GATE_PASSED__LOCAL_FEATURE_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED
+(27/27 checks PASS; runtime 348.9s).
+Decision:
+RECOMMEND_AUTHORIZE_LABEL_DERIVATION_READINESS_OR_EXECUTION_PLAN__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION.
+
+The read-only feature-layer gate validated
+the Phase 4bn-S local feature pre-v002
+segment (BTCUSDT / Binance USDⓈ-M futures /
+aggTrades; 2024-03-01 .. 2024-11-30 inclusive
+UTC; 275 dates). Feature segment manifest
+data/microstructure/manifests/microstructure_features_aggtrades_v001__v002_pre_v002_segment_4bn_s.json
+(SHA256
+4881eb874b132d5952e34c9d1d3e8191dd32d89a3bc2a02e65a02eebc4599b52).
+Validated 275 feature Parquet + 275 canonical
+.sha256 sidecars; recomputed total rows =
+400,001,695 (exact); recomputed footprint
+(parquet + sidecar) = 54,254,406,538 B
+(exact, ~50.53 GiB); locked 62-column
+FEATURE_SCHEMA_V002 (17 lineage + 45
+feature/quality) exact + forbidden-substring
+column guard; causal-only kernel
+(feature_timestamp == source_transact_time;
+cross_day_tail_buffer_ms=60000); predecessor
+integrity (Phase 4bn-O manifest 0e96ae37...d9fa
++ sidecar 5d7dcbef...6402; Phase 4bn-P
+normalized-layer gate 3452fd9d...f134, PASS
+25/25).
+
+Local gitignored gate report (uncommitted):
+data/microstructure/gate-reports/features/microstructure_features_aggtrades_v001__v002_pre_v002_segment_4bn_s__phase-4bn-t__1780674917156__e647435c81d7.json
+(SHA256
+db731d1be06295404ef195d9b5b5bad8010ce6ae6efef43ece90c29653d6ab08)
++ canonical sidecar (SHA256
+12d2e437f444f8445306f6c3eebbf77821d59428d23dc621f3e39a541bd986ea).
+
+Non-eligible posture preserved: segment
+remains research_eligible=false,
+eligibility_gate_status=pending,
+no_successor_authorization=true; no manifest
+eligibility transition; Phase 4aw
+flip_research_eligible(...) always-raises
+invariant never invoked. A passing
+feature-layer gate authorizes no labels / ML
+/ diagnostics / strategy / PnL / backtests /
+chronological split / storage migration /
+v003 / paper / shadow / live / exchange-write
+/ successor.
+
+Boundaries: no feature execution rerun; no
+normalization / raw-gate / normalized-layer-
+gate rerun; published feature __v002
+manifest/family not read and not mutated; v002
+terminal raw/normalized window by-reference
+only and unread; sealed test split untouched
+(sealed_test_split_touched=false,
+test_rows_loaded=0); no .duckdb/.sqlite; no
+data/research output; no data artefact
+committed.
+
+Phase 4bn-T is branch-complete only. Per the
+workflow standard it is NOT project-complete
+until a separately authorized merge phase
+records its merge-closeout on main.
+Recommended state: remain paused. No next
+phase authorized.
+```
+
 Current phase:
 
 ```text
