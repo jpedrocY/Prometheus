@@ -25,8 +25,14 @@
   (`data(phase-4bn-x): gate pre-v002 label segment`).
 - **Merge commit SHA:** `daee3df628c3e03df58e3d6f11a399c0ae5b8097`
   (`data(phase-4bn-x): merge label-layer eligibility gate`).
-- **Merge-closeout commit SHA:** `<filled at SHA-finalization>`.
-- **Final `main` / `origin/main` SHA after push:** `<filled at SHA-finalization>`.
+- **Merge-closeout commit SHA:** `af6387d118ffda5c7f9a3e307f6de1a6f4c081a0`
+  (`docs(phase-4bn-x): add merge closeout`).
+- **SHA-finalization commit SHA:** the subsequent
+  `docs(phase-4bn-x): finalize merge closeout shas` commit — its own hash
+  becomes the new `main` tip; recorded in the final operator report after the
+  commit and push.
+- **Final `main` / `origin/main` SHA after push:** the SHA-finalization commit
+  hash above; recorded in the final operator report after `git push origin main`.
 
 ## 3. Merge method
 
