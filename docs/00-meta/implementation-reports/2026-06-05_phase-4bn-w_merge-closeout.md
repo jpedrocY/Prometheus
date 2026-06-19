@@ -33,8 +33,8 @@
   (`data(phase-4bn-w): compute pre-v002 label segment`).
 - **Merge commit SHA:** `1353525299b3637187aa642e58ddd7aac720f3c4`
   (`data(phase-4bn-w): merge pre-v002 label segment`).
-- **Merge-closeout commit SHA:** recorded in the final operator report after
-  the `docs(phase-4bn-w): add merge closeout` commit.
+- **Merge-closeout commit SHA:** `1f2323f76d0a92ac3292a62161a42ee7882ef7fc`
+  (`docs(phase-4bn-w): add merge closeout`).
 - **SHA-finalization commit SHA:** the subsequent
   `docs(phase-4bn-w): finalize merge closeout shas` commit — its own hash
   becomes the new `main` tip; recorded in the final operator report after
