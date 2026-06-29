@@ -26,10 +26,9 @@
   (`code(phase-4bn-aa): add pre-v002 split policy artefact`).
 - **Merge commit SHA:** `451a51e9bd8c5711a147b095c6ec37989f725f66`
   (`code(phase-4bn-aa): merge pre-v002 split policy artefact`).
-- **Merge-closeout commit SHA:** this file's commit
-  (`docs(phase-4bn-aa): add merge closeout`) — recorded in the final operator
-  report and `git log`.
-- **SHA-finalization commit SHA:** the follow-up
+- **Merge-closeout commit SHA:** `6cfbf68783011ea67fbb752d27b3b49773a479c9`
+  (`docs(phase-4bn-aa): add merge closeout`).
+- **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-aa): finalize merge closeout shas`) — its exact SHA is the
   resulting `main` / `origin/main` tip, reproduced in the final operator report
   and `git log`.
