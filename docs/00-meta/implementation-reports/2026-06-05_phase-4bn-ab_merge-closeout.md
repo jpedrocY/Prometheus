@@ -29,10 +29,9 @@
   (`docs(phase-4bn-ab): record source admissibility posture`).
 - **Merge commit SHA:** `d200a8b4563ac912d09b242af71231bc1c736139`
   (`docs(phase-4bn-ab): merge source admissibility posture`).
-- **Merge-closeout commit SHA:** this file's commit
-  (`docs(phase-4bn-ab): add merge closeout`) — exact SHA reproduced in the final
-  operator report and `git log`.
-- **SHA-finalization commit SHA:** the follow-up update
+- **Merge-closeout commit SHA:** `1d032a40bb555bea5cb48d95db7215da7707bfb1`
+  (`docs(phase-4bn-ab): add merge closeout`).
+- **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-ab): finalize merge closeout shas`) — its exact SHA is the
   resulting `main` / `origin/main` tip, reproduced in the final operator report
   and `git log`.
