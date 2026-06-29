@@ -26,9 +26,8 @@
   (`docs(phase-4bn-z): assess ml baseline readiness`).
 - **Merge commit SHA:** `12e50e8c042797359bc9d0274d441b5d9635e61a`
   (`docs(phase-4bn-z): merge ml baseline readiness`).
-- **Merge-closeout commit SHA:** `e1b... TBD` — the commit adding this file
-  (`docs(phase-4bn-z): add merge closeout`); its exact SHA is filled by the
-  SHA-finalization commit and reproduced in the final operator report.
+- **Merge-closeout commit SHA:** `268020a87eadef7cbf719cd265ffe8b662d7e67e`
+  (`docs(phase-4bn-z): add merge closeout`).
 - **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-z): finalize merge closeout shas`) — its exact SHA is the
   resulting `main` / `origin/main` tip, reproduced in the final operator report
