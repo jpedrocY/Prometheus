@@ -23,11 +23,14 @@
   (`docs(phase-4bn-y): define chronological split holdout policy`).
 - **Merge commit SHA:** `69005a46a46addf703bbe470e3382f72cbf3dabb`
   (`docs(phase-4bn-y): merge chronological split holdout policy`).
-- **Merge-closeout commit SHA:** `__TO_BE_FINALIZED__`
+- **Merge-closeout commit SHA:** `e55e5a84b57d312f4e5f6e10a29ff69a276532e1`
   (`docs(phase-4bn-y): add merge closeout`).
-- **SHA-finalization commit SHA:** `__TO_BE_FINALIZED__`
-  (`docs(phase-4bn-y): finalize merge closeout shas`).
-- **Final `main` / `origin/main` SHA after push:** `__TO_BE_FINALIZED__`.
+- **SHA-finalization commit SHA:** this commit
+  (`docs(phase-4bn-y): finalize merge closeout shas`) — its exact SHA is the
+  resulting `main` / `origin/main` tip, reproduced in the final operator report
+  and `git log`.
+- **Final `main` / `origin/main` SHA after push:** equal to the SHA-finalization
+  commit SHA above; reproduced in the final operator report and `git log`.
 
 ---
 
