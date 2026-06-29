@@ -277,6 +277,134 @@ Phase 4bn-W is the **Label-Only Pre-V002 BTCUSDT aggTrades Segment Execution** (
 
 Phase 4bn-X is the **Label-Layer Eligibility Gate for the Pre-V002 BTCUSDT aggTrades Label Segment** (label-layer eligibility gate / local gitignored label artefact validation / code + tests + docs + local gate-report phase; **Tier 1 Full Phase** per `phase-risk-tiering-standard` §3, because it reads the Phase 4bn-W local label segment and its predecessor manifests/gate reports, validates the newly generated label segment, and prepares the label layer for later chronological-split / ML-baseline admissibility review, while explicitly authorizing no eligibility flip, no ML, no diagnostics, no strategy, no PnL, no backtests, no split-policy transition, no downstream use, and no successor; separately authorized by the operator following the Phase 4bn-W decision `RECOMMEND_AUTHORIZE_LABEL_LAYER_ELIGIBILITY_GATE`). **Phase 4bn-X is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-x/label-layer-eligibility-gate`. **Base:** `main` at `5bcae53ee843759a6c81c14d71a66dc241023e31` (`docs(phase-4bn-w): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-W SHA-finalization `5bcae53`, merge-closeout `1f2323f`, merge `1353525`, and branch `098b274` all present on main). **Tracked changes (5 files):** the bounded read-only gate runner `scripts/phase4bn_x_validate_label_pre_v002_gate.py` (reuses only the locked generic SHA/sidecar/path primitives from `normalize_io` and the locked `LABEL_SCHEMA_V002` / label-policy constants from `labels_schema_v002`; re-implements the segment-scoped `label_config_hash` recomputation inline; the committed `multiday_label_gate*` gates are hardcoded to the published `__v002` 90-day terminal window and a Stage-5 research-eligible successor-state precondition, so they are not reusable for the non-eligible pre-v002 segment), the offline test module `tests/research/microstructure/test_phase4bn_x_label_layer_gate.py` (48 tests), the implementation report (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-x_label-layer-eligibility-gate.md`; 28 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-x_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-W paragraphs and blocks preserved as labelled historical context). **No `src/prometheus` module and no locked prior-phase script or test was modified.** **Result:** **PASS** — `LABEL_LAYER_GATE_PASSED__LOCAL_LABEL_SEGMENT_NON_ELIGIBLE__REMAIN_PAUSED`. The read-only gate validated the Phase 4bn-W local label pre-v002 segment (BTCUSDT / Binance USDⓈ-M futures / aggTrades; 2024-03-01 .. 2024-11-30 inclusive UTC; 275 dates) across **40/40 checks PASS** in 205.6 s, performing a **full per-row scan of all 275 label Parquets (no sampling)**: streamed the SHA256 of every Parquet (each matched its canonical two-space `.sha256` sidecar and the manifest `per_day_outputs` inventory), validated the label segment manifest SHA256 (`69746c88860bff2de197dca0841dc2c6e439a93b06ba4dac9f58312b95e1b161`) + sidecar (`636a4c1a…8239`), the required-field contract + forbidden-field absence + non-eligible/governance/by-reference/sealed posture, the locked **40-column `LABEL_SCHEMA_V002`** (17 lineage + `label_config_hash` + 8 causal forward-return/direction + 14 support) with the 21-token forbidden-substring column guard on every file, the exhaustive constant lineage/identity/hash columns (`label_config_hash = b3bd5d2b332e9f4b4a6bbf76de533f48993b4d0500e4aab90087404b51558970` on every row of every file; the two re-mapped lineage columns bound to the Phase 4bn-T feature-layer gate `db731d1b…` and Phase 4bn-P normalized-layer gate `3452fd9d…`), per-row envelope-terminal censoring (`horizon_censored_flag_H == (feature_timestamp_ms + H_ms > 1733011199331)`; censored ⇒ reference/label null; non-censored ⇒ reference timestamp ≤ target ≤ terminal), the `label_any_censored_flag` OR invariant, `forward_direction ∈ {-1,0,1}`, recomputed total rows = **400,001,695** (exact), recomputed footprint (parquet + sidecar bytes) = **15,654,082,679 B** (exact), recomputed per-horizon censored counts **1s=3 / 5s=20 / 15s=42 / 60s=216** (exact) and invalid-price rows **0** (exact), recomputed `envelope_terminal_unix_ms = 1733011199331` (max anchor `feature_timestamp_ms`, UTC date 2024-11-30), recomputed segment-scoped `label_config_hash` from the manifest inputs = `b3bd5d2b…` (exact), and predecessor integrity (Phase 4bn-S feature manifest `4881eb87…` + sidecar `f2ca2f48…` non-eligible/pending; Phase 4bn-T feature-layer gate `db731d1b…` verdict + 27/27 PASS; Phase 4bn-O normalized manifest `0e96ae37…` + sidecar `5d7dcbef…` non-eligible/pending; Phase 4bn-P normalized-layer gate `3452fd9d…` verdict + 25/25 PASS; raw segment manifest `1659e6da…`). **Local gitignored gate output (uncommitted):** one gate report `data/microstructure/gate-reports/labels/microstructure_labels_aggtrades_v001__v002_pre_v002_segment_4bn_w__phase-4bn-x__1781897304431__5bcae53ee843.json` (SHA256 `ffb5b09215d6efd9b34c3a625421a367c9587b63027c59f2fc9d5c59797a8984`) + canonical sidecar (SHA256 `68dd5b5709bb523003ed183ac776e95ad1c82a40deb65e3cda51b2e10e51997c`), recording `segment_non_eligible: true`, `research_eligible_after: false`, `eligibility_gate_status_after: pending`, `no_successor_authorization: true`, `label_execution_rerun: false`, `v002_terminal_window_read: false`, `sealed_test_split_touched: false`, `published_v002_label_mutated: false`, `data_committed: false`. **The gate is read-only on all data: it did not rerun label derivation; it did not mutate the segment manifest, any label Parquet, any sidecar, any predecessor artefact, or the published label `__v002` family; it did not flip `research_eligible` or transition `eligibility_gate_status` / `chronological_split_policy`; the published label `__v002` manifest/Parquet were by reference only and unread; the v002 terminal raw/normalized/feature/label window was by reference only and unread; the sealed v002 test split was untouched (`test_rows_loaded: 0`); no v003 path, no `.duckdb`/`.sqlite`, no compacted Parquet was created; no data/microstructure or data/research artefact was committed.** **Decision:** `RECOMMEND_AUTHORIZE_CHRONOLOGICAL_SPLIT_AND_HOLDOUT_POLICY_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION` — with raw acquisition, raw gate, normalization, normalized-layer gate, feature derivation, feature-layer gate, label derivation, and now the label-layer gate all passed for the pre-v002 segment, the next safe step before any ML is a separately-authorized **docs-only chronological split / holdout policy memo** (train/validation/test boundaries, purging/embargo, sealed-test rules, ML-baseline admissibility conditions); acceptable alternatives are remain paused, request a merge prompt for Phase 4bn-X, separately authorize an ML-baseline readiness memo (only after a split policy exists), a docs-only holdout-boundary memo (only if a future scope touches the v002 terminal or sealed-test dates), a source-policy documentation memo, a process-doc `D:` path-string update, or reject further ML-baseline successors and close the ML arc; no successor is authorized from inside Phase 4bn-X. **A passing label-layer gate does not make the dataset research-eligible and authorizes no chronological split policy, ML, diagnostics, strategy, PnL, backtests, storage migration, v003, paper/shadow/live, exchange-write, or any successor.** **Validation:** `ruff check` on the runner + test → all checks passed; `pytest` on the new module (48 passed) + the predecessor 4bn-W/4bn-T/4bn-S/4bn-P/4bn-O suites (155 passed) → 203 passed; `mypy src/prometheus` reports only 96 pre-existing errors in 12 unrelated modules (Phase 4bn-X added no `src/prometheus` change; the new wrapper lives under `scripts/`); `git diff --check` clean; `git check-ignore -v data/microstructure/` → `.gitignore:85` (gate report + sidecar both gitignored); `git check-ignore -v data/research/` → `.gitignore:88`; `git status --short` shows only the five tracked Phase 4bn-X files plus the expected untracked `.claude/scheduled_tasks.lock`; no `data/microstructure/` or `data/research/` artefact staged. Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock (§11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue rule; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path + sidecar policy; the Phase 4bn-J-R1 raw-only cap amendment; the Phase 4bn-L derived-stack storage budget; the Phase 4bn-N normalization manifest/versioning convention; the Phase 4bn-R feature manifest/versioning convention; the Phase 4bn-V label manifest/versioning convention) is preserved verbatim. Phase 4 canonical remains unauthorized. **Phase 4bn-X is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** **No next phase authorized.**
 
+Phase 4bn-Y is the **Chronological Split / Holdout Policy Memo** (docs-only split-policy / holdout-boundary / ML-admissibility-precondition / leakage-control memo; Tier 1 Full Phase per `phase-risk-tiering-standard` §3; separately authorized by the operator following the Phase 4bn-X label-layer gate decision `RECOMMEND_AUTHORIZE_CHRONOLOGICAL_SPLIT_AND_HOLDOUT_POLICY_MEMO`). **Phase 4bn-Y is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-y/chronological-split-holdout-policy-memo`. **Base:** `main` at `5d69e679b00783c1a2b37e4d6a80c64c2dd3782a` (`docs(phase-4bn-x): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-X SHA-finalization `5d69e67`, merge-closeout `af6387d`, merge `daee3df`, and branch `d272dcd` all present on main; Phase 4bn-W finalization `5bcae53` present as predecessor). **Tracked changes (3 files):** the split/holdout policy memo (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-y_chronological-split-holdout-policy.md`, 23 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-y_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-X paragraphs/blocks preserved as labelled historical context). **No source / test / committed-script / configuration / manifest / sidecar / gate-report / successor-state file modified. No local data read. No local data created or mutated. No split file / research matrix created. No ML. No diagnostics. No strategy / signals / PnL / backtests. No acquisition. No endpoint calls.** **Result state:** `RECORD_CHRONOLOGICAL_SPLIT_POLICY__REMAIN_PAUSED`. **Decision:** `RECOMMEND_AUTHORIZE_ML_BASELINE_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **The memo defines the chronological split / holdout contract for the first future ML-baseline path over the gated pre-v002 BTCUSDT / Binance USDⓈ-M futures / aggTrades label segment (2024-03-01 .. 2024-11-30 inclusive UTC; 275 dates; 400,001,695 rows; label manifest `69746c88…b161`; `label_config_hash b3bd5d2b…8970`; `envelope_terminal_unix_ms 1733011199331`), determined from committed docs + committed source read-only (incl. `diagnostics_split_policy_v002.py`, the already-recorded v002 split policy); no local data read.** **Selected split policy:** Candidate A — conservative pre-v002-only chronological split with internal dry-run holdout (working name `CHRONO_SPLIT_PRE_V002_214D_45D_14D_WITH_1D_BOUNDARY_EMBARGO`; not implemented in code by this phase): **Train** 2024-03-01 .. 2024-09-30 (214 dates); **embargo date** 2024-10-01; **Validation** 2024-10-02 .. 2024-11-15 (45 dates); **embargo date** 2024-11-16; **internal holdout / dry-run (NOT the sealed test)** 2024-11-17 .. 2024-11-30 (14 dates); 214 + 1 + 45 + 1 + 14 = 275 = full gated pre-v002 segment; assignment by `source_transact_time_ms` UTC date; chronological-only; no shuffle / random / k-fold-over-time / bootstrap. **Selected embargo:** 1 full UTC date dropped at each internal boundary (operational rule), over a formal ≥60 s row-level earlier-split floor (subsumes the locked v002 `MIN_BOUNDARY_EMBARGO_SECONDS=60`; the 1-day purge is explicitly more conservative than the 60 s label horizon, 86,400 s ≫ 60 s). **v002 terminal (2024-12-01 .. 2025-02-28):** by reference only / unread; governed by the recorded `CHRONO_SPLIT_45D_30D_15D_WITH_60S_BOUNDARY_EMBARGO` policy (preserved verbatim); inadmissible to the first ML-baseline path. **Published v002 labels:** by reference only; byte-for-byte immutable; unread. **Sealed test (2025-02-14 .. 2025-02-28):** fully sealed; `test_rows_loaded=0`; untouched; single-use, future-authorization only; the pre-v002 internal holdout is NOT the sealed test and may not be used for final / strategy / production claims. **Full-envelope reference/assembly:** not required for the conservative pre-v002-only path; required only before any future pre-v002 + v002 combined path; deferred / unauthorized. **Censored labels:** no silent imputation; retain rows with null per-horizon labels; per-task drop of per-horizon nulls; exact filtering deferred to a future ML readiness memo. **Invalid-price labels:** 0 present; future policy must explicitly reject/filter; never impute. **Future ML-readiness prerequisites:** docs-only ML-baseline readiness memo; code-level pre-v002 split-policy artefact + offline tests; source admissibility resolved (segment remains `research_eligible=false` / `eligibility_gate_status=pending`); leakage / split-integrity proof; budget preflight within Phase 4bn-L caps. **Future label budget carried forward (Phase 4bn-L):** label footprint warn 75 GiB / hard cap 125 GiB; runtime warn 4 h / hard cap 8 h; temp warn 50 GiB / hard cap 100 GiB; total derived-stack warn 250 GiB / hard cap 300 GiB; D: ≥ 500 GiB before / fail closed below 350 GiB during. **Validation:** `git diff --check` clean; `git status --short` shows only the three tracked Phase 4bn-Y docs files plus the pre-existing untracked `.claude/scheduled_tasks.lock`; `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`. Phase 4bn-Y did NOT add or modify any source / test / script / config; did NOT read or create any local data; did NOT create a split file / research matrix / manifest / sidecar / gate report; did NOT run ML / diagnostics / strategy / PnL / backtests; did NOT acquire data or call endpoints; did NOT read the v002 terminal window or sealed-test split; did NOT flip `research_eligible`; did NOT transition `eligibility_gate_status` / `chronological_split_policy` / `diagnostics_authorized` / `ml_authorized`; did NOT create a database; did NOT compact Parquet; did NOT create v003; did NOT create or commit `data/microstructure` or `data/research`; did NOT authorize any successor. Phase 4aw `flip_research_eligible(...)` always-raises invariant preserved (never invoked); recorded v002 `CHRONO_SPLIT_45D_30D_15D_WITH_60S_BOUNDARY_EMBARGO` policy preserved verbatim. **Phase 4bn-Y preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue; Phase 4aw always-raises invariant; Phase 4bb-F canonical path policy; Phase 4bl-F risk tiers; Phase 4bm-U/4bm-W v002 split policy; Phase 4bn-L budgets; Phase 4bn-N normalization manifest/versioning; Phase 4bn-R feature manifest/versioning; Phase 4bn-V label manifest/versioning; Phase 4am .. Phase 4bn-X results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-Y merge phase / any ML-baseline readiness memo / any full-envelope reference-assembly memo / any holdout-boundary memo / any pre-v002 split-policy code artefact / any ML implementation / any model training / any strategy / signals / PnL / backtest / acquisition / paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-Y executed (Chronological Split /
+Holdout Policy Memo; docs-only split-policy /
+holdout-boundary /
+ML-admissibility-precondition /
+leakage-control memo; Tier 1 Full Phase per
+phase-risk-tiering-standard §3).
+Phase 4bn-Y is branch-complete only by this
+work; not merged into main; not
+project-complete.
+
+Branch:
+phase-4bn-y/chronological-split-holdout-policy-memo
+Base SHA: main at
+5d69e679b00783c1a2b37e4d6a80c64c2dd3782a
+(docs(phase-4bn-x): finalize merge closeout
+shas; pre-branch main == origin/main == HEAD
+verified in sync).
+
+Result state:
+RECORD_CHRONOLOGICAL_SPLIT_POLICY__REMAIN_PAUSED.
+Decision:
+RECOMMEND_AUTHORIZE_ML_BASELINE_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION.
+
+Docs-only memo defining the chronological
+split / holdout contract for the first future
+ML-baseline path over the gated pre-v002
+BTCUSDT / Binance USDⓈ-M futures / aggTrades
+label segment (2024-03-01 .. 2024-11-30
+inclusive UTC; 275 dates; 400,001,695 rows;
+label manifest 69746c88...b161;
+label_config_hash b3bd5d2b...8970;
+envelope_terminal_unix_ms 1733011199331).
+Determined from committed docs + committed
+source read-only (incl.
+diagnostics_split_policy_v002.py, the
+already-recorded v002 split policy); no local
+data read.
+
+Selected split policy: Candidate A —
+conservative pre-v002-only chronological split
+with internal dry-run holdout (working name
+CHRONO_SPLIT_PRE_V002_214D_45D_14D_WITH_1D_BOUNDARY_EMBARGO;
+not implemented in code). Train 2024-03-01 ..
+2024-09-30 (214 dates); embargo date
+2024-10-01; Validation 2024-10-02 ..
+2024-11-15 (45 dates); embargo date
+2024-11-16; internal holdout / dry-run (NOT
+the sealed test) 2024-11-17 .. 2024-11-30 (14
+dates). 214 + 1 + 45 + 1 + 14 = 275 = full
+gated pre-v002 segment. Assignment by
+source_transact_time_ms UTC date;
+chronological-only; no shuffle / random /
+k-fold / bootstrap.
+
+Embargo: 1 full UTC date dropped at each
+internal boundary (operational), over a formal
+>=60 s row-level earlier-split floor (subsumes
+locked v002 MIN_BOUNDARY_EMBARGO_SECONDS=60;
+1-day purge >> 60 s horizon).
+
+v002 terminal 2024-12-01 .. 2025-02-28: by
+reference only / unread; governed by recorded
+CHRONO_SPLIT_45D_30D_15D_WITH_60S_BOUNDARY_EMBARGO
+(preserved verbatim); inadmissible to first
+ML path. Published v002 labels: by reference
+only; immutable; unread. Sealed test
+2025-02-14 .. 2025-02-28: fully sealed;
+test_rows_loaded=0; untouched; single-use,
+future-authorization only; pre-v002 internal
+holdout is NOT the sealed test. Full-envelope
+reference/assembly: not required for the
+conservative pre-v002-only path; required only
+before a future pre-v002 + v002 combined path;
+deferred / unauthorized.
+
+Censored labels: no silent imputation; retain
+rows with null per-horizon labels; per-task
+drop of per-horizon nulls; exact filtering
+deferred to a future ML readiness memo.
+Invalid-price labels: 0 present; future policy
+must explicitly reject/filter; never impute.
+
+Future ML-readiness prerequisites: docs-only
+ML-baseline readiness memo; code-level
+pre-v002 split-policy artefact + offline
+tests; source admissibility resolved (segment
+remains research_eligible=false /
+eligibility_gate_status=pending); leakage /
+split-integrity proof; budget preflight within
+Phase 4bn-L caps.
+
+Non-eligible posture preserved: nothing
+flipped; research_eligible=false,
+eligibility_gate_status=pending,
+no_successor_authorization=true; Phase 4aw
+flip_research_eligible(...) always-raises
+invariant never invoked. Read-only: no local
+data read or created; no split file / research
+matrix / manifest / sidecar / gate report
+created; no manifest mutation; no
+chronological_split_policy set; no ML /
+diagnostics / strategy / signals / PnL /
+backtests; v002 terminal + published v002
+labels by reference only and unread; sealed
+test untouched (test_rows_loaded=0); no
+database / Parquet compaction / v003 /
+data/research / data/microstructure commit. No
+successor authorized.
+
+Validation: git diff --check clean; git status
+--short shows only the three tracked Phase
+4bn-Y docs files + untracked
+scheduled_tasks.lock; data/microstructure +
+data/research gitignored (.gitignore:85 / :88).
+
+Phase 4bn-Y is branch-complete only. Per the
+workflow standard it is NOT project-complete
+until a separately authorized merge phase
+records its merge-closeout on main.
+Recommended state: remain paused. No next
+phase authorized.
+```
+
 Current phase:
 
 ```text
