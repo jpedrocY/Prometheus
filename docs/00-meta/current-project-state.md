@@ -285,6 +285,214 @@ Phase 4bn-AA is the **Pre-V002 Split-Policy Artefact + Offline Tests** (pure-sou
 
 Phase 4bn-AB is the **Source-Admissibility Memo** (docs-only / source-admissibility / eligibility-governance / ML-data-use-precondition / no-flag-flip memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3, because it decides how the locally produced and locally gated pre-v002 normalized / feature / label stack may become admissible, or not admissible, as a future ML dataset-construction source without violating the project's eligibility governance, the Phase 4aw `flip_research_eligible(...)` always-raises invariant, sealed-test protections, or the no-rescue constraints; separately authorized by the operator following the Phase 4bn-AA decision `RECOMMEND_AUTHORIZE_SOURCE_ADMISSIBILITY_MEMO`). **Phase 4bn-AB is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-ab/source-admissibility-memo`. **Base:** `main` at `e749598dcdcbfaec1a69f8a4f8f0620e68a25c8a` (`docs(phase-4bn-aa): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-AA SHA-finalization `e749598`, merge-closeout `6cfbf68`, merge `451a51e`, and branch `e12e928` all present on main; Phase 4bn-Z finalization `d9e699e` present as predecessor). **Tracked changes (3 files):** the source-admissibility memo (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-ab_source-admissibility-memo.md`; 27 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-ab_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-AA paragraphs and blocks preserved as labelled historical context). **No code / test / script / data file / configuration / `.gitignore` / `README.md` / MCP file / manifest / sidecar / gate report / successor-state artefact was created or modified. No local data was read; no local data was created.** **Result state:** `SOURCE_ADMISSIBILITY_RECORDED__PRE_V002_STACK_ADMISSIBLE_FOR_DATASET_CONTRACT_ONLY__REMAIN_PAUSED`. **Decision:** `RECOMMEND_AUTHORIZE_ML_DATASET_CONTRACT_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **Source-admissibility verdict:** the completed local evidence chain O/P/S/T/W/X/Y/Z/AA makes the pre-v002 normalized / feature / label stack **source-admissible for future docs-only ML dataset-contract design only**, and **not** admissible for actual data reads, dataset-builder implementation, ML training, scoring, predictions, diagnostics, strategy, PnL, or backtests. **Crux:** the Phase 4aw `flip_research_eligible(...)` invariant forbids only flipping the manifest `research_eligible` field outside a future separately-authorized eligibility gate (which is not implemented); it does NOT forbid a docs-only admissibility verdict that grants no data access — so an admissibility decision can be recorded by documentation without mutating any manifest. **Admissibility vocabulary recorded (memo-level concepts, not manifest fields, terms 1–7):** `layer_integrity_passed=true`; `source_admissible_for_dataset_contract=true`; `source_admissible_for_data_read=false`; `source_admissible_for_dataset_builder=false`; `ml_authorized=false`; `diagnostics_authorized=false`; `strategy_backtest_authorized=false`. **Actual manifest fields (unchanged, terms 8–10):** `manifest_research_eligible=false`; `manifest_eligibility_gate_status=pending`; `manifest_chronological_split_policy=not set / not transitioned`. **Scope admitted for future docs-only dataset-contract design (by reference only):** BTCUSDT / Binance USDⓈ-M futures / aggTrades; pre-v002 only (2024-03-01..2024-11-30; 275 dates); Phase 4bn-S feature segment (`4881eb87…` / `feature_config_hash 0726b41d…`) + Phase 4bn-W label segment (`69746c88…` / `label_config_hash b3bd5d2b…`); split contract = the Phase 4bn-AA `pre_v002_split_policy.py` artefact (Candidate A: 214 / embargo 2024-10-01 / 45 / embargo 2024-11-16 / 14; chronological-only; ≥60 s floor + 1-day purge; hard v002/sealed exclusion); targets/features/filtering per Phase 4bn-Z §13–§15; leakage / split-integrity proof + Phase 4bn-L budget preflight as contract obligations. **Full-envelope assembly NOT required and holdout-boundary memo NOT required for the conservative pre-v002-only path; no v002 terminal or sealed-test data may be read; no additional data scan is required before the next docs-only step.** **Remaining blockers before data reads / dataset builder / ML training:** ML dataset contract → code-level dataset builder bound to the passed gates (`3452fd9d…` / `db731d1b…` / `ffb5b09…`) + manifests/hashes + the 4bn-AA split artefact → leakage / split-integrity proof + Phase 4bn-L budget preflight → per-task target/horizon/filtering decision → committed end-to-end trainer (does not exist), each separately authorized. **Selected next recommendation:** a docs-only ML dataset contract memo (reads no data); a separate code-level source-admissibility gate is NOT required before it. **Phase 4bn-AB does not read or create any local data; does not inspect any local raw zip / normalized / feature / label Parquet / manifest / gate report / sidecar under `data/microstructure` or `data/research`; does not read the v002 terminal window; does not touch the sealed v002 test split (`test_rows_loaded=0`); does not create a split file / research matrix / ML dataset / ML config / manifest / sidecar / gate report; does not mutate any manifest / sidecar / gate report / successor-state artefact; does not flip `research_eligible`; does not transition `eligibility_gate_status` / `chronological_split_policy` / `diagnostics_authorized` / `ml_authorized`; does not train / score / predict; does not run diagnostics / strategy / signals / PnL / backtests; does not acquire data or call any endpoint; does not download any archive or CHECKSUM; does not run HEAD preflight; does not rerun any acquisition / raw / normalization / feature / label execution or any layer gate; does not create a database / `.duckdb` / `.sqlite`; does not compact Parquet; does not migrate storage; does not create v003; does not create or commit any `data/microstructure` or `data/research` artefact; does not use credentials / `.env` / `.mcp.json` / MCP / Graphify; does not open any WebSocket / user stream / private / authenticated endpoint; does not authorize Phase 5, paper / shadow, live-readiness, deployment, exchange-write, production keys, or any successor phase.** Every retained verdict (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1) and every project lock (§11.6 = 8 bps per side; round-trip = 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue rule; Phase 4aw `flip_research_eligible(...)` always-raises invariant (never invoked); Phase 4bb-F canonical path + sidecar policy; the Phase 4bn-J-R1 raw-only cap amendment; the Phase 4bn-L derived-stack storage budget; the Phase 4bn-N normalization manifest/versioning convention; the Phase 4bn-R feature manifest/versioning convention; the Phase 4bn-V label manifest/versioning convention; the Phase 4bn-Y chronological split/holdout policy; the Phase 4bn-AA pre-v002 split-policy artefact) is preserved verbatim. Phase 4 canonical remains unauthorized. **Validation:** `git status --short` shows only the three tracked Phase 4bn-AB docs files plus the expected untracked `.claude/scheduled_tasks.lock`; `git diff --check` clean; `git diff` over the three named docs shows only the intended changes; `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`; no `data/microstructure/` or `data/research/` artefact staged; no repo-standard markdown lint tooling exists so none was run; ruff / mypy / pytest omitted for a docs-only Tier 1 memo with no code surface. **Phase 4bn-AB is branch-complete only.** Per the workflow standard it is NOT project-complete until a separately authorized merge phase records its merge-closeout on `main`. **Recommended state: remain paused.** **No next phase authorized.**
 
+Phase 4bn-AC is the **ML Dataset Contract Memo** (docs-only ML dataset contract / pre-v002 source-binding / target-feature-filtering / leakage-proof / budget-preflight / no-data-read memo; Tier 1 Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md` §3, because it defines the binding contract any future pre-v002 ML dataset builder must obey — targets, admissible features, excluded columns, filtering rules, split binding, manifest/hash/gate-report binding, leakage-proof obligations, budget-preflight obligations, output namespace posture, and non-authorization boundaries — where an error could cause downstream leakage, misaligned labels/features, accidental data reads, or invalid ML claims, even though the phase itself reads no data; separately authorized by the operator following the Phase 4bn-AB decision `RECOMMEND_AUTHORIZE_ML_DATASET_CONTRACT_MEMO`). **Phase 4bn-AC is branch-complete only by this work; not merged into main; not project-complete.** **Branch:** `phase-4bn-ac/ml-dataset-contract-memo`. **Base:** `main` at `46bcdd3862c2b82b268d668f1e2d0180243f0dce` (`docs(phase-4bn-ab): finalize merge closeout shas`; pre-branch `main == origin/main == HEAD` verified in sync; Phase 4bn-AB SHA-finalization `46bcdd3`, merge-closeout `1d032a4`, merge `d200a8b`, and branch `80e032c` all present on main; Phase 4bn-AA finalization `e749598` present as predecessor). **Tracked changes (3 files):** the ML dataset contract memo (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-ac_ml-dataset-contract-memo.md`; 32 sections), the closeout (`docs/00-meta/implementation-reports/2026-06-05_phase-4bn-ac_closeout.md`), and this narrow `current-project-state.md` paragraph + new `Current phase:` block (prior Phase 4bn-A … 4bn-AB paragraphs and blocks preserved as labelled historical context). **No code / test / script / data file / configuration / `.gitignore` / `README.md` / MCP file / manifest / sidecar / gate report / successor-state artefact was created or modified. No local data was read; no local data was created.** **Result state:** `ML_DATASET_CONTRACT_RECORDED__PRE_V002_CONTRACT_ONLY__NO_DATA_READ__REMAIN_PAUSED`. **Decision:** `RECOMMEND_AUTHORIZE_ML_DATASET_BUILDER_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION`. **The memo records, by reference only, the binding contract that any future pre-v002 ML dataset builder must obey, written from committed docs + committed source/tests only (incl. `pre_v002_split_policy.py`, `features_schema_v002.py`, `labels_schema_v002.py`, `ml_baseline_design_v002.py`); no local data read.** **Contract name (docs-level only; no dataset/config/manifest created or set):** `microstructure_ml_dataset_aggtrades_pre_v002_contract_v001`. **Permitted source scope (by reference; future-authorized read only):** BTCUSDT / Binance USDⓈ-M futures / aggTrades; pre-v002 only (2024-03-01..2024-11-30; 275 dates; 400,001,695 rows); Phase 4bn-S features (manifest `4881eb87…b52` / `feature_config_hash 0726b41d…14c` / feature-layer gate `db731d1b…b08` 27/27) + Phase 4bn-W labels (manifest `69746c88…b161` / sidecar `636a4c1a…8239` / `label_config_hash b3bd5d2b…8970` / label-layer gate `ffb5b092…8984` sidecar `68dd5b57…997c` 40/40); Phase 4bn-O normalized lineage (manifest `0e96ae37…d9fa` / normalized-layer gate `3452fd9d…f134` 25/25) by reference. **Forbidden source scope:** v002 terminal (2024-12-01..2025-02-28); sealed test (2025-02-14..2025-02-28); full-envelope assembly; non-BTCUSDT; spot / mark-price / index-price / order-book / kline / liquidation / funding / open-interest / cross-venue; newly acquired data; raw zip; any family not in the pre-v002 chain (incl. published `feature_config_hash 819cfa7a…` / `label_config_hash 352bad41…`); `data/research` priors; external / private / authenticated sources — all fail-closed. **Split binding:** import `pre_v002_split_policy.py` (`CHRONO_SPLIT_PRE_V002_214D_45D_14D_WITH_1D_BOUNDARY_EMBARGO`); train 2024-03-01..2024-09-30 (214) / embargo 2024-10-01 / validation 2024-10-02..2024-11-15 (45) / embargo 2024-11-16 / internal holdout (dry-run, NOT sealed test) 2024-11-17..2024-11-30 (14) = 275; assignment by `source_transact_time_ms` UTC date via `split_for_timestamp_ms`; drop embargo; per-horizon earlier-split boundary protection (`is_earlier_split_boundary_crossing`); hard-raise on out-of-segment / v002 / sealed dates; no shuffle / random / k-fold-over-time / bootstrap / post-hoc resampling. **Target / horizon:** family `microstructure_labels_aggtrades_v001 @ v002`; primary first-baseline target `forward_direction_15s` — 3-class signed `{-1,0,+1}`, zero class preserved (per `DIRECTION_THRESHOLD_POLICY_V002`); **horizon 15s chosen over 60s on committed terminal-censor evidence (1s=3 / 5s=20 / 15s=42 / 60s=216; 60s drops ~5× more terminal rows) and noise structure — a contract choice, not a performance claim**; secondary descriptive (not a model target) `forward_log_return_15s` for cost-context reporting only; 1s/5s/60s contract-known but multi-horizon use deferred; no barrier / stop / MFE / MAE / R-multiple / PnL / ordinal / meta-label / binary-collapse targets. **Target filtering:** drop null direction; drop null log-return where required; drop `horizon_censored_flag_15s=true`; reject `label_invalid_price_flag=true` (0 present by reference); never impute targets; censored/invalid rows never enter any split; internal holdout dry-run only (no selection/tuning/threshold/feature-selection/final-claims); sealed test `test_rows_loaded=0`; record drop counts by split and reason. **Feature allowlist:** exactly the 45 causal computed `FEATURE_SCHEMA_V002` columns (40 windowed [10 templates × {1s,5s,15s,60s}] + `utc_hour`/`utc_minute`/`milliseconds_since_day_start` + `invalid_window_flag`/`rolling_missing_window_flag`); no additions / selection / ranking / pruning / PCA / embeddings; no raw prices unless a future revision explicitly authorizes. **Forbidden model-matrix columns:** the 17 lineage columns (`EXCLUDED_LINEAGE_COLUMN_NAMES`) + all label/support/split/censor columns; forbidden substrings `forward_log_return`, `forward_direction`, `horizon_censored_flag`, `label_`, `split_`, `censored_`; forbidden-column scan must fail-closed. **Alignment:** strict per-day positional alignment with identical-key verification (`row_index`, `agg_trade_id`, `feature_timestamp_ms`, `source_transact_time_ms`, `symbol`/`utc_date`); no join-repair / reorder / fill / tolerance-merge / heuristic dedup; any mismatch fails closed. **Builder execution order:** discover 275/275 partitions → verify manifest/config/gate hashes → pair by UTC date → verify positional keys → assign split → drop embargo + boundary-crossing → filter censored/null/invalid targets → build 45-col matrix + forbidden scan → fit transforms on train only → apply to validation/holdout → emit proof/sidecar → write only to local gitignored namespace if separately authorized. **Train-only transforms:** fit standardization on train only (`subtract_train_mean_divide_by_max_train_std_epsilon`, ε=1e-8); fixed-zero imputation for null numeric (locked v002 fit-free design); boolean flags not standardized; never fit on validation/holdout/test; record train-only provenance. **Leakage / split-integrity proof obligations:** policy name; split module path + commit SHA; 214/1/45/1/14 counts; no missing/duplicate/multi-assigned dates; no embargo used; zero out-of-segment; `v002_terminal_window_read=false`; `sealed_test_split_touched=false`; `test_rows_loaded=0`; no random/shuffle/k-fold/bootstrap; per-horizon zero boundary-crossing rows; strict key-alignment counts; null/censor/invalid drops by split; feature-column list hash; forbidden-column scan empty; train-only transform provenance; budget-preflight result; non-authorization flags all false. **Budget preflight (Phase 4bn-L; fail-closed; recorded before any write):** derived footprint warn 75 GiB / hard 125 GiB; total derived-stack warn 250 GiB / hard 300 GiB; runtime warn 4 h / hard 8 h; temp warn 50 GiB / hard 100 GiB; D: ≥ 500 GiB before / fail closed below 350 GiB during. **Output namespace posture:** future outputs (if separately authorized) local + gitignored only under `data/research/microstructure/ml_datasets/pre_v002_contract_v001/`, each with a Phase 4bb-F canonical sidecar; not created/written/committed by this phase; no research-eligibility implication; no `chronological_split_policy` set; no `ml_authorized`/`diagnostics_authorized` transition. **Future builder validation requirements:** offline tests for manifest/hash/gate binding, 275 partition count, 2024-03-01..2024-11-30 range, v002/sealed exclusion, split via `pre_v002_split_policy.py`, embargo dropping, horizon validation, target censor/null/invalid filtering, 45-column allowlist, forbidden substring scan, no-raw-price, strict positional alignment, train-only transforms, `data/research`-only output, sidecar metadata, no data output committed, no eligibility transition, no ML/training/diagnostics/strategy; a future builder phase must separately decide code-only-with-synthetic-tests-first vs implement-and-run-on-real-data (this contract recommends a readiness or code-only skeleton phase first). **Remaining blockers:** data reads blocked (`source_admissible_for_data_read=false`); dataset builder blocked (`source_admissible_for_dataset_builder=false`); ML blocked (`ml_authorized=false`); the only committed ML-baseline stack (`ml_baseline_design_v002.py` / `ml_baseline_dataset_v002.py` / `diagnostics_split_policy_v002.py`) is v002-terminal-bound (90 partitions / 155,153,449 rows / `819cfa7a…` / `352bad41…`) and inadmissible to pre-v002; no committed end-to-end pre-v002 trainer exists. **Selected next recommendation:** a docs-only ML dataset builder readiness memo (decide code-only-first vs data-reading); do not jump to a data-reading builder. **Validation:** `git diff --check` clean; `git status --short` shows only the three tracked Phase 4bn-AC docs files plus the pre-existing untracked `.claude/scheduled_tasks.lock`; `git check-ignore -v data/microstructure/` → `.gitignore:85`; `git check-ignore -v data/research/` → `.gitignore:88`; no repo-standard markdown lint tooling exists so none was run; ruff / mypy / pytest omitted for a docs-only Tier 1 memo with no code surface. Phase 4bn-AC did NOT add or modify any source / test / script / config; did NOT read or create any local data; did NOT inspect any file under `data/microstructure` or `data/research` (raw zip / normalized / feature / label Parquet / manifest / gate report / sidecar / v002-terminal / sealed-test); did NOT create a split file / research matrix / ML dataset / ML config / manifest / sidecar / gate report; did NOT run ML / diagnostics / strategy / signals / PnL / backtests; did NOT train / score / predict; did NOT acquire data or call endpoints; did NOT download any archive / CHECKSUM; did NOT run HEAD preflight; did NOT rerun any acquisition / raw / normalization / feature / label execution or any layer gate; did NOT flip `research_eligible`; did NOT transition `eligibility_gate_status` / `chronological_split_policy` / `diagnostics_authorized` / `ml_authorized`; did NOT create a database / `.duckdb` / `.sqlite`; did NOT compact Parquet; did NOT migrate storage; did NOT create v003; did NOT create or commit `data/microstructure` or `data/research`; did NOT use credentials / `.env` / `.mcp.json` / MCP / Graphify; did NOT authorize any successor. Phase 4aw `flip_research_eligible(...)` always-raises invariant preserved (never invoked); recorded v002 `CHRONO_SPLIT_45D_30D_15D_WITH_60S_BOUNDARY_EMBARGO`, Phase 4bn-Y Candidate A policy, Phase 4bn-AA split artefact, and Phase 4bn-AB source-admissibility posture preserved verbatim. **Phase 4bn-AC preserves every retained verdict and project lock verbatim** (H0 / R3 / R1a / R1b-narrow / R2 / F1 / D1-A / 5m thread / V2 / G1 / C1; §11.6 = 8 bps per side / round-trip 16 bps; §1.7.3; Phase 3p §4.7; Phase 3r §8; Phase 3v §8; Phase 3w §6 / §7 / §8; Phase 4j §11; Phase 4k; Phase 4p; Phase 4q; Phase 4v; Phase 4w; Phase 4ak M0; Phase 4al refined no-rescue; Phase 4aw always-raises invariant; Phase 4bb-F canonical path policy; Phase 4bl-F risk tiers; Phase 4bm-U/4bm-W v002 split policy; Phase 4bn-L budgets; Phase 4bn-N normalization manifest/versioning; Phase 4bn-R feature manifest/versioning; Phase 4bn-V label manifest/versioning; Phase 4bn-Y chronological split policy; Phase 4bn-AA split artefact; Phase 4bn-AB source-admissibility posture; Phase 4am .. Phase 4bn-AB results — all preserved verbatim). **Phase 4 canonical remains unauthorized. Phase 4bn-AC merge phase / any ML dataset builder readiness memo / any code-only ML dataset builder skeleton / any source-admissibility gate artefact / any ML dataset builder / any research matrix / any full-envelope reference-assembly memo / any holdout-boundary memo / any ML implementation / any model training / scoring / prediction / any diagnostics / any strategy / signals / PnL / backtest / acquisition / paper / shadow / live-readiness / deployment / exchange-write / production-key / any Phase 5 / any successor phase remains unauthorized.** **Recommended state: remain paused.** **No next phase authorized.**
+
+Current phase:
+
+```text
+Phase 4bn-AC executed (ML Dataset Contract
+Memo; docs-only ML dataset contract /
+pre-v002 source-binding /
+target-feature-filtering / leakage-proof /
+budget-preflight / no-data-read memo; Tier 1
+Full Phase per phase-risk-tiering-standard §3).
+Phase 4bn-AC is branch-complete only by this
+work; not merged into main; not
+project-complete.
+
+Branch:
+phase-4bn-ac/ml-dataset-contract-memo
+Base SHA: main at
+46bcdd3862c2b82b268d668f1e2d0180243f0dce
+(docs(phase-4bn-ab): finalize merge closeout
+shas; pre-branch main == origin/main == HEAD
+verified in sync).
+
+Result state:
+ML_DATASET_CONTRACT_RECORDED__PRE_V002_CONTRACT_ONLY__NO_DATA_READ__REMAIN_PAUSED
+
+Decision:
+RECOMMEND_AUTHORIZE_ML_DATASET_BUILDER_READINESS_MEMO__SUBJECT_TO_SEPARATE_OPERATOR_AUTHORIZATION
+
+The memo records, by reference only, the
+binding contract any future pre-v002 ML
+dataset builder must obey. Written from
+committed docs + committed source/tests only
+(pre_v002_split_policy.py,
+features_schema_v002.py, labels_schema_v002.py,
+ml_baseline_design_v002.py); no local data
+read.
+
+Contract name (docs-level only; no dataset /
+config / manifest created or set):
+microstructure_ml_dataset_aggtrades_pre_v002_contract_v001.
+
+Permitted source scope (by reference;
+future-authorized read only): BTCUSDT /
+Binance USDⓈ-M futures / aggTrades; pre-v002
+only 2024-03-01..2024-11-30 (275 dates;
+400,001,695 rows); Phase 4bn-S features
+(4881eb87… / feature_config_hash 0726b41d… /
+gate db731d1b… 27/27) + Phase 4bn-W labels
+(69746c88… / label_config_hash b3bd5d2b… /
+gate ffb5b092… 40/40); Phase 4bn-O normalized
+lineage (0e96ae37… / gate 3452fd9d… 25/25) by
+reference.
+
+Forbidden source scope: v002 terminal
+2024-12-01..2025-02-28; sealed test
+2025-02-14..2025-02-28; full-envelope
+assembly; non-BTCUSDT; spot / mark-price /
+order-book / kline / liquidation / funding /
+open-interest / cross-venue; newly acquired
+data; raw zip; any family not in the pre-v002
+chain (incl. 819cfa7a… / 352bad41…);
+data/research priors; external / private /
+authenticated sources — all fail-closed.
+
+Split binding: import pre_v002_split_policy.py
+(CHRONO_SPLIT_PRE_V002_214D_45D_14D_WITH_1D_BOUNDARY_EMBARGO);
+train 214 / embargo 2024-10-01 / validation
+45 / embargo 2024-11-16 / internal holdout
+(dry-run, NOT sealed test) 14 = 275; assign by
+source_transact_time_ms UTC date via
+split_for_timestamp_ms; drop embargo;
+per-horizon earlier-split boundary protection;
+hard-raise on out-of-segment / v002 / sealed;
+no shuffle / random / k-fold / bootstrap /
+resampling.
+
+Target / horizon: family
+microstructure_labels_aggtrades_v001 @ v002;
+primary first-baseline target
+forward_direction_15s — 3-class signed
+{-1,0,+1}, zero class preserved; horizon 15s
+chosen over 60s on committed terminal-censor
+evidence (1s=3 / 5s=20 / 15s=42 / 60s=216; 60s
+drops ~5x more terminal rows) and noise
+structure — a contract choice, not a
+performance claim; secondary descriptive (not
+a model target) forward_log_return_15s for
+cost-context only; 1s/5s/60s contract-known,
+multi-horizon deferred; no barrier / stop /
+MFE / MAE / R-multiple / PnL / ordinal /
+meta-label / binary-collapse targets.
+
+Target filtering: drop null direction; drop
+null log-return where required; drop
+horizon_censored_flag_15s=true; reject
+label_invalid_price_flag=true (0 present);
+never impute targets; censored/invalid never
+enter any split; internal holdout dry-run only;
+sealed test test_rows_loaded=0; record drops by
+split and reason.
+
+Feature allowlist: exactly the 45 causal
+computed FEATURE_SCHEMA_V002 columns (40
+windowed + utc_hour / utc_minute /
+milliseconds_since_day_start +
+invalid_window_flag /
+rolling_missing_window_flag); no additions /
+selection / ranking / pruning / PCA /
+embeddings; no raw prices unless a future
+revision explicitly authorizes.
+
+Forbidden model-matrix columns: the 17 lineage
+columns + all label / support / split / censor
+columns; forbidden substrings
+forward_log_return, forward_direction,
+horizon_censored_flag, label_, split_,
+censored_; forbidden-column scan fails closed.
+
+Alignment: strict per-day positional alignment
+with identical-key verification (row_index,
+agg_trade_id, feature_timestamp_ms,
+source_transact_time_ms, symbol/utc_date); no
+join-repair / reorder / fill / tolerance-merge
+/ heuristic dedup; any mismatch fails closed.
+
+Train-only transforms: fit standardization on
+train only (subtract train-mean / divide by
+max(train-std, 1e-8)); fixed-zero imputation
+for null numeric (locked v002 fit-free);
+boolean flags not standardized; never fit on
+validation / holdout / test; record train-only
+provenance.
+
+Leakage proof obligations: policy name; split
+module path + commit SHA; 214/1/45/1/14 counts;
+no missing/duplicate/multi-assigned dates; no
+embargo used; zero out-of-segment;
+v002_terminal_window_read=false;
+sealed_test_split_touched=false;
+test_rows_loaded=0; no random/shuffle/k-fold/
+bootstrap; per-horizon zero boundary-crossing
+rows; strict key-alignment counts; null/censor/
+invalid drops by split; feature-column list
+hash; forbidden-column scan empty; train-only
+transform provenance; budget-preflight result;
+non-authorization flags all false.
+
+Budget preflight (Phase 4bn-L; fail-closed;
+recorded before any write): derived footprint
+warn 75 / hard 125 GiB; total derived-stack
+warn 250 / hard 300 GiB; runtime warn 4 h /
+hard 8 h; temp warn 50 / hard 100 GiB; D: >=
+500 GiB before / fail closed below 350 GiB
+during.
+
+Output namespace posture: future outputs (if
+separately authorized) local + gitignored only
+under
+data/research/microstructure/ml_datasets/pre_v002_contract_v001/,
+each with a Phase 4bb-F canonical sidecar; not
+created/written/committed here; no
+research-eligibility implication; no
+chronological_split_policy set; no
+ml_authorized / diagnostics_authorized
+transition.
+
+Remaining blockers: data reads blocked
+(source_admissible_for_data_read=false);
+dataset builder blocked
+(source_admissible_for_dataset_builder=false);
+ML blocked (ml_authorized=false); the only
+committed ML-baseline stack is v002-terminal-
+bound (90 partitions / 155,153,449 rows /
+819cfa7a… / 352bad41…) and inadmissible to
+pre-v002; no committed end-to-end pre-v002
+trainer exists.
+
+No local data read. No local data created. No
+manifest / sidecar / gate report / split file /
+research matrix / ML dataset / ML config
+created or mutated. No ML / diagnostics /
+strategy / signals / PnL / backtest /
+acquisition / endpoint / database / Parquet
+compaction / v003 / storage migration /
+data/research / data/microstructure commit. No
+research_eligible flip; no eligibility_gate_status
+/ chronological_split_policy / ml_authorized /
+diagnostics_authorized transition. Phase 4aw
+always-raises invariant preserved (never
+invoked). No successor authorized.
+
+Validation: git diff --check clean; git status
+--short shows only the three tracked Phase
+4bn-AC docs files + untracked
+scheduled_tasks.lock; data/microstructure +
+data/research gitignored (.gitignore:85 / :88);
+no markdown lint tooling exists so none run;
+ruff / mypy / pytest omitted (no code surface).
+
+Phase 4bn-AC is branch-complete only. Per the
+workflow standard it is NOT project-complete
+until a separately authorized merge phase
+records its merge-closeout on main.
+Recommended state: remain paused. No next
+phase authorized.
+```
+
 Current phase:
 
 ```text
