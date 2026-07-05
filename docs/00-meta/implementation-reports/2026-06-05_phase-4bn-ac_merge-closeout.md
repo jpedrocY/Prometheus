@@ -31,9 +31,8 @@
   (`docs(phase-4bn-ac): record ml dataset contract`).
 - **Merge commit SHA:** `454310357be778bf920bf339d952a3983789d0a8`
   (`docs(phase-4bn-ac): merge ml dataset contract`).
-- **Merge-closeout commit SHA:** `1d032a4`-style follow-up
-  (`docs(phase-4bn-ac): add merge closeout`) — its exact SHA is recorded by the
-  SHA-finalization update below and in the final operator report.
+- **Merge-closeout commit SHA:** `aab527a091b613019b05a41e6a9774105ed3b143`
+  (`docs(phase-4bn-ac): add merge closeout`).
 - **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-ac): finalize merge closeout shas`) — its exact SHA is the
   resulting `main` / `origin/main` tip, reproduced in the final operator report
