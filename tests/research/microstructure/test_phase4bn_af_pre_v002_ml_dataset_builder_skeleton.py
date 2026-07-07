@@ -160,7 +160,12 @@ def _exercise_full_surface() -> None:
 
 
 def test_imports_do_not_create_future_namespace() -> None:
-    assert not FUTURE_NAMESPACE.exists()
+    # The Phase 4bn-AH data-reading builder is the authorized phase that may
+    # create this namespace; the skeleton must never create or modify it.
+    # Exercising the full skeleton surface must leave its existence unchanged.
+    existed_before = FUTURE_NAMESPACE.exists()
+    _exercise_full_surface()
+    assert FUTURE_NAMESPACE.exists() == existed_before
 
 
 def test_modules_expose_all() -> None:
@@ -702,9 +707,10 @@ def test_no_output_namespace_created() -> None:
     existed_before = FUTURE_NAMESPACE.exists()
     _exercise_full_surface()
     existed_after = FUTURE_NAMESPACE.exists()
+    # The skeleton must never create or remove the namespace. It may already
+    # exist because the authorized Phase 4bn-AH data-reading builder created it;
+    # the skeleton's own surface must leave its existence unchanged either way.
     assert existed_before == existed_after
-    # The skeleton must never create it; the phase asserts it does not exist.
-    assert not existed_after
 
 
 # ---------------------------------------------------------------------------
