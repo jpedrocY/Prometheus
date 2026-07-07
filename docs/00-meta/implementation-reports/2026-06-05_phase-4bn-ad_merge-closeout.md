@@ -31,10 +31,9 @@
   (`docs(phase-4bn-ad): assess ml dataset builder readiness`).
 - **Merge commit SHA:** `3b659f11e27b626da33091d7a7985d6c7c13f9f7`
   (`docs(phase-4bn-ad): merge ml dataset builder readiness`).
-- **Merge-closeout commit SHA:** `aab527a…`-style follow-on commit
-  (`docs(phase-4bn-ad): add merge closeout`) — its exact SHA is recorded in the
-  final operator report and `git log`.
-- **SHA-finalization commit SHA:** the update
+- **Merge-closeout commit SHA:** `c4880c232436c4bda2ef337dab1be163dfae1ef2`
+  (`docs(phase-4bn-ad): add merge closeout`).
+- **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-ad): finalize merge closeout shas`) — its exact SHA is the
   resulting `main` / `origin/main` tip, reproduced in the final operator report
   and `git log`.
