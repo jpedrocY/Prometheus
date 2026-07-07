@@ -159,14 +159,17 @@ to `origin/main` with no force, no skip-hooks, no skip-signing.
 
 ## 17. Final merge commit SHA
 
-Recorded by the SHA-finalization commit below (`docs(phase-4bn-ah): finalize
-merge closeout shas`) after the merge is created.
+`f9f3647a5a840cf3d4ef22d77fbc9b72925c4ecf`
+(`code(phase-4bn-ah): merge data-reading ml dataset builder single run`).
 
 ## 18. Final main / origin main SHA
 
-Recorded by the SHA-finalization commit below; equals the SHA-finalization commit
-SHA (the resulting `main` / `origin/main` tip); reproduced in the final operator
-report and `git log`.
+Equal to this SHA-finalization commit (`docs(phase-4bn-ah): finalize merge
+closeout shas`), which is the resulting `main` / `origin/main` tip after push;
+reproduced in the final operator report and `git log`. Post-merge `git status
+--short` shows only the expected transient untracked `.claude/scheduled_tasks.lock`;
+`git ls-files data/research/microstructure/ml_datasets/pre_v002_contract_v001/`
+returns 0 tracked files (namespace gitignored, `.gitignore:88`).
 
 ## 19. Result state
 
