@@ -30,10 +30,9 @@
   (`code(phase-4bn-af): add code-only ml dataset builder skeleton`).
 - **Merge commit SHA:** `3ca22344315e58a08f666c3c4802b6a3f29ade3b`
   (`code(phase-4bn-af): merge code-only ml dataset builder skeleton`).
-- **Merge-closeout commit SHA:** this file's commit
-  (`docs(phase-4bn-af): add merge closeout`) — its exact SHA is recorded in the
-  final operator report and `git log`.
-- **SHA-finalization commit SHA:** the follow-up
+- **Merge-closeout commit SHA:** `e6151dd63e0a86fd43f718e89e047b36ae74c1af`
+  (`docs(phase-4bn-af): add merge closeout`).
+- **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-af): finalize merge closeout shas`) that fills the exact
   merge-closeout commit SHA above — its exact SHA equals the resulting `main` /
   `origin/main` tip, reproduced in the final operator report and `git log`.
