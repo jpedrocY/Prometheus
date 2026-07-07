@@ -171,11 +171,18 @@ merge descriptive dataset diagnostics"`. `ort` strategy; no squash; no rebase; n
 
 ## 20. Final merge commit SHA
 
-`__PLACEHOLDER_MERGE_COMMIT_SHA__` (finalized post-merge in §"SHA finalization").
+`d31377f6d926991d1fa4a714f64e9cc0aa486eac`
+(`docs(phase-4bn-ai): merge descriptive dataset diagnostics`).
 
 ## 21. Final main / origin main SHA
 
-`__PLACEHOLDER_FINAL_MAIN_SHA__` (finalized post-merge/push).
+Equal to this SHA-finalization commit (`docs(phase-4bn-ai): finalize merge
+closeout shas`), which is the resulting `main` / `origin/main` tip after push;
+reproduced in the final operator report and `git log`. Post-merge `git status
+--short` shows only the expected transient untracked `.claude/scheduled_tasks.lock`;
+`git ls-files data/research/microstructure/ml_datasets/pre_v002_contract_v001/`
+returns 0 tracked files (namespace gitignored, `.gitignore:88`); the AH namespace
+remains byte-identical (all four SHA256 unchanged).
 
 ## 22. Result state
 
