@@ -31,12 +31,12 @@
   (`docs(phase-4bn-ag): authorize data-reading builder path`).
 - **Merge commit SHA:** `bf1b2d977ad4516cbc4cd8bc7542301e8356e311`
   (`docs(phase-4bn-ag): merge data-reading builder authorization`).
-- **Merge-closeout commit SHA:** recorded by the SHA-finalization commit below
-  (`docs(phase-4bn-ag): add merge closeout` is this file's commit; its exact SHA
-  is filled by the follow-up `docs(phase-4bn-ag): finalize merge closeout shas`).
-- **SHA-finalization commit SHA:** `docs(phase-4bn-ag): finalize merge closeout
-  shas` — its exact SHA equals the resulting `main` / `origin/main` tip;
-  reproduced in the final operator report and `git log`.
+- **Merge-closeout commit SHA:** `163740e6d4b810a74f389b202cbc3787abcdc949`
+  (`docs(phase-4bn-ag): add merge closeout`).
+- **SHA-finalization commit SHA:** this update
+  (`docs(phase-4bn-ag): finalize merge closeout shas`) that fills the exact
+  merge-closeout commit SHA above — its exact SHA equals the resulting `main` /
+  `origin/main` tip; reproduced in the final operator report and `git log`.
 - **Final `main` / `origin/main` SHA after push:** equal to the SHA-finalization
   commit SHA above; reproduced in the final operator report and `git log`.
 
