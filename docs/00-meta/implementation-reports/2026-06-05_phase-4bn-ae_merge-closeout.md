@@ -32,12 +32,11 @@
   (`docs(phase-4bn-ae): preregister ml baseline evaluation`).
 - **Merge commit SHA:** `daae192758a3d7ae6cd6e443895d38a32e55f19b`
   (`docs(phase-4bn-ae): merge ml baseline preregistration`).
-- **Merge-closeout commit SHA:** this file's commit
-  (`docs(phase-4bn-ae): add merge closeout`) — its exact SHA is recorded in the
-  final operator report and `git log`.
-- **SHA-finalization commit SHA:** the follow-up
+- **Merge-closeout commit SHA:** `ee067f161594b8f4d5831e5609416ac9dd890e14`
+  (`docs(phase-4bn-ae): add merge closeout`).
+- **SHA-finalization commit SHA:** this update
   (`docs(phase-4bn-ae): finalize merge closeout shas`) that fills the exact
-  post-merge-closeout SHAs in this section — its exact SHA equals the resulting
+  merge-closeout commit SHA above — its exact SHA equals the resulting
   `main` / `origin/main` tip, reproduced in the final operator report and
   `git log`.
 - **Final `main` / `origin/main` SHA after push:** equal to the SHA-finalization
