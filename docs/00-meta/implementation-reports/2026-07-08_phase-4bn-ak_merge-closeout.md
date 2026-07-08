@@ -237,13 +237,18 @@ Non-fast-forward merge (`git merge --no-ff`) of
 
 ## 31. Final merge commit SHA
 
-`__PENDING_MERGE_COMMIT_SHA__` (finalized post-merge; see the finalization commit
-and the final operator report).
+`5cbc8dc1ee884c44368787a3ed9dfe9dcdc726ff`
+(`docs(phase-4bn-ak): merge ml arc decision memo`; `--no-ff`, 3 docs files added,
+1088 insertions, no data outputs).
 
 ## 32. Final main / origin main SHA
 
-`__PENDING_FINAL_MAIN_SHA__` (finalized post-merge and post-push; see the final
-operator report).
+Equal to this SHA-finalization commit (`docs(phase-4bn-ak): finalize merge closeout
+shas`), which is the resulting `main` / `origin/main` tip after push; reproduced in
+the final operator report and `git log`. Post-merge `git status --short` shows only
+`.claude/scheduled_tasks.lock` (untracked, not committed); `git ls-files` for
+`data/microstructure/` and `data/research/` returns 0 tracked files each (both
+gitignored, `.gitignore:85` / `.gitignore:88`).
 
 ## 33. Result state
 
