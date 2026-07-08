@@ -194,8 +194,8 @@ and all data outputs excluded. Then push to `origin/main`.
 
 ## 26. Final merge commit SHA
 
-`__PLACEHOLDER_MERGE_COMMIT_SHA__` — finalized post-merge in the SHA-finalization
-commit (`code(phase-4bn-aj): merge fixed pre-v002 baseline run verdict`).
+`11ece8ef15ff310ac98d6e27f35422cee76ac692`
+(`code(phase-4bn-aj): merge fixed pre-v002 baseline run verdict`).
 
 ## 27. Final main / origin main SHA
 
