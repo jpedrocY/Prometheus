@@ -335,7 +335,10 @@ assert len(LONGHORIZON_LABEL_SUPPORT_COLUMN_NAMES) == 11
 assert len(LONGHORIZON_LABEL_LINEAGE_COLUMNS) == 17
 assert len(LONGHORIZON_LABEL_SCHEMA) == 17 + 1 + 6 + 11
 assert len(set(LONGHORIZON_LABEL_SCHEMA)) == len(LONGHORIZON_LABEL_SCHEMA)
-assert LONGHORIZON_LABEL_DATASET_FAMILY != FROZEN_SHORT_HORIZON_FAMILY
+# Runtime tripwire: the sibling family name must differ from the frozen family.
+# ``str(...)`` keeps this a genuine runtime check without a static-literal
+# comparison-overlap warning.
+assert str(LONGHORIZON_LABEL_DATASET_FAMILY) != str(FROZEN_SHORT_HORIZON_FAMILY)
 # The sibling family must never carry a forbidden column-name substring.
 assert_no_forbidden_label_substrings_v002(LONGHORIZON_LABEL_SCHEMA)
 assert all(v is False for v in NON_AUTHORIZATION_FLAGS.values())
