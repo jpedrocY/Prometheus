@@ -259,17 +259,15 @@ Non-fast-forward merge (`git merge --no-ff`) of
 
 ## 34. Final merge commit SHA
 
-`<PENDING_MERGE_COMMIT_SHA>` — to be resolved by the post-merge
-`docs(phase-4bn-am): finalize merge closeout shas` commit on `main`
+`0c89f51a267e6ea8aec77ad01f252c74332ad4c5`
 (`docs(phase-4bn-am): merge longer-horizon label contract spec`; `--no-ff`, 3 docs
 files added: the memo, its closeout, and this merge-closeout).
 
 ## 35. Final main / origin main SHA
 
-`<PENDING_FINAL_MAIN_SHA>` — equal to the SHA-finalization commit
-(`docs(phase-4bn-am): finalize merge closeout shas`), which is the resulting `main` /
-`origin/main` tip after push; resolved in the finalize commit and reproduced in the
-final operator report.
+Equal to this SHA-finalization commit (`docs(phase-4bn-am): finalize merge closeout
+shas`), which is the resulting `main` / `origin/main` tip after push; the literal value
+is reproduced in the final operator report (a commit cannot embed its own SHA).
 
 ## 36. Result state
 
