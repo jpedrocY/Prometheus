@@ -312,17 +312,15 @@ no rebase; no `.claude/scheduled_tasks.lock`; no data outputs.
 
 ## 49. Final merge commit SHA
 
-`<PENDING_MERGE_COMMIT_SHA>` — to be resolved by the post-merge
-`docs(phase-4bn-ap): finalize merge closeout shas` commit on `main`
+`c2b9af1febc9c71a1500f223bc2e66aae6e34a65`
 (`docs(phase-4bn-ap): merge long-horizon ml baseline preregistration`; `--no-ff`, 3
 docs files added: the two AP docs + this merge-closeout).
 
 ## 50. Final main / origin main SHA
 
-`<PENDING_FINAL_MAIN_SHA>` — equal to the SHA-finalization commit
-(`docs(phase-4bn-ap): finalize merge closeout shas`), the resulting `main` /
-`origin/main` tip after push; resolved in the finalize commit and reproduced in the
-final operator report.
+Equal to this SHA-finalization commit (`docs(phase-4bn-ap): finalize merge closeout
+shas`), the resulting `main` / `origin/main` tip after push; the literal value is
+reproduced in the final operator report (a commit cannot embed its own SHA).
 
 ## 51. Result state
 
