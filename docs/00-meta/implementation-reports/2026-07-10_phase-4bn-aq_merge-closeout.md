@@ -384,25 +384,36 @@ rebase). `.claude/scheduled_tasks.lock` and every local data artefact excluded.
 
 ## 62. Merge-closeout branch commit SHA
 
-`<MERGE_CLOSEOUT_BRANCH_COMMIT_SHA>` — the `docs(phase-4bn-aq): add merge closeout`
-commit on the AQ branch (filled in the SHA-finalization commit; a commit cannot embed
-its own SHA).
+`96e2c92cdb72ec0f95e185707267f3c10d32da6f` — the `docs(phase-4bn-aq): add merge
+closeout` commit on the AQ branch.
 
 ## 63. Merge commit SHA
 
-`<MERGE_COMMIT_SHA>` — the `feat(phase-4bn-aq): merge long-horizon ml dataset build`
-no-fast-forward merge commit (filled in the SHA-finalization commit).
+`40350ac09aa0dac8208bfaf40d92d0d0d59446ae` — the `feat(phase-4bn-aq): merge
+long-horizon ml dataset build` no-fast-forward merge commit on `main`.
 
 ## 64. SHA-finalization commit
 
-`<SHA_FINALIZATION_COMMIT_SHA>` — the `docs(phase-4bn-aq): finalize merge closeout shas`
-commit on `main` (reproduced in the final operator report; a commit cannot embed its own
-SHA).
+This commit — `docs(phase-4bn-aq): finalize merge closeout shas` on `main` (its own SHA
+is reproduced in the final operator report; a commit cannot embed its own SHA).
 
 ## 65. Final main / origin main SHA
 
-`<FINAL_MAIN_SHA>` — equal to the SHA-finalization commit after push; reproduced in the
-final operator report.
+Equal to this SHA-finalization commit after `git push origin main` (reproduced in the
+final operator report; a commit cannot embed its own SHA).
+
+### Post-merge validation (recorded at finalization)
+
+- Merge method: `git merge --no-ff` → merge commit `40350ac0…` (9 files added, 3,739
+  insertions; additions-only).
+- `git status --short` → only `.claude/scheduled_tasks.lock` untracked.
+- `git log --oneline -12` → merge commit, merge-closeout `96e2c92`, and implementation
+  commit `765c36f` on top of `75bbfa3` (pre-AQ main tip).
+- `git diff --check` → clean.
+- `git ls-files data/microstructure/` / `data/research/` → empty; `git check-ignore -v`
+  → both roots ignored.
+- AQ output namespace intact (14 files, ~193 KiB), gitignored, unmutated. No AQ builder
+  rerun, no source Parquet read, no baseline/model run during merge/finalization.
 
 ## 66. Final result state
 
