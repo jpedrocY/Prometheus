@@ -368,20 +368,23 @@ artefacts excluded.
 
 ## 59. Merge-closeout branch commit SHA
 
-`PENDING_MERGE_CLOSEOUT_BRANCH_COMMIT` (this merge-closeout, committed on the AR
-branch before merge; finalized below).
+`b063c92689cf2ac7acd9651d35590ec98a30d67a` (this merge-closeout, committed on the AR
+branch before merge).
 
 ## 60. Merge commit SHA
 
-`PENDING_MERGE_COMMIT` (no-fast-forward merge into main; finalized below).
+`b51a59cff5199208428caa56baa05595e3b9f42c` (no-fast-forward merge into main).
 
 ## 61. SHA-finalization commit
 
-`PENDING_SHA_FINALIZATION_COMMIT` (docs: finalize merge closeout SHAs, on main).
+This document (SHA-finalization) is the commit that fills §59/§60; its own SHA and
+the resulting final main/origin SHA are recorded in the Phase 4bn-AR final operator
+report and in `git log` (a commit cannot embed its own hash).
 
 ## 62. Final main / origin SHA
 
-`PENDING_FINAL_MAIN_SHA` (main == origin/main after push).
+Equal to the SHA-finalization commit created by this update; `main == origin/main`
+after push (recorded in the final operator report).
 
 ## 63. Final result state
 
