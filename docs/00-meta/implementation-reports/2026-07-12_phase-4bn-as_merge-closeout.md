@@ -313,21 +313,25 @@ excluded.
 
 ## 44. Merge-closeout branch commit SHA
 
-`8a1a2f61a3a44e91277c2f4894f4b0f7f9b7b6d6` (this file, committed on the AS branch
+`386469af6a20a66b7257697465d7891f5f5386cf` (this file, committed on the AS branch
 before the merge).
 
 ## 45. Merge commit SHA
 
-`fdff5c86bb3455e9be4e2ac2cc1fda5b6a2ae1b1` (no-ff merge of the AS branch into main).
+`82df4e641a8743f30f8c6cbd3332561cb4dea1bc` (no-ff merge of the AS branch into main).
 
 ## 46. SHA-finalization commit
 
-`0f9d1b6f0f0e4b3b8c6a4d2e1f7a9c3b5d8e2a44` (finalizes the SHA placeholders in this
-merge-closeout on main).
+This finalization commit — it edits §44–§47 of this merge-closeout on main to record
+the real SHAs. Its own hash is self-referential and cannot be embedded here; it is
+recorded in `git log` and in the final operator report (immediately follows the merge
+commit `82df4e64…` and becomes the final `main` tip).
 
 ## 47. Final main / origin SHA
 
-`0f9d1b6f0f0e4b3b8c6a4d2e1f7a9c3b5d8e2a44` (`main == origin/main` after push).
+Equal to the SHA-finalization commit in §46 (this commit becomes the `main` tip and is
+pushed to `origin/main`); the exact hash is recorded in `git log` and the final
+operator report.
 
 ## 48. Final result state
 
