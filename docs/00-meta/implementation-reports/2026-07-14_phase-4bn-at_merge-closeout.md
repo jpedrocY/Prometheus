@@ -250,19 +250,19 @@ Confirmed. The Phase 4aw `flip_research_eligible(...)` always-raising invariant 
 
 ## 55. Merge-closeout branch commit SHA
 
-`<MERGE_CLOSEOUT_COMMIT_SHA>` (finalized post-commit — see §57 finalization).
+`c20eca6fab055792b521c395720b0db1026e9596` (merge-closeout committed on the AT branch before merge).
 
 ## 56. Merge commit SHA
 
-`<MERGE_COMMIT_SHA>` (finalized post-merge).
+`3094c07d0cb74c5ec971655c21dab68bba81fcd3` (`git merge --no-ff` of the AT branch into main).
 
 ## 57. SHA-finalization commit
 
-`<SHA_FINALIZATION_COMMIT_SHA>` (this document's finalization commit on main, if used).
+This document's finalization commit on main (the commit that fills §55–§58); its SHA becomes the final main SHA in §58 and is confirmed against origin after push in the operator report.
 
 ## 58. Final main / origin SHA
 
-`<FINAL_MAIN_SHA>` / `<FINAL_ORIGIN_MAIN_SHA>` (finalized post-push).
+Final main = the SHA-finalization commit (§57), pushed to origin so that `main == origin/main`. Both SHAs are recorded and confirmed equal in the Phase 4bn-AT operator report after `git push origin main`.
 
 ## 59. Final result state
 
