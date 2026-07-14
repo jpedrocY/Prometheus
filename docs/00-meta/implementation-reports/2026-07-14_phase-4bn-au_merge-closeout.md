@@ -29,11 +29,11 @@ Tier 1 (Full Phase) per `docs/00-meta/process/phase-risk-tiering-standard.md` â€
 
 ## 7. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` (this merge-closeout's own commit on the AU branch, `docs(phase-4bn-au): add merge closeout`).
+`3b4de3cf01ab2fed588496306689b429a123cc98` (this merge-closeout's own commit on the AU branch, `docs(phase-4bn-au): add merge closeout`).
 
 ## 8. Merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` (the `--no-ff` merge of the AU branch into `main`).
+`f3b239b07ae3ebfd45d151ae14fb6cc6818d4abe` (the `--no-ff` merge of the AU branch into `main`).
 
 ## 9. SHA-finalization commit statement
 
