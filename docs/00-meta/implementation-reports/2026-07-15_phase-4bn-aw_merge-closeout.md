@@ -39,13 +39,13 @@ three AW documentation files (screening memo, bounded Fable brief, closeout).
 
 ## 7. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the commit on the AW branch that adds this merge-closeout file
-(`docs(phase-4bn-aw): add merge closeout`).
+`caa6444d57a7178645553f9f94d68f04719a3dd3` — the commit on the AW branch that adds this
+merge-closeout file (`docs(phase-4bn-aw): add merge closeout`).
 
 ## 8. Merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the no-fast-forward merge commit created on `main`
-(`docs(phase-4bn-aw): merge return-to-strategy candidate screening`).
+`b1abcb7362eb69a1198b356f0cba5c6de3ce3bc9` — the no-fast-forward merge commit created on
+`main` (`docs(phase-4bn-aw): merge return-to-strategy candidate screening`).
 
 ## 9. SHA-finalization commit statement
 
