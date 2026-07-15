@@ -39,15 +39,13 @@ AX documentation files (main decision memo, forced-flow overlap/proxy-validity/M
 
 ## 7. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the commit on the AX branch that adds this merge-closeout file
-(`docs(phase-4bn-ax): add merge closeout`). Its exact SHA is recorded at SHA-finalization (§9) and
-in the final operator report.
+`45b1ee318ebcc6d997867cf53ced7a2e135ade81` — the commit on the AX branch that adds this
+merge-closeout file (`docs(phase-4bn-ax): add merge closeout`).
 
 ## 8. Merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the no-fast-forward merge commit created on `main`
-(`docs(phase-4bn-ax): merge post-Fable candidate selection`). Its exact SHA is recorded at
-SHA-finalization (§9) and in the final operator report.
+`2116e74397cd9a287653c04831e0aea5756b3a8b` — the no-fast-forward merge commit created on `main`
+(`docs(phase-4bn-ax): merge post-Fable candidate selection`).
 
 ## 9. SHA-finalization commit statement
 
