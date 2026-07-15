@@ -38,12 +38,13 @@ added the four AV documents).
 
 ## 7. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` (this merge-closeout's own commit on the AV branch,
-`docs(phase-4bn-av): add merge closeout`).
+`670ab497f287aeb6a54446e713b5fe824b65951c` (this merge-closeout's own commit on the AV
+branch, `docs(phase-4bn-av): add merge closeout`).
 
 ## 8. Merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` (the `--no-ff` merge of the AV branch into `main`).
+`578709009b5738f55c93d71091f69decaf87766f` (the `--no-ff` merge of the AV branch into
+`main`).
 
 ## 9. SHA-finalization commit statement
 
