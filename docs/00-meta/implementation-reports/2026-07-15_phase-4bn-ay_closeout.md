@@ -38,9 +38,10 @@ Exactly four, all additions:
 3. `docs/00-meta/implementation-reports/2026-07-15_phase-4bn-ay_cf1-execution-validation-checklist.md` — execution-validation checklist for a later phase.
 4. `docs/00-meta/implementation-reports/2026-07-15_phase-4bn-ay_closeout.md` — this closeout.
 
-All four were subsequently amended **in place** by the pre-merge contract-verification amendment
-(§33). The base-to-final branch diff relative to `main` remains **exactly these four added files** —
-no fifth file, no modification/deletion/rename of any pre-existing file.
+The four files were subsequently amended **in place** by **three pre-merge contract corrections**
+(§33.A–§33.C), followed by **this closeout-history-only correction** (§33.D), which modifies **only
+this closeout file**. The base-to-final branch diff relative to `main` remains **exactly these four
+added files** — no fifth file, no modification/deletion/rename of any pre-existing file.
 
 ## 7. Confirmation no existing file modified
 
@@ -189,17 +190,29 @@ backtest, replay, or runtime process; no data workflow or acquisition workflow; 
 search, API, Binance endpoint, credential, WebSocket, exchange-write function, MCP, Graphify, or
 `.mcp.json`; no Fable or external reviewer. No executable surface changed, so none applies.
 
-## 25. Commit SHA self-reference convention
+## 25. Commit history and SHA self-reference convention
 
-The original Phase 4bn-AY phase commit `c46cc6001d602d43c672aa94c069a34b5dc5d753` added exactly the
-four files in §6 with message `docs(phase-4bn-ay): preregister CF-1 volatility substrate test`. The
-first pre-merge contract-verification amendment `752d7ab27a81a2d4c42c89290d62a3d90a562d98` modified
-those same four files in place with message `docs(phase-4bn-ay): tighten CF-1 preregistration
-contract`. The final pre-merge endpoint-semantics amendment (§33) again modifies only those four files
-in place with message `docs(phase-4bn-ay): clarify half-open timestamp semantics`. No commit can embed
-its own SHA; the final branch SHA is recorded in the final operator report and the Git log after
-commit. No merge-closeout is created and no SHA-finalization commit is performed by this phase (merge
-is a separate, operator-authorized step).
+The Phase 4bn-AY branch comprises the following commits, in order:
+
+| # | SHA | Commit message | Role |
+|---|---|---|---|
+| 1 | `c46cc6001d602d43c672aa94c069a34b5dc5d753` | `docs(phase-4bn-ay): preregister CF-1 volatility substrate test` | Original Phase 4bn-AY preregistration; **added** exactly the four files in §6. |
+| 2 | `752d7ab27a81a2d4c42c89290d62a3d90a562d98` | `docs(phase-4bn-ay): tighten CF-1 preregistration contract` | First contract-tightening amendment (§33.A) — equal-weighted bootstrap estimand, zero-RV QLIKE safeguard, November buffer. Modified the same four files in place. |
+| 3 | `ead199856beb1a440b4c432d1c0e571ec39a9eb3` | `docs(phase-4bn-ay): clarify half-open timestamp semantics` | Half-open timestamp-semantics amendment (§33.B). **Historical and `SUPERSEDED_BEFORE_MERGE_BY_THE_CAUSAL_COMPLETED_INTERVAL_CORRECTION`** — its `[a, b)` construction is **not** a live implementation rule anywhere. |
+| 4 | `eeedab67c40a209c6ba85dcd3350752d735edc48` | `docs(phase-4bn-ay): correct causal RV boundary semantics` | **Final scientific-contract correction** (§33.C) — the causal completed-interval convention `(a, b]` with the single operator `P_at(u)` (`≤ u`). This is the approved scientific/mathematical contract. |
+| 5 | *this commit* | `docs(phase-4bn-ay): correct closeout commit history` | **Closeout-history-only correction** (§33.D). Modifies **only this closeout file**; changes **no** scientific contract. Its SHA is recorded in the final operator report because a commit cannot embed its own SHA. |
+
+Explicitly:
+
+- Commit 3 (`ead19985…`) is **historical and superseded**; it is retained only as the labeled
+  §33.B record and states its own supersession.
+- Commit 4 (`eeedab67…`) is the **final scientific-contract correction** and remains the approved
+  contract state.
+- **This commit (5) changes no scientific, statistical, timestamp, target, feature, model, loss,
+  bootstrap, split, verdict, consequence, evidence, or authorization rule** — it corrects closeout
+  commit history only, and modifies no file other than this closeout.
+- **No merge-closeout is created in this task**, and no SHA-finalization commit is performed by this
+  phase. **Merge remains separately authorized** and is a distinct, operator-authorized step.
 
 ## 26. Local / origin branch equality placeholders
 
@@ -255,16 +268,19 @@ retained-evidence classification; and every completed implementation report.
 
 ## 33. Post-review contract-verification amendments (pre-merge)
 
-Three narrow, docs-only, pre-merge amendments were made on this Phase 4bn-AY branch after the original
-preregistration commit. None is a new scientific phase, a redesign of CF-1, the merge phase, execution
-authorization, or data authorization.
+Three narrow, docs-only, pre-merge **contract** corrections were made on this Phase 4bn-AY branch
+after the original preregistration commit, followed by one **closeout-history-only** correction. None
+is a new scientific phase, a redesign of CF-1, the merge phase, execution authorization, or data
+authorization. (Full commit table: §25.)
 
 - **Original Phase 4bn-AY preregistration commit:** `c46cc6001d602d43c672aa94c069a34b5dc5d753`.
 - **First contract-tightening amendment:** `752d7ab27a81a2d4c42c89290d62a3d90a562d98` (§33.A).
 - **Half-open endpoint-semantics amendment:** `ead199856beb1a440b4c432d1c0e571ec39a9eb3` (§33.B) —
   **`SUPERSEDED_BEFORE_MERGE_BY_THE_CAUSAL_COMPLETED_INTERVAL_CORRECTION`**.
-- **Final causal completed-interval correction:** this commit (§33.C); its SHA is recorded in the
-  final operator report.
+- **Final causal completed-interval correction (the approved scientific contract):**
+  `eeedab67c40a209c6ba85dcd3350752d735edc48` (§33.C).
+- **Closeout commit-history correction (this commit; closeout file only):** §33.D; its SHA is
+  recorded in the final operator report.
 
 ### 33.A First amendment — bootstrap estimand, zero-RV QLIKE, November buffer
 
@@ -455,8 +471,55 @@ anywhere in the Phase 4bn-AY contract, memo, or checklist.
 - **Diff shape preserved.** Only the four Phase 4bn-AY files were modified in place; no fifth file
   added; nothing deleted or renamed; the base-to-final branch diff versus
   `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added files**.
-- **Amendment SHA.** This commit's exact SHA cannot be embedded inside the commit that contains this
-  closeout; it is recorded in the final operator report and in the Git log after commit.
+- **Amendment SHA.** `eeedab67c40a209c6ba85dcd3350752d735edc48` — the **final scientific-contract
+  correction** and the approved contract state.
 - **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
   read, the deterministic boundary proof, or any evidence-reserve spend. Merge remains a separate
   operator decision.
+
+### 33.D Final closeout commit-history correction
+
+- **What happened.** After the scientific contract was **approved** (final contract state
+  `eeedab67c40a209c6ba85dcd3350752d735edc48`, §33.C), a final review found **one documentation defect
+  only**: the closeout's commit-history section (§25) still described the **superseded** half-open
+  timestamp amendment (`ead19985…`) as the *final* amendment, even though the later causal
+  completed-interval correction had become the final branch state. This correction fixes that record.
+- **Only the closeout file changed.** This correction modifies exactly
+  `docs/00-meta/implementation-reports/2026-07-15_phase-4bn-ay_closeout.md` and **no other file**. The
+  main preregistration memo, the implementation-grade contract, and the execution-validation checklist
+  are **untouched**.
+- **What was corrected.**
+  1. **§25 stale history →** replaced with an accurate, ordered commit table naming all four prior
+     commits plus this one, marking `ead19985…` historical/superseded and `eeedab67…` the final
+     scientific-contract correction.
+  2. **§6 singular/plural wording →** now states the four files were amended in place by **three**
+     pre-merge contract corrections, followed by this closeout-history-only correction (which touches
+     only the closeout).
+  3. **§33 intro →** minimal consistency edit so it aligns with the corrected §25 and distinguishes
+     the original preregistration, the first amendment, the superseded half-open amendment, the final
+     causal completed-interval correction, and this closeout-history-only correction. The scientific
+     explanation in §33.C is preserved unchanged.
+- **The commit sequence is now accurate** (§25).
+- **No scientific, statistical, timestamp, target, feature, model, loss, bootstrap, split, verdict,
+  consequence, evidence, or authorization rule changed.** The live contract remains exactly as
+  approved: RV intervals `(a, b]`; the single canonical operator `P_at(u)` using
+  `source_transact_time_ms ≤ u`; `G_k = P_at(τ_k)`, `r_k = ln(G_k/G_{k-1})`, `RV(a,b] = Σ r_k²`;
+  target `(t, t+H]` with `H = 60 min` at top-of-UTC-hour origins; HAR `(t−L, t]` (1h / 24 completed
+  hourly / 168 completed hourly); feature snapshot `feature_timestamp_ms ≤ t`; the three
+  sign-invariant features; HAR-style OLS baseline and nested augmented OLS; QLIKE with
+  `v = RV + 1e-16` and `h = max(exp(ŷ), 1e-16)`; zero-RV retention; seven evaluation blocks;
+  `Δ_equal = (1/7) Σ_i D_i`; the block-specific stratified moving-block bootstrap, 10,000 replicates,
+  seed `20260715`, P3 iff `LB_95 > 0`; 6-of-7 block consistency; last potentially valid October origin
+  `2024-10-31T22:00:00.000Z` and invalid `2024-10-31T23:00:00.000Z`; `2024-11-01..2024-11-15 =
+  UNUSED_NON_RESERVE_BUFFER` with no November row opened; and all pass/fail/invalid routing,
+  anti-tuning, anti-switching, anti-rescue, terminal/sealed/consumed-holdout exclusions, stopped arcs,
+  and governance locks.
+- **No data or reserve was opened.** Only committed documentation and Git metadata were read.
+- **No execution ran.** No boundary proof, QLIKE, bootstrap, target, feature, model, diagnostic, or
+  backtest was computed.
+- **Diff shape preserved.** The base-to-final branch diff versus
+  `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added AY documents**; this commit
+  contributes exactly one `M` entry (the closeout) relative to `eeedab67…`.
+- **Correction SHA.** This correction commit's exact SHA cannot be embedded inside itself; it is
+  recorded in the final operator report and in the Git log after commit.
+- **Merge remains unauthorized** until a separate merge prompt. No merge-closeout is created here.
