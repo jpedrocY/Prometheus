@@ -798,7 +798,7 @@ A future, separately-authorized execution phase must emit (all **local / gitigno
   A failed or absent proof ⇒ `CF1_INVALID_RUN`;
 - a **leakage / split / coverage proof** validated **before** any metric is computed: chronological
   block boundaries; embargo/purge applied; per-block valid-origin counts `n_i`; `≥30/60` coverage
-  enforced (covered-minute predicate `τ_{k-1} ≤ ts < τ_k`, §7); primary execution-access boundary
+  enforced (covered-minute predicate `τ_{k-1} < ts ≤ τ_k`, §7); primary execution-access boundary
   respected (no 2024-11-01..2024-11-15 buffer row opened, §21); `v002_terminal_window_read = false`;
   `sealed_test_split_touched = false`; `test_rows_loaded = 0`; consumed-holdout not used;
 - a **model-run manifest**: the frozen constants of this contract (H, cadence, `ε = 1e-16`, feature
