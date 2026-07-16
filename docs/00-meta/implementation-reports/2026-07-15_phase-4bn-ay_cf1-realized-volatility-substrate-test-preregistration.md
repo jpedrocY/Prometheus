@@ -124,9 +124,10 @@ the RV-based baseline. Formally, `E[ L_base(t) − L_aug(t) ] ≤ 0`.
 ## 12. Alternative hypothesis
 
 `H1`: the augmented model achieves strictly lower QLIKE than the baseline, in a supermajority
-(≥ 6/7) of chronological blocks, with the one-sided 95% moving-block-bootstrap lower bound of the
-pooled QLIKE loss differential `> 0`. Formally, `E[ L_base(t) − L_aug(t) ] > 0` with the frozen
-block-consistency and uncertainty criteria met.
+(≥ 6/7) of chronological blocks, with the one-sided 95% **stratified-by-block** moving-block-bootstrap
+lower bound of the **equal-weighted seven-block** QLIKE loss-differential estimand `Δ_equal` (`LB_95`)
+`> 0`. Formally, `E[ d_{i,t} ] > 0` (where `d_{i,t} = QLIKE_base(i,t) − QLIKE_aug(i,t)`) with the
+frozen block-consistency and uncertainty criteria met.
 
 ## 13. Mechanism
 
@@ -144,10 +145,12 @@ inputs.
 Future **realized variance** of the BTCUSDT last-trade log price over a 1-hour forecast window,
 computed as the sum of 60 squared 1-minute log returns on a fixed UTC clock grid (causal LOCF grid
 prices), modelled in log space (`y = ln(RV + ε)`, `ε = 1e-16`) and mapped back to a positive
-variance forecast by exponentiation. No direction, sign, return-classification, continuation,
-reversion, or liquidation target. Full formula and validity rules: contract §3, §7–§10. The project
-has **no** prior committed realized-variance definition; CF-1's is authored fresh and duplicates
-nothing.
+variance forecast by exponentiation. The QLIKE loss uses the actual variance `v = RV + ε` and floors
+each forecast at `ε` (`h = max(exp(ŷ), ε)`) with the same `ε = 1e-16`, so the loss stays finite even
+when `RV = 0` and no zero-RV observation is dropped (contract §3, §26). No direction, sign,
+return-classification, continuation, reversion, or liquidation target. Full formula and validity
+rules: contract §3, §7–§10. The project has **no** prior committed realized-variance definition;
+CF-1's is authored fresh and duplicates nothing.
 
 ## 15. Exact selected horizon
 
@@ -165,11 +168,11 @@ One forecast origin at the **top of each UTC hour** (`HH:00:00.000`), **non-over
 ## 17. Baseline summary
 
 Exactly one **HAR-style realized-variance baseline** (heterogeneous autoregressive cascade at the
-hour / day / week timescales available in the 259-day window), estimated by **OLS in log-variance
-space** on three strictly-past-only realized-variance lookbacks (`RV_h` = previous 1h; `RV_d` = mean
-of previous 24 hourly RVs; `RV_w` = mean of previous 168 hourly RVs), with an intercept; forecasts
-exponentiated to guarantee positive variance. No baseline shopping; no alternate baseline promoted
-after execution; no tuning. Full spec: contract §17.
+hour / day / week timescales available in the 244-date primary execution-access window), estimated by
+**OLS in log-variance space** on three strictly-past-only realized-variance lookbacks (`RV_h` =
+previous 1h; `RV_d` = mean of previous 24 hourly RVs; `RV_w` = mean of previous 168 hourly RVs), with
+an intercept; forecasts exponentiated to guarantee positive variance. No baseline shopping; no
+alternate baseline promoted after execution; no tuning. Full spec: contract §17.
 
 ## 18. Augmented-model summary
 
@@ -195,32 +198,39 @@ past returns. Full contract: contract §11–§16.
 
 ## 20. Development-evidence boundary
 
-**Development window = pre-v002 train ∪ validation = 259 admissible UTC dates: 2024-03-01 ..
-2024-09-30 (214) + 2024-10-02 .. 2024-11-15 (45)** (committed `pre_v002_split_policy.py`). Excluded:
-the embargo dates 2024-10-01 and 2024-11-16; the **consumed** pre-v002 internal holdout 2024-11-17
-.. 2024-11-30 (never a CF-1 evaluation/confirmation set; descriptive-only); the **v002 terminal
-window** 2024-12-01 .. 2025-02-28 (`UNTOUCHED_RESERVED`); the **v002 sealed test** 2025-02-14 ..
-2025-02-28 (`UNTOUCHED_RESERVED`, highest protection). `test_rows_loaded = 0` is preserved. The CF-1
-development verdict is a **development-evidence** verdict only; genuine independent confirmation
-would require the untouched terminal reserve under a separate authorized spend, which this phase
-does **not** authorize.
+Two boundaries are distinguished (contract §21). **(a) Committed non-reserve eligibility envelope** =
+pre-v002 train ∪ validation = **259 admissible UTC dates: 2024-03-01 .. 2024-09-30 (214) + 2024-10-02
+.. 2024-11-15 (45)** (committed `pre_v002_split_policy.py`). **(b) Frozen CF-1 primary
+execution-access boundary** (what the primary experiment may open and use) = **2024-03-01 through
+2024-10-31 UTC, excluding 2024-10-01 = 244 dates**. **`2024-11-01 through 2024-11-15 =
+UNUSED_NON_RESERVE_BUFFER`** — non-reserve-eligible but **unopened and unused** (not training, not
+evaluation, not bootstrap, not confirmation, not preprocessing, not diagnostics). Excluded: the
+embargo dates 2024-10-01 and 2024-11-16; the **consumed** pre-v002 internal holdout 2024-11-17 ..
+2024-11-30 (never a CF-1 evaluation/confirmation set; descriptive-only); the **v002 terminal window**
+2024-12-01 .. 2025-02-28 (`UNTOUCHED_RESERVED`); the **v002 sealed test** 2025-02-14 .. 2025-02-28
+(`UNTOUCHED_RESERVED`, highest protection). `test_rows_loaded = 0` is preserved. The CF-1 development
+verdict is a **development-evidence** verdict only; genuine independent confirmation would require the
+untouched terminal reserve under a separate authorized spend, which this phase does **not** authorize.
 
 ## 21. Split / evaluation summary
 
 Chronological, **expanding-window walk-forward** over **7 contiguous, non-overlapping full UTC
 calendar-month evaluation blocks**: April–October 2024 (B7 = October starting 2024-10-02 to respect
-the committed 2024-10-01 embargo date). March 2024 is train-only warmup; 2024-11-01..2024-11-16 is a
-reserved buffer to the consumed-holdout boundary. Each block is evaluated with a model trained on
-all admissible development origins strictly before it, minus a 1-day embargo. No random split, no
-shuffled CV, no resampling across time. Full spec: contract §21–§25.
+the committed 2024-10-01 embargo date). March 2024 is train-only warmup; **2024-11-01..2024-11-15 is
+the `UNUSED_NON_RESERVE_BUFFER` (never opened)** and 2024-11-16 is a committed embargo exclusion — no
+evaluation block, training set, or bootstrap uses any date on or after 2024-11-01. Each block is
+evaluated with a model trained on all in-access development origins strictly before it, minus a 1-day
+embargo. No random split, no shuffled CV, no resampling across time. Full spec: contract §21–§25.
 
 ## 22. Primary loss
 
-**QLIKE** (quasi-likelihood), `L(t) = σ²/ĥ − ln(σ²/ĥ) − 1`, lower better; block-mean then
-equal-weighted across the 7 blocks. It is robust to a noisy volatility proxy and to the heavy right
-tail / scale variation of realized variance (Patton 2011), and is a proper score for variance
-forecasts — matching the magnitude question. It is the sole primary loss; secondary metrics cannot
-rescue a primary failure. Fable's illustrative 3–5% QLIKE margin is **not** adopted. Full spec:
+**QLIKE** (quasi-likelihood), `QLIKE(t) = v/h − ln(v/h) − 1` with the fixed zero-RV safeguard
+`v = RV + ε` and `h = max(exp(ŷ), ε)`, `ε = 1e-16` (so the loss is always finite and no zero-RV
+observation is dropped); lower better; block-mean then equal-weighted across the 7 blocks (the
+`Δ_equal` estimand). It is robust to a noisy volatility proxy and to the heavy right tail / scale
+variation of realized variance (Patton 2011), and is a proper score for variance forecasts —
+matching the magnitude question. It is the sole primary loss; secondary metrics cannot rescue a
+primary failure. Fable's illustrative 3–5% QLIKE margin is **not** adopted. Full spec:
 contract §26–§28.
 
 ## 23. Secondary descriptive metrics
@@ -234,19 +244,20 @@ statistic.
 
 ## 24. Pass rule
 
-`CF1_VALID_PASS` iff **all** hold simultaneously (contract §31): **(P1)** `ΔQLIKE_blockmean > 0`
-(strict positive equal-weighted-block-mean QLIKE improvement, zero-floor per §28); **(P2)** block
-consistency — augmented strictly better in **≥ 6 of 7** blocks; **(P3)** uncertainty — the one-sided
-95% moving-block-bootstrap lower bound of the pooled mean loss differential `> 0`; **(P4)** run
-validity — no `CF1_INVALID_RUN` condition, no contaminated block, no unauthorized switching, all 7
-blocks valid (each ≥ 100 valid paired origins).
+`CF1_VALID_PASS` iff **all** hold simultaneously (contract §31): **(P1)** `Δ_equal > 0` — strict
+positive equal-weighted seven-block-mean QLIKE improvement (`Δ_equal = (1/7) Σ_i D_i`, zero-floor per
+§28); **(P2)** block consistency — augmented strictly better (`D_i > 0`) in **≥ 6 of 7** blocks;
+**(P3)** uncertainty — the one-sided 95% **stratified-by-block** moving-block-bootstrap lower bound of
+the **same** `Δ_equal` estimand (`LB_95`) `> 0`; **(P4)** run validity — no `CF1_INVALID_RUN`
+condition, no contaminated block, no unauthorized switching, all 7 blocks valid (each ≥ 100 valid
+paired origins). P2 and P3 are independent and neither replaces the other.
 
 ## 25. Fail rule
 
 `CF1_VALID_FAIL`: every scientifically valid run (P4 holds) that does **not** satisfy all of
-P1–P3 — e.g. `ΔQLIKE_blockmean ≤ 0`, or fewer than 6/7 blocks improved, or a bootstrap lower bound
-`≤ 0`. There is **no** borderline / promising / weak / partial pass, **no** pass on a secondary
-metric, and **no** pass on a post-hoc subset.
+P1–P3 — e.g. `Δ_equal ≤ 0`, or fewer than 6/7 blocks with `D_i > 0`, or `LB_95 ≤ 0`. There is **no**
+borderline / promising / weak / partial pass, **no** pass on a secondary metric, and **no** pass on
+a post-hoc subset.
 
 ## 26. Invalid-run rule
 
@@ -261,19 +272,24 @@ separate corrective phase and a new operator authorization.
 
 ## 27. Uncertainty method
 
-**Moving-block bootstrap** (contract §29) of the per-origin QLIKE loss-differential series —
-compatible with serially-dependent chronological forecast errors. Block length `ℓ = ⌈n^(1/3)⌉`,
-`B = 10,000` resamples, one-sided 95%, exact null `E[d(t)] = 0`, decision direction = augmented
-better iff the lower bound `> 0`, fixed `RNG_SEED = 20260715`. Exactly one uncertainty test; no IID
-assumption; no multiple-testing selection; a descriptive Diebold–Mariano/Newey–West figure may be
-reported but is not the decision test. The uncertainty criterion supports but does **not** replace
-block consistency.
+**Stratified-by-evaluation-block moving-block bootstrap** (contract §29) that estimates uncertainty
+for the **same** equal-weighted seven-block `Δ_equal` estimand as the primary point estimate —
+compatible with serially-dependent chronological forecast errors. Within each block `i`, preserve
+chronological order, use a **block-specific** length `ℓ_i = ceil(n_i^(1/3))`, and resample moving
+blocks **within that block only** to `n_i` observations; per replicate compute `D_i^(b)` then
+`Δ_equal^(b) = (1/7) Σ_i D_i^(b)`; `B = 10,000` replicates, `RNG_SEED = 20260715`; `LB_95 =
+quantile({Δ_equal^(b)}, 0.05)`; **P3 passes iff `LB_95 > 0`**. No pooling of origins across blocks, no
+origin-count weighting, no resampling across block boundaries. Exactly one uncertainty test; no IID
+assumption; no multiple-testing selection; no alternate bootstrap / analytical SE / IID test /
+Diebold–Mariano variant may replace it after execution (a DM/Newey–West figure may be reported
+descriptively only). The uncertainty criterion supports but does **not** replace block consistency,
+and block consistency does **not** replace it.
 
 ## 28. Block-consistency rule
 
-Augmented strictly lower block-mean QLIKE than baseline in **≥ 6 of the 7** evaluation blocks; all 7
-block differentials recorded. Required and independent; not replaceable by the pooled uncertainty
-test.
+Augmented strictly lower block-mean QLIKE than baseline (`D_i > 0`) in **≥ 6 of the 7** evaluation
+blocks; all 7 block differentials `D_i` recorded. Required and independent; not replaceable by the
+stratified moving-block bootstrap (§27), and the bootstrap is not replaceable by it.
 
 ## 29. Anti-tuning and anti-switching rules
 

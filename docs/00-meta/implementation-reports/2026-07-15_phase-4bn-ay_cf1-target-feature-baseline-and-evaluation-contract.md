@@ -96,9 +96,14 @@ Model target (log realized variance, for positivity and QLIKE compatibility):
 y(t) = ln( RV(t) + ε ),   ε = 1e-16   (fixed floor, squared-log-return units)
 ```
 
-- **Modelled quantity:** `y(t) = log realized variance`. Forecasts are produced in `y`-space and
-  mapped back to a **variance** forecast `ĥ(t) = exp(ŷ(t))` (positivity guaranteed by
-  construction; no ad-hoc bias correction, no truncation).
+- **Modelled quantity:** `y(t) = log realized variance`. Because `y(t) = ln(RV(t) + ε)`, the
+  exponentiated forecast `exp(ŷ(t))` forecasts the **strictly positive** quantity `RV(t) + ε`,
+  consistent with the log target. Forecasts are mapped back to a **variance** forecast
+  `ĥ(t) = exp(ŷ(t))` (positive by construction; no ad-hoc bias correction).
+- **Actual variance and forecast floor used by the loss (frozen):** the QLIKE loss (§26) uses the
+  actual variance `v(t) = RV(t) + ε` and floors each forecast at `ε`
+  (`h(t) = max(exp(ŷ(t)), ε)`) with the **same** `ε = 1e-16`, so the loss is finite even when
+  `RV(t) = 0`. **No observation is dropped merely because `RV(t) = 0`.**
 - **No annualization.** RV and forecasts are per-1-hour-window variances in squared-log-return
   units. (Annualization is a monotone rescaling that does not affect QLIKE ranking; it is omitted
   to avoid an unnecessary constant.)
@@ -120,8 +125,8 @@ next-day rule. No sensitivity horizon is included; no menu of executable horizon
 |---|---|
 | 5 min | RV from only 5 one-minute returns is a very noisy variance proxy; QLIKE unstable; heavy microstructure-noise contamination. |
 | 15 / 30 min | Fewer intra-window returns (15 / 30) → noisier RV; does not align to a well-conditioned HAR hour/day/week cascade as cleanly as 1h. |
-| Daily | Only 259 development dates → far too few block-level observations; feature→target timescale gap extreme. |
-| **60 min (selected)** | 60 one-minute returns → well-conditioned RV; non-overlapping hourly origins; clean HAR hour/day/week cascade; directly supported by the committed `1h` horizon; ≈ 6,216 raw hourly origins over 259 days (ample after warmup/embargo). |
+| Daily | Only 244 primary execution-access dates → far too few block-level observations; feature→target timescale gap extreme. |
+| **60 min (selected)** | 60 one-minute returns → well-conditioned RV; non-overlapping hourly origins; clean HAR hour/day/week cascade; directly supported by the committed `1h` horizon; ≈ 5,856 raw hourly origins over the 244-date primary execution-access window (ample after warmup/embargo). |
 
 ## 5. Forecast cadence (frozen)
 
@@ -155,9 +160,10 @@ next-day rule. No sensitivity horizon is included; no menu of executable horizon
 
 ## 8. Partial-window treatment (frozen)
 
-Any forecast window (or HAR lookback window) that would extend beyond the available admissible
-development data, across the outer development-window boundary, across an embargo date, or into the
-consumed holdout / v002 terminal / v002 sealed windows is a **partial window → the origin is
+Any forecast window (or HAR lookback window) that would extend beyond the frozen CF-1 primary
+execution-access boundary (§21) — i.e. before 2024-03-01, onto the 2024-10-01 embargo date, or
+requiring any row dated 2024-11-01 or later (the `UNUSED_NON_RESERVE_BUFFER`, the 2024-11-16 embargo,
+the consumed holdout, or the v002 terminal / sealed reserves) — is a **partial window → the origin is
 invalid** (§10). Partial windows are never truncated, back-filled, or stitched across an envelope
 boundary (matching the committed no-cross-envelope-stitch rule).
 
@@ -165,8 +171,8 @@ boundary (matching the committed no-cross-envelope-stitch rule).
 
 - A 1-hour forecast or lookback window **may** cross a UTC-day boundary (all windows `≤ 24h`),
   resolved by the committed current-day-or-next-day reference rule.
-- A window may **not** cross the outer development-window boundary, an embargo date, or a
-  reserve/holdout boundary (§8, §21–§24).
+- A window may **not** cross the frozen CF-1 primary execution-access boundary (§21), an embargo
+  date, the `UNUSED_NON_RESERVE_BUFFER`, or a reserve/holdout boundary (§8, §21–§24).
 - `utc_date` for split assignment is derived from `source_transact_time_ms` per the committed rule.
 
 ## 10. Valid-target minimum observations (frozen)
@@ -266,9 +272,9 @@ feature ablation used to rescue a failure.
 ## 17. Baseline equation / specification (frozen)
 
 A simple, auditable **HAR-style realized-variance** baseline (heterogeneous autoregressive cascade
-at the hour / day / week timescales available in the 259-day development window). All lookbacks are
-computed with the **same 1-minute-grid RV machinery** as the target (§3), strictly past-only,
-`(t − L, t]`:
+at the hour / day / week timescales available in the 244-date primary execution-access window, §21).
+All lookbacks are computed with the **same 1-minute-grid RV machinery** as the target (§3), strictly
+past-only, `(t − L, t]`:
 
 ```
 RV_h(t) = realized variance over the previous 1 hour   [t − 1h,   t)   (60 one-minute r_k²)
@@ -329,12 +335,23 @@ where `z1,z2,z3` are the train-standardized log microstructure features (§13, �
 ## 20. Positivity handling (frozen)
 
 Variance forecasts are `ĥ(t) = exp(ŷ(t)) > 0` by construction (log-space modelling + exponential
-inverse). No negative-variance clipping, no flooring of forecasts, no truncation is ever applied.
-The target floor `ε = 1e-16` (§3) handles the rare exact-zero RV window before the logarithm.
+inverse). As a **numerical safeguard only**, the QLIKE loss (§26) evaluates each forecast as
+`h(t) = max(exp(ŷ(t)), ε)` with the same `ε = 1e-16`, guaranteeing a strictly-positive, finite
+denominator even under floating-point underflow; this floor can only raise an already-positive
+value away from an underflow-to-zero and is **not** a tunable choice. The actual variance used by
+the loss is `v(t) = RV(t) + ε` (§3, §26), also strictly positive. **No negative-variance clipping,
+and no post-hoc clipping of the QLIKE ratio or loss, is ever applied.** The target floor `ε = 1e-16`
+(§3) additionally handles the rare exact-zero RV window before the logarithm. The floor `ε` is the
+single frozen constant shared by the target, the actual, and the forecast; no alternative floor may
+be chosen during execution.
 
 ## 21. Development dates (frozen)
 
-**CF-1 development window = pre-v002 train ∪ validation = 259 admissible UTC dates:**
+Two distinct boundaries must not be conflated:
+
+**(a) Committed non-reserve eligibility envelope** (what committed split metadata classifies as
+pre-v002 non-reserve development-eligible) = pre-v002 train ∪ validation = **259 admissible UTC
+dates**:
 
 ```
 Train region:      2024-03-01 .. 2024-09-30   (214 dates)
@@ -345,12 +362,29 @@ Committed source: `pre_v002_split_policy.py:76-90`; Phase 4bn-Y; boundary consta
 `BOUNDARY_TRAIN_VALIDATION_MS = 1727827200000` (2024-10-02T00:00Z),
 `BOUNDARY_VALIDATION_HOLDOUT_MS = 1731801600000` (2024-11-17T00:00Z).
 
-**Excluded dates:**
+**(b) Frozen CF-1 primary execution-access boundary** (what the primary CF-1 experiment may open and
+use) = **`2024-03-01 through 2024-10-31 UTC, excluding 2024-10-01`** = **244 UTC dates**. Within it:
+March 2024 supplies warmup and initial expanding-window training history; April–October 2024 supply
+the seven fixed evaluation blocks (§22); 2024-10-01 is the fixed one-calendar-day embargo before the
+October evaluation block, which begins 2024-10-02. That committed metadata classifies dates through
+2024-11-15 as non-reserve **does not** authorize their use in the frozen CF-1 primary experiment.
+The last October forecast window's terminal 1-minute grid instant (2024-11-01T00:00:00.000Z) is
+resolved by causal LOCF from **in-access** trades only (`source_transact_time_ms ≤ 2024-10-31
+T23:59:59.999Z`); **no** 2024-11-01..2024-11-15 row is opened for it.
 
-| Excluded | Dates | Reason |
+**Frozen: `2024-11-01 through 2024-11-15 = UNUSED_NON_RESERVE_BUFFER`.** This buffer **is not** part
+of any training set, any evaluation block, the bootstrap, a confirmation set, a holdout, a fallback
+block, preprocessing, threshold choice, or diagnostics; it is **not** plotted or interpreted; and it
+**must not be opened or loaded** by the primary execution phase.
+
+**Excluded / non-access dates:**
+
+| Item | Dates | Reason |
 |---|---|---|
-| Boundary embargo | 2024-10-01; 2024-11-16 | committed `1D_BOUNDARY_EMBARGO` purge dates |
-| Consumed holdout | 2024-11-17 .. 2024-11-30 (14) | `PRE_V002_INTERNAL_HOLDOUT = CONSUMED`; never a CF-1 evaluation/confirmation set; descriptive-only |
+| October boundary embargo | 2024-10-01 | committed `1D_BOUNDARY_EMBARGO` purge date; outside execution access |
+| **Unused non-reserve buffer** | **2024-11-01 .. 2024-11-15 (15)** | `UNUSED_NON_RESERVE_BUFFER`; non-reserve-eligible but **unopened and unused**; outside the frozen CF-1 primary experiment |
+| Validation/holdout boundary embargo | 2024-11-16 | committed `1D_BOUNDARY_EMBARGO` purge date; outside the primary experiment |
+| Consumed holdout | 2024-11-17 .. 2024-11-30 (14) | `PRE_V002_INTERNAL_HOLDOUT = CONSUMED`; never a CF-1 evaluation/confirmation set; must not be opened for CF-1 confirmation; descriptive-only |
 | v002 terminal window | 2024-12-01 .. 2025-02-28 (90) | `UNTOUCHED_RESERVED`; excluded; `v002_terminal_window_read = false` |
 | v002 sealed test | 2025-02-14 .. 2025-02-28 (15) | `UNTOUCHED_RESERVED` highest protection; excluded; `test_rows_loaded = 0` |
 
@@ -373,11 +407,15 @@ into a fresh CF-1 evaluation or confirmation set; it may be cited descriptively 
 
 - **Warmup / initial training history (train-only, never evaluated):** 2024-03-01 .. 2024-03-31
   (provides the ≥168h HAR-week warmup and initial fit rows).
-- **Reserved buffer (unused; never evaluated, never trained-forward):** 2024-11-01 .. 2024-11-16 —
-  left as a clean chronological buffer between the last evaluation block and the consumed-holdout
-  boundary (2024-11-17). Recorded as an explicit, deliberate non-use, not a silent drop.
+- **`UNUSED_NON_RESERVE_BUFFER` (never opened, never trained, never evaluated, never bootstrapped):**
+  2024-11-01 .. 2024-11-15 — outside the frozen CF-1 primary execution-access boundary (§21). An
+  explicit, deliberate non-use, not a silent drop.
+- **Committed embargo exclusion:** 2024-11-16 remains excluded under committed split/embargo
+  metadata and is outside the primary experiment.
+- The last evaluation block is B7 (October); no evaluation block, training set, or bootstrap uses any
+  date on or after 2024-11-01.
 - Blocks are keyed to UTC dates; forecast origins inside a block are the hourly origins whose full
-  1h window lies within admissible development data (§8–§10).
+  1h window lies within the frozen CF-1 primary execution-access boundary (§8–§10, §21).
 
 ## 23. Training-window rule (frozen)
 
@@ -420,19 +458,31 @@ into a fresh CF-1 evaluation or confirmation set; it may be cited descriptively 
 
 ## 26. Primary loss formula (frozen)
 
-**QLIKE** (quasi-likelihood), the single primary loss. Per valid origin, with realized variance
-`σ²(t) = RV(t)` (floored by `ε`) and forecast variance `ĥ(t)`:
+**QLIKE** (quasi-likelihood), the single primary loss, with a fixed zero-RV safeguard so the loss is
+always finite. Per valid origin `t`, for model `m ∈ {B (baseline), A (augmented)}`, using the same
+`ε = 1e-16` throughout:
 
 ```
-L(t) = σ²(t)/ĥ(t) − ln( σ²(t)/ĥ(t) ) − 1        (≥ 0; = 0 iff σ² = ĥ)
+v(t)         = RV(t) + ε                       # actual variance used by the loss (strictly positive)
+h_m(t)       = max( exp(ŷ_m(t)), ε )           # forecast variance, floored at ε (strictly positive)
+ratio_m(t)   = v(t) / h_m(t)
+QLIKE_m(t)   = ratio_m(t) − ln( ratio_m(t) ) − 1        (≥ 0; = 0 iff v = h)
 ```
 
 - **Lower is better.**
-- **Aggregation within a block:** arithmetic mean of `L(t)` over the block's valid origins →
-  `QLIKE_block`.
-- **Aggregation across blocks:** **equal-weighted mean of the 7 `QLIKE_block` values** →
-  `QLIKE` (per model). Equal block weighting prevents any single large block dominating. (The
-  origin-pooled mean is additionally reported as a descriptive figure only.)
+- **Frozen numerical requirements:** `v(t) > 0`; `h_m(t) > 0`; `ratio_m(t)`, `ln(ratio_m(t))`, and
+  `QLIKE_m(t)` must all be finite. The **same** `ε` and the **same** formula apply to **both**
+  models. Any non-finite actual, forecast, ratio, logarithm, or QLIKE value is a **technical
+  invalidation condition** (`CF1_INVALID_RUN`, §31). **No observation may be silently dropped solely
+  because `RV(t) = 0`** (the `ε` floor keeps it well-defined); **no alternative floor** may be chosen
+  during execution; **no post-hoc clipping** of the ratio or loss is permitted.
+- **Aggregation within a block:** arithmetic mean of `QLIKE_m(t)` over block `i`'s `n_i` valid
+  paired origins → `QLIKE_block,i(m)`.
+- **Aggregation across blocks (the primary estimand):** **equal-weighted mean of the 7
+  `QLIKE_block,i(m)` values** → `QLIKE(m)` (per model). Equal block weighting prevents any single
+  large block dominating. **An origin-count-weighted "pooled" mean over all origins is NOT used in
+  any decision**; if reported at all it is descriptive-only and is never the primary or the bootstrap
+  estimand.
 - **Why QLIKE:** it is one of the two loss functions (with MSE) that are *robust* — i.e. yield
   consistent forecast rankings under a **noisy** volatility proxy (Patton, 2011) — and, unlike
   MSE, QLIKE is far less sensitive to the heavy right tail of realized variance and is invariant
@@ -440,31 +490,38 @@ L(t) = σ²(t)/ĥ(t) − ln( σ²(t)/ĥ(t) ) − 1        (≥ 0; = 0 iff σ² =
   development window. It is a proper scoring rule for variance forecasts. The choice is justified
   independently of any external reviewer; **Fable's illustrative 3–5% QLIKE margin is not adopted.**
 
-## 27. Relative-improvement formula (frozen)
+## 27. Relative-improvement formula and primary estimand (frozen)
 
-Per origin loss differential (positive ⇒ augmented better):
-
-```
-d(t) = L_base(t) − L_aug(t)
-```
-
-Point estimates:
+The primary statistic is an **equal-weighted mean of the seven block-level mean loss differentials**.
+For evaluation block `i ∈ {1,…,7}` and valid forecast origin `t` within block `i`:
 
 ```
-ΔQLIKE_blockmean = (1/7) Σ_i ( QLIKE_block,i(base) − QLIKE_block,i(aug) )   ← primary point estimate
-ρ                = ΔQLIKE_blockmean / QLIKE(base)                            ← relative improvement (descriptive)
+d_{i,t} = QLIKE_baseline(i,t) − QLIKE_augmented(i,t)        # positive ⇒ augmented better
+
+D_i     = (1 / n_i) · Σ_t d_{i,t}                          # block-i mean differential; n_i = valid paired origins in block i
+
+Δ_equal = (1 / 7) · Σ_{i=1}^{7} D_i                        # PRIMARY equal-weighted point estimate
 ```
 
-The primary decision uses `ΔQLIKE_blockmean` (point estimate), block consistency (§30), and the
-bootstrap CI (§29). `ρ` is reported for interpretability only and does not enter the pass rule.
+`Δ_equal` is identically the equal-weighted-block-mean improvement previously written
+`ΔQLIKE_blockmean` (`Δ_equal ≡ (1/7) Σ_i ( QLIKE_block,i(base) − QLIKE_block,i(aug) )`); the two names
+denote the **same** estimand and `Δ_equal` is the frozen symbol used by the pass rule.
+
+- **Primary pass condition P1:** `Δ_equal > 0` (strict; zero-floor per §28).
+- **Relative improvement (descriptive only):** `ρ = Δ_equal / QLIKE(base)` — reported for
+  interpretability; it does **not** enter the pass rule.
+
+The primary decision uses `Δ_equal` (point estimate, P1), block consistency (§30, P2), and the
+stratified moving-block bootstrap of the **same** `Δ_equal` estimand (§29, P3). No origin-count
+weighting and no cross-block pooling is used at any decision stage.
 
 ## 28. Materiality floor or zero-floor rationale (frozen)
 
 - **No nonzero materiality floor is adopted.** No committed project logic supplies a principled
   QLIKE materiality threshold, and Fable's illustrative 3–5% margin is explicitly not repository
   policy and not adopted.
-- **Zero-floor rule:** the pass rule requires **strictly positive** improvement (`ΔQLIKE_blockmean
-  > 0`) plus block consistency (§30) plus the bootstrap lower-bound criterion (§29).
+- **Zero-floor rule:** the pass rule requires **strictly positive** improvement (`Δ_equal > 0`, §27)
+  plus block consistency (§30) plus the bootstrap lower-bound criterion `LB_95 > 0` (§29).
 - **Explicit caveat (frozen):** a small strictly-positive result establishes only **statistical
   incremental information** on the magnitude axis; it establishes **no** economic materiality, **no**
   direction, **no** profitability, **no** ability to clear the locked 16 bps round-trip, and **no**
@@ -472,36 +529,60 @@ bootstrap CI (§29). `ρ` is reported for interpretability only and does not ent
 
 ## 29. Uncertainty procedure (frozen: exactly one)
 
-**Moving-block bootstrap** of the per-origin QLIKE loss-differential series, chosen to be
-compatible with serially-dependent chronological forecast errors (RV persistence):
+**Stratified-by-evaluation-block moving-block bootstrap** that estimates uncertainty for the **same**
+`Δ_equal` estimand as the primary point estimate (§27), and is compatible with serially-dependent
+chronological forecast errors (RV persistence). It keeps the seven evaluation blocks separate and
+never pools origins across blocks or weights blocks by their origin counts.
+
+**Exact procedure:**
+
+1. Keep the seven evaluation blocks separate.
+2. Within each block `i`, preserve chronological order and form the series `{d_{i,t}}` (§27).
+3. Use a **block-specific** moving-block length `ℓ_i = ceil(n_i^(1/3))` (`n_i` = valid paired origins
+   in block `i`; deterministic).
+4. For bootstrap replicate `b`, resample moving blocks **within each evaluation block independently**
+   until `n_i` observations are obtained; truncate the final sampled block to exactly `n_i`. No
+   moving block ever spans an evaluation-block boundary.
+5. Compute `D_i^(b) = mean( d_{i,*}^{(b)} )` for each block `i`.
+6. Compute the bootstrap primary statistic `Δ_equal^(b) = (1/7) · Σ_{i=1}^{7} D_i^(b)`.
+7. Repeat for exactly `B = 10,000` replicates using `RNG_SEED = 20260715`.
+8. Define the one-sided 95% percentile lower bound `LB_95 = empirical_quantile({Δ_equal^(b)}, 0.05)`.
+9. **P3 passes iff `LB_95 > 0`.**
 
 | Field | Frozen value |
 |---|---|
-| Comparison statistic | pooled mean `d̄` of `d(t)` over all valid paired origins (chronological concatenation across B1..B7) |
-| Method | moving-block bootstrap (fixed non-overlapping-position resampling of contiguous blocks of `d(t)`) |
-| Resampling unit | contiguous blocks of the per-origin `d(t)` series |
-| Block length | `ℓ = ⌈ n^(1/3) ⌉`, `n` = number of valid paired origins (deterministic; standard rule) |
-| Number of resamples | `B = 10_000` |
+| Estimand | the equal-weighted seven-block `Δ_equal` (§27) — the **same** as the primary point estimate |
+| Method | stratified-by-block moving-block bootstrap; within-block resampling only |
+| Resampling unit | contiguous moving blocks of `{d_{i,t}}` **within** each evaluation block |
+| Block length | block-specific `ℓ_i = ceil(n_i^(1/3))` |
+| Recombination | equal-weighted average of the seven bootstrap block means `D_i^(b)` |
+| Number of resamples | `B = 10,000` |
 | Confidence level | one-sided **95%** |
-| Interpretation | one-sided (H1: augmented better ⇒ `E[d] > 0`) |
-| Exact null | `H0: E[d(t)] = 0` (equal expected QLIKE) |
-| Decision direction | PASS-support iff the one-sided 95% bootstrap **lower bound of `d̄` is > 0** |
-| Random-seed policy | fixed `RNG_SEED = 20260715` (frozen; date-derived, matching the committed seed convention); the bootstrap is the **only** stochastic step |
-| Aggregation across blocks | the block structure is preserved by the moving-block resampling; block consistency (§30) is enforced separately and is **not** replaced by this test |
+| Exact null | `H0: E[d_{i,t}] = 0` (equal expected QLIKE) |
+| Decision direction | PASS-support iff `LB_95 = quantile({Δ_equal^(b)}, 0.05) > 0` |
+| Random-seed policy | fixed `RNG_SEED = 20260715` (frozen); the bootstrap is the **only** stochastic step |
 
-- **Not** IID bootstrap / IID standard errors (incompatible with serially-dependent forecasts).
-- The uncertainty method is **fixed here, before any residual is seen**; exactly one test is run;
-  **no** competing test is run and the most favorable selected. A Diebold–Mariano/Newey–West
-  statistic may be **reported descriptively** but is **not** the frozen decision test and cannot
-  override the moving-block bootstrap.
+**Frozen rules:**
+
+- **No pooling** of all per-origin observations into one sequence.
+- **No weighting** of evaluation months by their number of valid origins (equal-weight the 7 block
+  means, exactly as the primary estimand).
+- **No resampling across evaluation-block boundaries.**
+- **Not** an IID bootstrap / IID standard errors (incompatible with serially-dependent forecasts).
+- **No alternate bootstrap, analytical standard error, IID test, Diebold–Mariano variant, or residual
+  diagnostic may replace this method after execution.** A Diebold–Mariano/Newey–West figure may be
+  **reported descriptively** but is **not** the frozen decision test.
+- **Block consistency P2 (§30) remains separate:** at least 6 of the 7 observed `D_i` values must be
+  strictly positive. The bootstrap may not replace the 6-of-7 rule, and the 6-of-7 rule may not
+  replace the bootstrap.
 
 ## 30. Block-consistency rule (frozen)
 
-- Compute `ΔQLIKE_block,i = QLIKE_block,i(base) − QLIKE_block,i(aug)` for each of the 7 blocks.
-- **Block consistency holds iff `ΔQLIKE_block,i > 0` (augmented strictly better) in ≥ 6 of the 7
-  blocks.**
+- Compute `D_i = QLIKE_block,i(base) − QLIKE_block,i(aug)` for each of the 7 blocks (§27).
+- **Block consistency holds iff `D_i > 0` (augmented strictly better) in ≥ 6 of the 7 blocks.**
 - All 7 block values are recorded regardless. Block consistency is a **required, independent** pass
-  condition; it is **not** replaceable by the pooled uncertainty test (§29).
+  condition; it is **not** replaceable by the stratified moving-block bootstrap (§29), and the
+  bootstrap is **not** replaceable by block consistency.
 
 ## 31. Pass / fail / invalid pseudocode (frozen)
 
@@ -512,18 +593,20 @@ compatible with serially-dependent chronological forecast errors (RV persistence
 if any INVALID_RUN condition holds:
     #  target-contract violation; feature-contract violation; split leakage;
     #  reserve access (terminal / sealed / consumed-holdout-as-confirmation);
+    #  any 2024-11-01..2024-11-15 buffer row opened or used (§21, §22);
     #  preprocessing leakage (global stats or eval-block-fitted preprocessing);
     #  timestamp misalignment; a missing required block, or any block with
     #    < MIN_BLOCK_VALID_ORIGINS = 100 valid paired origins;
     #  material implementation mismatch vs this contract;
     #  numerical failure (singular matrix, zero-variance regressor, condition number > 1e10,
-    #    non-finite loss/coefficient, < 70 training origins) preventing the preregistered comparison;
+    #    non-finite actual / forecast / ratio / logarithm / QLIKE / coefficient value,
+    #    < 70 training origins) preventing the preregistered comparison;
     #  any unauthorized change of model / metric / horizon / cadence / threshold / feature / window / loss.
     verdict = CF1_INVALID_RUN            # no scientific claim; separate corrective phase + new operator authorization
 
-elif ( ΔQLIKE_blockmean > 0 )                                   # P1 strict positive improvement
-     and ( count_i[ ΔQLIKE_block,i > 0 ] >= 6 of 7 )            # P2 block consistency (§30)
-     and ( movingblock_bootstrap_oneSided95_lowerBound(d̄) > 0 ):# P3 uncertainty (§29)
+elif ( Δ_equal > 0 )                                            # P1 strict positive improvement (§27)
+     and ( count_i[ D_i > 0 ] >= 6 of 7 )                       # P2 block consistency (§30)
+     and ( LB_95 > 0 ):                                         # P3 uncertainty: stratified boot lower bound (§29)
     verdict = CF1_VALID_PASS
 
 else:                                                          # any valid run failing P1, P2, or P3
@@ -551,14 +634,16 @@ A future, separately-authorized execution phase must emit (all **local / gitigno
 - a **realized-variance target layer** (per-origin `RV(t)`, `y(t)`, HAR lookbacks `RV_h/RV_d/RV_w`,
   the three microstructure snapshots, split/block assignment) — compact Parquet;
 - a **leakage / split / coverage proof** validated **before** any metric is computed: chronological
-  block boundaries; embargo/purge applied; per-block valid-origin counts; `≥30/60` coverage
-  enforced; `v002_terminal_window_read = false`; `sealed_test_split_touched = false`;
+  block boundaries; embargo/purge applied; per-block valid-origin counts `n_i`; `≥30/60` coverage
+  enforced; primary execution-access boundary respected (no 2024-11-01..2024-11-15 buffer row opened,
+  §21); `v002_terminal_window_read = false`; `sealed_test_split_touched = false`;
   `test_rows_loaded = 0`; consumed-holdout not used;
-- a **model-run manifest**: the frozen constants of this contract (H, cadence, ε, feature list,
-  HAR spec, OLS, QLIKE, bootstrap seed/`B`/`ℓ`); per-block and pooled `QLIKE(base)`, `QLIKE(aug)`,
-  `ΔQLIKE_block,i`, `ΔQLIKE_blockmean`, `ρ`; the bootstrap CI; the two secondary metrics (§ main
-  memo); the P1/P2/P3 booleans; and the single `CF1_VALID_PASS | CF1_VALID_FAIL | CF1_INVALID_RUN`
-  verdict;
+- a **model-run manifest**: the frozen constants of this contract (H, cadence, `ε = 1e-16`, feature
+  list, HAR spec, OLS, QLIKE with the `v = RV+ε` / `h = max(exp(ŷ),ε)` safeguard, bootstrap
+  `seed = 20260715` / `B = 10,000` / block-specific `ℓ_i`); per-block `QLIKE_block,i(base)`,
+  `QLIKE_block,i(aug)`, and `D_i`; the equal-weighted `QLIKE(base)`, `QLIKE(aug)`, `Δ_equal`, `ρ`;
+  the bootstrap `LB_95`; the two secondary metrics (§ main memo); the P1/P2/P3 booleans; and the
+  single `CF1_VALID_PASS | CF1_VALID_FAIL | CF1_INVALID_RUN` verdict;
 - per-Parquet `.sha256` sidecars + inventory (Phase 4bb-F).
 
 ## 34. Required sidecar / provenance fields for a later phase (frozen)
@@ -574,17 +659,21 @@ non-authorization flags `ml_authorized`, `diagnostics_authorized`, `strategy_aut
 ## 35. Explicit prohibited deviations (frozen)
 
 The future execution phase may **not**: change the target family / RV estimator / sampling grid /
-floor `ε`; change the horizon (1h), cadence (hourly non-overlapping), or window closure; add,
-remove, transform-differently, re-window, or select features; introduce any directional / signed /
-funding / calendar / OI / order-book / forced-flow / liquidation input; switch the baseline or the
-augmented model class; add regularization, ensembling, trees, or neural nets; tune any
-hyperparameter; change the loss, add a competing loss as decision-primary, or switch to a secondary
-metric as primary; change the block count / boundaries / embargo / purge; exclude adverse dates or
-blocks post hoc; mine subgroups / regimes; reclassify an invalid run as a fail or pass; use the
-consumed holdout as fresh confirmation; read the v002 terminal or sealed reserves; alter the
-bootstrap seed / `B` / `ℓ` or run multiple uncertainty tests and select the best; or interpret any
-result before the artefact hashes and the leakage/split proof validate. Any such deviation makes the
-run `CF1_INVALID_RUN` (§31).
+floor `ε = 1e-16` (shared by target, actual `v`, and forecast `h`); change the QLIKE safeguard
+(`v = RV+ε`, `h = max(exp(ŷ),ε)`) or apply post-hoc clipping to the ratio or loss; drop an
+observation solely because `RV = 0`; change the horizon (1h), cadence (hourly non-overlapping), or
+window closure; add, remove, transform-differently, re-window, or select features; introduce any
+directional / signed / funding / calendar / OI / order-book / forced-flow / liquidation input;
+switch the baseline or the augmented model class; add regularization, ensembling, trees, or neural
+nets; tune any hyperparameter; change the loss, add a competing loss as decision-primary, or switch
+to a secondary metric as primary; change the block count / boundaries / embargo / purge; **open or
+use any 2024-11-01..2024-11-15 buffer row** (§21, §22), or extend the primary execution access beyond
+2024-10-31; exclude adverse dates or blocks post hoc; mine subgroups / regimes; reclassify an invalid
+run as a fail or pass; use the consumed holdout as fresh confirmation; read the v002 terminal or
+sealed reserves; pool origins across blocks, weight blocks by origin count, resample across
+evaluation-block boundaries, alter the bootstrap seed / `B` / block-specific `ℓ_i`, or run multiple
+uncertainty tests and select the best; or interpret any result before the artefact hashes and the
+leakage/split proof validate. Any such deviation makes the run `CF1_INVALID_RUN` (§31).
 
 ---
 

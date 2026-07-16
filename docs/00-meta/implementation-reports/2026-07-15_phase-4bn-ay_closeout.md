@@ -38,6 +38,10 @@ Exactly four, all additions:
 3. `docs/00-meta/implementation-reports/2026-07-15_phase-4bn-ay_cf1-execution-validation-checklist.md` — execution-validation checklist for a later phase.
 4. `docs/00-meta/implementation-reports/2026-07-15_phase-4bn-ay_closeout.md` — this closeout.
 
+All four were subsequently amended **in place** by the pre-merge contract-verification amendment
+(§33). The base-to-final branch diff relative to `main` remains **exactly these four added files** —
+no fifth file, no modification/deletion/rename of any pre-existing file.
+
 ## 7. Confirmation no existing file modified
 
 Confirmed. No existing file was modified, renamed, or deleted. The tracked diff is exactly four added
@@ -89,27 +93,40 @@ schema; none invented).
 
 ## 14. Exact development boundary
 
-Pre-v002 train ∪ validation = 2024-03-01..2024-09-30 (214) + 2024-10-02..2024-11-15 (45) = 259
-admissible UTC dates. Excluded: embargo dates 2024-10-01 / 2024-11-16; consumed holdout
-2024-11-17..2024-11-30 (descriptive-only, not a confirmation set); v002 terminal 2024-12-01..
-2025-02-28; v002 sealed 2025-02-14..2025-02-28. `test_rows_loaded = 0` preserved.
+**Committed non-reserve eligibility envelope:** pre-v002 train ∪ validation = 2024-03-01..2024-09-30
+(214) + 2024-10-02..2024-11-15 (45) = 259 admissible UTC dates. **Frozen CF-1 primary
+execution-access boundary:** `2024-03-01 through 2024-10-31 UTC, excluding 2024-10-01` = 244 dates —
+the only dates the primary experiment may open or use. **`2024-11-01..2024-11-15 =
+UNUSED_NON_RESERVE_BUFFER`** — non-reserve-eligible but unopened and unused (not training, not
+evaluation, not bootstrap, not confirmation, not preprocessing, not diagnostics). Excluded: embargo
+dates 2024-10-01 / 2024-11-16; consumed holdout 2024-11-17..2024-11-30 (descriptive-only, not a
+confirmation set, not opened for CF-1 confirmation); v002 terminal 2024-12-01..2025-02-28; v002
+sealed 2025-02-14..2025-02-28. `test_rows_loaded = 0` preserved.
 
 ## 15. Exact evaluation design
 
 Chronological expanding-window walk-forward over 7 non-overlapping full-month evaluation blocks
-Apr–Oct 2024 (B7 = 2024-10-02..2024-10-31); March = warmup; Nov 1–16 = buffer. Purge = 1h horizon;
-embargo = 1 calendar day; preprocessing fit train-only; no random/shuffled split.
+Apr–Oct 2024 (B7 = 2024-10-02..2024-10-31); March = warmup; `2024-11-01..2024-11-15 =
+UNUSED_NON_RESERVE_BUFFER` (never opened); 2024-11-16 = committed embargo exclusion. No evaluation
+block, training set, or bootstrap uses any date on or after 2024-11-01. Purge = 1h horizon; embargo =
+1 calendar day; preprocessing fit train-only; no random/shuffled split.
 
 ## 16. Primary loss
 
-**QLIKE** (`σ²/ĥ − ln(σ²/ĥ) − 1`), lower better, block-mean then equal-weighted across 7 blocks.
-Secondary descriptive metrics (≤2, non-authorizing): MSE-on-variance; Mincer–Zarnowitz R².
+**QLIKE** (`v/h − ln(v/h) − 1`) with the fixed zero-RV safeguard `v = RV + ε`,
+`h_m = max(exp(ŷ_m), ε)`, `ε = 1e-16` for both models — always finite, zero-RV origins retained, no
+post-hoc clipping. Lower better; block-mean then equal-weighted across the 7 blocks (the `Δ_equal`
+estimand). Secondary descriptive metrics (≤2, non-authorizing): MSE-on-variance; Mincer–Zarnowitz R².
 
 ## 17. Pass rule
 
-`CF1_VALID_PASS` iff all of: (P1) `ΔQLIKE_blockmean > 0`; (P2) augmented strictly better in ≥ 6/7
-blocks; (P3) moving-block bootstrap one-sided 95% lower bound of pooled loss differential > 0; (P4)
-run validity (no invalid-run condition; all 7 blocks ≥ 100 valid origins). Zero-floor materiality.
+`CF1_VALID_PASS` iff all of: (P1) `Δ_equal > 0`, where `d_{i,t} = QLIKE_base(i,t) − QLIKE_aug(i,t)`,
+`D_i = (1/n_i) Σ_t d_{i,t}`, `Δ_equal = (1/7) Σ_{i=1}^{7} D_i`; (P2) augmented strictly better
+(`D_i > 0`) in ≥ 6/7 blocks; (P3) the stratified-by-block moving-block bootstrap of the **same**
+`Δ_equal` estimand gives `LB_95 = quantile({Δ_equal^(b)}, 0.05) > 0` (block-specific
+`ℓ_i = ceil(n_i^(1/3))`, within-block resampling only, `B = 10,000`, seed `20260715`); (P4) run
+validity (no invalid-run condition; all 7 blocks ≥ 100 valid origins). Zero-floor materiality. P2 and
+P3 are independent; neither replaces the other.
 
 ## 18. Fail rule
 
@@ -166,10 +183,12 @@ search, API, Binance endpoint, credential, WebSocket, exchange-write function, M
 
 ## 25. Commit SHA self-reference convention
 
-The Phase 4bn-AY phase commit adds exactly the four files in §6 with message
-`docs(phase-4bn-ay): preregister CF-1 volatility substrate test`. Its exact SHA cannot be embedded
-inside itself; it is recorded in the final operator report and the Git log after commit. No
-merge-closeout is created and no SHA-finalization commit is performed by this phase (merge is a
+The original Phase 4bn-AY phase commit `c46cc6001d602d43c672aa94c069a34b5dc5d753` added exactly the
+four files in §6 with message `docs(phase-4bn-ay): preregister CF-1 volatility substrate test`. The
+pre-merge contract-verification amendment (§33) modifies those same four files in place with message
+`docs(phase-4bn-ay): tighten CF-1 preregistration contract`. Neither commit can embed its own SHA;
+the amendment/final branch SHA is recorded in the final operator report and the Git log after commit.
+No merge-closeout is created and no SHA-finalization commit is performed by this phase (merge is a
 separate, operator-authorized step).
 
 ## 26. Local / origin branch equality placeholders
@@ -223,3 +242,53 @@ standard, and late-inadmissibility protocol; all dataset identities and hashes;
 split/holdout/sidecar/storage policies (Phase 4bn-Y / L / AA / 4bb-F); every prior verdict and
 retained-evidence classification; and every completed implementation report.
 `docs/00-meta/current-project-state.md` is left unchanged by this phase.
+
+## 33. Post-review contract-verification amendment (pre-merge)
+
+- **Original Phase 4bn-AY preregistration commit:** `c46cc6001d602d43c672aa94c069a34b5dc5d753`.
+- **What happened:** after that commit, a repository-grounded compliance review found the design
+  substantially well constrained but identified three execution-bearing points needing to be made
+  fully explicit and internally consistent **before merge**. A **narrow, docs-only contract-
+  verification amendment** was made on the same Phase 4bn-AY branch. It is not a new scientific
+  phase, not the merge phase, and not execution authorization.
+- **The three clarified areas (and nothing else):**
+  1. **Equal-weighted bootstrap estimand.** The uncertainty procedure now estimates the **same**
+     equal-weighted seven-block estimand as the primary point estimate: `d_{i,t}`, `D_i`, and
+     `Δ_equal = (1/7) Σ_{i=1}^{7} D_i` are defined exactly; the bootstrap is **stratified by
+     evaluation block** with block-specific `ℓ_i = ceil(n_i^(1/3))`, within-block resampling only,
+     equal-weighted recombination, `B = 10,000`, seed `20260715`, and `P3 iff LB_95 =
+     quantile({Δ_equal^(b)}, 0.05) > 0`. The earlier "pooled per-origin `d̄`" phrasing — which could
+     have implied origin-count weighting or cross-block pooling — is removed from every decision path.
+  2. **Zero-RV QLIKE safeguard.** The loss is frozen as `v = RV + ε`, `h_m = max(exp(ŷ_m), ε)`,
+     `ratio_m = v/h_m`, `QLIKE_m = ratio_m − ln(ratio_m) − 1`, with the same `ε = 1e-16` already used
+     by the target and applied identically to both models; `exp(ŷ)` is clarified to forecast the
+     positive `RV + ε`. Zero-RV observations are **retained**, never dropped; any non-finite actual,
+     forecast, ratio, logarithm, or QLIKE is a technical invalidation; no alternative floor and no
+     post-hoc clipping of ratio or loss is permitted.
+  3. **Unused November 1–15 buffer.** The **committed non-reserve eligibility envelope** (through
+     2024-11-15, 259 dates) is now explicitly distinguished from the **frozen CF-1 primary
+     execution-access boundary** (`2024-03-01 through 2024-10-31 UTC, excluding 2024-10-01`; 244
+     dates). `2024-11-01..2024-11-15` is frozen as `UNUSED_NON_RESERVE_BUFFER` — unopened and unused:
+     not training, evaluation, bootstrap, confirmation, holdout, fallback, preprocessing, threshold
+     choice, or diagnostics; never plotted or interpreted. Eligibility is not access. The execution
+     checklist now **fails preflight** if any 2024-11-01..2024-11-15 row is proposed to be opened or
+     used. 2024-11-16 remains a committed embargo exclusion; 2024-11-17..2024-11-30 remains the
+     consumed internal holdout; 2024-12-01 onward remains terminal/sealed reserve territory.
+- **Nothing scientific changed.** The amendment changed **no** scientific hypothesis, target family,
+  horizon (60 min), forecast cadence, feature set (the same three sign-invariant 60s features), model
+  (HAR-style OLS baseline; nested augmented OLS), primary loss (QLIKE), secondary metrics, number of
+  evaluation blocks (7), block-consistency threshold (6 of 7), materiality floor (zero), bootstrap
+  replicate count (10,000), confidence level (one-sided 95%), seed (`20260715`), verdict vocabulary
+  (`CF1_VALID_PASS` / `CF1_VALID_FAIL` / `CF1_INVALID_RUN`), or any pass/fail/invalid project
+  consequence. All anti-tuning, anti-switching, anti-rescue, evidence-reserve, and non-authorization
+  boundaries are preserved exactly.
+- **No data or reserve opened.** The amendment read only committed documentation and Git metadata. No
+  market data, feature row, label row, model output, diagnostic output, or evidence reserve was
+  opened or read. No QLIKE, bootstrap, target, feature, model, diagnostic, or backtest was computed.
+- **Diff shape preserved.** Only the four Phase 4bn-AY files were modified in place; no fifth file was
+  added; nothing was deleted or renamed; the base-to-final branch diff versus
+  `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added files**.
+- **Amendment SHA.** The amendment commit's exact SHA cannot be embedded inside the commit that
+  contains this closeout; it is recorded in the final operator report and in the Git log after commit.
+- **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
+  read, or any evidence-reserve spend. Merge remains a separate operator decision.

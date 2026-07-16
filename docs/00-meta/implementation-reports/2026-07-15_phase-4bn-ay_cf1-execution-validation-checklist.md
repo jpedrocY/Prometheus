@@ -31,8 +31,21 @@ Each gate is `PASS` / `FAIL`; any `FAIL` ⇒ **preflight failure** (§3), stop, 
 ### 1.2 Data identity & boundaries (stated from committed metadata; verified without reserve reads)
 - [ ] **Exact data identity:** substrate = BTCUSDT USDⓈ-M pre-v002 aggTrades; families per contract
       §1; on-disk under `data/microstructure/…` (gitignored). No other source.
-- [ ] **Exact development date boundary:** development window = 2024-03-01..2024-09-30 ∪
+- [ ] **Committed non-reserve eligibility envelope (context only):** 2024-03-01..2024-09-30 ∪
       2024-10-02..2024-11-15 (259 dates); embargo dates 2024-10-01 and 2024-11-16 excluded (§21).
+      Eligibility is **not** access.
+- [ ] **Exact primary execution-access boundary:** the execution phase may open and use **only**
+      `2024-03-01 through 2024-10-31 UTC, excluding 2024-10-01` (244 dates) (§21). March = warmup /
+      initial training history; April–October = the seven evaluation blocks; 2024-10-01 = the fixed
+      one-day embargo before the October block, which begins 2024-10-02.
+- [ ] **November buffer not opened (FAIL PREFLIGHT if violated):** `2024-11-01 .. 2024-11-15 =
+      UNUSED_NON_RESERVE_BUFFER`. **Preflight FAILS if the execution prompt, the implementation, any
+      config, or any query proposes to open, load, read, train on, evaluate on, bootstrap over,
+      preprocess with, threshold on, plot, or interpret any 2024-11-01..2024-11-15 row.** That
+      committed split metadata classifies these dates as non-reserve development-eligible does **not**
+      authorize their use in the frozen CF-1 primary experiment.
+- [ ] **2024-11-16 exclusion:** remains excluded under committed split/embargo metadata; outside the
+      primary experiment.
 - [ ] **Terminal exclusion:** v002 terminal 2024-12-01..2025-02-28 excluded;
       `v002_terminal_window_read = false`.
 - [ ] **Sealed exclusion:** v002 sealed test 2025-02-14..2025-02-28 excluded;
@@ -42,7 +55,11 @@ Each gate is `PASS` / `FAIL`; any `FAIL` ⇒ **preflight failure** (§3), stop, 
 
 ### 1.3 Frozen target / horizon / cadence
 - [ ] **Target formula** matches §3 exactly (1-minute UTC grid, causal LOCF prices, `RV = Σ r_k²`,
-      `y = ln(RV+ε)`, `ε = 1e-16`, no annualization).
+      `y = ln(RV+ε)`, `ε = 1e-16`, no annualization); `exp(ŷ)` forecasts the positive quantity
+      `RV + ε`, consistent with the log target.
+- [ ] **Zero-RV safeguard wired in:** the loss uses `v = RV + ε` and `h_m = max(exp(ŷ_m), ε)` with the
+      **same** `ε = 1e-16` for **both** models (§3, §20, §26); zero-RV origins are **retained**, never
+      dropped for being zero; no alternative floor; no post-hoc clipping of ratio or loss.
 - [ ] **Horizon = 60 min** (`M = 60`); exactly one; no sensitivity horizon (§4).
 - [ ] **Cadence = top-of-UTC-hour, non-overlapping** windows (§5).
 - [ ] Interval closure, missing-grid coverage (`≥30/60`), partial-window, and day-boundary rules per
@@ -63,24 +80,38 @@ Each gate is `PASS` / `FAIL`; any `FAIL` ⇒ **preflight failure** (§3), stop, 
       forecast `exp(ŷ)`; exactly one baseline (§17).
 - [ ] **Augmented implementation** = nested OLS adding only the 3 standardized log microstructure
       features; identical target/window/estimator/origins/preprocessing (§18).
-- [ ] Estimation = plain **OLS**, no regularization, no tunable hyperparameter (§19); positivity by
-      construction (§20).
+- [ ] Estimation = plain **OLS**, no regularization, no tunable hyperparameter (§19); forecast
+      positivity by construction plus the `ε` loss-floor safeguard (§20).
 
 ### 1.6 Frozen split / leakage controls
 - [ ] **Split boundaries:** 7 monthly evaluation blocks Apr–Oct 2024 (B7 = 2024-10-02..2024-10-31);
-      March warmup; Nov 1–16 buffer (§22).
+      March warmup; `2024-11-01..2024-11-15 = UNUSED_NON_RESERVE_BUFFER` (never opened); 2024-11-16 =
+      committed embargo exclusion. No evaluation block, training set, or bootstrap uses any date on or
+      after 2024-11-01 (§22).
 - [ ] **Expanding-window training** rule; `≥ 70` training origins per fit (§23).
 - [ ] **Purge** = horizon (1h); **embargo** = 1 calendar day at each train/eval boundary (§24).
 - [ ] **Preprocessing scope:** all fitted on training origins only; no global stats; no eval block
       influences its own preprocessing (§25).
 
 ### 1.7 Frozen loss / uncertainty / decision
-- [ ] **Primary loss** = QLIKE per §26; block-mean then equal-weighted across 7 blocks; secondary
-      metrics limited to MSE-on-variance and MZ-R² (descriptive only).
-- [ ] **Uncertainty method** = moving-block bootstrap per §29 (`ℓ=⌈n^(1/3)⌉`, `B=10,000`, one-sided
-      95%, null `E[d]=0`, lower-bound>0 rule).
-- [ ] **Pass / fail / invalid pseudocode** implemented exactly per §31; block-consistency `≥6/7`
-      (§30); zero-floor materiality (§28).
+- [ ] **Primary loss** = QLIKE per §26 (with the `v`/`h` `ε`-safeguard); secondary metrics limited to
+      MSE-on-variance and MZ-R² (descriptive only, never decision-bearing).
+- [ ] **Observed primary estimand computed exactly as §27:** `d_{i,t} = QLIKE_base(i,t) −
+      QLIKE_aug(i,t)`; `D_i = (1/n_i) Σ_t d_{i,t}`; `Δ_equal = (1/7) Σ_{i=1}^{7} D_i`. **P1 iff
+      `Δ_equal > 0`.** Verify **no** origin-count weighting and **no** cross-block pooling anywhere in
+      the decision path.
+- [ ] **Bootstrap estimates the SAME `Δ_equal` estimand (§29):** stratified by evaluation block;
+      chronological order preserved within each block; block-specific `ℓ_i = ceil(n_i^(1/3))`;
+      within-block moving-block resampling to exactly `n_i` (final block truncated); `D_i^(b) =
+      mean(d_{i,*}^{(b)})`; `Δ_equal^(b) = (1/7) Σ_i D_i^(b)`; exactly `B = 10,000` replicates; seed
+      `20260715`; `LB_95 = quantile({Δ_equal^(b)}, 0.05)`. **P3 iff `LB_95 > 0`.**
+- [ ] **Bootstrap prohibitions honored:** no pooling of all per-origin observations into one sequence;
+      no weighting of months by valid-origin count; no resampling across evaluation-block boundaries;
+      no alternate bootstrap / analytical SE / IID test / DM variant / residual diagnostic substituted
+      after execution.
+- [ ] **P2 and P3 independent:** at least 6 of 7 observed `D_i` strictly positive (§30); the bootstrap
+      may not replace the 6-of-7 rule and the 6-of-7 rule may not replace the bootstrap.
+- [ ] **Pass / fail / invalid pseudocode** implemented exactly per §31; zero-floor materiality (§28).
 - [ ] **Random seeds:** OLS deterministic; bootstrap `RNG_SEED = 20260715` fixed (§32).
 
 ### 1.8 Frozen outputs / provenance / environment
@@ -102,14 +133,17 @@ Each gate is `PASS` / `FAIL`; any `FAIL` ⇒ **preflight failure** (§3), stop, 
 
 ## 2. Execution-order gates (fail-closed, in order)
 
-1. [ ] Build the RV target + HAR lookbacks + microstructure snapshots on development data only;
-       emit the **leakage / split / coverage proof** and validate it **before** any metric
-       computation (boundaries, embargo/purge, `≥30/60` coverage, per-block valid-origin counts,
-       reserve-untouched flags).
+1. [ ] Build the RV target + HAR lookbacks + microstructure snapshots **within the primary
+       execution-access boundary only** (2024-03-01..2024-10-31 excl. 2024-10-01); emit the
+       **leakage / split / coverage proof** and validate it **before** any metric computation
+       (boundaries, embargo/purge, `≥30/60` coverage, per-block valid-origin counts `n_i`,
+       no-November-buffer-row proof, reserve-untouched flags).
 2. [ ] Fit baseline and augmented per block (expanding window); record numerical-guard results
        (condition number, rank, training-origin counts).
-3. [ ] Compute per-origin QLIKE, per-block means, `ΔQLIKE_block,i`, `ΔQLIKE_blockmean`, `ρ`, the two
-       secondary metrics, and the moving-block bootstrap CI.
+3. [ ] Compute per-origin `QLIKE_m(t)` under the `ε`-safeguard (verifying every actual, forecast,
+       ratio, logarithm, and loss is finite, and that zero-RV origins are retained), then `d_{i,t}`,
+       `D_i`, `Δ_equal`, `ρ`, the two secondary metrics, and the stratified moving-block bootstrap
+       `LB_95`.
 4. [ ] Freeze the primary result, then (only then) route to the verdict in §3–§4.
 
 ## 3. Outcome classification (four mutually distinct results)
@@ -119,7 +153,7 @@ The execution phase must record **exactly one**:
 | Outcome | Meaning | Consequence |
 |---|---|---|
 | **PREFLIGHT_FAILURE** | any §1 gate failed **before** data read | stop; fix and re-authorize; **no** data opened; **not** a scientific result |
-| **CF1_INVALID_RUN** (technical invalidation) | a §1.x/§2 control broke **during** execution — leakage, reserve access, preprocessing leak, timestamp misalignment, missing/undersized block, numerical failure, or any unauthorized switch (contract §31) | make **no** scientific claim; preserve all locks; stop; separate corrective phase + new operator authorization |
+| **CF1_INVALID_RUN** (technical invalidation) | a §1.x/§2 control broke **during** execution — leakage, reserve access, any 2024-11-01..2024-11-15 buffer row opened or used, preprocessing leak, timestamp misalignment, missing/undersized block, numerical failure, or any unauthorized switch (contract §31) | make **no** scientific claim; preserve all locks; stop; separate corrective phase + new operator authorization |
 | **CF1_VALID_FAIL** | valid run; not all of P1/P2/P3 met (contract §31) | fail consequence (prereg §32): materially narrow the magnitude lane; no neighboring variants; return to paused |
 | **CF1_VALID_PASS** | valid run; P1 ∧ P2 ∧ P3 ∧ P4 all met | pass consequence (prereg §31): substrate informative on magnitude axis; authorize **only** a separate docs-only market-state-filter assessment; no direction/PnL/reserve |
 
@@ -137,9 +171,11 @@ elif P1 and P2 and P3 and run-valid:                           → CF1_VALID_PAS
 else (valid run, pass rule not fully met):                     → CF1_VALID_FAIL
 ```
 
-- A numerical failure (singular matrix, zero-variance regressor, condition number `> 1e10`,
-  non-finite loss, `< 70` training origins, a block with `< 100` valid origins) is a
-  **CF1_INVALID_RUN**, not a fail and not a pass.
+- A numerical failure (singular matrix, zero-variance regressor, condition number `> 1e10`, a
+  non-finite actual / forecast / ratio / logarithm / QLIKE / coefficient value, `< 70` training
+  origins, a block with `< 100` valid origins) is a **CF1_INVALID_RUN**, not a fail and not a pass.
+  Note `RV(t) = 0` is **not** a numerical failure and **not** a drop reason — the `ε` floor keeps its
+  QLIKE well-defined (contract §26).
 - Ambiguity, a missing contract element, invalid temporal ordering, or a contaminated split **cannot**
   be converted into a scientific pass; when in doubt, fail closed to `CF1_INVALID_RUN`.
 
