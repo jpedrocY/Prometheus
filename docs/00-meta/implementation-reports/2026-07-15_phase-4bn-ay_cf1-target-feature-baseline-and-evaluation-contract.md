@@ -69,26 +69,50 @@ CF-1 forecasts **future realized variance** of the BTCUSDT last-trade log price 
 horizon. No direction, sign, return-classification, continuation, reversion, liquidation, or
 forced-flow target is used.
 
-Let the forecast origin be `t` (a UTC clock instant, §5). Define a **fixed 1-minute UTC clock
-grid**. For grid instants `τ` define the causal grid price
+Let the forecast origin be `t` (a UTC clock instant, §5). Define a **fixed 1-minute UTC clock grid**.
+
+**General half-open interval rule (frozen).** For every realized-variance interval `[a, b)`:
+
+> `[a, b)` includes information available at the left endpoint `a` and excludes every trade whose
+> event timestamp is exactly the right endpoint `b`.
+
+A trade timestamped exactly at a shared boundary is assigned **exactly once**, to the interval
+**beginning** at that timestamp — never to both adjacent intervals, and never to neither.
+
+**Two distinct causal grid-price operators (frozen).**
 
 ```
-P(τ) = last-trade price of the most recent aggTrade with source_transact_time_ms ≤ τ
-       (last-observation-carried-forward; same row-index tie-break as committed:
-        the largest row_index among trades with transact_time_ms ≤ τ)
+P_start(a) = price of the canonical last aggTrade with source_transact_time_ms ≤ a
+             (ties among rows at timestamp a: greatest / last canonical row_index;
+              equivalently the committed row_index_le_R rule)
+
+P_minus(u) = price of the canonical last aggTrade with source_transact_time_ms < u
+             (ties among rows at the latest timestamp strictly below u:
+              greatest canonical row_index)
 ```
 
-Intra-window 1-minute log returns over the forecast window `[t, t + H)`:
+`P_start` is used **only** at an interval's left endpoint. `P_minus` is used at **every** grid
+boundary strictly after the interval start, **including the terminal boundary `b`**. A trade
+timestamped exactly at `u` is **excluded** from the interval ending at `u` and belongs to the next
+interval beginning at `u`.
+
+**Frozen minute-return formula.** For an interval `[a, b)` of length `H = 60 minutes`:
 
 ```
-r_k = ln( P(τ_k) / P(τ_{k-1}) ),   τ_k = t + k·60_000 ms,   k = 1 … M,   M = H / 60_000
+τ_k = a + k × 60_000 ms,             k = 1 … 60
+G_0 = P_start(a)
+G_k = P_minus(τ_k),                  k = 1 … 60
+r_k = ln( G_k / G_{k-1} ),           k = 1 … 60
+RV[a, b) = Σ_{k=1}^{60} r_k²
 ```
 
-Realized variance of the forecast window:
+This formula is the **sole** frozen implementation. **Do not** use `source_transact_time_ms ≤ τ_k`
+for `k ≥ 1`. **Do not** include a trade timestamped exactly at any interior or terminal minute
+boundary in the interval ending at that boundary; that trade becomes eligible as the left-endpoint
+observation of the next minute / next forecast interval.
 
-```
-RV(t) = Σ_{k=1}^{M} r_k²
-```
+For the forecast target at origin `t`: `a = t`, `b = t + H`, and `RV(t) ≡ RV[t, t + H)`. Any
+implementation violating this endpoint convention is a contract violation → `CF1_INVALID_RUN` (§31).
 
 Model target (log realized variance, for positivity and QLIKE compatibility):
 
@@ -138,25 +162,53 @@ next-day rule. No sensitivity horizon is included; no menu of executable horizon
 
 ## 6. Interval closure (frozen)
 
-- Forecast window: **right-open** `[t, t + H)`.
-- 1-minute grid steps: left-anchored at `τ_{k-1}`, return realized at `τ_k`; grid prices use
-  causal LOCF (`≤ τ`), consistent with the committed completed-bar / no-look-ahead rule
-  (`timestamp-policy.md` "only completed bars may be used") and the committed trailing right-closed
-  window convention.
-- HAR lookback windows (§17): **left-open, right-closed** `(t − L, t]`, strictly past-only.
+**Every CF-1 realized-variance interval — target and HAR lookback alike — is half-open `[a, b)`**
+under the general rule and the two operators frozen in §3. There is no right-closed
+realized-variance interval anywhere in this contract.
+
+- **Forecast (target) interval: right-open `[t, t + H)`.** Left endpoint `t` uses `P_start(t)`
+  (`≤ t`); every later boundary, including the terminal `t + H`, uses `P_minus(·)` (strict `<`). A
+  trade timestamped exactly `t + H` is **not** used by the target for origin `t`; it belongs to the
+  next forecast interval beginning at `t + H`.
+- **1-minute grid steps:** sub-interval `[τ_{k-1}, τ_k)`; return realized at `τ_k` from
+  `G_k = P_minus(τ_k)` over `G_{k-1}`; causal only, never using any trade at or after the
+  sub-interval's right endpoint. This is consistent with the committed completed-bar /
+  no-look-ahead rule (`timestamp-policy.md` "only completed bars may be used").
+- **HAR lookback intervals (§17): half-open `[t − L, t)`, strictly past-only** — left endpoint uses
+  `P_start(t − L)` (`≤ t − L`), every later boundary including the terminal `t` uses `P_minus(·)`
+  (strict `<`). **No HAR regressor at origin `t` uses a trade timestamped exactly `t`.** This is the
+  intended meaning of "strictly past-only".
+- **Feature snapshot at the origin (§11) is deliberately different:** it uses `≤ t` and **may** use a
+  feature row timestamped exactly `t`. This is intentional and is **not** leakage — information *at*
+  the forecast origin is available at the origin, while the *future* target interval begins after it.
+  Every event is assigned exactly once under the half-open convention.
+
+Note: the committed **feature-window** rule quoted in §2 (`(T − window_ms, T]`,
+`trailing_right_open_left`) is an upstream property of the committed 45-column feature schema
+describing how each feature row was computed; it is **not** a CF-1 realized-variance interval and does
+not alter the `[a, b)` convention frozen here.
 
 ## 7. Missing-grid treatment (frozen)
 
-- A grid instant `τ` with **no** aggTrade at or before it within the same admissible development
-  segment → `P(τ)` is carried forward from the last available trade (LOCF); if no prior trade
-  exists at all in-segment, the origin is **invalid** (§10).
-- A 1-minute step whose interval contains **no** actual aggTrade contributes `r_k` from LOCF
-  prices (typically `0`, i.e. no observed price change) and is counted as a **non-covered minute**.
-- **Coverage rule:** a forecast window is valid only if **≥ 30 of its 60 one-minute steps contain
-  ≥ 1 actual aggTrade** (`min_covered_minute_fraction = 0.50`, frozen). A window failing this is
-  **invalid** (§10) — dropped, never imputed. The same coverage rule applies to each HAR lookback
-  window (§17). No committed aggTrades maintenance-gap registry exists; this conservative coverage
+- **Covered-minute definition (frozen, consistent with §3):** the one-minute sub-interval
+  `[τ_{k-1}, τ_k)` is **covered** iff at least one actual aggTrade satisfies
+  `τ_{k-1} ≤ source_transact_time_ms < τ_k`. The event exactly at the sub-interval **start** is
+  naturally **included** in that minute; a trade exactly at `τ_k` belongs to the **next** minute and
+  does not make `[τ_{k-1}, τ_k)` covered.
+- A grid boundary with **no** qualifying trade within the same admissible in-access segment →
+  the operator (`P_start` at the left endpoint, `P_minus` at every later boundary, §3) carries
+  forward the last qualifying trade's price under its own timestamp predicate; if no qualifying prior
+  trade exists at all in-segment, the origin is **invalid** (§10).
+- A **non-covered** minute contributes `r_k` computed from the carried-forward operator prices
+  (typically `0`, i.e. no observed price change) and is counted as non-covered.
+- **Coverage rule (unchanged):** a forecast window is valid only if **≥ 30 of its 60 one-minute
+  sub-intervals are covered** (`min_covered_minute_fraction = 0.50`, frozen). A window failing this
+  is **invalid** (§10) — dropped, never imputed. The same coverage rule applies to each HAR lookback
+  interval (§17). No committed aggTrades maintenance-gap registry exists; this conservative coverage
   rule is the frozen mechanism for exchange gaps / thin periods.
+- **No future look-ahead; no stitching** across an embargo date, the `UNUSED_NON_RESERVE_BUFFER`, the
+  consumed holdout, or the terminal / sealed reserve boundaries. **No observation is dropped merely
+  because `RV = 0`** (§26).
 
 ## 8. Partial-window treatment (frozen)
 
@@ -202,9 +254,17 @@ columns at the **60s** window, snapshotted causally at the forecast origin:
 | x2 | `rolling_quantity_sum_60s` | unsigned traded-volume intensity | decimal string non-null | liquidity-demand magnitude |
 | x3 | `rolling_quantity_mean_60s` | mean trade size (level) | decimal string, `null_when_empty` | trade-size level |
 
-- **Snapshot rule:** the value of each column on the **last aggTrade with
-  `source_transact_time_ms ≤ t`** (causal last-observation snapshot; same `row_index_le_R`
-  tie-break). Every feature is therefore available at or before the forecast origin.
+- **Snapshot rule (frozen, `≤ t`):** the value of each column on the **last committed feature row
+  with `feature_timestamp_ms ≤ t`** (equivalently `source_transact_time_ms ≤ t`; the committed
+  schema sets `feature_timestamp_ms == source_transact_time_ms`), using the committed
+  `row_index_le_R` tie rule (greatest / last canonical `row_index` among rows at timestamp `t`).
+  A feature row timestamped **exactly** at `t` **is available at the origin and may be used**. Every
+  feature is therefore available at or before the forecast origin.
+- **Intentional asymmetry vs the target and the HAR lookbacks (not leakage):** the feature snapshot
+  uses `≤ t`, whereas the *future* target interval `[t, t + H)` and every HAR lookback `[t − L, t)`
+  exclude trades timestamped exactly at their **right** endpoint (`P_minus`, strict `<`, §3, §6,
+  §17). Information *at* the forecast origin is available at the origin; the future target begins
+  after it; and every event is assigned exactly once to the interval **beginning** at its timestamp.
 - **Maximum feature count = 3.** One window (60s) only. No other windows, no other columns.
 - **Explicitly excluded directional / non-sign-invariant committed columns:**
   `rolling_aggressive_flow_ratio_{w}`, `rolling_aggressive_quantity_imbalance_{w}`,
@@ -273,14 +333,24 @@ feature ablation used to rescue a failure.
 
 A simple, auditable **HAR-style realized-variance** baseline (heterogeneous autoregressive cascade
 at the hour / day / week timescales available in the 244-date primary execution-access window, §21).
-All lookbacks are computed with the **same 1-minute-grid RV machinery** as the target (§3), strictly
-past-only, `(t − L, t]`:
+All lookbacks are computed with the **same 1-minute-grid RV machinery** as the target (§3), and are
+**half-open `[t − L, t)`, strictly past-only**:
 
 ```
-RV_h(t) = realized variance over the previous 1 hour   [t − 1h,   t)   (60 one-minute r_k²)
-RV_d(t) = mean of the 24 trailing hourly RVs over       [t − 24h,  t)
-RV_w(t) = mean of the 168 trailing hourly RVs over      [t − 168h, t)   (7 days)
+RV_h(t) = RV[t − 1h, t)                                (the previous completed hour; 60 one-minute r_k²)
+RV_d(t) = mean of the 24 completed hourly RV intervals tiling  [t − 24h,  t)
+RV_w(t) = mean of the 168 completed hourly RV intervals tiling [t − 168h, t)   (7 days)
 ```
+
+**HAR endpoint semantics (frozen).** For any HAR interval `[a, b)`: use `P_start(a)` at its left
+endpoint (`≤ a`); use `P_minus(a + k·60_000)` at **all** later minute boundaries, **including `b`**
+(strict `<`). Do **not** use a trade timestamped exactly at `b` in the lookback interval ending at
+`b`. Consequently **no HAR regressor at origin `t` uses a trade timestamped exactly `t`** — that
+trade belongs to the interval beginning at `t` (the target). This is the intended meaning of
+"strictly past-only". Each component hourly RV used by the daily and weekly means is itself a
+half-open UTC-hour interval; the daily mean uses the 24 completed hourly intervals and the weekly
+mean the 168 completed hourly intervals ending at or before `t`. The lengths (1h / 24h / 168h) and
+the averaging definitions are unchanged.
 
 Baseline model (OLS in log space):
 
@@ -368,9 +438,21 @@ March 2024 supplies warmup and initial expanding-window training history; April�
 the seven fixed evaluation blocks (§22); 2024-10-01 is the fixed one-calendar-day embargo before the
 October evaluation block, which begins 2024-10-02. That committed metadata classifies dates through
 2024-11-15 as non-reserve **does not** authorize their use in the frozen CF-1 primary experiment.
-The last October forecast window's terminal 1-minute grid instant (2024-11-01T00:00:00.000Z) is
-resolved by causal LOCF from **in-access** trades only (`source_transact_time_ms ≤ 2024-10-31
-T23:59:59.999Z`); **no** 2024-11-01..2024-11-15 row is opened for it.
+
+**October/November boundary (the general §3 rule applied).** The final October forecast interval is
+
+```
+[ 2024-10-31T23:00:00.000Z , 2024-11-01T00:00:00.000Z )
+```
+
+and its terminal grid price is `P_minus(2024-11-01T00:00:00.000Z)` — formed **only** from trades with
+`source_transact_time_ms < 2024-11-01T00:00:00.000Z`. Therefore: **no row dated 2024-11-01 is
+opened**; **no trade timestamped exactly `2024-11-01T00:00:00.000Z` is used**; the target remains
+fully inside the frozen execution-access boundary; and 2024-11-01..2024-11-15 remains unopened and
+unused. This is **not** ordinary LOCF using `≤ 2024-11-01T00:00:00.000Z` — it is a **causal
+left-limit price using strict `<` at the right endpoint**, exactly as `P_minus` is defined for every
+interior and terminal boundary of every interval. Opening a November row to resolve the October
+terminal grid price is a contract violation → `CF1_INVALID_RUN` (§31).
 
 **Frozen: `2024-11-01 through 2024-11-15 = UNUSED_NON_RESERVE_BUFFER`.** This buffer **is not** part
 of any training set, any evaluation block, the bootstrap, a confirmation set, a holdout, a fallback
@@ -592,6 +674,15 @@ never pools origins across blocks or weights blocks by their origin counts.
 
 if any INVALID_RUN condition holds:
     #  target-contract violation; feature-contract violation; split leakage;
+    #  ENDPOINT-CONVENTION violation (§3, §6, §17) — any of:
+    #    using <= instead of < at an interior or terminal right boundary;
+    #    including a trade timestamped exactly t+H in the target for origin t;
+    #    including a trade timestamped exactly t in RV_h(t) or any HAR lookback ending at t;
+    #    inconsistent tie rules between target and HAR construction;
+    #    opening a 2024-11-01 row to resolve the October terminal grid price;
+    #    assigning a boundary trade to both adjacent intervals;
+    #    assigning a boundary trade to neither interval when the next interval is otherwise valid;
+    #    a failed or absent deterministic timestamp-boundary proof (§33);
     #  reserve access (terminal / sealed / consumed-holdout-as-confirmation);
     #  any 2024-11-01..2024-11-15 buffer row opened or used (§21, §22);
     #  preprocessing leakage (global stats or eval-block-fitted preprocessing);
@@ -633,11 +724,18 @@ A future, separately-authorized execution phase must emit (all **local / gitigno
 
 - a **realized-variance target layer** (per-origin `RV(t)`, `y(t)`, HAR lookbacks `RV_h/RV_d/RV_w`,
   the three microstructure snapshots, split/block assignment) — compact Parquet;
+- a **deterministic timestamp-boundary proof**, emitted and validated **before** any metric is
+  computed, covering **synthetic timestamp cases only** (it reads **no** market data and **no**
+  reserve). It must verify at least: a trade at `09:59:59.999` is eligible for `[09:00, 10:00)`; a
+  trade at exactly `10:00:00.000` is **excluded** from `[09:00, 10:00)` and is available at the start
+  of `[10:00, 11:00)`; the feature snapshot at `10:00:00.000` **may** include the trade timestamped
+  exactly `10:00`; `RV_h(10:00)` **excludes** the trade timestamped exactly `10:00`; and the final
+  October interval excludes all November-dated rows. A failed or absent proof ⇒ `CF1_INVALID_RUN`;
 - a **leakage / split / coverage proof** validated **before** any metric is computed: chronological
   block boundaries; embargo/purge applied; per-block valid-origin counts `n_i`; `≥30/60` coverage
-  enforced; primary execution-access boundary respected (no 2024-11-01..2024-11-15 buffer row opened,
-  §21); `v002_terminal_window_read = false`; `sealed_test_split_touched = false`;
-  `test_rows_loaded = 0`; consumed-holdout not used;
+  enforced (covered-minute predicate `τ_{k-1} ≤ ts < τ_k`, §7); primary execution-access boundary
+  respected (no 2024-11-01..2024-11-15 buffer row opened, §21); `v002_terminal_window_read = false`;
+  `sealed_test_split_touched = false`; `test_rows_loaded = 0`; consumed-holdout not used;
 - a **model-run manifest**: the frozen constants of this contract (H, cadence, `ε = 1e-16`, feature
   list, HAR spec, OLS, QLIKE with the `v = RV+ε` / `h = max(exp(ŷ),ε)` safeguard, bootstrap
   `seed = 20260715` / `B = 10,000` / block-specific `ℓ_i`); per-block `QLIKE_block,i(base)`,
@@ -658,8 +756,13 @@ non-authorization flags `ml_authorized`, `diagnostics_authorized`, `strategy_aut
 
 ## 35. Explicit prohibited deviations (frozen)
 
-The future execution phase may **not**: change the target family / RV estimator / sampling grid /
-floor `ε = 1e-16` (shared by target, actual `v`, and forecast `h`); change the QLIKE safeguard
+The future execution phase may **not**: change the half-open interval convention or either grid-price
+operator — `[a, b)`, `P_start(a)` (`≤ a`) at the left endpoint, `P_minus(u)` (strict `<`) at every
+interior and terminal boundary, the boundary-trade-belongs-to-the-next-interval rule, the `≤ t`
+feature snapshot, or the covered-minute predicate `τ_{k-1} ≤ ts < τ_k` (§3, §6, §7, §11, §17); skip
+or weaken the deterministic timestamp-boundary proof (§33); change the target family / RV estimator /
+sampling grid / floor `ε = 1e-16` (shared by target, actual `v`, and forecast `h`); change the QLIKE
+safeguard
 (`v = RV+ε`, `h = max(exp(ŷ),ε)`) or apply post-hoc clipping to the ratio or loss; drop an
 observation solely because `RV = 0`; change the horizon (1h), cadence (hourly non-overlapping), or
 window closure; add, remove, transform-differently, re-window, or select features; introduce any

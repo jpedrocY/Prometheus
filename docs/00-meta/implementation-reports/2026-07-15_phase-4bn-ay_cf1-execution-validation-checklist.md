@@ -54,16 +54,49 @@ Each gate is `PASS` / `FAIL`; any `FAIL` ⇒ **preflight failure** (§3), stop, 
       evaluation or confirmation set; not relabeled into a fresh holdout; descriptive-only (§36).
 
 ### 1.3 Frozen target / horizon / cadence
-- [ ] **Target formula** matches §3 exactly (1-minute UTC grid, causal LOCF prices, `RV = Σ r_k²`,
-      `y = ln(RV+ε)`, `ε = 1e-16`, no annualization); `exp(ŷ)` forecasts the positive quantity
-      `RV + ε`, consistent with the log target.
+- [ ] **Target formula** matches §3 exactly (1-minute UTC grid, `G_0 = P_start(a)`,
+      `G_k = P_minus(τ_k)`, `r_k = ln(G_k/G_{k-1})`, `RV[a,b) = Σ_{k=1}^{60} r_k²`, `y = ln(RV+ε)`,
+      `ε = 1e-16`, no annualization); `exp(ŷ)` forecasts the positive quantity `RV + ε`, consistent
+      with the log target.
+
+**Half-open endpoint gates (all must PASS; any violation ⇒ `CF1_INVALID_RUN`, §31):**
+
+- [ ] **(1) Target intervals are `[t, t + H)`** — right-open (§3, §6).
+- [ ] **(2) Target start uses `≤ t`** — `G_0 = P_start(t)` = last canonical aggTrade with
+      `source_transact_time_ms ≤ t`, ties by greatest canonical `row_index` (`row_index_le_R`).
+- [ ] **(3) Target interior and terminal boundaries use strict `<`** — `G_k = P_minus(τ_k)` = last
+      canonical aggTrade with `source_transact_time_ms < τ_k`, for **every** `k = 1…60` including the
+      terminal `t + H`. Confirm `≤ τ_k` is **not** used for any `k ≥ 1`.
+- [ ] **(4) HAR intervals are `[a, b)` and use strict `< b`** — `P_start(a)` at the left endpoint,
+      `P_minus(·)` at every later boundary including `b`; therefore **no HAR regressor at origin `t`
+      uses a trade timestamped exactly `t`** (§6, §17).
+- [ ] **(5) Feature snapshot at `t` uses `≤ t`** — a feature row timestamped exactly `t` **may** be
+      used (§11). Confirm this asymmetry vs (3)/(4) is implemented deliberately, not accidentally.
+- [ ] **(6) Boundary trades are assigned exactly once**, to the interval **beginning** at their
+      timestamp — never to both adjacent intervals, never to neither when the next interval is
+      otherwise valid. Tie rules are **identical** between target and HAR construction.
+- [ ] **(7) The final October target opens no November row** — the terminal grid price of
+      `[2024-10-31T23:00:00.000Z, 2024-11-01T00:00:00.000Z)` is
+      `P_minus(2024-11-01T00:00:00.000Z)`, formed only from
+      `source_transact_time_ms < 2024-11-01T00:00:00.000Z`; **not** LOCF with `≤` (§21).
+- [ ] **Deterministic timestamp-boundary proof emitted and PASSING before any metric is computed**
+      (§33), covering **synthetic timestamp cases only** (reads no market data, no reserve):
+      a trade at `09:59:59.999` is eligible for `[09:00,10:00)`; a trade at exactly `10:00:00.000` is
+      excluded from `[09:00,10:00)` and available at the start of `[10:00,11:00)`; the feature
+      snapshot at `10:00:00.000` may include the trade timestamped exactly `10:00`; `RV_h(10:00)`
+      excludes the trade timestamped exactly `10:00`; the final October interval excludes all
+      November-dated rows. A failed or absent proof ⇒ `CF1_INVALID_RUN`.
 - [ ] **Zero-RV safeguard wired in:** the loss uses `v = RV + ε` and `h_m = max(exp(ŷ_m), ε)` with the
       **same** `ε = 1e-16` for **both** models (§3, §20, §26); zero-RV origins are **retained**, never
       dropped for being zero; no alternative floor; no post-hoc clipping of ratio or loss.
 - [ ] **Horizon = 60 min** (`M = 60`); exactly one; no sensitivity horizon (§4).
 - [ ] **Cadence = top-of-UTC-hour, non-overlapping** windows (§5).
-- [ ] Interval closure, missing-grid coverage (`≥30/60`), partial-window, and day-boundary rules per
-      §6–§10.
+- [ ] Interval closure, partial-window, and day-boundary rules per §6–§10.
+- [ ] **Covered-minute predicate:** `[τ_{k-1}, τ_k)` is covered iff ≥ 1 actual aggTrade satisfies
+      `τ_{k-1} ≤ source_transact_time_ms < τ_k` — the trade exactly at the sub-interval start counts
+      for that minute; a trade exactly at `τ_k` counts for the **next** minute (§7). Coverage
+      threshold unchanged at **≥ 30 of 60**; causal carry-forward; no future look-ahead; no stitching
+      across embargo / buffer / holdout / terminal / sealed boundaries.
 
 ### 1.4 Frozen features
 - [ ] **Feature names** exactly `{rolling_aggtrade_count_60s, rolling_quantity_sum_60s,
@@ -133,8 +166,12 @@ Each gate is `PASS` / `FAIL`; any `FAIL` ⇒ **preflight failure** (§3), stop, 
 
 ## 2. Execution-order gates (fail-closed, in order)
 
+0. [ ] Emit and validate the **deterministic timestamp-boundary proof** (§33; synthetic timestamp
+       cases only, no market data, no reserve). It must PASS **before** the target build begins.
 1. [ ] Build the RV target + HAR lookbacks + microstructure snapshots **within the primary
-       execution-access boundary only** (2024-03-01..2024-10-31 excl. 2024-10-01); emit the
+       execution-access boundary only** (2024-03-01..2024-10-31 excl. 2024-10-01), using
+       `P_start` (`≤`) at each interval's left endpoint and `P_minus` (strict `<`) at every interior
+       and terminal boundary; emit the
        **leakage / split / coverage proof** and validate it **before** any metric computation
        (boundaries, embargo/purge, `≥30/60` coverage, per-block valid-origin counts `n_i`,
        no-November-buffer-row proof, reserve-untouched flags).
@@ -153,7 +190,7 @@ The execution phase must record **exactly one**:
 | Outcome | Meaning | Consequence |
 |---|---|---|
 | **PREFLIGHT_FAILURE** | any §1 gate failed **before** data read | stop; fix and re-authorize; **no** data opened; **not** a scientific result |
-| **CF1_INVALID_RUN** (technical invalidation) | a §1.x/§2 control broke **during** execution — leakage, reserve access, any 2024-11-01..2024-11-15 buffer row opened or used, preprocessing leak, timestamp misalignment, missing/undersized block, numerical failure, or any unauthorized switch (contract §31) | make **no** scientific claim; preserve all locks; stop; separate corrective phase + new operator authorization |
+| **CF1_INVALID_RUN** (technical invalidation) | a §1.x/§2 control broke **during** execution — leakage, reserve access, any 2024-11-01..2024-11-15 buffer row opened or used, **any endpoint-convention violation (`≤` instead of `<` at a right boundary; a trade at exactly `t+H` used in the target for origin `t`; a trade at exactly `t` used in `RV_h(t)` or any HAR lookback ending at `t`; inconsistent target-vs-HAR tie rules; a November row opened for the October terminal price; a boundary trade double-assigned or unassigned; a failed/absent timestamp-boundary proof)**, preprocessing leak, timestamp misalignment, missing/undersized block, numerical failure, or any unauthorized switch (contract §31) | make **no** scientific claim; preserve all locks; stop; separate corrective phase + new operator authorization |
 | **CF1_VALID_FAIL** | valid run; not all of P1/P2/P3 met (contract §31) | fail consequence (prereg §32): materially narrow the magnitude lane; no neighboring variants; return to paused |
 | **CF1_VALID_PASS** | valid run; P1 ∧ P2 ∧ P3 ∧ P4 all met | pass consequence (prereg §31): substrate informative on magnitude axis; authorize **only** a separate docs-only market-state-filter assessment; no direction/PnL/reserve |
 

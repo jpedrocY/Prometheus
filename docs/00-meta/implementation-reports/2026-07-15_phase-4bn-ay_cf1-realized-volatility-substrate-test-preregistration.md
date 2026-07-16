@@ -142,10 +142,15 @@ inputs.
 
 ## 14. Target summary
 
-Future **realized variance** of the BTCUSDT last-trade log price over a 1-hour forecast window,
-computed as the sum of 60 squared 1-minute log returns on a fixed UTC clock grid (causal LOCF grid
-prices), modelled in log space (`y = ln(RV + ε)`, `ε = 1e-16`) and mapped back to a positive
-variance forecast by exponentiation. The QLIKE loss uses the actual variance `v = RV + ε` and floors
+Future **realized variance** of the BTCUSDT last-trade log price over a 1-hour **half-open** forecast
+interval `[t, t + H)`, computed as the sum of 60 squared 1-minute log returns on a fixed UTC clock
+grid, modelled in log space (`y = ln(RV + ε)`, `ε = 1e-16`) and mapped back to a positive variance
+forecast by exponentiation. **Endpoint semantics (frozen, contract §3/§6):** the interval's left
+endpoint uses `P_start(t)` = the last canonical aggTrade with `source_transact_time_ms ≤ t`; every
+later grid boundary — interior and terminal alike — uses `P_minus(u)` = the last canonical aggTrade
+with `source_transact_time_ms < u`. A trade timestamped exactly at a boundary is assigned exactly
+once, to the interval **beginning** at that timestamp; so a trade at exactly `t + H` is not used by
+the target for origin `t`. The QLIKE loss uses the actual variance `v = RV + ε` and floors
 each forecast at `ε` (`h = max(exp(ŷ), ε)`) with the same `ε = 1e-16`, so the loss stays finite even
 when `RV = 0` and no zero-RV observation is dropped (contract §3, §26). No direction, sign,
 return-classification, continuation, reversion, or liquidation target. Full formula and validity
@@ -170,9 +175,12 @@ One forecast origin at the **top of each UTC hour** (`HH:00:00.000`), **non-over
 Exactly one **HAR-style realized-variance baseline** (heterogeneous autoregressive cascade at the
 hour / day / week timescales available in the 244-date primary execution-access window), estimated by
 **OLS in log-variance space** on three strictly-past-only realized-variance lookbacks (`RV_h` =
-previous 1h; `RV_d` = mean of previous 24 hourly RVs; `RV_w` = mean of previous 168 hourly RVs), with
-an intercept; forecasts exponentiated to guarantee positive variance. No baseline shopping; no
-alternate baseline promoted after execution; no tuning. Full spec: contract §17.
+`RV[t − 1h, t)`; `RV_d` = mean of the 24 completed hourly RVs tiling `[t − 24h, t)`; `RV_w` = mean of
+the 168 completed hourly RVs tiling `[t − 168h, t)`), with an intercept; forecasts exponentiated to
+guarantee positive variance. **All HAR lookbacks are half-open `[t − L, t)` and strictly exclude
+trades timestamped exactly at the forecast origin `t`** (contract §6/§17) — that is the intended
+meaning of "strictly past-only". Lengths and averaging definitions unchanged. No baseline shopping;
+no alternate baseline promoted after execution; no tuning. Full spec: contract §17.
 
 ## 18. Augmented-model summary
 
@@ -403,7 +411,7 @@ is a valid operator choice.
 
 ## 40. Exact final result state
 
-`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
+`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__BOOTSTRAP_ESTIMAND_ZERO_RV_EXECUTION_BOUNDARY_AND_HALF_OPEN_TIMESTAMP_SEMANTICS_CLARIFIED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
 
 Exact statements:
 

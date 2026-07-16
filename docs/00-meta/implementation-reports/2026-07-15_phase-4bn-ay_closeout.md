@@ -64,10 +64,12 @@ potentially stale and navigational only.
 
 ## 9. Exact selected target
 
-Future **realized variance** of BTCUSDT last-trade log price over a 1-hour forecast window: 1-minute
-UTC-clock grid, causal LOCF grid prices, `RV(t) = Σ_{k=1}^{60} r_k²`, modelled as `y = ln(RV + ε)`
-with `ε = 1e-16`, forecast mapped back to variance by exponentiation. Non-directional; no prior
-committed RV definition existed, so authored fresh.
+Future **realized variance** of BTCUSDT last-trade log price over a 1-hour **half-open** forecast
+interval `[t, t + H)`: 1-minute UTC-clock grid, `G_0 = P_start(t)` (`≤ t`), `G_k = P_minus(τ_k)`
+(strict `< τ_k`, every interior and terminal boundary), `r_k = ln(G_k / G_{k-1})`,
+`RV(t) = Σ_{k=1}^{60} r_k²`, modelled as `y = ln(RV + ε)` with `ε = 1e-16`, forecast mapped back to
+variance by exponentiation. A boundary trade is assigned exactly once, to the interval beginning at
+its timestamp. Non-directional; no prior committed RV definition existed, so authored fresh.
 
 ## 10. Exact horizon
 
@@ -185,11 +187,13 @@ search, API, Binance endpoint, credential, WebSocket, exchange-write function, M
 
 The original Phase 4bn-AY phase commit `c46cc6001d602d43c672aa94c069a34b5dc5d753` added exactly the
 four files in §6 with message `docs(phase-4bn-ay): preregister CF-1 volatility substrate test`. The
-pre-merge contract-verification amendment (§33) modifies those same four files in place with message
-`docs(phase-4bn-ay): tighten CF-1 preregistration contract`. Neither commit can embed its own SHA;
-the amendment/final branch SHA is recorded in the final operator report and the Git log after commit.
-No merge-closeout is created and no SHA-finalization commit is performed by this phase (merge is a
-separate, operator-authorized step).
+first pre-merge contract-verification amendment `752d7ab27a81a2d4c42c89290d62a3d90a562d98` modified
+those same four files in place with message `docs(phase-4bn-ay): tighten CF-1 preregistration
+contract`. The final pre-merge endpoint-semantics amendment (§33) again modifies only those four files
+in place with message `docs(phase-4bn-ay): clarify half-open timestamp semantics`. No commit can embed
+its own SHA; the final branch SHA is recorded in the final operator report and the Git log after
+commit. No merge-closeout is created and no SHA-finalization commit is performed by this phase (merge
+is a separate, operator-authorized step).
 
 ## 26. Local / origin branch equality placeholders
 
@@ -200,7 +204,7 @@ the final operator report. `main` and `origin/main` remain at
 
 ## 27. Exact final result state
 
-`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
+`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__BOOTSTRAP_ESTIMAND_ZERO_RV_EXECUTION_BOUNDARY_AND_HALF_OPEN_TIMESTAMP_SEMANTICS_CLARIFIED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
 
 ## 28. No-execution statement
 
@@ -243,10 +247,20 @@ split/holdout/sidecar/storage policies (Phase 4bn-Y / L / AA / 4bb-F); every pri
 retained-evidence classification; and every completed implementation report.
 `docs/00-meta/current-project-state.md` is left unchanged by this phase.
 
-## 33. Post-review contract-verification amendment (pre-merge)
+## 33. Post-review contract-verification amendments (pre-merge)
+
+Two narrow, docs-only, pre-merge amendments were made on this Phase 4bn-AY branch after the original
+preregistration commit. Neither is a new scientific phase, a redesign, the merge phase, execution
+authorization, or data authorization.
 
 - **Original Phase 4bn-AY preregistration commit:** `c46cc6001d602d43c672aa94c069a34b5dc5d753`.
-- **What happened:** after that commit, a repository-grounded compliance review found the design
+- **First contract-tightening amendment:** `752d7ab27a81a2d4c42c89290d62a3d90a562d98` (§33.A).
+- **Final endpoint-semantics amendment:** this commit (§33.B); its SHA is recorded in the final
+  operator report.
+
+### 33.A First amendment — bootstrap estimand, zero-RV QLIKE, November buffer
+
+- **What happened:** after the original commit, a repository-grounded compliance review found the design
   substantially well constrained but identified three execution-bearing points needing to be made
   fully explicit and internally consistent **before merge**. A **narrow, docs-only contract-
   verification amendment** was made on the same Phase 4bn-AY branch. It is not a new scientific
@@ -288,7 +302,69 @@ retained-evidence classification; and every completed implementation report.
 - **Diff shape preserved.** Only the four Phase 4bn-AY files were modified in place; no fifth file was
   added; nothing was deleted or renamed; the base-to-final branch diff versus
   `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added files**.
-- **Amendment SHA.** The amendment commit's exact SHA cannot be embedded inside the commit that
-  contains this closeout; it is recorded in the final operator report and in the Git log after commit.
+- **Amendment SHA.** `752d7ab27a81a2d4c42c89290d62a3d90a562d98`.
 - **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
   read, or any evidence-reserve spend. Merge remains a separate operator decision.
+
+### 33.B Final amendment — half-open timestamp-endpoint semantics
+
+- **What happened:** a final contract review identified one remaining execution-bearing ambiguity.
+  The target interval was declared right-open `[t, t + H)`, but the grid notation defined a single
+  operator `P(τ)` using `source_transact_time_ms ≤ τ` for **every** grid instant — which could be read
+  as admitting a trade timestamped exactly at the right endpoint `t + H`, even though that endpoint
+  lies outside the declared interval. Related HAR notation alternated between `(t − L, t]` (prose) and
+  `[t − L, t)` (formula). This amendment resolves **only** that endpoint/tie ambiguity.
+- **Exact clarification (frozen):**
+  - **Right-open target and HAR intervals.** Every CF-1 realized-variance interval — target and HAR
+    lookback alike — is half-open `[a, b)`: it includes information available at the left endpoint `a`
+    and excludes every trade whose event timestamp is exactly the right endpoint `b`. There is no
+    right-closed realized-variance interval anywhere in the contract; the conflicting `(t − L, t]` /
+    "right-closed HAR lookback" notation is removed.
+  - **Left endpoint uses `≤`.** `P_start(a)` = price of the canonical last aggTrade with
+    `source_transact_time_ms ≤ a`, ties broken by greatest canonical `row_index` (the committed
+    `row_index_le_R` rule).
+  - **Interior and terminal right boundaries use `<`.** `P_minus(u)` = price of the canonical last
+    aggTrade with `source_transact_time_ms < u`, applied at **every** grid boundary strictly after the
+    interval start, **including the terminal boundary**. Frozen formula: `τ_k = a + k×60,000 ms`,
+    `G_0 = P_start(a)`, `G_k = P_minus(τ_k)`, `r_k = ln(G_k/G_{k-1})`, `RV[a,b) = Σ_{k=1}^{60} r_k²`.
+    `≤ τ_k` is prohibited for `k ≥ 1`. A boundary trade is assigned exactly once, to the interval
+    **beginning** at its timestamp. Consequently no HAR regressor at origin `t` uses a trade
+    timestamped exactly `t` — the intended meaning of "strictly past-only".
+  - **Feature snapshot at the origin remains `≤`.** The three microstructure features are snapshotted
+    from the last committed feature row with `feature_timestamp_ms ≤ t`; a row timestamped exactly `t`
+    is available and may be used. This asymmetry is intentional and is **not** leakage: information at
+    the origin is available at the origin, the future target begins after it, and every event is
+    assigned consistently under the half-open convention.
+  - **Final October target opens no November row.** The terminal price of
+    `[2024-10-31T23:00:00.000Z, 2024-11-01T00:00:00.000Z)` is `P_minus(2024-11-01T00:00:00.000Z)`,
+    formed only from `source_transact_time_ms < 2024-11-01T00:00:00.000Z` — a causal **left-limit**
+    price, not ordinary LOCF using `≤`. 2024-11-01..2024-11-15 remains unopened and unused.
+  - **Coverage made consistent, threshold unchanged.** `[τ_{k-1}, τ_k)` is covered iff ≥ 1 actual
+    aggTrade satisfies `τ_{k-1} ≤ source_transact_time_ms < τ_k`; the ≥ 30-of-60 threshold, causal
+    carry-forward, no-look-ahead, no-stitching, and zero-RV-retention rules are unchanged.
+  - **Invalid-run and checklist.** Endpoint-convention violations now route explicitly to
+    `CF1_INVALID_RUN`, and the checklist adds seven preflight gates plus a required **deterministic
+    timestamp-boundary proof** over **synthetic timestamp cases only** (no market data, no reserve),
+    to be emitted and validated by the later execution code before any metric is computed. **That
+    proof was not run during this docs-only amendment.**
+- **Nothing scientific or statistical changed.** No change to the hypothesis, target family, source,
+  1-minute UTC grid, causal construction, horizon (60 min), cadence (top-of-UTC-hour), non-overlapping
+  intervals, `RV = Σ r_k²`, `y = ln(RV + 1e-16)`, no-annualization, the HAR-style log-RV OLS baseline
+  or its 1h/24h/168h lengths and averaging, the nested augmented OLS, the three sign-invariant
+  features, log + train-only z-score, seven evaluation blocks, the execution-access boundary ending
+  2024-10-31, the `UNUSED_NON_RESERVE_BUFFER`, purge/embargo, QLIKE, the QLIKE epsilon, the
+  equal-weighted seven-block estimand, the stratified-by-block moving-block bootstrap, 10,000
+  replicates, one-sided 95%, seed `20260715`, 6-of-7 block consistency, the pass/fail/invalid rules, or
+  any project consequence. All anti-tuning, anti-switching, anti-rescue, evidence, reserve, and
+  non-authorization boundaries are preserved exactly.
+- **No data or reserve opened.** Only committed documentation and Git metadata were read. No market
+  data, feature row, label row, model output, diagnostic output, or evidence reserve was opened. No
+  boundary proof, QLIKE, bootstrap, target, feature, model, diagnostic, or backtest was computed.
+- **Diff shape preserved.** Only the four Phase 4bn-AY files were modified in place; no fifth file
+  added; nothing deleted or renamed; the base-to-final branch diff versus
+  `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added files**.
+- **Amendment SHA.** This amendment commit's exact SHA cannot be embedded inside the commit that
+  contains this closeout; it is recorded in the final operator report and in the Git log after commit.
+- **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
+  read, the timestamp-boundary proof, or any evidence-reserve spend. Merge remains a separate operator
+  decision.
