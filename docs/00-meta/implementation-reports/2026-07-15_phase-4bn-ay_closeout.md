@@ -64,12 +64,15 @@ potentially stale and navigational only.
 
 ## 9. Exact selected target
 
-Future **realized variance** of BTCUSDT last-trade log price over a 1-hour **half-open** forecast
-interval `[t, t + H)`: 1-minute UTC-clock grid, `G_0 = P_start(t)` (`≤ t`), `G_k = P_minus(τ_k)`
-(strict `< τ_k`, every interior and terminal boundary), `r_k = ln(G_k / G_{k-1})`,
-`RV(t) = Σ_{k=1}^{60} r_k²`, modelled as `y = ln(RV + ε)` with `ε = 1e-16`, forecast mapped back to
-variance by exponentiation. A boundary trade is assigned exactly once, to the interval beginning at
-its timestamp. Non-directional; no prior committed RV definition existed, so authored fresh.
+Future **realized variance** of BTCUSDT last-trade log price over a 1-hour **causal completed**
+target interval `(t, t + H]`: 1-minute UTC-clock grid, single canonical operator
+`P_at(u)` = last canonical aggTrade with `source_transact_time_ms ≤ u` (greatest `row_index` tie
+rule), `τ_k = t + k·60,000 ms` for `k = 0…60`, `G_k = P_at(τ_k)`, `r_k = ln(G_k / G_{k-1})`,
+`RV(t) = RV(t, t + H] = Σ_{k=1}^{60} r_k²`, modelled as `y = ln(RV + ε)` with `ε = 1e-16`, forecast
+mapped back to variance by exponentiation. A boundary trade is assigned exactly once, to the interval
+**ending** at its timestamp; `G_0 = P_at(t)` is already-known origin information, so no boundary jump
+is omitted and no already-observed origin-time jump enters the target. Non-directional; no prior
+committed RV definition existed, so authored fresh.
 
 ## 10. Exact horizon
 
@@ -110,8 +113,11 @@ sealed 2025-02-14..2025-02-28. `test_rows_loaded = 0` preserved.
 Chronological expanding-window walk-forward over 7 non-overlapping full-month evaluation blocks
 Apr–Oct 2024 (B7 = 2024-10-02..2024-10-31); March = warmup; `2024-11-01..2024-11-15 =
 UNUSED_NON_RESERVE_BUFFER` (never opened); 2024-11-16 = committed embargo exclusion. No evaluation
-block, training set, or bootstrap uses any date on or after 2024-11-01. Purge = 1h horizon; embargo =
-1 calendar day; preprocessing fit train-only; no random/shuffled split.
+block, training set, or bootstrap uses any date on or after 2024-11-01. An origin is assigned to a
+block by its own UTC date/time but is valid only if its entire completed target `(t, t+H]` — right
+endpoint included — lies inside execution access; the `2024-10-31T23:00` origin is therefore invalid
+and B7's last potentially valid origin is `2024-10-31T22:00`. Purge = 1h horizon; embargo = 1 calendar
+day; preprocessing fit train-only; no random/shuffled split.
 
 ## 16. Primary loss
 
@@ -204,7 +210,7 @@ the final operator report. `main` and `origin/main` remain at
 
 ## 27. Exact final result state
 
-`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__BOOTSTRAP_ESTIMAND_ZERO_RV_EXECUTION_BOUNDARY_AND_HALF_OPEN_TIMESTAMP_SEMANTICS_CLARIFIED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
+`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__BOOTSTRAP_ESTIMAND_ZERO_RV_EXECUTION_BOUNDARY_AND_CAUSAL_COMPLETED_INTERVAL_SEMANTICS_CLARIFIED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
 
 ## 28. No-execution statement
 
@@ -249,14 +255,16 @@ retained-evidence classification; and every completed implementation report.
 
 ## 33. Post-review contract-verification amendments (pre-merge)
 
-Two narrow, docs-only, pre-merge amendments were made on this Phase 4bn-AY branch after the original
-preregistration commit. Neither is a new scientific phase, a redesign, the merge phase, execution
+Three narrow, docs-only, pre-merge amendments were made on this Phase 4bn-AY branch after the original
+preregistration commit. None is a new scientific phase, a redesign of CF-1, the merge phase, execution
 authorization, or data authorization.
 
 - **Original Phase 4bn-AY preregistration commit:** `c46cc6001d602d43c672aa94c069a34b5dc5d753`.
 - **First contract-tightening amendment:** `752d7ab27a81a2d4c42c89290d62a3d90a562d98` (§33.A).
-- **Final endpoint-semantics amendment:** this commit (§33.B); its SHA is recorded in the final
-  operator report.
+- **Half-open endpoint-semantics amendment:** `ead199856beb1a440b4c432d1c0e571ec39a9eb3` (§33.B) —
+  **`SUPERSEDED_BEFORE_MERGE_BY_THE_CAUSAL_COMPLETED_INTERVAL_CORRECTION`**.
+- **Final causal completed-interval correction:** this commit (§33.C); its SHA is recorded in the
+  final operator report.
 
 ### 33.A First amendment — bootstrap estimand, zero-RV QLIKE, November buffer
 
@@ -306,7 +314,11 @@ authorization, or data authorization.
 - **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
   read, or any evidence-reserve spend. Merge remains a separate operator decision.
 
-### 33.B Final amendment — half-open timestamp-endpoint semantics
+### 33.B Half-open timestamp-endpoint amendment — `SUPERSEDED_BEFORE_MERGE_BY_THE_CAUSAL_COMPLETED_INTERVAL_CORRECTION`
+
+**This entire subsection is a historical amendment record only.** The half-open `[a, b)` construction
+it describes is **superseded before merge** by §33.C and is **not** a live implementation rule
+anywhere in the Phase 4bn-AY contract, memo, or checklist.
 
 - **What happened:** a final contract review identified one remaining execution-bearing ambiguity.
   The target interval was declared right-open `[t, t + H)`, but the grid notation defined a single
@@ -363,8 +375,88 @@ authorization, or data authorization.
 - **Diff shape preserved.** Only the four Phase 4bn-AY files were modified in place; no fifth file
   added; nothing deleted or renamed; the base-to-final branch diff versus
   `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added files**.
-- **Amendment SHA.** This amendment commit's exact SHA cannot be embedded inside the commit that
-  contains this closeout; it is recorded in the final operator report and in the Git log after commit.
+- **Amendment SHA.** `ead199856beb1a440b4c432d1c0e571ec39a9eb3`.
 - **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
   read, the timestamp-boundary proof, or any evidence-reserve spend. Merge remains a separate operator
   decision.
+
+### 33.C Final amendment — causal completed-interval correction
+
+- **Why the half-open specification (§33.B) was superseded — boundary-jump omission.** That
+  specification paired `G_0 = P_start(a)` (trades `≤ a`) with `G_k = P_minus(τ_k)` (trades `< τ_k`).
+  For a trade occurring exactly at a shared boundary `a`: the **preceding** interval excluded it at
+  its right endpoint, while the **following** interval already contained its price in `G_0`. The
+  price jump from the last pre-`a` trade to the trade at `a` therefore appeared in **neither**
+  interval's return sequence. That contradicted the "assigned exactly once" rule and could
+  **understate realized variance at exact clock boundaries** — a mathematical defect, not a wording
+  issue.
+- **Why `P_minus(a)` at the target start was not adopted instead.** Replacing `G_0` with `P_minus(a)`
+  would have captured the boundary jump in the following interval, but under the existing information
+  set the feature snapshot at origin `t` may use a trade timestamped exactly `t`; the future target
+  would then contain a price jump that was **already observed at the origin**. That is a causality
+  defect, so it was rejected.
+- **Exact final solution (frozen).**
+  - **Convention:** every CF-1 realized-variance interval is a **causal completed interval `(a, b]`** —
+    target, previous-hour RV, each hourly RV in the 24h and 168h HAR means, and the coverage minutes.
+    A trade at exactly `a` is **not** in `(a, b]`; a trade at exactly `b` **is**. Adjacent `(a,b]` and
+    `(b,c]` assign a trade at exactly `b` to the interval **ending** at `b`. Every boundary event is
+    assigned **exactly once**. No live `[a, b)` RV interval remains.
+  - **Single operator:** `P_at(u)` = price of the canonical last aggTrade with
+    `source_transact_time_ms ≤ u`, ties by greatest canonical `row_index` (committed `row_index_le_R`).
+    `P_start`, `P_minus`, strict `<` at an RV boundary, mixed operators, and left-limit terminal prices
+    are removed as live concepts.
+  - **Formula:** `τ_k = a + k·60,000 ms` (`k = 0…60`), `G_k = P_at(τ_k)`, `r_k = ln(G_k/G_{k-1})`
+    (`k = 1…60`), `RV(a,b] = Σ r_k²`. No boundary jump omitted; no boundary trade double-counted.
+  - **Target:** `(t, t + H]`, `RV_target(t) = RV(t, t+H]`. `G_0 = P_at(t)` is already-known origin
+    information, so the target contains no already-observed origin-time jump; a trade at exactly `t+H`
+    belongs to this target; the next target `(t+H, t+2H]` starts from `P_at(t+H)` without re-counting.
+    Adjacent target intervals remain non-overlapping.
+  - **Feature snapshot:** unchanged at `feature_timestamp_ms ≤ t`; a row at exactly `t` may be used.
+    It now reads the **same** origin information set as `G_0 = P_at(t)` and the HAR terminal price, so
+    the earlier "intentional asymmetry" framing no longer applies and was removed.
+  - **HAR:** `RV_h(t) = RV(t − 1h, t]`; daily mean over the 24 completed hourly intervals
+    `(t−24h, t−23h] … (t−1h, t]`; weekly mean over the 168 completed hourly intervals tiling
+    `(t−168h, t]`. A trade at exactly `t` is known at the origin and **may** enter `RV_h(t)`; it is not
+    in the target because it is already in `G_0`. Causal, no future look-ahead. Lengths, averaging, and
+    OLS unchanged.
+  - **Coverage:** `(τ_{k-1}, τ_k]` covered iff ≥ 1 aggTrade with `τ_{k-1} < ts ≤ τ_k`; threshold
+    unchanged at ≥ 30 of 60; causal carry-forward, no look-ahead, no stitching, no zero-RV drop.
+  - **Final October origin:** because `P_at(b)` uses `≤ b`, an origin is valid only if its **entire**
+    completed target `(t, t+H]` — right endpoint included — lies inside execution access. The
+    `2024-10-31T23:00` origin is therefore **invalid** (endpoint `2024-11-01T00:00:00.000Z`), and the
+    **last potentially valid October origin is `2024-10-31T22:00`** (target ends
+    `2024-10-31T23:00:00.000Z`). The dropped hour is removed identically from both models. **No
+    2024-11-01 row — including one at exactly midnight — is opened**, and no excluded endpoint is
+    loaded merely to form `P_at(endpoint)`. The superseded left-limit example retaining the 23:00
+    origin is withdrawn; this may reduce B7's possible origin count by **one** relative to it.
+  - **Invalid-run / checklist:** completed-interval violations route to `CF1_INVALID_RUN`, and the
+    checklist carries ten explicit gates plus a **deterministic timestamp-boundary proof** over
+    **synthetic timestamp cases only** (price 100 at `09:59:59.999`, 110 at exactly `10:00:00.000`),
+    to be emitted and validated by the later execution code **before any market data is opened**.
+    **That proof was not run during this docs-only amendment.**
+- **Preserved unchanged.** B7's date identity, the seven-block structure, the ≥ 100 valid-paired-origin
+  minimum, equal block weighting; and every prior correction: the equal-weighted `Δ_equal` statistic
+  and P1; the stratified-by-block moving-block bootstrap (`ℓ_i = ceil(n_i^(1/3))`, within-block only,
+  `B = 10,000`, seed `20260715`, `LB_95 = quantile(·, 0.05)`, P3 iff `LB_95 > 0`, no pooled
+  origin-count weighting); the QLIKE safeguard (`v = RV + 1e-16`, `h_m = max(exp(ŷ_m), 1e-16)`,
+  zero-RV origins retained, all values finite, no alternative floor, no post-hoc loss clipping); and
+  `2024-11-01..2024-11-15 = UNUSED_NON_RESERVE_BUFFER`, unopened and unused.
+- **Nothing scientific or statistical changed.** No change to the hypothesis, target family, source,
+  1-minute UTC grid, horizon (60 min), forecast cadence, `RV = Σ r_k²`, `y = ln(RV + 1e-16)`,
+  no-annualization, the HAR-style log-RV OLS baseline, the nested augmented OLS, the three
+  sign-invariant features, log + train-only z-score, seven evaluation blocks, the committed eligibility
+  envelope, the execution-access boundary, purge/embargo, QLIKE, the QLIKE epsilon, the
+  equal-weighted seven-block estimand, the bootstrap, 10,000 replicates, one-sided 95%, seed
+  `20260715`, 6-of-7 block consistency, the pass rule, the pass/fail/invalid consequences, or any
+  evidence classification. Only the RV interval-closure convention and its directly dependent
+  checklist / invalid-run wording changed.
+- **No data or reserve opened.** Only committed documentation and Git metadata were read. No boundary
+  proof, QLIKE, bootstrap, target, feature, model, diagnostic, or backtest was computed.
+- **Diff shape preserved.** Only the four Phase 4bn-AY files were modified in place; no fifth file
+  added; nothing deleted or renamed; the base-to-final branch diff versus
+  `8b6c8614e37508cd05346f5ed90f8d08d9f68560` remains **exactly four added files**.
+- **Amendment SHA.** This commit's exact SHA cannot be embedded inside the commit that contains this
+  closeout; it is recorded in the final operator report and in the Git log after commit.
+- **Still not authorized:** merge into `main`, a merge-closeout, Phase 4bn-AZ, any execution, any data
+  read, the deterministic boundary proof, or any evidence-reserve spend. Merge remains a separate
+  operator decision.

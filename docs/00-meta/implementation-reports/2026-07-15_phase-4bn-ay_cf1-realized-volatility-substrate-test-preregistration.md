@@ -142,15 +142,17 @@ inputs.
 
 ## 14. Target summary
 
-Future **realized variance** of the BTCUSDT last-trade log price over a 1-hour **half-open** forecast
-interval `[t, t + H)`, computed as the sum of 60 squared 1-minute log returns on a fixed UTC clock
-grid, modelled in log space (`y = ln(RV + ε)`, `ε = 1e-16`) and mapped back to a positive variance
-forecast by exponentiation. **Endpoint semantics (frozen, contract §3/§6):** the interval's left
-endpoint uses `P_start(t)` = the last canonical aggTrade with `source_transact_time_ms ≤ t`; every
-later grid boundary — interior and terminal alike — uses `P_minus(u)` = the last canonical aggTrade
-with `source_transact_time_ms < u`. A trade timestamped exactly at a boundary is assigned exactly
-once, to the interval **beginning** at that timestamp; so a trade at exactly `t + H` is not used by
-the target for origin `t`. The QLIKE loss uses the actual variance `v = RV + ε` and floors
+Future **realized variance** of the BTCUSDT last-trade log price over a 1-hour **causal completed**
+target interval `(t, t + H]`, computed as the sum of 60 squared 1-minute log returns on a fixed UTC
+clock grid, modelled in log space (`y = ln(RV + ε)`, `ε = 1e-16`) and mapped back to a positive
+variance forecast by exponentiation. **Endpoint semantics (frozen, contract §3/§6):** every RV
+interval — target and HAR alike — is `(a, b]`, and **every** grid boundary uses the single canonical
+operator `P_at(u)` = the last canonical aggTrade with `source_transact_time_ms ≤ u` (greatest
+`row_index` tie rule). With `τ_k = t + k·60,000 ms` for `k = 0…60`: `G_k = P_at(τ_k)`,
+`r_k = ln(G_k / G_{k-1})`, `RV(t) = RV(t, t + H] = Σ_{k=1}^{60} r_k²`. A trade timestamped exactly at
+a boundary is assigned exactly once, to the interval **ending** at that timestamp; `G_0 = P_at(t)` is
+already-known origin information, so the target contains no already-observed origin-time jump and no
+boundary jump is omitted. The QLIKE loss uses the actual variance `v = RV + ε` and floors
 each forecast at `ε` (`h = max(exp(ŷ), ε)`) with the same `ε = 1e-16`, so the loss stays finite even
 when `RV = 0` and no zero-RV observation is dropped (contract §3, §26). No direction, sign,
 return-classification, continuation, reversion, or liquidation target. Full formula and validity
@@ -167,20 +169,25 @@ horizon is fixed here, before any data is opened, and may never be changed after
 
 ## 16. Exact forecast cadence
 
-One forecast origin at the **top of each UTC hour** (`HH:00:00.000`), **non-overlapping** windows
-`[HH:00, HH+1:00)`. The target series carries no construction-induced overlap dependence.
+One forecast origin at the **top of each UTC hour** (`HH:00:00.000`), **non-overlapping** target
+intervals `(HH:00, HH+1:00]`. Adjacent intervals `(t, t+H]` and `(t+H, t+2H]` do not overlap: the
+boundary trade at `t+H` belongs to the first only, and the second merely starts from `P_at(t+H)`. The
+target series carries no construction-induced overlap dependence.
 
 ## 17. Baseline summary
 
 Exactly one **HAR-style realized-variance baseline** (heterogeneous autoregressive cascade at the
 hour / day / week timescales available in the 244-date primary execution-access window), estimated by
-**OLS in log-variance space** on three strictly-past-only realized-variance lookbacks (`RV_h` =
-`RV[t − 1h, t)`; `RV_d` = mean of the 24 completed hourly RVs tiling `[t − 24h, t)`; `RV_w` = mean of
-the 168 completed hourly RVs tiling `[t − 168h, t)`), with an intercept; forecasts exponentiated to
-guarantee positive variance. **All HAR lookbacks are half-open `[t − L, t)` and strictly exclude
-trades timestamped exactly at the forecast origin `t`** (contract §6/§17) — that is the intended
-meaning of "strictly past-only". Lengths and averaging definitions unchanged. No baseline shopping;
-no alternate baseline promoted after execution; no tuning. Full spec: contract §17.
+**OLS in log-variance space** on three causal completed realized-variance lookbacks (`RV_h` =
+`RV(t − 1h, t]`; `RV_d` = mean of the 24 completed hourly RVs `(t−24h, t−23h] … (t−1h, t]`; `RV_w` =
+mean of the 168 completed hourly RVs tiling `(t − 168h, t]`), with an intercept; forecasts
+exponentiated to guarantee positive variance. **All HAR lookbacks are completed right-closed
+intervals `(t − L, t]` using only information available at or before the forecast origin** (contract
+§6/§17); a trade timestamped exactly `t` is known at the origin and **may** enter `RV_h(t)`, while it
+is not part of the future target `(t, t+H]` because it is already contained in `G_0 = P_at(t)` — this
+is causal and contains no future look-ahead. Lengths (1h/24h/168h), averaging definitions, and OLS
+unchanged. No baseline shopping; no alternate baseline promoted after execution; no tuning. Full
+spec: contract §17.
 
 ## 18. Augmented-model summary
 
@@ -226,9 +233,13 @@ Chronological, **expanding-window walk-forward** over **7 contiguous, non-overla
 calendar-month evaluation blocks**: April–October 2024 (B7 = October starting 2024-10-02 to respect
 the committed 2024-10-01 embargo date). March 2024 is train-only warmup; **2024-11-01..2024-11-15 is
 the `UNUSED_NON_RESERVE_BUFFER` (never opened)** and 2024-11-16 is a committed embargo exclusion — no
-evaluation block, training set, or bootstrap uses any date on or after 2024-11-01. Each block is
-evaluated with a model trained on all in-access development origins strictly before it, minus a 1-day
-embargo. No random split, no shuffled CV, no resampling across time. Full spec: contract §21–§25.
+evaluation block, training set, or bootstrap uses any date on or after 2024-11-01. An origin is
+assigned to a block by its own UTC date/time but is valid **only if its entire completed target
+`(t, t+H]`, right endpoint included, lies inside execution access**; consequently the
+`2024-10-31T23:00` origin is **invalid** and B7's last potentially valid origin is
+`2024-10-31T22:00` (contract §8/§21). Each block is evaluated with a model trained on all in-access
+development origins strictly before it, minus a 1-day embargo. No random split, no shuffled CV, no
+resampling across time. Full spec: contract §21–§25.
 
 ## 22. Primary loss
 
@@ -269,14 +280,19 @@ a post-hoc subset.
 
 ## 26. Invalid-run rule
 
-`CF1_INVALID_RUN`: any target-contract violation; feature-contract violation; split leakage; reserve
-access (terminal / sealed / consumed-holdout-as-confirmation); preprocessing leakage; timestamp
-misalignment; missing required block or a block with `< 100` valid origins; material implementation
-mismatch; numerical failure (singular matrix, zero-variance regressor, condition number `> 1e10`,
-non-finite loss/coefficient, `< 70` training origins) preventing the preregistered comparison; or
-any unauthorized change of model / metric / horizon / cadence / threshold / feature / window / loss.
-An invalid run is **not** interpretable scientifically (neither pass nor fail) and requires a
-separate corrective phase and a new operator authorization.
+`CF1_INVALID_RUN`: any target-contract violation; feature-contract violation; **completed-interval /
+endpoint violation** (a live `[a, b)` RV interval; `P_minus` or strict `<` at an RV boundary; mixed
+operators; the origin-time jump inside the future target; a boundary jump omitted; a boundary trade
+assigned to both or neither adjacent RV interval; HAR built as `[t−L, t)`; opening a 2024-11-01 row to
+score the `2024-10-31T23:00` origin; retaining an origin whose target endpoint lies outside execution
+access; a failed or absent deterministic boundary proof); split leakage; reserve access (terminal /
+sealed / consumed-holdout-as-confirmation); preprocessing leakage; timestamp misalignment; missing
+required block or a block with `< 100` valid origins; material implementation mismatch; numerical
+failure (singular matrix, zero-variance regressor, condition number `> 1e10`, non-finite
+actual/forecast/ratio/logarithm/QLIKE/coefficient, `< 70` training origins) preventing the
+preregistered comparison; or any unauthorized change of model / metric / horizon / cadence /
+threshold / feature / window / loss. An invalid run is **not** interpretable scientifically (neither
+pass nor fail) and requires a separate corrective phase and a new operator authorization.
 
 ## 27. Uncertainty method
 
@@ -388,8 +404,9 @@ phase pinned to this preregistration commit SHA with **no** modification of any 
 (d) acceptance of CF-1's M0 mapping (§34) or a separate M0-style clearance memo; (e) storage
 preflight (`D:` free ≥ 500 GiB; Phase 4bn-L caps); (f) reserves untouched (`v002_terminal_window_read
 = false`, `sealed_test_split_touched = false`, `test_rows_loaded = 0`); (g) all non-authorization
-flags `false`; (h) the leakage/split/coverage proof validated **before** any metric is computed.
-Absent any precondition, execution does not begin.
+flags `false`; (h) the **deterministic timestamp-boundary proof** (synthetic cases only) emitted and
+PASSING **before any market data is opened**, and the leakage/split/coverage proof validated **before**
+any metric is computed. Absent any precondition, execution does not begin.
 
 ## 38. Proposed later execution phase title (explicitly not authorized)
 
@@ -411,7 +428,7 @@ is a valid operator choice.
 
 ## 40. Exact final result state
 
-`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__BOOTSTRAP_ESTIMAND_ZERO_RV_EXECUTION_BOUNDARY_AND_HALF_OPEN_TIMESTAMP_SEMANTICS_CLARIFIED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
+`CF1_REALIZED_VOLATILITY_SUBSTRATE_TEST_PREREGISTERED__TARGET_FEATURE_BASELINE_SPLIT_LOSS_AND_PASS_FAIL_CONTRACT_FROZEN__BOOTSTRAP_ESTIMAND_ZERO_RV_EXECUTION_BOUNDARY_AND_CAUSAL_COMPLETED_INTERVAL_SEMANTICS_CLARIFIED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__NO_EVIDENCE_RESERVE_SPEND_AUTHORIZED`
 
 Exact statements:
 
