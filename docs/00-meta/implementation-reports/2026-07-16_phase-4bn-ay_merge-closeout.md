@@ -58,12 +58,13 @@ merge time.
 
 ## 8. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_COMMIT` — the commit on the AY branch that adds this merge-closeout file
-(`docs(phase-4bn-ay): add merge closeout`). This becomes the **seventh** commit on the source branch.
+`e70963752ff303b8e9af7d1a9b2f5b41b3e44f05` — the commit on the AY branch that adds this
+merge-closeout file (`docs(phase-4bn-ay): add merge closeout`). This is the **seventh** commit on the
+source branch.
 
 ## 9. No-fast-forward merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the no-fast-forward merge commit created on `main`
+`cd5a3b7128bb7bc8d887fb4c7ea1c1538e5b1305` — the no-fast-forward merge commit created on `main`
 (`docs(phase-4bn-ay): merge CF-1 volatility substrate preregistration`).
 
 ## 10. SHA-finalization commit statement
