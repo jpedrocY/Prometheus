@@ -54,13 +54,15 @@ This merge-closeout is the **fourth** commit on the source branch.
 
 ## 8. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_COMMIT` — the commit on the AZ branch that adds this merge-closeout file
-(`docs(phase-4bn-az): add merge closeout`).
+`eb7298012c8e30f00a25f45eef3da2c0095163be` — the commit on the AZ branch that adds this
+merge-closeout file (`docs(phase-4bn-az): add merge closeout`). This is the **fourth** commit on the
+source branch.
 
 ## 9. No-fast-forward merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the no-fast-forward merge commit created on `main`
-(`research(phase-4bn-az): merge CF-1 invalid-run evidence`).
+`8e82e185a0def318acd2ec42fcb73337edc67b51` — the no-fast-forward merge commit created on `main`
+(`research(phase-4bn-az): merge CF-1 invalid-run evidence`), made by the `ort` strategy with 12
+added files and 5,135 insertions.
 
 ## 10. SHA-finalization commit statement
 
