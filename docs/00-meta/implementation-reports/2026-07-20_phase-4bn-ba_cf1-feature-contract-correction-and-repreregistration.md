@@ -52,15 +52,16 @@ The following statements are binding historical interpretation and are restated 
 Phase 4bn-AY remains historical and merged. Phase 4bn-AZ remains an invalid run. No past document,
 run, metric, or verdict is rewritten by this phase.
 
-## 4. Reason for correction (the exact algebraic defect)
+## 4. Reason for correction (the algebraic defect)
 
 The merged Phase 4bn-AY contract §11 froze exactly three microstructure regressors at the 60s
 window:
 
 ```
-x1 = rolling_aggtrade_count_60s
-x2 = rolling_quantity_sum_60s
-x3 = rolling_quantity_mean_60s
+x1  = rolling_aggtrade_count_60s
+x2  = rolling_quantity_sum_60s
+x3  = rolling_quantity_mean_60s      (the stored committed feature)
+x3* = x2 / x1                        (the ideal arithmetic mean at a valid positive origin)
 ```
 
 and §13 froze the natural logarithm of each, followed by train-only z-scoring (§14).
@@ -68,35 +69,63 @@ and §13 froze the natural logarithm of each, followed by train-only z-scoring (
 By the committed feature definition
 (`src/prometheus/research/microstructure/features_compute.py:343-349`, which calls
 `_format_mean_as_decimal_string(window_qty[i], window_count[i], max_dp_q)` defined at
-`features_compute.py:141-159` as `sum_int / count`), the mean column is the quotient of the **same
-two committed accumulators** that constitute the other two features, over the **same** 60s trailing
-window:
+`features_compute.py:141-159`), the mean column is derived from the **same two committed
+accumulators** that constitute the other two features, over the **same** 60s trailing window. The
+formatter is a **fixed-point floor quantizer**:
 
 ```
-x3 = x2 / x1        (exact by construction, up to a fixed-point floor truncation at
-                     max_dp + 12 decimal places, i.e. relative error ≤ 1e-12)
+mean_int = (sum_int × 10^12) // count          # floor division
+x3       = mean_int / 10^(max_dp_q + 12)       # serialized at the quantity scale + 12 decimals
 ```
 
-Therefore
+**Ideal versus stored.** The stored feature is therefore a deterministic *floor-quantized
+approximation* to the ideal quotient, not the ideal quotient itself:
 
 ```
-ln(x3) ≡ ln(x2) − ln(x1)
+x3 = x3* − q ,    q ≥ 0 ,    q < one unit of the stored mean's least-significant decimal place
+                  q = 0 only when the quotient is exactly representable at the formatter's
+                  stored precision
 ```
 
-holds identically at every origin. The three log-transformed regressors span a **two-dimensional**
-space. With one intercept, three HAR log-realized-variance regressors, and three transformed
-microstructure regressors, the augmented design matrix has **7 columns but structural rank 6**.
+Consequently, for positive valid origins, defining
 
-This is a defect of the **preregistered design**, not of the data, the implementation, the split,
-the timestamp semantics, the substrate, or the sample size. Standardization does not remove it: an
-invertible affine rescaling of exactly collinear columns remains exactly collinear.
+```
+δ = ln(x3) − [ ln(x2) − ln(x1) ]
+```
+
+we have `δ ≤ 0`, with `δ = 0` only when `q = 0`, and `δ` **generally nonzero**. The stored
+log-transformed mean is therefore **not guaranteed to be an exact affine combination** of `ln(x1)`
+and `ln(x2)` at the serialized stored-value level. No universal relative-error bound on `q/x3*` is
+asserted here, because none is provable from the committed source over the full valid domain (the
+absolute quantization step is bounded, but the relative step is not bounded independently of `x3*`).
+
+**What is nonetheless established from source.** `x3` is **deterministically derived** from `x1` and
+`x2` alone — it introduces no independent information — and after the frozen logarithm its stored
+column is **numerically almost collinear** with `ln(x2) − ln(x1)`. This is a defect of the
+**preregistered design**, not of the data, the implementation, the split, the timestamp semantics,
+the substrate, or the sample size. Standardization does not repair it: an invertible affine
+rescaling of near-collinear columns leaves them near-collinear, and cannot restore conditioning.
+
+**Phase 4bn-AZ committed evidence (cited, not recomputed).** On the Phase 4bn-AZ frozen target layer
+the residual was recorded as
+
+```
+max |δ|  = 3.33e-14
+mean|δ|  = 3.51e-15
+```
+
+This is **near-machine-precision transformed dependence on the Phase 4bn-AZ frozen target layer** —
+evidence of effective, not exact, dependence. It is not a proof of a universal exact stored
+identity, and it is not recomputed by this phase.
 
 The Phase 4bn-AY contract simultaneously mandated (a) these three features, (b) the log transform,
-and (c) the guard `condition number > 1e10 ⇒ CF1_INVALID_RUN` (§19). The conjunction (a) ∧ (b)
-necessarily trips (c). The experiment as frozen could not have produced a scientific pass or fail
-on any data.
+and (c) the guard `condition number > 1e10 ⇒ CF1_INVALID_RUN` (§19). Because (a) ∧ (b) produce a
+deterministically derived, near-collinear third column, the augmented design is driven to
+catastrophic conditioning and trips (c). Phase 4bn-AZ demonstrated exactly this outcome in every
+block; the experiment as frozen did not, and on this substrate would not, reach a scientific pass or
+fail.
 
-Phase 4bn-AZ confirmed this deterministically: all seven blocks tripped
+Phase 4bn-AZ recorded this deterministically: all seven blocks tripped
 `augmented_condition_number_exceeded` with augmented condition numbers ≈ 1.02e+16 – 1.09e+16,
 against a well-conditioned baseline (3.4e+02 – 6.2e+02, full rank 4/4). Every block met its
 valid-origin minimum (n_i between 550 and 744, all ≥ 100) and its training minimum (551 – 4,966,
@@ -129,7 +158,7 @@ At the frozen 60s window the ten templates classify exhaustively as:
 |---|---|---|---|
 | 1 | `rolling_aggtrade_count_60s` | trade-arrival intensity; sign-invariant | **yes** |
 | 2 | `rolling_quantity_sum_60s` | unsigned traded-volume intensity; sign-invariant | **yes** |
-| 3 | `rolling_quantity_mean_60s` | sign-invariant trade-size level; **deterministic quotient of 1 and 2** | no — algebraically redundant |
+| 3 | `rolling_quantity_mean_60s` | sign-invariant trade-size level; **deterministic floor-quantized derived column from 1 and 2** | no — deterministically redundant at the source-definition level |
 | 4 | `rolling_aggressive_buy_quantity_60s` | directional (side identity) | no — §16 prohibited |
 | 5 | `rolling_aggressive_sell_quantity_60s` | directional (side identity) | no — §16 prohibited |
 | 6 | `rolling_aggressive_buy_count_60s` | directional (side identity) | no — §16 prohibited |
@@ -149,52 +178,68 @@ committed column, which is a different feature family and is out of scope for a 
 repair.
 
 **Therefore the entire sign-invariant, non-directional, magnitude candidate universe at the frozen
-60s window is exactly `{x1, x2, x3}`, and `x3` is a deterministic function of `x1` and `x2`.**
+60s window is exactly `{x1, x2, x3}`, and `x3` is a deterministic floor-quantized function of `x1`
+and `x2` that contributes no independent information.**
 
 ## 6. Symbolic audit summary
 
 The full audit is recorded in
 `2026-07-20_phase-4bn-ba_cf1-estimability-and-anti-duplication-audit.md`. Its decisive results:
 
-1. **Cardinality theorem.** The log-transformed candidate set `{ln x1, ln x2, ln x3}` spans exactly
-   two dimensions. Hence **every** linearly independent subset of the admissible universe has
-   cardinality at most **2**, and the pairs `{x1,x2}`, `{x1,x3}`, `{x2,x3}` each attain 2. A
-   three-feature admissible contract does not exist.
-2. **Equivalence theorem.** The three admissible pairs span the *same* two-dimensional column
-   space. Adjoined to the intercept and the three HAR regressors, they therefore produce **identical
-   fitted values, identical residuals, identical QLIKE, identical `d_{i,t}`, `D_i`, `Δ_equal`, `ρ`,
-   and identical bootstrap distributions**. The choice among the three pairs is scientifically
-   immaterial and **cannot** be a data-driven selection even in principle, because no observable
-   outcome can distinguish them.
-3. **Span-preservation theorem.** `span{ln x1, ln x2} = span{ln x1, ln x2, ln x3}`. The corrected
-   two-feature contract represents **every** linear combination the invalid three-feature contract
-   could have represented, including the trade-size-level channel, which is exactly the contrast
-   `ln x2 − ln x1`. **No mechanism content is lost by the correction.**
-4. **Independence.** Nothing in the committed definitions implies any affine identity between
+1. **Admissible-cardinality finding.** `x3` is a deterministic floor-quantized function of `x1` and
+   `x2` and therefore carries **no independent information**. Adding its stored column to `{x1, x2}`
+   contributes only quantization noise while driving the augmented design to catastrophic
+   conditioning. The admissible non-redundant contract therefore has **at most two** features, and
+   the pairs `{x1,x2}`, `{x1,x3}`, `{x2,x3}` each contain two source-independent columns. A
+   non-redundant three-feature contract does not exist within the committed universe.
+2. **Pair comparison (source-only, no all-dataset equivalence claim).** The three admissible pairs
+   are **not** asserted to be outcome-identical on every possible serialized dataset — the stored
+   `x3` carries its own quantization, so the three designs need not produce bit-identical fits.
+   `{x1,x2}` is selected on **committed-source properties alone**: it is the unique pair containing
+   only **primitive**, **non-null-by-construction**, **non-quantized** accumulators, and the unique
+   pair that retains both preregistered mechanism channels as explicit regressors. No observed
+   scientific outcome informed the choice, because Phase 4bn-AZ produced no scientific metric.
+3. **Mechanism coverage.** The **ideal** mean-size contrast is `ln(x2) − ln(x1)`, which the corrected
+   two-regressor design allows the estimator to represent directly. The correction therefore
+   preserves the intended count and volume primitives and the ideal trade-size channel, **without
+   carrying the separately floor-quantized derived column**. No claim is made that the corrected
+   design exactly reproduces every fitted value of the stored three-feature design.
+4. **Independence.** Nothing in the committed definitions implies any exact affine identity between
    `ln x1` and `ln x2`: `x1` is the window cardinality and `x2` is the sum of the window's
    quantities, and the quantity values are free positive decimals not determined by the cardinality.
-   No deterministic relation exists in source.
+   No deterministic relation between them exists in source.
 5. **Standardization safety.** Train-only z-scoring is an invertible affine column map (`σ > 0`
-   enforced by the retained zero-variance guard), so it neither creates nor conceals a deterministic
-   dependency; column space and rank are preserved exactly.
+   enforced by the retained zero-variance guard), so it neither creates nor conceals a dependency;
+   column space and rank are preserved. It equally cannot *repair* near-collinearity — which is why
+   it did not rescue the Phase 4bn-AY design.
 6. **Anti-duplication vs HAR.** The HAR regressors are log realized variances constructed from the
    price path; `x1` and `x2` are trade counts and traded quantity. They share no accumulator, no
    construction, and no algebraic relation. Conceptual association (the mixture-of-distributions
    intuition linking activity to volatility) is precisely the hypothesis under test and is not
    duplication; empirical correlation is not measured in this phase and is not the criterion.
-7. **Tie-break is non-data-driven.** Because the three pairs are outcome-equivalent (result 2), the
-   pair is selected on committed-source properties alone: `x1` and `x2` are the **primitive**
-   accumulators (`window_count`, `window_qty`), both **non-null by construction**
-   (`features_compute.py:462-476`), and both free of the fixed-point floor truncation that the
-   derived mean carries; `x3` is the **only** nullable column of the three
+7. **Tie-break is non-data-driven.** The pair is selected on committed-source properties alone:
+   `x1` and `x2` are the **primitive** accumulators (`window_count`, `window_qty`), both **non-null
+   by construction** (`features_compute.py:462-476`), and both free of the fixed-point floor
+   quantization that the derived mean carries; `x3` is the **only** nullable column of the three
    (`nullable_decimal_prefixes = ("rolling_quantity_mean_",)`, `NULL_POLICY_V001`
-   `"rolling_quantity_mean": "null_when_empty"`) and the **only** one with quantization loss.
+   `"rolling_quantity_mean": "null_when_empty"`) and the **only** one that is floor-quantized. No
+   data was opened, no metric exists, and no observed outcome entered the choice.
 
-The original three-feature transformed set is marked:
+The Phase 4bn-AY three-feature set is deterministically redundant at the source-definition level and
+numerically non-identifiable under the frozen runtime guard after serialization and logarithmic
+transformation. It remains marked:
 
 ```
 STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION
 ```
+
+**Operational meaning of that label (definition, binding).** It denotes a source-defined
+deterministically derived feature whose stored transformed column produced **effective rank
+deficiency / catastrophic conditioning under the frozen runtime guard**. It does **not** assert an
+exact symbolic rank theorem for every possible serialized dataset. An equivalent plain-language
+label for the same condition is
+`SOURCE_DERIVED_REDUNDANT__EFFECTIVELY_RANK_DEFICIENT_UNDER_FROZEN_GUARD`; the required label above
+is the authoritative one and is not replaced.
 
 ## 7. Exact decision
 
@@ -206,13 +251,14 @@ SELECT_CORRECTED_CF1_FEATURE_CONTRACT_FOR_SEPARATE_FUTURE_EXECUTION
 the Phase 4bn-AY feature set with the redundant derived column `rolling_quantity_mean_60s`
 **removed**, retaining the two primitive committed sign-invariant columns.
 
-This is the minimum bounded change that makes the specification estimable: exactly one column is
-removed, the removal is **forced** by the cardinality theorem (§6.1), and by the span-preservation
-theorem (§6.3) it removes **no** mechanism content.
+This is the minimum bounded change that removes the source-defined numerical redundancy: exactly one
+column is removed, the removal is **forced** by the admissible-cardinality finding (§6.1), and by
+§6.3 it forfeits no preregistered mechanism channel — the ideal mean-size contrast remains
+representable by the estimator as `ln(x2) − ln(x1)`.
 
 The corrected specification is **not** selected to preserve the original feature count of three; a
-three-feature admissible contract provably does not exist, and the smaller two-feature
-specification is the maximal estimable contract available from committed source.
+non-redundant three-feature contract does not exist within the committed universe, and the smaller
+two-feature specification is the maximal non-redundant contract available from committed source.
 
 ## 8. Corrected hypothesis boundary (unchanged)
 
@@ -223,8 +269,9 @@ The CF-1 hypothesis is preserved exactly as preregistered by Phase 4bn-AY:
 
 The correction does not broaden, narrow, or restate the mechanism. It does not add a sensitivity
 test, relax a guard, improve the model, or introduce a new feature family. By §6.3 the corrected
-augmented model has exactly the same representational capacity on the microstructure axis as the
-invalid contract intended.
+augmented model retains both preregistered mechanism channels as explicit regressors and allows the
+estimator to represent the ideal trade-size contrast, which is the representational capacity the
+Phase 4bn-AY contract intended on the microstructure axis.
 
 ## 9. Exact inherited Phase 4bn-AY contract (unchanged)
 
@@ -321,8 +368,9 @@ CORRECTED_CF1_FEATURE_COUNT = 2
 ```
 
 `rolling_quantity_mean_60s` is **removed** and is prohibited for any future CF-1 execution under this
-contract, together with the original three-feature transformed set, which is marked
-`STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION`.
+contract, together with the original three-feature set, which is marked
+`STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION` in the operational sense defined in
+§6.
 
 All directional exclusions of Phase 4bn-AY §16 remain absolute and unchanged.
 
@@ -352,9 +400,12 @@ u2(t) = ln( rolling_quantity_sum_60s(t) )
 ```
 
 No other transform. No interactions, no polynomial expansion, no ratios, no differencing. In
-particular the quotient `x2 / x1` is **not** formed as a feature; the contrast `u2 − u1` lies inside
-the retained span and is available to the estimator as a linear combination, which is exactly why no
-mechanism content is lost.
+particular the quotient `x2 / x1` is **not** formed as an explicit model feature. The ideal
+arithmetic mean-size contrast is `ln(x2) − ln(x1)`. The committed stored mean is a floor-quantized
+approximation to that contrast. Retaining the two primitive regressors therefore preserves the
+intended count and volume primitives and allows the estimator to represent the ideal mean-size
+contrast, without carrying the separately quantized derived column. No claim is made of exact
+equality to the stored `rolling_quantity_mean_60s` column.
 
 **Positivity at a valid origin.** A valid origin requires `rolling_aggtrade_count_60s ≥ 1` and
 `rolling_quantity_sum_60s > 0`, so both logarithms are finite. See §10.9.
@@ -413,14 +464,21 @@ Superseded value: `70`. Fewer than 60 valid training origins in any block ⇒ `C
 
 ### 10.9 Exact estimability proof (symbolic, pre-data)
 
-**Claim.** Under the committed definitions, the corrected augmented design has full column rank 6,
-and no exact affine identity among its columns is implied by source.
+**Claim (scoped).** Under the committed definitions, **no exact affine dependency is implied between
+`ln(x1)` and `ln(x2)`**, and none is implied between the microstructure block and the HAR block.
+Accordingly the corrected six-column augmented design is declared
+`EXPECTED_AUGMENTED_STRUCTURAL_RANK = 6`. This is a statement about the **absence of a
+source-implied exact dependency**; it is **not** a proof that every empirical training matrix will
+have full numerical rank or acceptable conditioning. The runtime guards remain the final arbiter.
 
-**Step 1 — the redundancy is removed.** The unique algebraic identity present in the Phase 4bn-AY
-transformed set is `ln x3 = ln x2 − ln x1`, which arises solely because
-`x3 = x2 / x1` by construction. Removing `x3` removes the sole identity. No remaining pair of
-retained columns stands in any functional relation declared or implied by
-`features_schema.py`, `features_schema_v002.py`, or `features_compute.py`.
+**Step 1 — the source-defined redundancy is removed.** The Phase 4bn-AY set contained a column,
+`x3`, that is **deterministically derived** from `x1` and `x2` by the committed floor quantizer
+(`mean_int = (sum_int × 10^12) // count`). Ideally `ln(x3*) = ln(x2) − ln(x1)`; for the stored column
+`ln(x3) = ln(x2) − ln(x1) + δ` with `δ ≤ 0` and generally nonzero. Either way `x3` supplies **no
+independent information**, and after the logarithm its stored column is numerically almost collinear
+with the retained pair — which is what drove the Phase 4bn-AZ conditioning failure. Removing `x3`
+removes that redundancy. No remaining pair of retained columns stands in any functional relation
+declared or implied by `features_schema.py`, `features_schema_v002.py`, or `features_compute.py`.
 
 **Step 2 — `u1` and `u2` are not affinely dependent.** Suppose constants `(a, b, c)` with
 `a·u1(t) + b·u2(t) + c = 0` for all admissible origins. `x1` is the cardinality of the trade set in
@@ -450,20 +508,23 @@ or conceal a deterministic dependency. The intercept column absorbs the location
 `rolling_quantity_sum_60s > 0` (§10.10), so `u1` and `u2` are finite real numbers and no
 non-finite input can enter the design.
 
-**Conclusion.** The corrected augmented design is **structurally identifiable** with expected
-column rank 6. This is a symbolic proof of the absence of *structural* rank deficiency; it is not a
-claim about any numerical condition number on unopened data. The runtime rank, zero-variance,
-condition-number, and non-finite guards of §10.11 are retained **unchanged and unrelaxed** as the
-fail-closed backstop, exactly as in Phase 4bn-AY.
+**Conclusion.** No source-implied exact dependency exists among the corrected design's columns, so
+`EXPECTED_AUGMENTED_STRUCTURAL_RANK = 6`. **Scope, stated honestly:** this is absence of a
+source-implied exact dependency only. It is **not** proof that every empirical training matrix will
+have full numerical rank, and no condition number was computed or estimated by this phase. The
+runtime rank, zero-variance, condition-number (`> 1e10`), and non-finite guards of §10.10 are
+retained **unchanged and unrelaxed** as the binding fail-closed backstop, exactly as in Phase
+4bn-AY, and they — not this document — are the final arbiter at execution time.
 
-**Non-data-driven proof.** The correction is forced by algebra, not chosen from outcomes: (i) the
-admissible universe is closed at three columns by enumeration of the committed schema; (ii) the
-maximal linearly independent subset has cardinality 2 (cardinality theorem); (iii) all three
-admissible pairs span the identical column space and therefore yield identical fitted values and
-identical values of every decision statistic, so **no observable outcome could distinguish them**
-and no data-driven selection is possible even in principle; (iv) the specific pair is fixed by
-committed-source properties only — primitiveness, non-nullability, and absence of quantization loss.
-No Phase 4bn-AZ metric was consulted, and none exists.
+**Non-data-driven basis of the correction.** The correction is forced by the committed definitions,
+not chosen from outcomes: (i) the admissible universe is closed at three columns by enumeration of
+the committed schema; (ii) `x3` is deterministically derived from `x1` and `x2` and carries no
+independent information, so the non-redundant contract has at most two features; (iii) the specific
+pair is fixed by committed-source properties only — primitiveness, non-nullability by construction,
+absence of floor quantization, and direct retention of both preregistered mechanism channels; (iv)
+no Phase 4bn-AZ metric was consulted, and none exists, because no scientific metric was computed.
+No claim is made that data could not in principle distinguish the three admissible pairs; the point
+is that no data was opened and no outcome entered the selection.
 
 ### 10.10 Exact invalidation guards (inherited; feature-dependent clauses restated)
 
@@ -478,11 +539,16 @@ The feature-dependent clauses read, under the corrected contract:
 - a singular normal-equations matrix or non-finite coefficient ⇒ `CF1_INVALID_RUN`;
 - **origin validity:** an origin is invalid, and dropped identically from both models, if
   `rolling_aggtrade_count_60s < 1` or `rolling_quantity_sum_60s ≤ 0` at the snapshot, or if any
-  feature value is null or non-finite. This predicate is **equivalent** to the Phase 4bn-AY §15
-  predicate: by the committed `null_when_empty` policy, `rolling_quantity_mean_60s` is null exactly
-  when `window_count = 0`, and a zero quantity sum with `count ≥ 1` would have produced
-  `ln(x3) = −∞` and tripped the Phase 4bn-AY non-finite guard. **The corrected contract therefore
-  selects the same valid-origin set as the invalid contract**;
+  feature value is null or non-finite. Relation to the Phase 4bn-AY §15 predicate: by the committed
+  `null_when_empty` policy, `rolling_quantity_mean_60s` is null exactly when `window_count = 0`, and
+  a zero quantity sum with `count ≥ 1` would have produced `ln(x3) = −∞` and tripped the Phase
+  4bn-AY non-finite guard. The corrected predicate therefore **excludes every origin the Phase
+  4bn-AY predicate excluded on those grounds**. The two are **not asserted to be exactly identical**:
+  because the stored mean is floor-quantized, a degenerate origin whose stored mean underflowed to
+  zero would additionally have been invalidated under Phase 4bn-AY, whereas the corrected contract —
+  which never forms the mean — retains it if `count ≥ 1` and `quantity_sum > 0`. The corrected
+  valid-origin set is therefore **equal to or a superset of** the Phase 4bn-AY set. This is a
+  consequence of removing a quantized derived column, not a relaxation of any guard;
 - no imputation of any feature; no forward-fill across invalid windows; no NaN/Inf in any model
   input;
 - using `rolling_quantity_mean_60s`, or any three-feature microstructure set, or any feature outside
@@ -543,9 +609,9 @@ other Phase 4bn-AY gate is inherited verbatim.
 | Transformed regressors | `z1, z2, z3` | `z1, z2` |
 | Augmented equation | `… + γ1·z1 + γ2·z2 + γ3·z3` | `… + γ1·z1 + γ2·z2` |
 | Augmented parameter count | 7 | 6 |
-| Expected augmented structural rank | 6 (deficient) | 6 (full) |
+| Expected augmented structural rank | 7 columns, source-derived redundant column present; effectively rank deficient under the frozen guard | 6 (no source-implied exact dependency; subject to the runtime guards) |
 | Minimum training origins (`10 × params`) | 70 | 60 |
-| Missing-feature validity predicate | `rolling_quantity_mean_60s` non-null | `count ≥ 1` and `quantity_sum > 0` (equivalent set) |
+| Missing-feature validity predicate | `rolling_quantity_mean_60s` non-null | `count ≥ 1` and `quantity_sum > 0` (equal to or a superset of the Phase 4bn-AY set; see §10.10) |
 | Manifest / checklist feature list | three columns | two columns |
 | Target-layer snapshot columns | three | two |
 

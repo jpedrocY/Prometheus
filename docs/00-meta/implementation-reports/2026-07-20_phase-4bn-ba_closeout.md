@@ -23,7 +23,8 @@ Branch: `phase-4bn-ba/cf1-feature-contract-correction-repreregistration`.
 | # | SHA | Message | Role |
 |---|---|---|---|
 | 1 | `af1dbf6725fd31eaf82db9070195750afd172241` | `docs(phase-4bn-ba): correct and repreregister CF-1 feature contract` | `BA_DECISION_COMMIT_SHA`. Adds the main decision memo, the estimability and anti-duplication audit, and the corrected execution-validation checklist |
-| 2 | *this commit* | `docs(phase-4bn-ba): add closeout` | `FINAL_PHASE_SHA`. **Closeout commit.** A commit cannot embed its own SHA; per the established convention its exact SHA is recorded in the final operator report and in the Git log after commit |
+| 2 | `2fafdd48f435bc3c07e7fbf6e10ebb578a3ec12b` | `docs(phase-4bn-ba): add closeout` | Closeout commit as originally written |
+| 3 | *this commit* | `docs(phase-4bn-ba): correct finite-precision feature characterization` | `FINAL_PHASE_SHA`. Narrow mathematical-precision correction across all four BA documents (see §18). A commit cannot embed its own SHA; per the established convention its exact SHA is recorded in the final operator report and in the Git log after commit |
 
 ## 4. Exact files added
 
@@ -65,24 +66,60 @@ TRANSFORM                   = natural logarithm, then train-only z-score, σ flo
 AUGMENTED_EQUATION          = y = β0 + β1·ln(RV_h+ε) + β2·ln(RV_d+ε) + β3·ln(RV_w+ε)
                                     + γ1·z1 + γ2·z2 + u
 AUGMENTED_PARAMETER_COUNT   = 6      (1 intercept + 3 HAR + 2 microstructure)
-EXPECTED_STRUCTURAL_RANK    = 6      (full column rank)
+EXPECTED_STRUCTURAL_RANK    = 6      (absence of a source-implied exact dependency; NOT a
+                                      guarantee of full numerical rank on any dataset; the
+                                      runtime rank / zero-variance / condition-number /
+                                      non-finite guards remain the final arbiter)
 MIN_TRAINING_ORIGINS        = 60     (10 × 6, the inherited 10 × parameters rule)
 MIN_BLOCK_VALID_ORIGINS     = 100    (unchanged)
 REMOVED                     = rolling_quantity_mean_60s
 ```
 
-The Phase 4bn-AY three-feature transformed set is marked:
+The Phase 4bn-AY three-feature set is deterministically redundant at the source-definition level and
+numerically non-identifiable under the frozen runtime guard after serialization and logarithmic
+transformation. It remains marked:
 
 ```
 STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION
 ```
 
-The defect corrected: `rolling_quantity_mean_60s = rolling_quantity_sum_60s /
-rolling_aggtrade_count_60s` by committed construction, so under the frozen logarithm
-`ln(x3) ≡ ln(x2) − ln(x1)`, giving 7 augmented columns at structural rank 6 and an inevitable trip of
-the frozen `condition number > 1e10` guard. Removing the derived column removes the sole identity.
-Because `span{ln x1, ln x2} = span{ln x1, ln x2, ln x3}`, **no mechanism content is lost**: the
-trade-size channel is exactly the contrast `ln x2 − ln x1`, which lies inside the retained span.
+**Operational meaning of that label:** a source-defined derived feature whose stored transformed
+column produced **effective rank deficiency / catastrophic conditioning under the frozen guard**. It
+does **not** assert an exact symbolic rank theorem for every possible serialized dataset.
+
+**The defect corrected.** `rolling_quantity_mean_60s` is produced by the committed **fixed-point
+floor quantizer** `mean_int = (sum_int × 10^12) // count`, serialized at the quantity scale plus
+twelve decimals. Writing `x3*` for the ideal quotient `x2/x1` and `x3` for the stored column:
+
+```
+x3     = x3* − q ,   q ≥ 0 ,  q < one stored least-significant decimal unit,
+                     q = 0 only when the quotient is exactly representable at that precision
+ln(x3) = ln(x2) − ln(x1) + δ ,   δ ≤ 0 ,  δ = 0 only when q = 0 ,  δ generally nonzero
+```
+
+So the ideal identity `ln(x3*) = ln(x2) − ln(x1)` is exact, while the **stored** column is **not
+guaranteed** to be an exact affine combination of `ln(x1)` and `ln(x2)`. What *is* established from
+source is that `x3` is deterministically derived from `x1` and `x2`, carries **no independent
+information**, and after the logarithm is numerically almost collinear with `ln(x2) − ln(x1)`. Phase
+4bn-AZ recorded `max|δ| = 3.33e-14` and `mean|δ| = 3.51e-15` on its frozen target layer —
+near-machine-precision transformed dependence, cited and **not recomputed** — with augmented
+condition numbers ≈ 1e16 exceeding the frozen `> 1e10` guard in all seven blocks. No universal
+relative-error bound is asserted, because none is provable from source over the full valid domain.
+
+**Mechanism coverage.** The ideal arithmetic mean-size contrast is `ln(x2) − ln(x1)`, and the
+committed stored mean is a floor-quantized approximation to it. Retaining the two primitive
+regressors preserves the intended count and volume primitives and allows the estimator to represent
+the ideal mean-size contrast, **without carrying the separately quantized derived column**. No claim
+is made that the corrected design exactly reproduces every fitted value of the stored three-feature
+design.
+
+**Why this pair (source-only).** `rolling_aggtrade_count_60s` and `rolling_quantity_sum_60s` are the
+two primitive committed accumulators; neither is deterministically defined from the other; both are
+non-null by construction; both avoid the mean column's floor quantization; and together they preserve
+the explicitly preregistered arrival-intensity and unsigned-volume-intensity channels. Removing the
+derived mean is the minimum contract change that removes the source-defined numerical redundancy
+Phase 4bn-AZ demonstrated. No observed scientific outcome selected the pair, because Phase 4bn-AZ
+produced no scientific metric.
 
 The corrected contract contains **no alternate candidate menu, no secondary feature set, no fallback
 feature, no "choose later", no conditional drop, no post-data repair logic, no regularization rescue,
@@ -106,8 +143,10 @@ Superseded, for any future corrected experiment only: the feature names; the fea
 the transformed regressor list (`z1,z2,z3` → `z1,z2`); the augmented equation; the augmented
 parameter count (7 → 6); the minimum training-origin count (70 → 60, the `10 × parameters` rule
 itself unchanged); the missing-feature validity predicate (restated as `count ≥ 1` and
-`quantity_sum > 0`, an equivalent origin set); the manifest and checklist feature lists; and the
-target-layer and manifest output columns.
+`quantity_sum > 0`, which excludes every origin the Phase 4bn-AY predicate excluded on those grounds
+and is equal to or a superset of the Phase 4bn-AY set, since the corrected contract never forms the
+floor-quantized mean); the manifest and checklist feature lists; and the target-layer and manifest
+output columns.
 
 Phase 4bn-AY remains historical and merged. Phase 4bn-AZ remains an invalid run. **No past document,
 run, metric, or verdict is rewritten.**
@@ -221,7 +260,55 @@ Phase 4bn-BB — Corrected CF-1 Realized-Volatility Substrate-Test Execution
 No data read is authorized. No synthetic proof is run. No implementation is written. No model is
 fitted. No metric is computed.
 
-## 17. Recommended next operator action
+## 17. Amendment history
+
+| # | Commit | Change |
+|---|---|---|
+| 1 | `af1dbf6725fd31eaf82db9070195750afd172241` | Initial Phase 4bn-BA decision memo, estimability and anti-duplication audit, and corrected execution-validation checklist |
+| 2 | `2fafdd48f435bc3c07e7fbf6e10ebb578a3ec12b` | Initial Phase 4bn-BA closeout |
+| 3 | *this commit* — `docs(phase-4bn-ba): correct finite-precision feature characterization` | **Narrow mathematical-precision correction** applied consistently across all four Phase 4bn-BA documents |
+
+**Scope of amendment 3.** The committed mean formatter is a fixed-point **floor quantizer**
+(`mean_int = (sum_int × 10^12) // count`), so the stored `rolling_quantity_mean_60s` is a
+deterministic floor-quantized approximation to `rolling_quantity_sum_60s /
+rolling_aggtrade_count_60s`, not the exact quotient at the serialized stored-value level. The
+original Phase 4bn-BA documents overstated this as a universal exact identity and built several
+exact theorems on it. Amendment 3 replaces those overstatements with the precise characterization:
+an exact **ideal** identity `ln(x3*) = ln(x2) − ln(x1)`; a **stored** relation
+`ln(x3) = ln(x2) − ln(x1) + δ` with `δ ≤ 0` and generally nonzero; and Phase 4bn-AZ's recorded
+near-machine-precision residual plus its demonstrated conditioning failure as **empirical evidence**
+of effective, not exact, dependence.
+
+Specifically removed as live claims: the exact stored quotient; the exact stored logarithmic
+identity; the exact null vector for the stored transformed columns; the exact rank-2 stored
+transformed block; the exact column-space equality of all three admissible pairs; the claim of
+identical fitted values and identical decision statistics for all three pairs on every dataset; the
+claim that data could not distinguish the pairs in principle; the exact span-preservation theorem
+and exact zero-mechanism-loss claim; the inevitable exact structural rank 6 of the seven-column
+stored design; the invented `≤ 1e-12` universal relative-error bound; and the claim that the
+corrected valid-origin set is provably identical to the Phase 4bn-AY set (it is equal to or a
+superset).
+
+**What amendment 3 did not change.**
+
+- Decision A is **unchanged**: `SELECT_CORRECTED_CF1_FEATURE_CONTRACT_FOR_SEPARATE_FUTURE_EXECUTION`.
+- The selected corrected pair is **unchanged**:
+  `{ rolling_aggtrade_count_60s , rolling_quantity_sum_60s }`, feature count 2.
+- The removed column is **unchanged**: `rolling_quantity_mean_60s`.
+- `AUGMENTED_PARAMETER_COUNT = 6`, `MIN_TRAINING_ORIGINS = 60`, `MIN_BLOCK_VALID_ORIGINS = 100`, the
+  `> 1e10` condition-number guard, the rank / zero-variance / non-finite guards, the 60s window, the
+  snapshot rule, the transform, the standardization rule, and every inherited Phase 4bn-AY field are
+  **unchanged**.
+- The Phase 4bn-BA result state is **unchanged**, and no new result state was created.
+- `STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION` is **retained**, now with an
+  explicit operational definition (§7).
+- **No scientific or execution-bearing field changed** except the characterization of the removed
+  stored mean feature and the justification wording supporting its removal.
+- No data was opened, no local artefact was inspected, no residual was recomputed, no test, linter,
+  or script was run, and no execution occurred.
+- Merge remains **unauthorized**; Phase 4bn-BB remains **unauthorized**.
+
+## 18. Recommended next operator action
 
 1. Review the four Phase 4bn-BA documents on the branch — in particular the symbolic estimability
    and anti-duplication audit, and the corrected feature contract §10 of the main memo.
@@ -229,6 +316,8 @@ fitted. No metric is computed.
 3. Independently, and only after a merge decision, decide whether to authorize
    `Phase 4bn-BB — Corrected CF-1 Realized-Volatility Substrate-Test Execution`. It is not
    authorized here and requires a new operator authorization and a new Claude Code prompt.
-4. `Remaining paused is a valid operator choice.`
+4. Return the corrected four Phase 4bn-BA documents and the final operator report for final merge
+   review and a separate Phase 4bn-BA merge prompt.
+5. `Remaining paused is a valid operator choice.`
 
 Recommended state: **paused**, pending operator review and a separate merge decision.
