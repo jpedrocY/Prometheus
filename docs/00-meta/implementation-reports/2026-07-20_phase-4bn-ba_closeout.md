@@ -1,0 +1,234 @@
+# Phase 4bn-BA — Closeout
+
+## 1. Phase name
+
+Phase 4bn-BA — CF-1 Feature-Contract Correction and Re-Preregistration. A **docs-only, no-data,
+no-model, no-metric, no-rerun, no-reserve, no-PnL, no-backtest, no-strategy, no-paper/shadow/live,
+no-exchange/API** scientific-contract correction phase following the merged Phase 4bn-AZ
+`CF1_INVALID_RUN`. Tier 1 / Full Phase per `docs/00-meta/process/phase-risk-tiering-standard.md`.
+
+## 2. Branch and base
+
+Branch: `phase-4bn-ba/cf1-feature-contract-correction-repreregistration`.
+
+| Item | SHA |
+|---|---|
+| Base `main` == `origin/main` at branch creation and at completion | `021e4fc12e2e541aaefd54f562ff9d1a9c9cff52` |
+| Phase 4bn-AZ no-fast-forward merge commit | `8e82e185a0def318acd2ec42fcb73337edc67b51` |
+| Phase 4bn-AZ evidence-bearing implementation SHA | `05fa63a8bf8c9b1fe386cc4ab67805046ae418b1` |
+| Phase 4bn-AY final scientific-contract tip | `0fb560656aa9b50cf110602e15be8222b7343623` |
+
+## 3. Commit history and SHA self-reference convention
+
+| # | SHA | Message | Role |
+|---|---|---|---|
+| 1 | `af1dbf6725fd31eaf82db9070195750afd172241` | `docs(phase-4bn-ba): correct and repreregister CF-1 feature contract` | `BA_DECISION_COMMIT_SHA`. Adds the main decision memo, the estimability and anti-duplication audit, and the corrected execution-validation checklist |
+| 2 | *this commit* | `docs(phase-4bn-ba): add closeout` | `FINAL_PHASE_SHA`. **Closeout commit.** A commit cannot embed its own SHA; per the established convention its exact SHA is recorded in the final operator report and in the Git log after commit |
+
+## 4. Exact files added
+
+Exactly four files added; **no existing file modified, deleted, or renamed.**
+
+```
+A  docs/00-meta/implementation-reports/2026-07-20_phase-4bn-ba_cf1-feature-contract-correction-and-repreregistration.md
+A  docs/00-meta/implementation-reports/2026-07-20_phase-4bn-ba_cf1-estimability-and-anti-duplication-audit.md
+A  docs/00-meta/implementation-reports/2026-07-20_phase-4bn-ba_cf1-corrected-execution-validation-checklist.md
+A  docs/00-meta/implementation-reports/2026-07-20_phase-4bn-ba_closeout.md
+```
+
+No Phase 4bn-AY document, Phase 4bn-AZ document, source module, test, script, schema, README,
+`current-project-state.md`, process standard, manifest, ledger, phase gate, or technical-debt
+register was modified. No executable surface changed.
+
+## 5. Exact decision
+
+```
+SELECT_CORRECTED_CF1_FEATURE_CONTRACT_FOR_SEPARATE_FUTURE_EXECUTION
+```
+
+**Decision A.** Exactly one corrected feature specification was selected and fully re-preregistered.
+
+## 6. Exact result state
+
+```
+CF1_CORRECTED_FEATURE_CONTRACT_REPREREGISTERED__ORIGINAL_AZ_INVALID_RUN_PRESERVED__ESTIMABILITY_AND_ANTI_DUPLICATION_AUDIT_PASSED__NO_DATA_OPENED__NO_EXECUTION_AUTHORIZED__RESERVES_UNTOUCHED
+```
+
+## 7. Exact selected corrected feature contract
+
+```
+CORRECTED_CF1_FEATURE_SET   = { rolling_aggtrade_count_60s , rolling_quantity_sum_60s }
+CORRECTED_CF1_FEATURE_COUNT = 2
+FEATURE_WINDOW              = 60s, (t_last − 60_000 ms, t_last], trailing_right_open_left
+SNAPSHOT_RULE               = last feature row with feature_timestamp_ms ≤ t, row_index_le_R tie
+TRANSFORM                   = natural logarithm, then train-only z-score, σ floor 1e-8
+AUGMENTED_EQUATION          = y = β0 + β1·ln(RV_h+ε) + β2·ln(RV_d+ε) + β3·ln(RV_w+ε)
+                                    + γ1·z1 + γ2·z2 + u
+AUGMENTED_PARAMETER_COUNT   = 6      (1 intercept + 3 HAR + 2 microstructure)
+EXPECTED_STRUCTURAL_RANK    = 6      (full column rank)
+MIN_TRAINING_ORIGINS        = 60     (10 × 6, the inherited 10 × parameters rule)
+MIN_BLOCK_VALID_ORIGINS     = 100    (unchanged)
+REMOVED                     = rolling_quantity_mean_60s
+```
+
+The Phase 4bn-AY three-feature transformed set is marked:
+
+```
+STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION
+```
+
+The defect corrected: `rolling_quantity_mean_60s = rolling_quantity_sum_60s /
+rolling_aggtrade_count_60s` by committed construction, so under the frozen logarithm
+`ln(x3) ≡ ln(x2) − ln(x1)`, giving 7 augmented columns at structural rank 6 and an inevitable trip of
+the frozen `condition number > 1e10` guard. Removing the derived column removes the sole identity.
+Because `span{ln x1, ln x2} = span{ln x1, ln x2, ln x3}`, **no mechanism content is lost**: the
+trade-size channel is exactly the contrast `ln x2 − ln x1`, which lies inside the retained span.
+
+The corrected contract contains **no alternate candidate menu, no secondary feature set, no fallback
+feature, no "choose later", no conditional drop, no post-data repair logic, no regularization rescue,
+no relaxed condition threshold, and no post-hoc ablation path.**
+
+## 8. Exact inherited fields
+
+Every Phase 4bn-AY contract field is inherited unchanged except the feature set and its directly
+dependent fields: target family and realized-variance construction; interval semantics `(a, b]`;
+`P_at(u)` with `≤ u` and the greatest-`row_index` tie; horizon `H = 60 min`; hourly non-overlapping
+cadence; source; development dates (244 UTC dates, 2024-03-01..2024-10-31 excluding 2024-10-01);
+the seven evaluation blocks with B7 beginning 2024-10-02; the one-day embargo and one-hour purge;
+the HAR-style OLS baseline; the deterministic OLS estimator class; QLIKE with `v = RV + 1e-16` and
+`h = max(exp(ŷ), 1e-16)`; equal block weighting; the stratified moving-block bootstrap with
+`B = 10,000`, `RNG_SEED = 20260715`, block-specific `ℓ_i`; the P1/P2/P3 pass rule; the fail rule; the
+invalid-run rule; the reserve boundary; the anti-tuning rules; the consequence rules; the §33
+output-artefact contract including both pre-metric proofs; the §34 provenance fields and the eight
+non-authorization flags; and the §35 prohibited-deviation list.
+
+Superseded, for any future corrected experiment only: the feature names; the feature count (3 → 2);
+the transformed regressor list (`z1,z2,z3` → `z1,z2`); the augmented equation; the augmented
+parameter count (7 → 6); the minimum training-origin count (70 → 60, the `10 × parameters` rule
+itself unchanged); the missing-feature validity predicate (restated as `count ≥ 1` and
+`quantity_sum > 0`, an equivalent origin set); the manifest and checklist feature lists; and the
+target-layer and manifest output columns.
+
+Phase 4bn-AY remains historical and merged. Phase 4bn-AZ remains an invalid run. **No past document,
+run, metric, or verdict is rewritten.**
+
+## 9. Historical interpretation preserved
+
+`Phase 4bn-AZ remains CF1_INVALID_RUN and is not reclassified, repaired, rerun, or interpreted as a scientific pass or fail.`
+
+`The one authorized Phase 4bn-AZ evidence-bearing run remains consumed.`
+
+`No Phase 4bn-AZ metric is used to select the corrected feature contract because no scientific metric was computed.`
+
+`The correction is based only on committed feature definitions, symbolic estimability, mechanism coherence, and anti-duplication constraints.`
+
+`Phase 4bn-AZ produced CF1_INVALID_RUN, not CF1_VALID_FAIL and not CF1_VALID_PASS.` The run produced
+no scientific test of the CF-1 hypothesis; no QLIKE, `d_{i,t}`, `D_i`, `Δ_equal`, `ρ`, MSE,
+Mincer–Zarnowitz R², bootstrap distribution, or `LB_95` was computed; P1, P2, and P3 were not
+evaluable, and any recorded `false` or zero placeholder is **not** a negative scientific finding; the
+Phase 4bn-AY valid-fail consequence does **not** apply; and the aggTrades magnitude lane was **not**
+narrowed by Phase 4bn-AZ. **The CF-1 hypothesis remains scientifically untested.**
+
+## 10. No data, no local artefact access, no execution
+
+`No market data, target row, feature row, model output, diagnostic output, or local Phase 4bn-AZ artefact was opened or read by Phase 4bn-BA.`
+
+`No QLIKE, bootstrap, model fitting, target generation, feature generation, diagnostic, backtest, PnL analysis, data acquisition, paper, shadow, live, or exchange-write execution is authorized by Phase 4bn-BA.`
+
+Evidence was limited to committed documents, committed source (`features_schema.py`,
+`features_schema_v002.py`, `features_compute.py`), committed schema and compute policy constants,
+committed process standards, Git metadata, and static symbolic reasoning. `data/microstructure/` and
+`data/research/` were not opened or listed for content. No Parquet, JSON artefact, or `.sha256`
+sidecar content was opened. The Phase 4bn-AZ algebraic residual was **not** recomputed; the committed
+Phase 4bn-AZ report is sufficient evidence. No correlation, condition number, rank, or residual was
+computed. No test, linter, type-checker, builder, or script was run — this phase changes no
+executable surface. No network, web, API, Binance endpoint, credential, `.env`, MCP, Graphify, or
+`.mcp.json` access occurred.
+
+## 11. No reserve
+
+`No evidence reserve is authorized for spending by Phase 4bn-BA.` No evidence reserve was opened or
+spent, and no evidence-ledger status transition occurred.
+
+`The v002 terminal window and v002 sealed test remain untouched and excluded.`
+
+`The consumed pre-v002 internal holdout and the 2024-11-01 through 2024-11-15 buffer remain unopened.`
+
+Restated and unchanged: `PRE_V002_INTERNAL_HOLDOUT = CONSUMED`;
+`V002_TERMINAL_WINDOW = UNTOUCHED_RESERVED`; `V002_SEALED_TEST = UNTOUCHED_RESERVED`;
+`HIST_TOB_BOOKTICKER_SOURCE = INADMISSIBLE_OR_UNAVAILABLE`; `test_rows_loaded = 0`;
+`v002_terminal_window_read = false`; `sealed_test_split_touched = false`;
+`consumed_holdout_opened = false`; `november_buffer_opened = false`.
+
+## 12. No PnL, no trading
+
+No signal generation, strategy, PnL analysis, backtest, replay, paper, shadow, live, or
+exchange-write execution was performed or is authorized. CF-1 is a non-directional
+realized-variance magnitude contract; it produces no directional object and no tradable object.
+`network_used = false`; `data_acquisition_used = false`; and all eight non-authorization flags
+(`ml_authorized`, `diagnostics_authorized`, `strategy_authorized`, `signals_authorized`,
+`pnl_authorized`, `backtest_authorized`, `live_authorized`, `exchange_write_authorized`) remain
+`false`. This phase does not clear M0 for any strategy.
+
+## 13. Preserved locks
+
+Preserved exactly and unchanged: `STOP_LONGHORIZON_ML_ARC`;
+`STOP_TOB_MECHANISM_ARC_DATA_INADMISSIBLE`; `REJECTED_AS_RESCUE_SHAPED_PROXY_MECHANISM_MISMATCH`;
+`PRE_V002_INTERNAL_HOLDOUT = CONSUMED`; `V002_TERMINAL_WINDOW = UNTOUCHED_RESERVED`;
+`V002_SEALED_TEST = UNTOUCHED_RESERVED`; `HIST_TOB_BOOKTICKER_SOURCE = INADMISSIBLE_OR_UNAVAILABLE`;
+`test_rows_loaded = 0`; `research_eligible = false`; `eligibility_gate_status = pending`; all
+authorization flags false; the Phase 4aw always-raising `flip_research_eligible(...)` flip, never
+invoked; Phase 4bn-AE §19; the Phase 4ak twelve-clause M0 gate with its §6 cooldown rule and §7
+cooled-down-families list; the cooldown and cooled-down-family rules; the 8 bps/side · 16 bps
+round-trip cost lock; every prior verdict; every dataset identity and hash; every
+split/holdout/sidecar/storage policy; and the evidence-ledger and spending-authority rules.
+
+**No stopped arc is softened, merged, reinterpreted, reopened, or rescued.** The corrected contract
+overlaps no stopped family: it reads no long-horizon label, no top-of-book or bookTicker source, and
+substitutes no proxy for an inadmissible source — it retains two of the three columns the Phase
+4bn-AY contract already froze.
+
+## 14. Preserved locks — working tree
+
+`.claude/scheduled_tasks.lock` was the only untracked item at branch creation and at completion. It
+was never staged, modified, deleted, cleaned, or committed.
+
+## 15. Merge non-authorization
+
+**No merge is performed or authorized by this phase.** No merge-closeout is created. Merging Phase
+4bn-BA into `main` requires a **separate operator prompt and decision**. `main` and `origin/main`
+remain exactly `021e4fc12e2e541aaefd54f562ff9d1a9c9cff52`; no `main` push and no SHA-finalization
+commit were performed. Phase 4bn-BA is **branch-complete, not project-complete**.
+
+## 16. Successor non-authorization
+
+**No successor phase is authorized by this closeout.**
+
+A future corrected CF-1 execution would be a **new experiment** under the Phase 4bn-BA contract — not
+a Phase 4bn-AZ rerun, continuation, correction-in-place, reuse of the consumed run, or
+reclassification.
+
+Proposed future title, **proposed only**:
+
+```
+Phase 4bn-BB — Corrected CF-1 Realized-Volatility Substrate-Test Execution
+```
+
+`Phase 4bn-BB or any future corrected execution requires separate operator authorization and a new Claude Code prompt.`
+
+`The corrected feature contract is frozen before any new execution and contains no fallback, ablation, or post-data feature-selection path.`
+
+No data read is authorized. No synthetic proof is run. No implementation is written. No model is
+fitted. No metric is computed.
+
+## 17. Recommended next operator action
+
+1. Review the four Phase 4bn-BA documents on the branch — in particular the symbolic estimability
+   and anti-duplication audit, and the corrected feature contract §10 of the main memo.
+2. Decide whether to authorize a **separate merge phase** for Phase 4bn-BA.
+3. Independently, and only after a merge decision, decide whether to authorize
+   `Phase 4bn-BB — Corrected CF-1 Realized-Volatility Substrate-Test Execution`. It is not
+   authorized here and requires a new operator authorization and a new Claude Code prompt.
+4. `Remaining paused is a valid operator choice.`
+
+Recommended state: **paused**, pending operator review and a separate merge decision.
