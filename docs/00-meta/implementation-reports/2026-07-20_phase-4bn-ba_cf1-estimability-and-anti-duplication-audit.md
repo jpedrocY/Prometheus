@@ -186,8 +186,10 @@ describe window validity, not market activity. **REJECTED.**
 
 **There is no committed sign-invariant dispersion, standard-deviation, variance, quantile,
 range, or higher-moment column of trade size in the aggTrades feature schema at any window.** The
-only committed central-moment column is `rolling_quantity_mean_{w}`, and it is exactly the
-redundant quotient audited as C3. Phase 4bn-AY §11 recorded the same finding and declined to invent
+only committed central-moment column is `rolling_quantity_mean_{w}`, and it is the
+deterministically derived, floor-quantized mean column audited as C3 — distinct from the ideal
+arithmetic quotient `x3* = x2 / x1`, which is the only quantity for which an exact identity holds.
+Phase 4bn-AY §11 recorded the same finding and declined to invent
 one; this audit independently confirms it by enumeration of `PER_WINDOW_FEATURE_TEMPLATES` and of
 its v002 alias.
 

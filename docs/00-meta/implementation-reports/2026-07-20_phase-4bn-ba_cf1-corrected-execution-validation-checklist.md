@@ -62,7 +62,7 @@ before any data read is a `PREFLIGHT_FAILURE` (stop, no data opened); a FAIL aft
 | 1.4.6 | Prohibited constructs absent | No `P_start`, no `P_minus`, no strict `<` at any RV boundary, no mixed operators, no left-limit terminal price, no `[a,b)` as a live RV interval |
 | 1.4.7 | Coverage | Covered-minute predicate `τ_{k−1} < ts ≤ τ_k`; `≥ 30 of 60`; no stitching; zero-RV origins retained |
 | 1.4.8 | Origin validity boundary | Entire completed target `(t, t+H]` including its right endpoint inside execution access; `2024-10-31T23:00` invalid; last potentially valid origin `2024-10-31T22:00` |
-| 1.4.9 | Deterministic synthetic timestamp-boundary proof | Emitted and PASSED **before any market data is opened**; synthetic rows only; `market_data_opened = false`, `reserve_touched = false`. A failed or absent proof ⇒ `CF1_INVALID_RUN` |
+| 1.4.9 | Deterministic synthetic timestamp-boundary proof | Emitted and PASSED **before any market data is opened**; synthetic rows only; `market_data_opened = false`, `reserve_touched = false`. A failed or absent proof before any market-data read ⇒ `PREFLIGHT_FAILURE`; stop with no market data opened and no scientific result |
 
 ### 1.5 Frozen corrected features (SUPERSEDES the Phase 4bn-AY checklist §1.4)
 
@@ -162,7 +162,10 @@ restatement, not a computation on data.
 The corrected execution phase may **not**: change the interval convention, `P_at(·)`, the coverage
 predicate, or the right-endpoint validity rule; reintroduce `P_start`, `P_minus`, strict `<`, mixed
 operators, a left-limit terminal price, or `[a,b)`; retain the `2024-10-31T23:00` origin; skip or
-weaken either proof; change the target family, RV estimator, sampling grid, or `ε = 1e-16`; change
+weaken either proof (proceeding to open market data having skipped or weakened a proof is a
+post-access violation ⇒ `CF1_INVALID_RUN`; stopping at a failed pre-data proof without opening market
+data is `PREFLIGHT_FAILURE` per §1.4.9); change the target family, RV estimator, sampling grid, or
+`ε = 1e-16`; change
 the QLIKE safeguard or clip the ratio or loss; drop an observation solely because `RV = 0`; change
 the horizon, cadence, or window closure; **add, remove, re-window, transform differently, or select
 features**; introduce any directional / signed / funding / calendar / OI / order-book / forced-flow /
@@ -183,7 +186,7 @@ result before the artefact hashes and the leakage/split proof validate. **Any su
 2. Record the pre-data symbolic estimability proof (§1.6). FAIL ⇒ `PREFLIGHT_FAILURE`.
 3. Commit and push the implementation; verify local == origin. FAIL ⇒ stop.
 4. Emit and validate the deterministic synthetic timestamp-boundary proof (§1.4.9), synthetic rows
-   only. FAIL ⇒ stop, no market data opened.
+   only. FAIL ⇒ `PREFLIGHT_FAILURE`; stop with no market data opened and no scientific result.
 5. Open **only** the 244 authorized partitions, verifying each `.sha256` sidecar. Any mismatch or any
    forbidden partition ⇒ stop.
 6. Build the realized-variance target layer and the **two** feature snapshots per origin.
@@ -209,6 +212,19 @@ Exactly one of:
   into a pass or a fail.
 
 There is no fourth outcome, no borderline result, and no post-hoc subset result.
+
+**`PREFLIGHT_FAILURE` is not a fourth scientific outcome.** It is a **pre-execution gate result**:
+the run stops before any market-data byte is opened, produces **no** scientific pass, fail, or
+invalid-run result, consumes no evidence, and makes no claim about the CF-1 hypothesis. It is
+recorded as a gate failure, never as a verdict, and never converted into one.
+
+The routing boundary is therefore:
+
+- a failed gate **before** any market-data read ⇒ `PREFLIGHT_FAILURE` (stop; no market data opened;
+  no scientific result). This includes a failed or absent deterministic synthetic timestamp-boundary
+  proof (§1.4.9) and a failed or absent pre-data symbolic estimability record (§1.6);
+- a failed gate or contract violation **after** market-data access ⇒ `CF1_INVALID_RUN` (a scientific
+  outcome carrying no scientific claim).
 
 ## 4. Non-authorization
 

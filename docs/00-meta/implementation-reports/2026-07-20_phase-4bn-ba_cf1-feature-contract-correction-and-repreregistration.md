@@ -49,6 +49,15 @@ The following statements are binding historical interpretation and are restated 
 - `The Phase 4bn-AY valid-fail consequence does not apply, and the aggTrades magnitude lane was not narrowed by Phase 4bn-AZ.`
 - `The one authorized evidence-bearing run is consumed, and no rerun is authorized.`
 
+**Qualifier on the third statement above (historical shorthand).** That sentence reproduces Phase
+4bn-AZ's historical shorthand. Its exact-identity wording is **superseded for mathematical
+interpretation** by the ideal-versus-stored finite-precision characterization in §4: the exact
+identity holds for the *ideal* quotient `x3* = x2 / x1`, whereas the *stored* committed column is
+floor-quantized and satisfies `ln(x3) = ln(x2) − ln(x1) + δ` with `δ ≤ 0` and generally nonzero. The
+shorthand is preserved here as the historical record and is **not** a live exact stored-feature
+theorem. The `CF1_INVALID_RUN` classification, the recorded residual statistics, the recorded
+condition numbers, and the no-scientific-claim consequence **remain unchanged and binding**.
+
 Phase 4bn-AY remains historical and merged. Phase 4bn-AZ remains an invalid run. No past document,
 run, metric, or verdict is rewritten by this phase.
 
@@ -171,8 +180,10 @@ At the frozen 60s window the ten templates classify exhaustively as:
 
 **Explicit statement required by the mandate:** *no committed independent sign-invariant dispersion,
 standard-deviation, or variance-of-trade-size column exists in the aggTrades feature schema.* The
-only committed central-moment column is `rolling_quantity_mean_{w}`, and it is precisely the
-redundant quotient. There is likewise no committed sign-invariant magnitude column outside the
+only committed central-moment column is `rolling_quantity_mean_{w}`, and it is the
+deterministically derived, floor-quantized mean column audited here — the source-derived
+approximation to the arithmetic quotient, not the exact quotient itself. There is likewise no
+committed sign-invariant magnitude column outside the
 set {count, quantity sum, quantity mean}. A dispersion feature would require building a new
 committed column, which is a different feature family and is out of scope for a bounded contract
 repair.
