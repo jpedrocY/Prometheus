@@ -58,22 +58,26 @@ merge time.
 
 ## 7. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_COMMIT` — the commit on the BA branch that adds this merge-closeout file
-(`docs(phase-4bn-ba): add merge closeout`). This is the **sixth** commit on the source branch.
+`ba6ddf12dfa97a2f4ef04abf2bd35127c7f04274` — the commit on the BA branch that adds this
+merge-closeout file (`docs(phase-4bn-ba): add merge closeout`). This is the **sixth** commit on the
+source branch.
 
 ## 8. No-fast-forward merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the commit created by `git merge --no-ff` on `main`
+`7096ce853dd85dfe6bd95ae88942548bc76400dd` — the commit created by `git merge --no-ff` on `main`
 (`docs(phase-4bn-ba): merge corrected CF-1 feature contract`).
 
 ## 9. SHA-finalization convention
 
-This merge-closeout is created on the BA source branch with the two SHAs above as placeholders. After
-the `--no-ff` merge into `main`, a single narrow SHA-finalization commit on `main`
-(`docs(phase-4bn-ba): finalize merge closeout shas`) replaces the placeholders with the actual
-merge-closeout branch commit SHA and the actual merge commit SHA. A commit cannot embed its own SHA;
-the SHA-finalization commit's own SHA equals the resulting final `main` / `origin/main` tip and is
-recorded in the final operator report and the Git log after commit.
+This merge-closeout was created on the BA source branch with the §7 and §8 SHAs as placeholders.
+After the `--no-ff` merge into `main`, this single narrow SHA-finalization commit on `main`
+(`docs(phase-4bn-ba): finalize merge closeout shas`) replaces those placeholders with the actual
+merge-closeout branch commit SHA (`ba6ddf12dfa97a2f4ef04abf2bd35127c7f04274`, §7) and the actual
+`--no-ff` merge commit SHA (`7096ce853dd85dfe6bd95ae88942548bc76400dd`, §8).
+
+**SHA-finalization commit SHA:** this update (`docs(phase-4bn-ba): finalize merge closeout shas`). A
+commit cannot embed its own SHA; the SHA-finalization commit's own SHA equals the resulting final
+`main` / `origin/main` tip and is recorded in the final operator report and the Git log after commit.
 
 ## 10. Final `main` / `origin/main` statement
 
