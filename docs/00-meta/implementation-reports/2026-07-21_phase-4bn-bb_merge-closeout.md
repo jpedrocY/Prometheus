@@ -46,12 +46,13 @@ This merge-closeout is the **fourth** commit on the source branch.
 
 ## 6. Merge-closeout branch commit SHA
 
-`TO_BE_FILLED_AFTER_COMMIT` — the commit on the BB branch that adds this merge-closeout file
-(`docs(phase-4bn-bb): add merge closeout`). This is the **fourth** commit on the source branch.
+`4214c658fea625be1d626af99324c5c0babea57c` — the commit on the BB branch that adds this
+merge-closeout file (`docs(phase-4bn-bb): add merge closeout`). This is the **fourth** commit on the
+source branch.
 
 ## 7. No-fast-forward merge commit SHA
 
-`TO_BE_FILLED_AFTER_MERGE` — the commit created by `git merge --no-ff` on `main`
+`0200d576884ae8461f75768b97b8ad9d938a8a9b` — the commit created by `git merge --no-ff` on `main`
 (`research(phase-4bn-bb): merge corrected CF-1 valid-pass execution`).
 
 ## 8. SHA-finalization convention
