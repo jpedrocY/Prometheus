@@ -22,9 +22,11 @@ Branch: `phase-4bn-ba/cf1-feature-contract-correction-repreregistration`.
 
 | # | SHA | Message | Role |
 |---|---|---|---|
-| 1 | `af1dbf6725fd31eaf82db9070195750afd172241` | `docs(phase-4bn-ba): correct and repreregister CF-1 feature contract` | `BA_DECISION_COMMIT_SHA`. Adds the main decision memo, the estimability and anti-duplication audit, and the corrected execution-validation checklist |
-| 2 | `2fafdd48f435bc3c07e7fbf6e10ebb578a3ec12b` | `docs(phase-4bn-ba): add closeout` | Closeout commit as originally written |
-| 3 | *this commit* | `docs(phase-4bn-ba): correct finite-precision feature characterization` | `FINAL_PHASE_SHA`. Narrow mathematical-precision correction across all four BA documents (see §18). A commit cannot embed its own SHA; per the established convention its exact SHA is recorded in the final operator report and in the Git log after commit |
+| 1 | `af1dbf6725fd31eaf82db9070195750afd172241` | `docs(phase-4bn-ba): correct and repreregister CF-1 feature contract` | `BA_DECISION_COMMIT_SHA`. Initial Decision A memo, the estimability and anti-duplication audit, and the corrected execution-validation checklist |
+| 2 | `2fafdd48f435bc3c07e7fbf6e10ebb578a3ec12b` | `docs(phase-4bn-ba): add closeout` | Initial closeout |
+| 3 | `f1384a5b61739861790c92537e3af606c38ad213` | `docs(phase-4bn-ba): correct finite-precision feature characterization` | Corrected exact-identity, rank, span, pair-equivalence, relative-error, and valid-origin characterizations across all four BA documents (see §17, Amendment 3) |
+| 4 | `97e1d1e65ecff654fcd5e3b7f43e023f64149c33` | `docs(phase-4bn-ba): finalize quotient wording and preflight routing` | Corrected two residual quotient phrases, qualified the Phase 4bn-AZ historical shorthand, and routed a failed pre-data timestamp proof to `PREFLIGHT_FAILURE` (see §17, Amendment 4) |
+| 5 | *this commit* | `docs(phase-4bn-ba): synchronize closeout with final corrections` | `FINAL_PHASE_SHA`. Final closeout synchronization; metadata and closeout history only (see §17, Amendment 5). A commit cannot embed its own SHA; per the established convention its exact SHA is recorded in the final operator report and in the Git log after commit |
 
 ## 4. Exact files added
 
@@ -266,7 +268,9 @@ fitted. No metric is computed.
 |---|---|---|
 | 1 | `af1dbf6725fd31eaf82db9070195750afd172241` | Initial Phase 4bn-BA decision memo, estimability and anti-duplication audit, and corrected execution-validation checklist |
 | 2 | `2fafdd48f435bc3c07e7fbf6e10ebb578a3ec12b` | Initial Phase 4bn-BA closeout |
-| 3 | *this commit* — `docs(phase-4bn-ba): correct finite-precision feature characterization` | **Narrow mathematical-precision correction** applied consistently across all four Phase 4bn-BA documents |
+| 3 | `f1384a5b61739861790c92537e3af606c38ad213` — `docs(phase-4bn-ba): correct finite-precision feature characterization` | **Narrow mathematical-precision correction** applied consistently across all four Phase 4bn-BA documents |
+| 4 | `97e1d1e65ecff654fcd5e3b7f43e023f64149c33` — `docs(phase-4bn-ba): finalize quotient wording and preflight routing` | **Residual-wording and pre-data routing correction** across the three non-closeout BA documents |
+| 5 | *this commit* — `docs(phase-4bn-ba): synchronize closeout with final corrections` | **Closeout synchronization**; metadata and closeout history only. Records amendments 3 and 4 accurately; changes no scientific or execution-bearing field; preserves merge and Phase 4bn-BB non-authorization |
 
 **Scope of amendment 3.** The committed mean formatter is a fixed-point **floor quantizer**
 (`mean_int = (sum_int × 10^12) // count`), so the stored `rolling_quantity_mean_60s` is a
@@ -307,6 +311,76 @@ superset).
 - No data was opened, no local artefact was inspected, no residual was recomputed, no test, linter,
   or script was run, and no execution occurred.
 - Merge remains **unauthorized**; Phase 4bn-BB remains **unauthorized**.
+
+**Scope of amendment 4** (`97e1d1e65ecff654fcd5e3b7f43e023f64149c33`,
+`docs(phase-4bn-ba): finalize quotient wording and preflight routing`). Applied to the three
+non-closeout BA documents:
+
+- replaced the two remaining phrases that still described the stored mean as the **exact** or
+  **precise** quotient with the deterministically-derived, floor-quantized characterization,
+  distinguished from the ideal arithmetic quotient `x3* = x2 / x1`, which alone carries an exact
+  identity;
+- **qualified the historical Phase 4bn-AZ exact-identity sentence** as historical shorthand whose
+  mathematical interpretation is superseded by the ideal-versus-stored finite-precision relation
+  `ln(x3) = ln(x2) − ln(x1) + δ` (`δ ≤ 0`, generally nonzero); the `CF1_INVALID_RUN` classification,
+  the recorded residual statistics, the recorded condition numbers, and the no-scientific-claim
+  consequence remain unchanged and binding;
+- corrected gate 1.4.9 and execution-order step 4 of the corrected execution-validation checklist so
+  a **failed or absent pre-data deterministic synthetic timestamp-boundary proof routes to
+  `PREFLIGHT_FAILURE`** (stop; no market data opened; no scientific result), not `CF1_INVALID_RUN`;
+- clarified that `PREFLIGHT_FAILURE` is a **pre-execution gate result, not a fourth scientific
+  outcome**, that no market data is opened and no scientific result is produced, and that
+  **post-access violations continue to route to `CF1_INVALID_RUN`**;
+- added the anti-switching clarification that opening market data after skipping or weakening a proof
+  is a post-access violation (`CF1_INVALID_RUN`), while stopping before any market-data read after a
+  proof failure is `PREFLIGHT_FAILURE`;
+- **preserved** Decision A, the selected pair, the removed column, feature count 2, augmented
+  parameter count 6, the training minimum 60, the block minimum 100, the expected-structural-rank
+  scope, the result state, the Phase 4bn-AZ verdict and consumed-run status, and every runtime guard.
+
+**Scope of amendment 5** (this commit,
+`docs(phase-4bn-ba): synchronize closeout with final corrections`). Metadata and closeout history
+only:
+
+- records the complete five-entry Phase 4bn-BA commit history by exact SHA, replacing the earlier
+  `this commit` placeholder for `f1384a5b61739861790c92537e3af606c38ad213` with its actual SHA;
+- records amendments 3 and 4 accurately, and records the pre-data proof routing correction (below);
+- **changes no scientific or execution-bearing field**, opens no data, inspects no local artefact,
+  recomputes no residual, runs no test/linter/script/proof/model/metric, and performs no execution;
+- preserves the Phase 4bn-BA result state, all inherited fields, all locks, merge non-authorization,
+  and Phase 4bn-BB non-authorization.
+
+### Execution-routing record (the only execution-bearing clarification since the initial closeout)
+
+The Phase 4bn-BA corrected execution-validation checklist now distinguishes pre-data gate failure
+from post-access invalidation. A failed or absent deterministic synthetic timestamp-boundary proof
+before any market-data read is `PREFLIGHT_FAILURE`: no market data is opened, no evidence is
+consumed, and no scientific result exists. A contract violation after market-data access is
+`CF1_INVALID_RUN`. `PREFLIGHT_FAILURE` is not a fourth scientific outcome.
+
+This is a **routing consistency correction, not a relaxation.** The three scientific execution
+outcomes are unchanged and remain `CF1_VALID_PASS`, `CF1_VALID_FAIL`, and `CF1_INVALID_RUN`. The
+checklist authorizes nothing.
+
+**The only execution-bearing clarification after the initial closeout was the routing of a failed or
+absent pre-data deterministic synthetic timestamp-boundary proof to `PREFLIGHT_FAILURE` rather than
+`CF1_INVALID_RUN`. No model, metric, data, feature, target, split, guard, or scientific decision
+field changed.** (The amendment-3 characterization of the removed stored-mean feature was a wording
+and mathematical-interpretation correction, not a change to any execution-bearing field.)
+
+### What amendments 3, 4, and 5 did not change (cumulative)
+
+None of amendments 3, 4, or 5 changed: Decision A
+(`SELECT_CORRECTED_CF1_FEATURE_CONTRACT_FOR_SEPARATE_FUTURE_EXECUTION`); the selected pair
+`{ rolling_aggtrade_count_60s , rolling_quantity_sum_60s }`; the removal and prohibition of
+`rolling_quantity_mean_60s`; feature count 2; augmented parameter count 6; minimum training origins
+60; minimum block valid origins 100; the expected-structural-rank scope (absence of a source-implied
+exact dependency only); the runtime rank guard; the zero-variance guard; the non-finite guard; the
+condition-number threshold `> 1e10`; the target; the interval semantics; the horizon; the cadence;
+the split; the embargo; the purge; the HAR baseline; the OLS estimator; QLIKE; equal block
+weighting; the bootstrap; the pass/fail/invalid routing; the reserve boundaries; the stopped arcs;
+the Phase 4bn-AZ historical verdict; the Phase 4bn-AZ consumed-run status; the Phase 4bn-BA result
+state; merge non-authorization; or Phase 4bn-BB non-authorization.
 
 ## 18. Recommended next operator action
 
