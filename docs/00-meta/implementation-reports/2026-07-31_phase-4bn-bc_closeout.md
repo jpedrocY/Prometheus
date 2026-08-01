@@ -167,9 +167,18 @@ The full table is in the main memo §21. No unsupported claim is softened.
 
 **Strategy M0 is not cleared.** The Phase 4bn-BB valid pass does not clear strategy M0, and neither
 Phase 4bn-BC nor any future filter object may be described as clearing it. The assessed continuation
-was mapped clause by clause in the companion audit: M0-permissible in form, adverse on M0.2 and
-M0.12, hollow on M0.3 / M0.7 in substance, PASS on M0.8; M0 §7.D is engaged, bounded, and not
-relaxed; no §6 / §6.A materially-new mechanism source is asserted.
+was mapped clause by clause in the companion audit:
+
+The assessed continuation is M0-permissible in form. **M0.2 passes because the mechanism source is
+non-price-only.** **M0.12 records no post-null reopening** because Phase 4bn-BB returned
+`CF1_VALID_PASS` rather than `NOT_SUPPORTED`, so the §6.A materially-new-source requirement is **not
+triggered**. M0.3 and M0.7 remain hollow in substance; **M0.8 passes**. Section 7.D remains engaged,
+bounded, unrelaxed, and `NOT_RECOMMENDED_NOW`. **M0.5 remains unresolved and blocking for every
+trading path.** **Strategy M0 remains NOT CLEARED.**
+
+The substantial forecast-to-state coarsening of Phase 4bn-BB remains adverse under the
+anti-duplication and decision-consequence analyses, not as an M0.2 or M0.12 failure; the rejection
+continues to rest on decision consequence and anti-duplication.
 
 **Phase 4bn-AE §19 remains absolute and unsoftened.** No result, however strong, authorizes strategy
 construction, signal generation, threshold trading, confidence-gated trading, backtesting, PnL
@@ -242,13 +251,44 @@ Per Phase 4bn-AY §30, this rejection does not authorize neighbouring variants. 
 different future CF-1-adjacent object would require a new mechanism justification, a new docs-only
 phase, an explicit anti-duplication audit, separate operator authorization, and its own M0 clearance.
 
-## 19. Final commit self-reference convention
+## 19. Commit history and final commit self-reference convention
 
-Phase 4bn-BC commits all three files in exactly one phase commit
-(`docs(phase-4bn-bc): assess CF-1 filter admissibility and consequences`). A commit cannot embed its
-own SHA; this closeout is part of that commit, so the commit's own SHA is the canonical Phase 4bn-BC
-phase-commit SHA and branch tip, and it is recorded in the final operator report and in the Git log
-after commit.
+Phase 4bn-BC has **two commits**. The three files were initially added in one phase commit, followed
+by one narrow correction commit modifying two of those three files.
+
+**1 — Initial Phase 4bn-BC decision commit.**
+
+```text
+SHA:     bcf3685722187757eaceab2d609a8df01e34b8fa
+Message: docs(phase-4bn-bc): assess CF-1 filter admissibility and consequences
+```
+
+Role: adds all three Phase 4bn-BC documents; records Decision A, Decision B, and the original
+governance audit.
+
+**2 — M0 mapping correction commit.**
+
+```text
+Message: docs(phase-4bn-bc): correct M0 clause mapping
+```
+
+Role: corrects M0.2 from adverse to **PASS** through the non-price-only source route; corrects M0.12
+from adverse to **PASS** because no post-null reopening occurs; preserves the §7.D caution; preserves
+Decision A, R3, and the final Phase 4bn-BC result state; and synchronizes this closeout.
+
+**Self-reference convention.** A commit cannot embed its own SHA.
+
+```text
+M0 mapping correction commit SHA:
+this update (`docs(phase-4bn-bc): correct M0 clause mapping`);
+its exact SHA is the resulting final Phase 4bn-BC branch tip and is recorded in
+the final operator report and Git log.
+```
+
+The correction commit modifies only the companion audit and this closeout; it creates no file and
+leaves the main decision memo byte-identical to `bcf3685722187757eaceab2d609a8df01e34b8fa`. Relative
+to base `7bb6819ad5f1d5aded1746bf3332ad6f4aa5dc49` the branch still shows exactly three added Phase
+4bn-BC files, with no modification, deletion, or rename of any pre-existing base path.
 
 ## 20. Recommended next operator action
 

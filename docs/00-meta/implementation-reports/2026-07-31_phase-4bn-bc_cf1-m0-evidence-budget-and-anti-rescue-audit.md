@@ -49,8 +49,8 @@ stating, that CF-1 or any future filter clears strategy M0.
 
 | Clause | Mapping | Finding |
 |---|---|---|
-| **M0.1 Mechanism source** | Not price-only in the depleted sense: the mechanism source is aggTrades trade-arrival intensity and unsigned traded-volume intensity (`rolling_aggtrade_count_60s`, `rolling_quantity_sum_60s`), already committed on disk, feeding a realized-variance magnitude object. The assessed continuation introduces **no new mechanism source at all**; it re-expresses the CF-1 forecast. | Source admissible; but "no new mechanism source" is itself adverse for a fresh-hypothesis claim. |
-| **M0.2 Non-price-only / structurally distinct** | The substrate is trade-tape, not price-only, so §7.A depletion is not engaged. However, relative to Phase 4bn-BB the assessed object is a **coarsening of the same forecast under the same features, target, model, loss, horizon, and split** — it is not structurally distinct from the experiment already run. M0.2 requires structural distinctness stated in theoretical terms before any data is touched; a discretization of an already-tested comparison does not supply it. | **ADVERSE.** |
+| **M0.1 Mechanism source** | Not price-only in the depleted sense: the mechanism source is aggTrades trade-arrival intensity and unsigned traded-volume intensity (`rolling_aggtrade_count_60s`, `rolling_quantity_sum_60s`), already committed on disk, feeding a realized-variance magnitude object. The assessed continuation introduces **no new mechanism source at all**; it re-expresses the CF-1 forecast. | Source stated and admissible. M0.1 requires the source to be stated, not to be novel, so the absence of a new source is **not an M0.1 failure**; it is routed to the anti-duplication, materially-different-question, and decision-consequence analyses. |
+| **M0.2 Non-price-only or structurally distinct source requirement** | The substrate is aggTrades trade-tape — trade count and unsigned traded quantity — and is therefore **not price-only**; §7.A depletion is not engaged. M0.2 is **disjunctive**: a source must be non-price-only **or**, if price-only, structurally distinct from depleted lanes. The assessed continuation satisfies the **first route**, so the price-only structural-distinctness condition is not the applicable route and no claim of structural distinctness from Phase 4bn-BB is required or made. The proposed forecast-to-state coarsening remains **substantially duplicative** of Phase 4bn-BB, but that concern is assessed under anti-duplication (§15), the materially-different-question and decision-consequence tests (§17; main memo §13), and researcher freedom (§16). It is **not** an M0.2 failure. | **PASS — `NON_PRICE_ONLY_SOURCE`.** |
 | **M0.3 Baseline-superiority theory (non-strategy route)** | CF-1 used the M0.3 "equivalent baseline differential for non-strategy mechanism claims" route (Phase 4bn-AY §34), discharged by the P1/P2/P3 predicate (strict positivity, ≥ 6/7 block consistency, bootstrap `LB_95 > 0`) rather than a predicted Δ_R magnitude. The same predicate form is available to a state object, so M0.3 is **satisfiable in form**. It is not satisfiable in substance without a theoretical reason to expect a state-level differential that is not simply the already-observed `ρ = 0.036651473671709504` restated — and using that observed value would be prohibited post-hoc selection. | Satisfiable in form; hollow in substance. |
 | **M0.4 Rejection-topology distance** | Distance from R2 (cost fragility), F1 (mean-reversion overextension), D1-A (funding-aware contrarian), V2 (participation-confirmed breakout), G1 (regime-first breakout continuation), C1 (volatility-contraction expansion breakout): all six are **directional strategy candidates with entry, exit, sizing, and PnL**. The assessed object has no sign, no entry, no exit, no position, and no PnL. **Closest prior failure trap: G1** — a regime-first construct whose gate was to condition trading. The structural distinction is that G1's regime existed to gate entries, whereas the assessed object is barred from gating anything. | Distance adequate **only** while the no-gating bar holds; the trap is real and is the reason the bar is restated absolutely. |
 | **M0.5 Cost realism under §11.6 (8 bps/side, 16 bps round trip)** | **Non-decision-bearing here, and explicitly so.** The assessed object generates no trade, so it incurs no cost and clears no cost. That is not a pass: it means the clause cannot be discharged at all on aggTrades-only evidence. Phase 4bn-AE §19 records that aggTrades-only data cannot support spread, slippage, executable mid, depth, or impact; Phase 4bn-AS §31 records the same. The locked 8/16 bps reference is preserved as descriptive context and entered no Phase 4bn-BB target, model, loss, threshold, weighting, or verdict. | Not applicable to a non-trading research object; **remains an absolute blocker for any trading path**. |
@@ -60,15 +60,21 @@ stating, that CF-1 or any future filter clears strategy M0.
 | **M0.9 Governance compatibility** | Compatible on its face with §11.6, §1.7.3, Phase 3r §8, Phase 3v §8, Phase 3w §6/§7/§8, Phase 4j §11, the M0 document itself, and the §6 cooldown, **because it proposes no trading, no position, no stop, and no metrics/OI use**. Compatibility is achieved by inaction rather than by clearance. | Compatible; not clearance. |
 | **M0.10 Forbidden-rescue and anti-reduction** | The assessed object does not reduce to V2 / G1 / C1 / R2 / R1a / R1b-narrow / F1 / D1-A / rank-then-breakout / multi-position / 5m variants / alt-symbol reruns — it has no direction and no position. **Closest rescue trap: a "volatility-regime filter" becoming G1-style regime gating under a research name.** The structural reason it is not that trap is that every gating consumer is prohibited absolutely (Phase 4bn-AE §19) and the object is barred by construction from conditioning any action. Naming is not sufficient and the structural argument is supplied — but the trap's proximity is a standing hazard, and closing the continuation removes it. | Not a rescue as scoped; hazard real. |
 | **M0.11 Pre-backtest falsification** | A state-level proper-score or disagreement-rate predicate would be predeclarable, substantive, and capable of terminating the candidate at the docs-only or analysis stage, distinct from downstream catastrophic-floor predicates. | Satisfiable. |
-| **M0.12 Post-null cooldown and non-authorization** | The assessed object touches the M0 §7.D microstructure / order-flow / liquidity-timing lane, status `NOT_RECOMMENDED_NOW`. It asserts **no** §6.A "materially new mechanism source" — it introduces no new observable and derives from no new external theory. It relies on the same §7.D posture CF-1 relied on (M0.8 data already on disk; object is magnitude, not short-horizon direction). Passing M0 would authorize no strategy-spec, backtest-plan, backtest, paper/shadow, live-readiness, deployment, exchange-write, credentials, or successor phase. | §7.D not relaxed; no materially-new source asserted; **ADVERSE** for a fresh-hypothesis claim. |
+| **M0.12 Post-null cooldown and non-authorization** | **No prior `NOT_SUPPORTED` result cooled down the CF-1 magnitude family.** Phase 4bn-BB returned `CF1_VALID_PASS`, and the assessed continuation is the predeclared consequence assessment of that pass. **No post-null reopening is occurring**, so the §6 / §6.A materially-new-mechanism-source requirement is **not triggered**. The object does touch the M0 §7.D microstructure / order-flow / liquidity-timing lane, whose status remains `NOT_RECOMMENDED_NOW`; **that caution is not relaxed, and §7.D is not cleared**. §7.D's own stated preconditions are M0.5 and M0.8 on theoretical content before any acquisition: **M0.8 is satisfied** for the already-built, sidecar-verified, non-reserve aggTrades data, and **M0.5 remains unresolved and an absolute blocker for any trading path**. Passing M0 authorizes no strategy-spec, backtest-plan, backtest, paper/shadow, live-readiness, deployment, exchange-write, credentials, or successor phase. | **PASS — `NO_POST_NULL_REOPENING__EXPLICIT_NON_AUTHORIZATION_PRESERVED`.** |
 
 **M0 mapping result.** The assessed continuation is not M0-inadmissible in the way the Phase 4bn-AX
-forced-flow family was (which failed M0.2, M0.4, M0.8, M0.10, and M0.12 outright). It is
-**M0-permissible in form but adverse on M0.2 and M0.12 and hollow on M0.3/M0.7 in substance**: it
-introduces no new mechanism source, is not structurally distinct from the experiment already run, and
-cannot state an expected differential without either inventing one or reading it off the observed
-Phase 4bn-BB result. This is consistent with, and reinforces, the decision-consequence rejection in
-the main memo §13; it is not an independent second basis for it.
+forced-flow family was (which failed M0.2, M0.4, M0.8, M0.10, and M0.12 outright).
+
+The assessed continuation is **M0-permissible in form**. **M0.2 passes through the non-price-only
+source route.** **M0.12 records no post-null reopening and preserves all non-authorizations.**
+**M0.8 passes.** **M0.3 and M0.7 are satisfiable in form but hollow in substance**, since neither can
+state an expected differential without either inventing one or reading it off the observed Phase
+4bn-BB result, **while M0.5 remains unresolved and blocking for any trading path**. **Section 7.D
+remains `NOT_RECOMMENDED_NOW`, bounded, and unrelaxed.**
+
+The continuation is **rejected on decision-consequence and anti-duplication grounds, not because
+M0.2 or M0.12 failed.** The M0 mapping is consistent with, and does not independently establish, the
+decision-consequence rejection recorded in the main memo §13.
 
 ## 3. Explicit statement — strategy M0 is not cleared
 
@@ -165,8 +171,9 @@ is:
   a non-trading research object precisely because that object generates no trade, and it remains an
   absolute blocker for any trading path.
 - **§7.D is not relaxed, reinterpreted, narrowed, or cleared** by Phase 4bn-BB, by its merge, or by
-  Phase 4bn-BC. No §6 / §6.A "materially new mechanism source" is asserted. The lane's
-  `NOT_RECOMMENDED_NOW` status stands.
+  Phase 4bn-BC. The lane's `NOT_RECOMMENDED_NOW` status stands. **§7.D does not itself convert this
+  valid-pass consequence assessment into a post-null reopening**, so the §6 / §6.A "materially new
+  mechanism source" requirement is **not triggered** and none is asserted or needed.
 
 **`REJECTED_AS_RESCUE_SHAPED_PROXY_MECHANISM_MISMATCH` is preserved exactly and unchanged.**
 
@@ -185,7 +192,9 @@ cooldown does not block), §6.C (no implicit decay), §7 (current cooled-down fa
 
 **§6 cooldown compliance.** No cooled-down family is reopened by parameter, descriptor, threshold,
 symbol-universe, interval, forward-horizon, filter-relaxation, weight-reassignment, or
-rebalance-frequency adjustment. No §6.A materially-new mechanism source is claimed. §6.C is respected:
+rebalance-frequency adjustment. **§6 applies after a predeclared feasibility phase returns
+`NOT_SUPPORTED`; Phase 4bn-BB returned `CF1_VALID_PASS`, so no post-null reopening is occurring and
+the §6.A materially-new-source condition is not triggered.** None is claimed. §6.C is respected:
 no cooldown has decayed with time, and none is treated as decayed. §6.B is respected in the permitted
 direction only — this phase reads and cites prior stopped-arc reports as historical documentation,
 which the cooldown explicitly does not block.
@@ -300,13 +309,13 @@ creates no sealed-test proposal.
 |---|---|
 | Does Phase 4bn-BC duplicate a committed governance document? | **No.** It cites owners and creates no standard, ledger, gate, register, or policy. |
 | Does Phase 4bn-BC restate or amend M0, Phase 4bn-AE §19, the ledger, or the scarce-reserve standard? | **No.** Each is cited by owner and left unmodified. |
-| Would the assessed continuation duplicate the Phase 4bn-BB experiment? | **Substantially yes** — it is a coarsening of the same nested comparison under the same target, features, model, loss, horizon, and split. This is recorded as adverse under M0.2 and is the substance of main memo §13(c). |
+| Would the assessed continuation duplicate the Phase 4bn-BB experiment? | **Substantially yes** — it is a coarsening of the same nested comparison under the same target, features, model, loss, horizon, and split. This is adverse under the **anti-duplication and decision-consequence analyses** and is the substance of main memo §13(c). **M0.2 nevertheless passes because the mechanism source is non-price-only.** |
 | Would it duplicate a previously stopped or rejected family? | **No** — not the long-horizon ML arc, not the ToB arc, not the forced-flow family. |
 | Would it duplicate the prohibited Phase 4bn-AY three-feature contract? | **No.** That set remains `STRUCTURALLY_NON_IDENTIFIABLE__PROHIBITED_FOR_FUTURE_EXECUTION` and `rolling_quantity_mean_60s` remains prohibited. |
 | Is empirical correlation, distributional overlap, or any data property used as a criterion anywhere in this phase? | **No.** No data was opened; no data property was measured or relied upon. |
 
 **Anti-duplication verdict: PASS for Phase 4bn-BC's own conduct; ADVERSE for the assessed
-continuation, consistent with the M0.2 finding.**
+continuation on anti-duplication grounds, independent of the passing M0.2 source classification.**
 
 ## 16. Researcher-freedom assessment
 
@@ -365,9 +374,15 @@ necessary and not sufficient, and §17 is where it fails.
 
 ## 19. Final audit verdict
 
-- **M0 mapping:** performed clause by clause. The assessed continuation is M0-permissible in form,
-  **adverse on M0.2 and M0.12**, hollow on M0.3 / M0.7 in substance, and PASS on M0.8. §7.D is
-  engaged, bounded, and not relaxed.
+- **M0 mapping:** performed clause by clause. The assessed continuation is **M0-permissible in form**.
+  - **M0.2: PASS — `NON_PRICE_ONLY_SOURCE`.**
+  - **M0.12: PASS — `NO_POST_NULL_REOPENING__EXPLICIT_NON_AUTHORIZATION_PRESERVED`.**
+  - **M0.3 / M0.7:** satisfiable in form, **hollow in substance**.
+  - **M0.5:** not applicable to the non-trading research object; **unresolved and absolute for any
+    trading path**.
+  - **M0.8: PASS.**
+  - **§7.D:** engaged, bounded, and **unrelaxed**; status remains `NOT_RECOMMENDED_NOW` and §7.D is
+    **not cleared**.
 - **Strategy M0:** **NOT CLEARED**, and not claimed to be cleared for CF-1 or for any future filter.
 - **Phase 4bn-AE §19:** preserved, absolute, unsoftened.
 - **`STOP_LONGHORIZON_ML_ARC`:** preserved exactly.
@@ -378,8 +393,10 @@ necessary and not sufficient, and §17 is where it fails.
 - **Reserve posture:** `R3 — NO_CF1_RESERVE_PATH_JUSTIFIED__REMAIN_RESERVED`; no reserve opened or
   spent; no proposal created; pre-spend quorum not engaged.
 - **Anti-rescue:** PASS. **Anti-duplication:** PASS for this phase; ADVERSE for the assessed
-  continuation. **Researcher freedom:** boundable but not forced; adverse.
-- **Decision consequence:** fails, and is the decisive basis for Decision A.
+  continuation on anti-duplication grounds, independent of the passing M0.2 source classification.
+  **Researcher freedom:** boundable but not forced; adverse.
+- **Decision consequence:** **fails, and remains the decisive basis for Decision A** — the rejection
+  rests on decision consequence and anti-duplication, not on M0.2 or M0.12.
 
 ```
 PHASE_4BN_BC_GOVERNANCE_AUDIT_PASSED__FILTER_CONTINUATION_NOT_ADMISSIBLE_ON_DECISION_CONSEQUENCE__STRATEGY_M0_NOT_CLEARED__ALL_STOPS_AND_LOCKS_PRESERVED__NO_RESERVE_OPENED_OR_SPENT
