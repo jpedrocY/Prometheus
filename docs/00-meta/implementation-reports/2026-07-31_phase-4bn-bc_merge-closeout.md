@@ -20,8 +20,8 @@ no reserve, and no lock, and it authorizes no successor phase.
 | Pre-merge `main` == `origin/main` (Phase 4bn-BB merge-closeout SHA-finalization tip) | `7bb6819ad5f1d5aded1746bf3332ad6f4aa5dc49` |
 | Phase 4bn-BC decision commit (three documents added) | `bcf3685722187757eaceab2d609a8df01e34b8fa` |
 | Phase 4bn-BC M0 mapping correction commit | `6816cf5e8dcf88a05f44be60b15e4a4f961ff7f6` |
-| Phase 4bn-BC merge-closeout branch commit (this file) | `<MERGE_CLOSEOUT_COMMIT_SHA>` |
-| Phase 4bn-BC no-fast-forward merge commit | `<MERGE_COMMIT_SHA>` |
+| Phase 4bn-BC merge-closeout branch commit (this file) | `6b5de7937eb047d0b8a216012f99ce9bea1687a4` |
+| Phase 4bn-BC no-fast-forward merge commit | `4236d19784e686dbec536c40b6d57ef7f6c065b5` |
 
 **SHA-finalization convention.** This merge-closeout is created on the BC source
 branch with the last two SHAs as placeholders. After the `--no-ff` merge into
