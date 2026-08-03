@@ -25,8 +25,8 @@ Merging Phase 4bn-BE records the external-theory candidate shortlist and its gov
 |---|---|
 | Pre-merge `main` == `origin/main` (Phase 4bn-BC merge-closeout SHA-finalization tip) | `fe28cfcc79b726bdf7c6aec6c8b4167f908e25f0` |
 | Phase 4bn-BE approved source-phase commit (two documents added) — `research(phase-4bn-be): assess external-theory new-lane candidates` | `6de62178a1f9a9856e96a7a0c5e9f4dab7dad711` |
-| Phase 4bn-BE merge-closeout branch commit (this file) | `PLACEHOLDER_MERGE_CLOSEOUT_BRANCH_COMMIT_SHA` |
-| Phase 4bn-BE no-fast-forward merge commit | `PLACEHOLDER_NO_FAST_FORWARD_MERGE_COMMIT_SHA` |
+| Phase 4bn-BE merge-closeout branch commit (this file) | `0ddf082af45dd65d6b64af7829737ed70e4b164f` |
+| Phase 4bn-BE no-fast-forward merge commit | `ef38f04c1c17103a2e0e6a069dd9616846d4dc31` |
 
 `main == origin/main == fe28cfcc79b726bdf7c6aec6c8b4167f908e25f0` was confirmed at preflight, before any
 mutation. The local and remote source branch were confirmed equal at
