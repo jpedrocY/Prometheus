@@ -27,9 +27,9 @@ Merging Phase 4bn-BF records the completed cross-lane mechanism and data-interac
 |---|---|
 | Pre-merge `main` == `origin/main` (Phase 4bn-BE merge-closeout SHA-finalization tip) | `d8182d96e11bc11517c3432eeddc1fd6ea4cacb5` |
 | Phase 4bn-BF approved source-phase commit (two documents added) — `research(phase-4bn-bf): map cross-lane mechanism interactions` | `f164f66bd1287d48151269baa8e43e0c252c5407` |
-| Phase 4bn-BF merge-closeout branch commit (this file) — `docs(phase-4bn-bf): add merge closeout` | `<<SOURCE_MERGE_CLOSEOUT_SHA_PLACEHOLDER>>` |
-| Phase 4bn-BF no-fast-forward merge commit — `research(phase-4bn-bf): merge cross-lane interaction atlas` | `<<MERGE_COMMIT_SHA_PLACEHOLDER>>` |
-| Final `main` == `origin/main` after SHA finalization | `<<FINAL_MAIN_SHA_PLACEHOLDER>>` |
+| Phase 4bn-BF merge-closeout branch commit (this file) — `docs(phase-4bn-bf): add merge closeout` | `e37696a32939120205744439e7ca2a201df32a29` |
+| Phase 4bn-BF no-fast-forward merge commit — `research(phase-4bn-bf): merge cross-lane interaction atlas` | `a33c92742e6773c99f3818fbeeb39e6ada74b078` |
+| Final `main` == `origin/main` after SHA finalization | the SHA-finalization commit that contains this completed merge-closeout — identified by branch `main`, commit message `docs(phase-4bn-bf): finalize merge closeout shas`, recorded in the final operator report, and recoverable from `git log --oneline d8182d96e11bc11517c3432eeddc1fd6ea4cacb5..main` |
 
 `main == origin/main == d8182d96e11bc11517c3432eeddc1fd6ea4cacb5` was confirmed at preflight, before any
 mutation, and reconfirmed immediately before the merge. The local and remote source branch were confirmed
